@@ -1,0 +1,163 @@
+/* Vidrio líquido para la interfaz · WebGL1 + fragment shader (Safari, Firefox y Chromium)
+   Los contenedores y botones del DOM se pasan al shader como cajas redondeadas que se funden
+   (unión suave, como metabolas). Sobre ese campo de distancia se aplica la receta del vidrio líquido:
+   refracción de borde (bisel), separación cromática por canal (R 1.10 · G 1.00 · B 0.90),
+   desenfoque, luz de borde y, al acercar el cursor, un brillo especular que lo sigue y un
+   crecimiento con resorte (como el liquid glass de iOS).
+   Si WebGL no está disponible, la hoja de estilos usa un vidrio CSS equivalente (fallback). */
+(function () {
+  // pills contenedores: en pantallas táctiles se abren con un toque
+  document.addEventListener('click', e => { const l = e.target.closest && e.target.closest('.morph .lbl'); if (l) l.parentElement.classList.toggle('open'); else document.querySelectorAll('.morph.open').forEach(m => { if (!m.contains(e.target)) m.classList.remove('open'); }); });
+  let src = document.getElementById('c'), bgDraw = null;
+  const gc = document.createElement('canvas'); gc.id = 'glass';
+  if (src) src.parentNode.insertBefore(gc, src.nextSibling);
+  else { src = document.createElement('canvas'); bgDraw = makeBg(src); document.body.insertBefore(gc, document.body.firstChild); }
+  // fondo para páginas sin visualización: polígonos string-art lentos que el vidrio refracta
+  function makeBg(cv) {
+    const c = cv.getContext('2d'), COLS = ['#8f9bff', '#ff6b5e', '#f4c25b', '#e86bd0'];
+    return t => {
+      const W = innerWidth, H = innerHeight; if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+      c.fillStyle = '#070a14'; c.fillRect(0, 0, W, H); c.lineWidth = 1;
+      COLS.forEach((col, k) => {
+        const cx = W * (.16 + .68 * k / 3 + .03 * Math.sin(t * .2 + k)), cy = H * (.3 + .38 * (k % 2) + .03 * Math.cos(t * .17 + k)), R = Math.min(W, H) * .36, m = 5 + k;
+        for (let i = 0; i < 30; i++) { const r = R * (1 - .9 * i / 30), rot = i * .06 * (k % 2 ? 1 : -1) + t * .05; c.strokeStyle = col + '66'; c.beginPath();
+          for (let q = 0; q <= m; q++) { const A = rot + q * 6.2832 / m, x = cx + Math.cos(A) * r, y = cy + Math.sin(A) * r; q ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke(); }
+      });
+    };
+  }
+  let gl = null; try { gl = gc.getContext('webgl', { antialias: false, alpha: false }) || gc.getContext('experimental-webgl'); } catch (e) { }
+  const fail = m => { if (m) console.warn('glass:', m); gc.remove(); document.body.classList.remove('gl'); };
+  if (!gl) return fail('sin WebGL');
+
+  const VERT = 'attribute vec2 aPos;void main(){gl_Position=vec4(aPos,0.,1.);}';
+  const FRAG = `
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+uniform sampler2D uTex;
+uniform vec2 uRes;
+uniform float uDens, uT;
+uniform vec4 uR[16];
+uniform float uRr[16];
+uniform float uE[16];
+uniform vec2 uM;
+uniform float uHero;
+float smin(float a, float b, float k){ float h = max(k - abs(a - b), 0.0) / k; return min(a, b) - h * h * k * 0.25; }
+float sdBox(vec2 p, vec2 c, vec2 hs, float r){
+  vec2 q = abs(p - c) - hs + r;
+  return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;
+}
+float scene(vec2 p){
+  float d = 100000.0;
+  for (int i = 0; i < 16; i++) {
+    if (uR[i].z > 0.5) {
+      vec2 hs = uR[i].zw * 0.5;
+      d = smin(d, sdBox(p, uR[i].xy + hs, hs, uRr[i]), 6.0);
+    }
+  }
+  return d;
+}
+float energyAt(vec2 p){
+  float best = 100000.0, e = 0.0;
+  for (int i = 0; i < 16; i++) {
+    if (uR[i].z > 0.5) {
+      vec2 hs = uR[i].zw * 0.5;
+      float di = sdBox(p, uR[i].xy + hs, hs, uRr[i]);
+      if (di < best) { best = di; e = uE[i]; }
+    }
+  }
+  return e;
+}
+vec3 blurSample(vec2 p){
+  vec3 acc = vec3(0.0);
+  for (int i = 0; i < 6; i++) {
+    float a = float(i) * 1.0471976;
+    acc += texture2D(uTex, (p + vec2(cos(a), sin(a)) * 2.5) / uRes).rgb;
+  }
+  return acc / 6.0 * (1.0 - 0.78 * uHero);
+}
+vec3 bgSample(vec2 p){
+  vec3 c = texture2D(uTex, p / uRes).rgb;
+  if (uHero > 0.01) {
+    vec3 w = vec3(0.0);
+    for (int i = 0; i < 6; i++) {
+      float a = float(i) * 1.0471976;
+      w += texture2D(uTex, (p + vec2(cos(a), sin(a)) * 10.0) / uRes).rgb + texture2D(uTex, (p + vec2(cos(a + 0.5), sin(a + 0.5)) * 22.0) / uRes).rgb;
+    }
+    c = mix(c, w / 12.0, uHero) * (1.0 - 0.78 * uHero);
+  }
+  return c;
+}
+void main(){
+  vec2 p = vec2(gl_FragCoord.x, uRes.y * uDens - gl_FragCoord.y) / uDens;
+  vec3 base = bgSample(p);
+  float d = scene(p);
+  if (d > 1.5) { gl_FragColor = vec4(base, 1.0); return; }
+
+  float t = max(-d, 0.0);
+  vec2 e = vec2(1.5, 0.0);
+  vec2 n = normalize(vec2(scene(p + e.xy) - scene(p - e.xy), scene(p + e.yx) - scene(p - e.yx)) + 1e-5);
+  float en = energyAt(p);
+  float st = pow(clamp(1.0 - t / 16.0, 0.0, 1.0), 2.0);
+  vec2 off = n * st * (40.0 + 16.0 * en);
+  vec3 col = vec3(blurSample(p + off * 1.10).r, blurSample(p + off).g, blurSample(p + off * 0.90).b);
+
+  float lum = dot(col, vec3(0.299, 0.587, 0.114));
+  col = mix(vec3(lum), col, 1.25) * 1.08;
+  col += vec3(0.055) + vec3(0.05) * (1.0 - smoothstep(0.0, 36.0, t));   // transparencia neutra
+  vec2 mv = p - uM;
+  col += vec3(1.0) * exp(-dot(mv, mv) / 9800.0) * en * 0.22;            // brillo especular que sigue al cursor
+
+  vec2 Ld = normalize(vec2(-0.55, -0.83));
+  float s1 = pow(max(dot(n, Ld), 0.0), 3.0);
+  float s2 = pow(max(dot(n, -Ld), 0.0), 3.0);
+  float rim = 1.0 - smoothstep(0.0, 9.0, t);
+  float line = 1.0 - smoothstep(0.0, 1.6, t);
+  col += vec3(1.0) * ((s1 * 0.8 + s2 * 0.35) * rim + line * (0.25 + 0.5 * s1)) * (1.0 + 1.4 * en);
+
+  float a = 1.0 - smoothstep(-0.8, 0.8, d);
+  gl_FragColor = vec4(mix(base, col, a), 1.0);
+}`;
+
+  function sh(type, s) { const o = gl.createShader(type); gl.shaderSource(o, s); gl.compileShader(o); return gl.getShaderParameter(o, gl.COMPILE_STATUS) ? o : (console.warn(gl.getShaderInfoLog(o)), null); }
+  const vs = sh(gl.VERTEX_SHADER, VERT), fs = sh(gl.FRAGMENT_SHADER, FRAG); if (!vs || !fs) return fail('shader');
+  const pr = gl.createProgram(); gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr);
+  if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return fail(gl.getProgramInfoLog(pr));
+  gl.useProgram(pr);
+  const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const ap = gl.getAttribLocation(pr, 'aPos'); gl.enableVertexAttribArray(ap); gl.vertexAttribPointer(ap, 2, gl.FLOAT, false, 0, 0);
+  const tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
+  [[gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]].forEach(a => gl.texParameteri(gl.TEXTURE_2D, a[0], a[1]));
+  const U = n => gl.getUniformLocation(pr, n), uTex = U('uTex'), uRes = U('uRes'), uDens = U('uDens'), uT = U('uT'), uR = U('uR'), uRr = U('uRr'), uE = U('uE'), uM = U('uM'), uHero = U('uHero');
+  gl.uniform1i(uTex, 0);
+
+  const SEL = ['#leg', '.morph .lbl', '.morph .mb', '#panel', '#back', '#hint', '#tip', '#hero button', '.card', '.btn'];
+  const eo = el => { let o = 1; while (el && el !== document.body) { o *= parseFloat(getComputedStyle(el).opacity); el = el.parentElement; } return o; };
+  let mx = -99, my = -99, lt = performance.now() / 1000;
+  document.addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY; }, { passive: true });
+
+  function frame() {
+    try {
+      const W = innerWidth, H = innerHeight, dpr = Math.min(window.devicePixelRatio || 1, 2), now = performance.now() / 1000, dt = Math.min(.05, now - lt); lt = now, hero = document.getElementById('hero'), ho = hero ? eo(hero) : 0;
+      if (gc.width !== Math.round(W * dpr) || gc.height !== Math.round(H * dpr)) { gc.width = Math.round(W * dpr); gc.height = Math.round(H * dpr); gl.viewport(0, 0, gc.width, gc.height); }
+      const R = new Float32Array(64), Rr = new Float32Array(16), E = new Float32Array(16); let n = 0;
+      SEL.forEach(s => document.querySelectorAll(s).forEach(el => {
+        if (n >= 16) return; const b = el.getBoundingClientRect(); if (b.width < 4 || b.height < 4) return;
+        const cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || eo(el) < .05) return;
+        const inside = mx >= b.left && mx <= b.right && my >= b.top && my <= b.bottom; let s = el._e || 0, v = el._v || 0; v += ((inside ? 1 : 0) - s) * 170 * dt; v *= Math.exp(-13 * dt); s += v * dt; el._e = s; el._v = v; // resorte: crece con un leve rebote
+        const sp = Math.max(0, s), g = (b.width > 420 || b.height > 220 ? 3 : 6) * sp + (el.classList.contains('on') ? 2 : 0), w = b.width + 2 * g, h = b.height + 2 * g;
+        R.set([b.left - g, b.top - g, w, h], n * 4); Rr[n] = Math.min(parseFloat(cs.borderTopLeftRadius) || 20, h / 2, w / 2) + g * .5; E[n] = Math.min(1, sp); n++;
+      }));
+      if (bgDraw) bgDraw(now);
+      if (src.width && src.height) { gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tex); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src); }
+      gl.uniform2f(uRes, W, H); gl.uniform1f(uDens, dpr); gl.uniform1f(uT, now % 1000);
+      gl.uniform4fv(uR, R); gl.uniform1fv(uRr, Rr); gl.uniform1fv(uE, E); gl.uniform2f(uM, mx, my); gl.uniform1f(uHero, ho);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      document.body.classList.add('gl');
+      requestAnimationFrame(frame);
+    } catch (err) { fail(err); }
+  }
+  requestAnimationFrame(frame);
+})();
