@@ -1,31 +1,93 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Acerca de Marea de resonancias</title><link rel="stylesheet" href="style.css"></head>
-<body>
-<header><b>Marea de resonancias</b><nav><a href="index.html">Visualización</a><a class="on" href="about.html">Acerca del estudio</a></nav></header>
-<main>
-<h1>Marea de resonancias</h1>
-<p style="color:var(--mut);margin-bottom:24px">Atlas sonoro del Barrio Puerto, Valparaíso</p>
-<p class="lead">Grupo 2 · Taller de Diseño de Servicios 2026. Estudia cómo cambian las fuentes sonoras dominantes y los niveles de sonido del Barrio Puerto de Valparaíso según el lugar y el horario, y cómo se relaciona esa variación con el espacio público y la experiencia de quienes lo habitan, trabajan o visitan.</p>
-<h2>Pregunta orientadora</h2>
-<p>¿Cómo varían las fuentes sonoras dominantes y los niveles de sonido en distintos sectores de la ciudad puerto según el lugar y el horario?</p>
-<h2>Puntos de estudio</h2>
-<ul><li><b>Muelle Prat:</b> borde abierto al mar. Ruido portuario como fondo difuso, voces de lancheros y turistas; la amplitud favorece la permanencia.</li>
-<li><b>Plaza Sotomayor:</b> explanada de bordes duros. El semáforo marca el pulso del sonido y las fachadas lo devuelven; alta saturación en paraderos.</li>
-<li><b>Calle Serrano:</b> corredor de adoquín; el sonido se acumula en el eje.</li>
-<li><b>Plaza Echaurren:</b> claro rodeado de muros; la voz humana ocupa el centro.</li></ul>
-<h2>Instrumentos y datos</h2>
-<p>Ficha de observación sonora (fuentes, dB mín/prom/máx con sonómetro y apps móviles), ficha de flujos (aforos peatonales y vehiculares) y cartografía sonora. Total: 40 fichas entre el 13 y el 29 de octubre de 2026 y 20 encuestas de percepción. Un artefacto físico (pizarra de 800 × 400 mm con láminas apilables y fichas de color y tamaño) recogió 32 registros participativos en Muelle Prat.</p>
-<h2>Hallazgos</h2>
-<ul><li>Sotomayor concentra la mayor presión sonora (promedio ≈ 71 dB, peaks de 88 dB) y el menor agrado.</li>
-<li>Muelle Prat tiene la mayor diversidad de fuentes y es el sector percibido como más tranquilo pese a sus picos.</li>
-<li>El confort no depende solo de los dB, sino de la predictibilidad y el sentido de la fuente: mar y voces se valoran; los impulsos mecánicos generan rechazo.</li>
-<li>La hora punta (17:30–18:50) concentra los niveles más altos.</li></ul>
-<h2>Cómo leer la visualización</h2>
-<p>Cada <b>figura</b> es un lugar: una composición de polígonos girados cuyo color es la fuente de sonido predominante, cuyos lados siguen el n.º de fichas y cuya deformación sigue el dB según la hora. Cada <b>ficha</b> es un conjunto de hebras de esa misma figura que se ilumina y pulsa entre su dB mínimo y máximo, en la posición horaria de la medición (en sentido horario desde arriba); un trazo grueso con punto marca el dB promedio. Siguiendo la geometría del lugar circulan <b>puntos lentos (personas)</b> y <b>estelas rápidas (vehículos)</b>: su cantidad y velocidad siguen los niveles de flujo registrados. El <b>color</b> de la figura es la fuente de sonido predominante; el agrado de las encuestas se lee en el panel de cada sector.</p>
-<p><small>Límites: Echaurren tiene pocas fichas (3) y encuestas (2); tres fichas del Muelle comparten un pico de 121,4 dB que se acota visualmente. Las encuestas solo registran agrado en cuatro niveles.</small></p>
-<h2>Uso de IA</h2>
-<p>La IA apoyó la implementación técnica (canvas, partículas, interacción). La pregunta, la selección de variables, la codificación visual y el punto de vista fueron decisiones del equipo.</p>
-<h2>Fuentes</h2>
-<p><a href="https://wiki.ead.pucv.cl/Proyecto_de_Visualización_-_Grupo_2">Wiki del proyecto · Proyecto de Visualización – Grupo 2</a>. Observadores: Francisco Daniou, Sofía Vera, Catalina Cabezas y Piera Ivelic.</p>
-</main></body></html>
+<body class="about">
+<header><b>Marea de resonancias</b><nav id="nav" class="morph"><span class="lbl" tabindex="0">Inicio</span><a class="mb" href="index.html">Visualización</a><a class="mb on" href="about.html">Acerca del estudio</a></nav></header>
+<div class="wrap">
+<section class="top"><h1>Marea de resonancias</h1><p class="sub">Atlas sonoro del Barrio Puerto, Valparaíso</p><a class="btn" href="index.html">Ver la visualización →</a></section>
+<div class="cols"><div class="col">
+
+<section class="card"><h2>Planteamiento general</h2>
+<p>Marea de resonancias responde a la pregunta central del estudio grupal, abordando el paisaje sonoro desde sus variaciones temporales y espaciales. Sobre esta base, se tomó una decisión estructural: el sonido se muestra como un conjunto de figuras vivas, una por lugar, cuyo aspecto y movimiento cambian con los datos. Los sectores de estudio se presentan lado a lado con el mismo formato. Así, la diferencia entre ellos se percibe de un vistazo.</p>
+<p>La visualización cruza dos fuentes del levantamiento: las 40 fichas de terreno (niveles de sonido, fuentes, flujos y fenómenos observados) y las 20 encuestas de percepción (agrado y citas textuales).</p></section>
+
+<section class="card"><h2>Definiciones previas del estudio grupal</h2>
+<p>Antes de la estructuración de los datos y el modelo visual, el levantamiento grupal estableció los criterios y categorías fundamentales que guían el proyecto.</p>
+<h3>Pregunta orientadora</h3>
+<p>Todo el análisis y la posterior visualización buscan dar respuesta a una interrogante central:</p>
+<em class="q">¿Cómo varían las fuentes sonoras dominantes y los niveles de sonido según el lugar y el horario?</em>
+<h3>Tipologías espaciales de los lugares de estudio</h3>
+<p>El levantamiento definió con precisión las condiciones espaciales que configuran el paisaje sonoro, estableciendo cómo la forma del espacio filtra, concentra o deja escapar el sonido:</p>
+<ul>
+<li><b>Muelle Prat: borde abierto al mar.</b> Explanada amplia y plana, abierta hacia la bahía y cerrada hacia la ciudad por edificios altos de fachada lisa. El ruido portuario de grúas, bocinas y camiones cruza el agua sin obstáculos y llega como un fondo difuso, sin una fuente localizable. Sobre él aparecen voces cercanas de lancheros, captadores y grupos de turistas. La amplitud separa a los grupos y la conducta dominante es la permanencia.</li>
+<li><b>Plaza Sotomayor: explanada de bordes duros.</b> Gran plaza cívica enmarcada por edificios de vidrio y hormigón, con avenidas de alto tránsito en su perímetro. Vereda y calzada forman una plataforma única de losa sin desnivel. El cruce con semáforo concentra motores y personas, haciendo que el sonido late con sus ciclos, mientras las fachadas devuelven las ondas hacia la plaza. Predominan la espera y el paso en oleadas.</li>
+<li><b>Calle Serrano: corredor encerrado.</b> Calle angosta de adoquín, flanqueada por fachadas continuas, con una franja de cielo estrecha. El sonido viaja por el eje de la calle y se acumula. El adoquín anuncia y amplifica el rodaje de los vehículos, transformando el espacio en una caja de resonancia.</li>
+<li><b>Plaza Echaurren: claro rodeado de muros.</b> Plaza rodeada por calzada de adoquín y fachadas continuas. El tránsito queda relegado al borde, mientras el centro es ocupado por la voz humana. Los árboles de copa baja crean un “bajo cielo” que amortigua el entorno; las fachadas devuelven parte del sonido y la apertura hacia arriba disipa el resto, propiciando la permanencia.</li></ul>
+<p>Aunque el análisis principal se focalizó en el contraste entre Muelle Prat y Plaza Sotomayor para evitar redundancias tipológicas, las cuatro condiciones espaciales se conservan porque permiten una lectura comparativa más completa de cómo la arquitectura y la circulación configuran la experiencia sensorial.</p>
+<h3>Tipos de fuentes de sonido</h3>
+<p>Se determinó que el confort acústico depende del sentido de la fuente y no solo del nivel de decibeles. Por ello, los sonidos predominantes se clasificaron en cinco categorías base: <b>vehicular, humana, comercial, portuaria y natural</b>. Esta categorización es la que permite dar un tratamiento cualitativo al ruido medido en terreno.</p></section>
+
+</div><div class="col">
+<section class="card"><h2>Estructura del modelo de visualización</h2>
+<p>El modelo conceptual y técnico de la visualización mapea los datos del paisaje sonoro en representaciones gráficas y de comportamiento, estructurado de la siguiente manera:</p>
+<ul>
+<li><b>Objetivo:</b> mostrar la variación de fuentes y niveles sonoros por lugar y horario, cruzando mediciones de terreno empíricas y de percepción ciudadana.</li>
+<li><b>Mapeo de variables:</b><ul>
+<li><i>Hora:</i> define la posición de la medición en la figura (organizada en sentido horario).</li>
+<li><i>Decibeles (mínimo, promedio, máximo):</i> definen la amplitud, la longitud del tramo iluminado y el recorrido del pulso en las hebras.</li>
+<li><i>Fuente sonora predominante:</i> define el color base de la geometría y de las hebras.</li>
+<li><i>Flujos (peatonal y vehicular):</i> controlan la cantidad y la velocidad de los elementos móviles (puntos y estelas).</li>
+<li><i>Nivel de agrado:</i> determina el grado de agitación o nerviosismo general del movimiento de la figura.</li></ul></li>
+<li><b>Representación espacial:</b> utiliza polígonos compuestos por capas anidadas y giradas para evocar la morfología arquitectónica de cada sector (como el encierro o la apertura del espacio).</li>
+<li><b>Interfaz e interacción:</b> despliegue mediante una vista general comparativa, filtros por franjas horarias y paneles de detalle que unen las métricas cuantitativas con las citas textuales cualitativas.</li></ul></section>
+
+<section class="card"><h2>Inventario de datos</h2>
+<p>Del levantamiento del Barrio Puerto se seleccionó solo la información que responde a la pregunta del estudio. Se usaron dos tablas de la base de datos, la de las 40 fichas de terreno y la de las 20 encuestas de percepción. Estas se vincularon por sector, así, cada lugar reúne lo que se midió y lo que se sintió.</p>
+<h3>Datos de las fichas de terreno</h3>
+<ul>
+<li><b>Sector o lugar:</b> se tomó el nombre de cada punto, que es la unidad de la visualización. Cada figura representa un sector, y el estudio se organiza justamente en torno a la comparación entre sus tipologías espaciales, desde el borde abierto del Muelle Prat hasta el corredor encerrado de la Calle Serrano.</li>
+<li><b>Hora del registro:</b> se tomó la hora de inicio de cada ficha, entre las 09:40 y las 18:50. Se usa para ubicar cada ficha en la figura y para el filtro por franja (mañana, tarde y hora punta). La fecha del registro no se usó porque el estudio compara por hora del día y no por jornada.</li>
+<li><b>Niveles de sonido:</b> se tomaron los tres valores en decibeles (mínimo, promedio y máximo) para distinguir entre el fondo difuso y los eventos impulsivos. El promedio ubica la ficha y el recorrido entre mínimo y máximo muestra la estabilidad o sobresalto del sonido.</li>
+<li><b>Fuente predominante:</b> el tipo de sonido se categorizó según los cinco grupos definidos (vehicular, humana, comercial, portuaria y natural), lo que determina el color de cada sector.</li>
+<li><b>Dinámica de flujos:</b> los niveles peatonal y vehicular (bajo, medio, alto) se tradujeron a valores numéricos (1 al 3) para controlar la cantidad y velocidad de los puntos y estelas, relacionando la conducta espacial con el entorno.</li>
+<li><b>Relación personas-sonido:</b> se extrajo el fenómeno sonoro clave (por ejemplo, “el ritmo del semáforo dirige el volumen de las conversaciones”) para el detalle de la ficha, aportando la interpretación cualitativa de terreno.</li></ul>
+<h3>Datos de las encuestas</h3>
+<ul>
+<li><b>Punto de muestreo:</b> sector donde se aplicó cada encuesta, dato esencial para el cruce relacional con las fichas.</li>
+<li><b>Sensación de agrado:</b> codificada en una escala numérica (“me gusta” = 2, “me gusta un poco” = 1, “me da igual” = 0, “me incomoda un poco” = −1). El promedio controla el grado de agitación del movimiento del sector, evidenciando que el malestar no depende estrictamente de los decibeles.</li>
+<li><b>dB medido:</b> valor registrado durante la encuesta. Se muestra como promedio en el panel para un cruce directo entre lo medido y lo percibido.</li>
+<li><b>Cita textual:</b> selección de una frase representativa por sector para el panel de detalle, logrando que la voz habitante acompañe a las cifras.</li></ul>
+</section>
+
+</div><div class="col">
+<section class="card"><h2>Datos que no se incluyeron</h2>
+<p>Se excluyeron el observador y el instrumento de medición por ser datos estrictamente metodológicos. No se integraron la relación con el barrio ni horarios habituales (la mayoría son visitantes y la variable no discrimina). Los datos de lugar más ruidoso/tranquilo y razón de la percepción se descartaron para evitar solapamientos con el nivel de agrado y las citas textuales.</p></section>
+<section class="card"><h2>Figuración</h2>
+<h3>El lugar como figura</h3>
+<p>Cada sector se representa como un polígono compuesto por capas anidadas y giradas, que forman una trama de líneas. Esta decisión nace de una premisa central del estudio grupal: la forma del espacio determina cómo se oye el sonido, porque lo filtra, lo concentra o lo devuelve. La apertura, los bordes, el pavimento y la vegetación orientan a su vez la conducta de las personas (si pasan, se detienen o permanecen).</p>
+<p>Representar el lugar como una geometría, y no como una barra o un punto, permite que esa premisa sea visible. Las capas superpuestas evocan la reverberación entre las fachadas continuas, y las aristas recuerdan los bordes duros de Sotomayor frente a la apertura del Muelle.</p>
+<p>El color de cada figura corresponde a la fuente de sonido predominante del lugar. El Muelle Prat es portuario mientras que la Plaza Sotomayor es vehicular. Se eligió el color porque la fuente es una categoría y no una cantidad, y el tono permite distinguir categorías sin pedir lectura.</p>
+<h3>La ficha como evento dentro del lugar</h3>
+<p>Cada medición es un conjunto de hebras dentro de la figura, iluminadas con el color de su fuente. Se ordenan en sentido horario desde arriba (09:40 a 18:50).</p>
+<p>La distancia al centro marca el nivel de sonido, trazando un polígono sobre la capa del promedio. El tramo iluminado va del mínimo al máximo registrado: una ficha corta refleja un sonido estable (murmullo en Echaurren) y una larga un evento irruptivo (picos de micros en Sotomayor de hasta 88 dB).</p>
+<p>Sobre cada hebra viaja un pulso del mínimo al máximo, acelerándose a mayor nivel promedio, devolviendo al dato su carácter de suceso temporal. Las hebras llevan un contorno oscuro para evitar pérdida de contraste visual cuando el color de la ficha y el sector coinciden.</p>
+<h3>Los flujos: personas y vehículos</h3>
+<p>El espacio es recorrido por dos poblaciones gráficas en las aristas y capas:</p>
+<ul><li><b>Puntos lentos:</b> representan a las personas.</li><li><b>Estelas rápidas:</b> representan a los vehículos.</li></ul>
+<p>La cantidad y velocidad dependen de los flujos registrados. Sotomayor presenta saturación mixta de puntos y estelas, mientras Echaurren tiene predominio peatonal casi sin estelas. Las trayectorias incluyen pausas y cambios de ritmo (las estelas ondulan según semáforos, los puntos se detienen en barandas).</p>
+<h3>El movimiento como expresión del agrado</h3>
+<p>El grado de agitación del movimiento depende del agrado que las encuestas registran para cada lugar: cuanto menor es el agrado, más errático el movimiento. Esta decisión se sustenta en el hallazgo central: el malestar sonoro no depende solo del nivel de decibeles, sino de la predictibilidad y el sentido de la fuente. Los sonidos naturales y la voz humana se valoran y se asocian al descanso; los mecánicos impulsivos generan rechazo y fatiga auditiva. Así, Sotomayor, con el agrado más bajo, se ve nerviosa, mientras que el Muelle, que registra picos altos pero es percibido como más tranquilo, se ve calmo.</p></section>
+
+<section class="card"><h2>Interacción</h2>
+<h3>Exploración y lectura</h3>
+<p>La interacción sigue una secuencia modular:</p>
+<ol>
+<li><b>Vista general:</b> panorámica comparativa de los lugares.</li>
+<li><b>Filtro por franja horaria:</b> selectores de mañana, tarde y hora punta. Permite observar fenómenos evolutivos como la escalada vespertina (atochamiento y cierre comercial entre las 17:30 y las 18:50).</li>
+<li><b>Vista expandida:</b> aislamiento de un sector. Despliega la lista de sus fichas y un panel de detalle con cifras, niveles de flujo y la cita textual, fusionando la métrica cuantitativa con la experiencia cualitativa.</li></ol></section>
+
+</div></div>
+<p class="foot">Grupo 2 · Taller de Diseño de Servicios 2026 · <a href="https://wiki.ead.pucv.cl/Proyecto_de_Visualización_-_Grupo_2">Wiki del proyecto</a></p>
+</div>
+<script src="glass.js"></script>
+</body></html>
