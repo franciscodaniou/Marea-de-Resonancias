@@ -92,7 +92,7 @@ function flowHtml(s) { const [p, v] = lvl(s); return `<div class="fl"><div>Perso
 function size() {
   dpr = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight;
   cv.width = W * dpr; cv.height = H * dpr; x.setTransform(dpr, 0, 0, dpr, 0, 0);
-  const top0 = W < 900 ? 64 : 178, gh = H - 72 - top0, gw = W - 44;
+  const top0 = W < 1100 ? 64 : 196, gh = H - 72 - top0, gw = W - 44;
   const rA = Math.min(gw / 4 / 2.05, (gh - 74) / 2.2), rB = Math.min(gw / 2 / 2.05, (gh / 2 - 74) / 2.2), row = rA >= rB;
   Rb = Math.max(rA, rB); const bh = 2.2 * Rb + 74, off = row ? (gh - bh) / 2 : (gh / 2 - bh) / 2;
   ctr = [0, 1, 2, 3].map(i => row ? [22 + gw * (i + .5) / 4, top0 + off + 8 + Rb * 1.08] : [22 + gw * (i % 2 + .5) / 2, top0 + (gh / 2) * Math.floor(i / 2) + off + 8 + Rb * 1.08]);
@@ -246,10 +246,10 @@ function render() {
 
 function pick(e) {
   const mx = e.clientX, my = e.clientY; hs = null; hov = null;
-  G.forEach((g, s) => { if (g.al > .5 && Math.hypot(mx - g.cx, my - g.cy) < g.R * 1.1 && (foc === null || k > .5)) hs = s; });
+  G.forEach((g, s) => { if (g.al < .5) return; const inFig = Math.hypot(mx - g.cx, my - g.cy) < g.R * 1.1, inLbl = want === null && Math.abs(mx - g.cx) < Math.max(g.R, 110) && my > g.cy + g.R * .95 && my < g.cy + g.R * 1.12 + 72; if ((inFig && (foc === null || k > .5)) || inLbl) hs = s; }); // la figura y su nombre abren el mismo sector
   if (hs !== null) {
     const g = G[hs], a = Math.atan2(my - g.cy, mx - g.cx); let best = 9;
-    F.forEach(q => { if (q.s !== hs || !on(q)) return; const d = Math.abs(Math.atan2(Math.sin(a - angM(q.m)), Math.cos(a - angM(q.m)))); if (d < wid(q) / 2 + .03 && d < best && Math.hypot(mx - g.cx, my - g.cy) > g.R * .15) { best = d; hov = q; } });
+    F.forEach(q => { if (q.s !== hs || !on(q)) return; const d = Math.abs(Math.atan2(Math.sin(a - angM(q.m)), Math.cos(a - angM(q.m)))); if (d < wid(q) / 2 + .03 && d < best && Math.hypot(mx - g.cx, my - g.cy) > g.R * .15 && Math.hypot(mx - g.cx, my - g.cy) < g.R * 1.1) { best = d; hov = q; } });
   }
   if (hov) { tip.innerHTML = `<b>${hov.id} · ${hov.t} h</b>${hov.src}<br>${hov.mn}–${hov.mx} dB · prom ${hov.pr}<br><span style="color:${COL[hov.c]}">${CAT[hov.c]}</span><br><i>${hov.ph}</i>`; tip.style.display = 'block'; tip.style.left = Math.min(mx + 16, W - 320) + 'px'; tip.style.top = my + 16 + 'px'; }
   else tip.style.display = 'none';
@@ -262,8 +262,8 @@ cv.addEventListener('click', e => { pick(e); if (want === null) { if (hs !== nul
 panel.addEventListener('click', e => { const b = e.target.closest('.it'); if (b) { const f = F[+b.dataset.i]; pf = pf === f ? null : f; render(); } });
 back.onclick = () => focus(null);
 addEventListener('keydown', e => { if (e.key === 'Escape') focus(null); });
-document.querySelectorAll('#ctl button').forEach(b => b.onclick = () => { flt = b.dataset.f; document.querySelectorAll('#ctl button').forEach(o => o.classList.toggle('on', o === b)); render(); });
-document.getElementById('go').onclick = () => document.getElementById('hero').classList.add('off');
+document.querySelectorAll('#ctl button').forEach(b => b.onclick = () => { flt = b.dataset.f; document.querySelectorAll('#ctl button').forEach(o => o.classList.toggle('on', o === b)); document.querySelector('#ctl .lbl').textContent = 'Franja · ' + b.textContent; render(); });
+document.getElementById('go').onclick = () => { document.getElementById('hero').classList.add('off'); document.body.classList.remove('heroing'); };
 document.getElementById('leg').innerHTML =
   `<div class="lg"><b>Fuente de sonido</b><br>${Object.keys(COL).map(k => `<span><i style="background:${COL[k]}"></i>${CAT[k]}</span>`).join('')}</div>
   <div class="lg"><b>Figura</b> = el lugar: color = fuente predominante, lados = n.º de fichas, deformación = dB según la hora.<br><b>Ficha</b> = hebras de la figura que se iluminan y pulsan entre su dB mín y máx (hora en sentido horario desde arriba); trazo grueso y punto = dB promedio.</div>
