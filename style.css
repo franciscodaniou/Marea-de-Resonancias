@@ -37,7 +37,7 @@ main h2{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(-
 main p,main li{color:#c3cada;margin-bottom:10px}
 main ul{padding-left:18px}
 main .lead{font-size:18px;color:var(--fg)}
-@media(max-width:700px){#leg{display:none}#panel{bottom:70px}}
+@media(max-width:700px){#panel{bottom:70px}}
 /* v2: tamaños y modo expandido */
 html,body{font-size:17px}
 header b{font-size:16px}header nav a{font-size:15px}
@@ -62,7 +62,7 @@ header b{font-size:16px}header nav a{font-size:15px}
 .it span{width:10px;height:10px;border-radius:50%;grid-row:span 2}.it em{grid-column:2;color:var(--mut);font-size:13px}.it b{grid-row:span 2;font-weight:600}
 #tip{font-size:15px;max-width:320px;padding:12px 14px}
 main p,main li{font-size:17px}main .lead{font-size:21px}main h2{font-size:14px}
-@media(max-width:700px){#leg{display:none}#panel.big{top:110px}}
+@media(max-width:700px){#panel.big{top:110px}}
 .fl{margin:12px 0}.fl div{display:grid;grid-template-columns:96px 1fr 60px;align-items:center;gap:10px;margin:6px 0;font-size:15px}
 .fl .tr{height:8px;border-radius:4px;background:rgba(255,255,255,.12);overflow:hidden}.fl i{display:block;height:100%;background:#fff;border-radius:4px}.fl .v i{background:#ff9a8c}.fl b{font-size:15px!important;text-align:right;color:var(--fg)}
 #leg{font-size:14.5px;max-height:calc(100vh - 150px);overflow:auto}
@@ -71,7 +71,7 @@ main p,main li{font-size:17px}main .lead{font-size:21px}main h2{font-size:14px}
 #leg .lg{flex:1}#leg .lg span{display:inline-block;margin:2px 14px 2px 0;white-space:nowrap}#leg i{width:11px;height:11px}
 #panel.big{top:190px}
 #hint{position:fixed;left:50%;bottom:30px;transform:translateX(-30%);z-index:4;font-size:15px;color:var(--mut)}
-@media(max-width:900px){#leg{display:none}#panel.big{top:110px}#hint{display:none!important}}
+@media(max-width:900px){#panel.big{top:110px}#hint{display:none!important}}
 #back{top:186px;left:22px;transform:none}
 @media(max-width:900px){#back{top:70px;left:50%;transform:translateX(-50%)}}
 #back{top:186px;left:22px;transform:none}
@@ -103,7 +103,7 @@ main{width:calc(100% - 32px);margin:96px auto 60px;padding:40px 44px;border-radi
 @media(max-width:700px){main{padding:26px 22px}}
 #back{top:198px}#panel.big{top:200px}
 #hint{left:auto;right:22px;transform:none;max-width:42vw}
-@media(max-width:1100px){#leg{display:none}#back{top:70px}#panel.big{top:70px}}
+@media(max-width:1100px){#back{top:70px}#panel.big{top:70px}}
 /* v8: mismo vidrio en inicio, cartel de ficha y página "acerca" */
 #tip,.card,.btn{
   background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,.04) 55%,rgba(255,255,255,.08));
@@ -169,12 +169,7 @@ body.gl #ctl .mb,body.gl #nav .mb{border-color:transparent}
 #ctl:hover .lbl,#ctl:focus-within .lbl,#nav:hover .lbl,#nav:focus-within .lbl{max-width:0;padding-left:0;padding-right:0;border-width:0;opacity:0}
 #ctl:hover .mb,#ctl:focus-within .mb,#nav:hover .mb,#nav:focus-within .mb{max-width:240px;padding:10px 22px;margin-left:8px;border-width:1px;opacity:1}
 #ctl:hover .mb:first-of-type,#ctl:focus-within .mb:first-of-type,#nav:hover .mb:first-of-type,#nav:focus-within .mb:first-of-type{margin-left:0}}
-#lgbtn{display:none}
-body.heroing #lgbtn{opacity:0;pointer-events:none}
 #tip{max-width:min(320px,80vw)}
-@media(max-width:1100px){
-#lgbtn{display:inline-block;position:fixed;top:66px;right:14px;z-index:6;font-size:14px;padding:7px 16px;cursor:pointer;transition:opacity .8s}
-body.showleg #leg{display:flex;flex-direction:column;position:fixed;top:106px;left:14px;right:14px;gap:14px;max-height:calc(100vh - 190px);overflow:auto;z-index:7;padding:16px 20px}}
 @media(max-width:760px){
 html,body{font-size:16px}
 header{padding:10px 14px}
@@ -195,3 +190,27 @@ body.navopen header b{opacity:0}
 .card{padding:22px 20px}
 }
 
+/* v11: «Cómo leer» = pill que se transforma en la leyenda (punteo estructurado) */
+#leg{position:fixed;top:72px;left:22px;right:auto;z-index:4;width:122px;height:38px;max-width:none;max-height:none;padding:0;display:block;overflow:hidden;border-radius:99px;font-size:14px;line-height:1.45;gap:0;
+  transition:width .65s cubic-bezier(.3,1.15,.5,1),height .65s cubic-bezier(.3,1.15,.5,1),border-radius .65s ease,opacity .8s}
+#leg.open{width:calc(100vw - 44px);height:var(--oh,200px);border-radius:30px}
+.lgin{width:calc(100vw - 44px)}
+.lgt{display:block;font:inherit;font-size:15px;font-weight:700;color:var(--fg);background:none;border:0;padding:0 22px;height:38px;line-height:38px;cursor:pointer;text-align:left;white-space:nowrap;border-radius:0}
+.lgt::after{content:' ▾';font-size:11px;opacity:.7}#leg.open .lgt::after{content:' ▴'}
+.lgb{padding:2px 24px 18px;opacity:0;transition:opacity .35s}#leg.open .lgb{opacity:1;transition-delay:.25s}
+.lcols{display:grid;grid-template-columns:1.05fr 1fr 1.15fr 1.1fr;gap:28px}
+.lc h4{font-size:12.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--N);margin:0 0 6px;font-weight:700}
+.lc ul{list-style:none;padding:0;margin:0}.lc li{position:relative;padding-left:16px;margin:3px 0;color:#d9dfec}
+.lc li::before{content:'•';position:absolute;left:3px;color:var(--mut)}
+.lc ul.dots li::before{display:none}.lc ul.dots li{padding-left:20px}.lc .dots i{position:absolute;left:0;top:5px;margin:0}
+.lc li b{color:var(--fg)}
+@media(min-width:1101px){#back{top:var(--lb,198px)}#panel.big{top:calc(var(--lb,198px) + 4px)}}
+@media(max-width:1100px){
+#leg{top:66px;left:auto;right:14px;width:122px;z-index:7}
+#leg.open{width:calc(100vw - 28px)}
+.lgin{width:calc(100vw - 28px)}
+.lcols{grid-template-columns:1fr;gap:12px}
+.lgb{max-height:calc(100vh - 215px);overflow:auto;-webkit-overflow-scrolling:touch}}
+@media(min-width:760px) and (max-width:1100px){.lcols{grid-template-columns:1fr 1fr}}
+/* leyenda abierta sobre las figuras (móvil/tablet): velo oscuro para que el punteo se lea */
+@media(max-width:1100px){body.gl #leg.open{background:rgba(7,10,20,.66)}}
