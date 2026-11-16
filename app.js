@@ -93,7 +93,11 @@ function size() {
   W = innerWidth; H = innerHeight; const mob = W < 760;
   dpr = Math.min(devicePixelRatio || 1, mob ? 1.5 : 2);
   cv.width = W * dpr; cv.height = H * dpr; x.setTransform(dpr, 0, 0, dpr, 0, 0);
-  const top0 = W < 1100 ? 64 : 196, LB = mob ? 84 : 74, gh = H - (mob ? 76 : 72) - top0, gw = W - (mob ? 28 : 44), x0 = mob ? 14 : 22;
+  layout();
+}
+function layout() { // las figuras se reacomodan en sincronía con el pill/leyenda «Cómo leer»
+  const mob = W < 760;
+  const top0 = W < 1100 ? 64 : 72 + leg.offsetHeight + 14, LB = mob ? 84 : 74, gh = H - (mob ? 76 : 84) - top0, gw = W - (mob ? 28 : 44), x0 = mob ? 14 : 22;
   const rA = Math.min(gw / 4 / 2.05, (gh - LB) / 2.2), rB = Math.min(gw / 2 / 2.05, (gh / 2 - LB) / 2.2), row = rA >= rB;
   Rb = Math.max(rA, rB); const bh = 2.2 * Rb + LB, off = row ? (gh - bh) / 2 : (gh / 2 - bh) / 2;
   ctr = [0, 1, 2, 3].map(i => row ? [x0 + gw * (i + .5) / 4, top0 + off + 8 + Rb * 1.08] : [x0 + gw * (i % 2 + .5) / 2, top0 + (gh / 2) * Math.floor(i / 2) + off + 8 + Rb * 1.08]);
@@ -213,9 +217,10 @@ function flows(s, dt) {
   });
 }
 
-let lastT = 0, curDt = 0;
+let lastT = 0, curDt = 0, lastLh = 0;
 function frame(ms) {
-  T = ms / 1000; const dt = Math.min(.05, T - lastT); lastT = T; k += ((want === null ? 0 : 1) - k) * .09;
+  T = ms / 1000;
+  const lh = leg.offsetHeight; if (W >= 1100 && Math.abs(lh - lastLh) > 1) { lastLh = lh; layout(); document.documentElement.style.setProperty('--lb', (72 + lh + 14) + 'px'); } const dt = Math.min(.05, T - lastT); lastT = T; k += ((want === null ? 0 : 1) - k) * .09;
   if (want === null && k < .003) { k = 0; foc = null; } else if (want !== null) foc = want;
   geoms(); x.globalCompositeOperation = 'source-over'; x.fillStyle = '#070a14'; x.fillRect(0, 0, W, H);
   curDt = dt; for (let s = 0; s < 4; s++) drawSector(s);
@@ -272,12 +277,24 @@ panel.addEventListener('click', e => { const b = e.target.closest('.it'); if (b)
 back.onclick = () => focus(null);
 addEventListener('keydown', e => { if (e.key === 'Escape') focus(null); });
 document.querySelectorAll('#ctl button').forEach(b => b.onclick = () => { flt = b.dataset.f; document.querySelectorAll('#ctl button').forEach(o => o.classList.toggle('on', o === b)); document.querySelector('#ctl .lbl').textContent = 'Franja · ' + b.textContent; document.getElementById('ctl').classList.remove('open'); b.blur(); render(); });
-document.getElementById('lgbtn').onclick = () => document.body.classList.toggle('showleg');
-cv.addEventListener('click', () => document.body.classList.remove('showleg'));
 document.getElementById('go').onclick = () => { document.getElementById('hero').classList.add('off'); document.body.classList.remove('heroing'); };
-document.getElementById('leg').innerHTML =
-  `<div class="lg"><b>Fuente de sonido</b><br>${Object.keys(COL).map(k => `<span><i style="background:${COL[k]}"></i>${CAT[k]}</span>`).join('')}</div>
-  <div class="lg"><b>Figura</b> = el lugar: color = fuente predominante, lados = n.º de fichas, deformación = dB según la hora.<br><b>Ficha</b> = hebras de la figura que se iluminan y pulsan entre su dB mín y máx (hora en sentido horario desde arriba); trazo grueso y punto = dB promedio.</div>
-  <div class="lg"><b>● puntos = personas · ━ estelas = vehículos.</b> Más cantidad y velocidad = más flujo. Recorren la geometría del lugar; cuanto menor el agrado, más errático el movimiento.</div>`;
+document.querySelector('#leg .lgb').innerHTML = `<div class="lcols">
+  <div class="lc"><h4>Color · fuente de sonido</h4><ul class="dots">${Object.keys(COL).map(k => `<li><i style="background:${COL[k]}"></i>${CAT[k]}</li>`).join('')}</ul></div>
+  <div class="lc"><h4>Figura · un lugar</h4><ul><li><b>Color:</b> fuente que predomina</li><li><b>Lados:</b> n.º de fichas</li><li><b>Deformación:</b> dB según la hora</li></ul></div>
+  <div class="lc"><h4>Ficha · una medición</h4><ul><li><b>Posición:</b> hora, en sentido horario desde arriba</li><li><b>Tramo iluminado:</b> dB mínimo → máximo</li><li><b>Trazo grueso y punto:</b> dB promedio</li></ul></div>
+  <div class="lc"><h4>Flujos · recorren el lugar</h4><ul><li><b>● Puntos lentos:</b> personas</li><li><b>━ Estelas rápidas:</b> vehículos</li><li><b>Más cantidad y velocidad:</b> más flujo</li><li><b>Movimiento errático:</b> menor agrado</li></ul></div></div>`;
+// «Cómo leer»: pill que se transforma en el contenedor de la leyenda (escritorio: abierta por defecto; móvil: cerrada)
+const leg = document.getElementById('leg'), lgin = leg.querySelector('.lgin'), lgt = document.getElementById('lgbtn');
+function legMeasure() {
+  const oh = Math.min(lgin.offsetHeight, innerHeight - 150);
+  leg.style.setProperty('--oh', oh + 'px'); document.documentElement.style.setProperty('--lb', (72 + Math.min(lgin.offsetHeight, 260) + 14) + 'px');
+}
+let legMode = innerWidth >= 1100; leg.classList.toggle('open', legMode); lgt.setAttribute('aria-expanded', legMode);
+const legSet = v => { legMeasure(); leg.classList.toggle('open', v); lgt.setAttribute('aria-expanded', v); };
+lgt.onclick = () => legSet(!leg.classList.contains('open'));
+cv.addEventListener('click', () => { if (innerWidth < 1100) legSet(false); });
+addEventListener('keydown', e => { if (e.key === 'Escape' && innerWidth < 1100) legSet(false); });
+addEventListener('resize', () => { legMeasure(); const m = innerWidth >= 1100; if (m !== legMode) { legMode = m; legSet(m); } });
+legMeasure(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { legMeasure(); size(); });
 addEventListener('resize', size); size(); render(); requestAnimationFrame(frame);
 
