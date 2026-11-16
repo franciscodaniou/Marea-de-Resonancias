@@ -150,9 +150,6 @@ body.heroing #leg,body.heroing #ctl,body.heroing #hint,body.heroing #panel,body.
   box-shadow:inset 1px 1px 1px rgba(255,255,255,.4),inset -1px -1px 1px rgba(255,255,255,.1),0 12px 32px rgba(0,0,0,.38)}
 #ctl .mb,#nav .mb{max-width:0;padding:10px 0;border-width:0;border-style:solid;border-color:rgba(255,255,255,.22);opacity:0}
 #nav .mb{background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,.04) 55%,rgba(255,255,255,.08));-webkit-backdrop-filter:blur(16px) saturate(1.6) brightness(1.1);backdrop-filter:blur(16px) saturate(1.6) brightness(1.1);box-shadow:inset 1px 1px 1px rgba(255,255,255,.4),inset -1px -1px 1px rgba(255,255,255,.1),0 12px 32px rgba(0,0,0,.38)}
-#ctl:hover .lbl,#ctl.open .lbl,#ctl:focus-within .lbl,#nav:hover .lbl,#nav.open .lbl,#nav:focus-within .lbl{max-width:0;padding-left:0;padding-right:0;border-width:0;opacity:0}
-#ctl:hover .mb,#ctl.open .mb,#ctl:focus-within .mb,#nav:hover .mb,#nav.open .mb,#nav:focus-within .mb{max-width:240px;padding:10px 22px;margin-left:8px;border-width:1px;opacity:1}
-#ctl:hover .mb:first-of-type,#ctl.open .mb:first-of-type,#ctl:focus-within .mb:first-of-type,#nav:hover .mb:first-of-type,#nav.open .mb:first-of-type,#nav:focus-within .mb:first-of-type{margin-left:0}
 #ctl .mb.on,#nav .mb.on{background:linear-gradient(135deg,rgba(255,255,255,.32),rgba(255,255,255,.1))}
 body.gl #ctl .lbl,body.gl #nav .lbl,body.gl #nav .mb{background:none;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none;border-color:transparent;text-shadow:0 1px 10px rgba(0,0,0,.55)}
 body.gl #ctl .mb,body.gl #nav .mb{border-color:transparent}
@@ -163,3 +160,38 @@ body.gl #ctl .mb,body.gl #nav .mb{border-color:transparent}
 .card p,.card li{font-size:15.5px}
 @media(max-width:1100px){.cols{grid-template-columns:1fr;max-width:820px;margin:0 auto}}
 #leg{top:72px}
+
+/* v10: touch (.open) separado de hover; responsivo móvil */
+#ctl.open .lbl,#nav.open .lbl{max-width:0;padding-left:0;padding-right:0;border-width:0;opacity:0}
+#ctl.open .mb,#nav.open .mb{max-width:240px;padding:10px 22px;margin-left:8px;border-width:1px;opacity:1}
+#ctl.open .mb:first-of-type,#nav.open .mb:first-of-type{margin-left:0}
+@media (hover:hover){
+#ctl:hover .lbl,#ctl:focus-within .lbl,#nav:hover .lbl,#nav:focus-within .lbl{max-width:0;padding-left:0;padding-right:0;border-width:0;opacity:0}
+#ctl:hover .mb,#ctl:focus-within .mb,#nav:hover .mb,#nav:focus-within .mb{max-width:240px;padding:10px 22px;margin-left:8px;border-width:1px;opacity:1}
+#ctl:hover .mb:first-of-type,#ctl:focus-within .mb:first-of-type,#nav:hover .mb:first-of-type,#nav:focus-within .mb:first-of-type{margin-left:0}}
+#lgbtn{display:none}
+body.heroing #lgbtn{opacity:0;pointer-events:none}
+#tip{max-width:min(320px,80vw)}
+@media(max-width:1100px){
+#lgbtn{display:inline-block;position:fixed;top:66px;right:14px;z-index:6;font-size:14px;padding:7px 16px;cursor:pointer;transition:opacity .8s}
+body.showleg #leg{display:flex;flex-direction:column;position:fixed;top:106px;left:14px;right:14px;gap:14px;max-height:calc(100vh - 190px);overflow:auto;z-index:7;padding:16px 20px}}
+@media(max-width:760px){
+html,body{font-size:16px}
+header{padding:10px 14px}
+header b{font-size:12px;letter-spacing:.12em}
+#nav .lbl,#nav .mb,#ctl .lbl,#ctl .mb{font-size:14px}
+#nav .lbl,#ctl .lbl{padding:8px 18px}
+#nav.open .mb{padding:8px 13px;margin-left:6px;font-size:13px}
+#ctl.open .mb{padding:8px 12px;margin-left:6px;font-size:13px}
+#nav.open .mb:first-of-type,#ctl.open .mb:first-of-type{margin-left:0}
+body.navopen header b{opacity:0}
+#ctl{left:14px;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+#back{top:66px;left:14px;transform:none;font-size:14px;padding:7px 14px}
+#panel.big{top:var(--pt,50%);bottom:calc(64px + env(safe-area-inset-bottom,0px));left:12px;right:12px;width:auto;padding:16px 18px;border-radius:28px;-webkit-overflow-scrolling:touch}
+#panel h2{font-size:22px}#panel .g b{font-size:22px}#panel .g div{font-size:11px}#panel q{font-size:14px}
+.it{font-size:14px;padding:6px 10px}
+.wrap{padding:84px 14px 40px}
+.top h1{font-size:clamp(34px,11vw,56px)}
+.card{padding:22px 20px}
+}
+
