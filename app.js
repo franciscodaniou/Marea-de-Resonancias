@@ -90,14 +90,21 @@ const cen = (g, f) => { const a = angM(f.m); return [g.cx + Math.cos(a) * g.R * 
 function flowHtml(s) { const [p, v] = lvl(s); return `<div class="fl"><div>Personas<span class="tr"><i style="width:${p / 3 * 100}%"></i></span><b>${lvn(p)}</b></div><div class="v">Vehículos<span class="tr"><i style="width:${v / 3 * 100}%"></i></span><b>${lvn(v)}</b></div></div>`; }
 
 function size() {
-  dpr = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight;
+  W = innerWidth; H = innerHeight; const mob = W < 760;
+  dpr = Math.min(devicePixelRatio || 1, mob ? 1.5 : 2);
   cv.width = W * dpr; cv.height = H * dpr; x.setTransform(dpr, 0, 0, dpr, 0, 0);
-  const top0 = W < 1100 ? 64 : 196, gh = H - 72 - top0, gw = W - 44;
-  const rA = Math.min(gw / 4 / 2.05, (gh - 74) / 2.2), rB = Math.min(gw / 2 / 2.05, (gh / 2 - 74) / 2.2), row = rA >= rB;
-  Rb = Math.max(rA, rB); const bh = 2.2 * Rb + 74, off = row ? (gh - bh) / 2 : (gh / 2 - bh) / 2;
-  ctr = [0, 1, 2, 3].map(i => row ? [22 + gw * (i + .5) / 4, top0 + off + 8 + Rb * 1.08] : [22 + gw * (i % 2 + .5) / 2, top0 + (gh / 2) * Math.floor(i / 2) + off + 8 + Rb * 1.08]);
-  const fw = W < 900 ? W - 40 : W - 480; Rf = Math.max(80, Math.min((gh - 100) / 2.3, fw / 2.3));
-  FX = W < 900 ? W / 2 : 22 + fw / 2; FY = top0 + 8 + Rf * 1.08 + (gh - 84 - 2.2 * Rf) / 2;
+  const top0 = W < 1100 ? 64 : 196, LB = mob ? 84 : 74, gh = H - (mob ? 76 : 72) - top0, gw = W - (mob ? 28 : 44), x0 = mob ? 14 : 22;
+  const rA = Math.min(gw / 4 / 2.05, (gh - LB) / 2.2), rB = Math.min(gw / 2 / 2.05, (gh / 2 - LB) / 2.2), row = rA >= rB;
+  Rb = Math.max(rA, rB); const bh = 2.2 * Rb + LB, off = row ? (gh - bh) / 2 : (gh / 2 - bh) / 2;
+  ctr = [0, 1, 2, 3].map(i => row ? [x0 + gw * (i + .5) / 4, top0 + off + 8 + Rb * 1.08] : [x0 + gw * (i % 2 + .5) / 2, top0 + (gh / 2) * Math.floor(i / 2) + off + 8 + Rb * 1.08]);
+  if (mob) { // móvil: figura arriba, panel como hoja inferior (la mitad inferior de la pantalla)
+    const pt = Math.round(H * .5), t1 = 100, A = pt - t1 - 6;
+    Rf = Math.max(60, Math.min(W * .36, (A - 90) / 2.2)); FX = W / 2; FY = t1 + (A - 90 - 2.2 * Rf) / 2 + 1.06 * Rf;
+    document.documentElement.style.setProperty('--pt', pt + 'px');
+  } else {
+    const fw = W < 900 ? W - 40 : W - 480; Rf = Math.max(80, Math.min((gh - 100) / 2.3, fw / 2.3));
+    FX = W < 900 ? W / 2 : 22 + fw / 2; FY = top0 + 8 + Rf * 1.08 + (gh - 84 - 2.2 * Rf) / 2;
+  }
 }
 
 function geoms() {
@@ -214,10 +221,12 @@ function frame(ms) {
   curDt = dt; for (let s = 0; s < 4; s++) drawSector(s);
   x.globalCompositeOperation = 'source-over'; x.textAlign = 'center';
   G.forEach((g, s) => {
-    if (g.al < .05) return; const c = rgbOf(COL[DOM[s]]), big = g.kk > .5, y = g.cy + g.R * 1.12 + (big ? 32 : 22), [p, v] = lvl(s);
-    x.globalAlpha = g.al; x.fillStyle = '#fff'; x.font = `700 ${big ? 28 : 20}px Helvetica,Arial`; x.fillText(SECT[s].toUpperCase(), g.cx, y);
-    x.font = `${big ? 16 : 14}px Helvetica,Arial`; x.fillStyle = `rgb(${c})`; x.fillText('Predomina: ' + SH[DOM[s]] + ' · agrado ' + agrSec(s).toFixed(2), g.cx, y + (big ? 24 : 21));
-    x.fillStyle = '#fff'; x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, y + (big ? 46 : 41)); x.globalAlpha = 1;
+    if (g.al < .05) return; const c = rgbOf(COL[DOM[s]]), big = g.kk > .5, mob = W < 760, [p, v] = lvl(s), y = g.cy + g.R * 1.12 + (big ? (mob ? 24 : 32) : (mob ? 18 : 22));
+    x.globalAlpha = g.al; x.fillStyle = '#fff'; x.font = `700 ${big ? (mob ? 20 : 28) : (mob ? 14 : 20)}px Helvetica,Arial`; x.fillText(SECT[s].toUpperCase(), g.cx, y);
+    x.font = `${big ? (mob ? 13 : 16) : (mob ? 11 : 14)}px Helvetica,Arial`; x.fillStyle = `rgb(${c})`;
+    if (mob && !big) { x.fillText(SH[DOM[s]] + ' · agrado ' + agrSec(s).toFixed(2), g.cx, y + 15); x.fillStyle = '#fff'; x.fillText('Personas: ' + lvn(p), g.cx, y + 29); x.fillText('Vehículos: ' + lvn(v), g.cx, y + 43); }
+    else { x.fillText('Predomina: ' + SH[DOM[s]] + ' · agrado ' + agrSec(s).toFixed(2), g.cx, y + (big ? (mob ? 18 : 24) : 21)); x.fillStyle = '#fff'; x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, y + (big ? (mob ? 35 : 46) : 41)); }
+    x.globalAlpha = 1;
   });
   requestAnimationFrame(frame);
 }
@@ -246,12 +255,12 @@ function render() {
 
 function pick(e) {
   const mx = e.clientX, my = e.clientY; hs = null; hov = null;
-  G.forEach((g, s) => { if (g.al < .5) return; const inFig = Math.hypot(mx - g.cx, my - g.cy) < g.R * 1.1, inLbl = want === null && Math.abs(mx - g.cx) < Math.max(g.R, 110) && my > g.cy + g.R * .95 && my < g.cy + g.R * 1.12 + 72; if ((inFig && (foc === null || k > .5)) || inLbl) hs = s; }); // la figura y su nombre abren el mismo sector
+  G.forEach((g, s) => { if (g.al < .5) return; const inFig = Math.hypot(mx - g.cx, my - g.cy) < g.R * 1.1, inLbl = want === null && Math.abs(mx - g.cx) < Math.max(g.R, W < 760 ? 70 : 110) && my > g.cy + g.R * .95 && my < g.cy + g.R * 1.12 + 72; if ((inFig && (foc === null || k > .5)) || inLbl) hs = s; }); // la figura y su nombre abren el mismo sector
   if (hs !== null) {
     const g = G[hs], a = Math.atan2(my - g.cy, mx - g.cx); let best = 9;
     F.forEach(q => { if (q.s !== hs || !on(q)) return; const d = Math.abs(Math.atan2(Math.sin(a - angM(q.m)), Math.cos(a - angM(q.m)))); if (d < wid(q) / 2 + .03 && d < best && Math.hypot(mx - g.cx, my - g.cy) > g.R * .15 && Math.hypot(mx - g.cx, my - g.cy) < g.R * 1.1) { best = d; hov = q; } });
   }
-  if (hov) { tip.innerHTML = `<b>${hov.id} · ${hov.t} h</b>${hov.src}<br>${hov.mn}–${hov.mx} dB · prom ${hov.pr}<br><span style="color:${COL[hov.c]}">${CAT[hov.c]}</span><br><i>${hov.ph}</i>`; tip.style.display = 'block'; tip.style.left = Math.min(mx + 16, W - 320) + 'px'; tip.style.top = my + 16 + 'px'; }
+  if (hov) { tip.innerHTML = `<b>${hov.id} · ${hov.t} h</b>${hov.src}<br>${hov.mn}–${hov.mx} dB · prom ${hov.pr}<br><span style="color:${COL[hov.c]}">${CAT[hov.c]}</span><br><i>${hov.ph}</i>`; tip.style.display = 'block'; tip.style.left = Math.max(8, Math.min(mx + 16, W - 280)) + 'px'; tip.style.top = (W < 760 ? Math.max(60, my - 130) : my + 16) + 'px'; }
   else tip.style.display = 'none';
   cv.style.cursor = hs !== null ? 'pointer' : 'default'; render();
 }
@@ -262,10 +271,13 @@ cv.addEventListener('click', e => { pick(e); if (want === null) { if (hs !== nul
 panel.addEventListener('click', e => { const b = e.target.closest('.it'); if (b) { const f = F[+b.dataset.i]; pf = pf === f ? null : f; render(); } });
 back.onclick = () => focus(null);
 addEventListener('keydown', e => { if (e.key === 'Escape') focus(null); });
-document.querySelectorAll('#ctl button').forEach(b => b.onclick = () => { flt = b.dataset.f; document.querySelectorAll('#ctl button').forEach(o => o.classList.toggle('on', o === b)); document.querySelector('#ctl .lbl').textContent = 'Franja · ' + b.textContent; render(); });
+document.querySelectorAll('#ctl button').forEach(b => b.onclick = () => { flt = b.dataset.f; document.querySelectorAll('#ctl button').forEach(o => o.classList.toggle('on', o === b)); document.querySelector('#ctl .lbl').textContent = 'Franja · ' + b.textContent; document.getElementById('ctl').classList.remove('open'); b.blur(); render(); });
+document.getElementById('lgbtn').onclick = () => document.body.classList.toggle('showleg');
+cv.addEventListener('click', () => document.body.classList.remove('showleg'));
 document.getElementById('go').onclick = () => { document.getElementById('hero').classList.add('off'); document.body.classList.remove('heroing'); };
 document.getElementById('leg').innerHTML =
   `<div class="lg"><b>Fuente de sonido</b><br>${Object.keys(COL).map(k => `<span><i style="background:${COL[k]}"></i>${CAT[k]}</span>`).join('')}</div>
   <div class="lg"><b>Figura</b> = el lugar: color = fuente predominante, lados = n.º de fichas, deformación = dB según la hora.<br><b>Ficha</b> = hebras de la figura que se iluminan y pulsan entre su dB mín y máx (hora en sentido horario desde arriba); trazo grueso y punto = dB promedio.</div>
   <div class="lg"><b>● puntos = personas · ━ estelas = vehículos.</b> Más cantidad y velocidad = más flujo. Recorren la geometría del lugar; cuanto menor el agrado, más errático el movimiento.</div>`;
 addEventListener('resize', size); size(); render(); requestAnimationFrame(frame);
+
