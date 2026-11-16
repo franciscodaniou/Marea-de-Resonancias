@@ -7,7 +7,7 @@
    Si WebGL no está disponible, la hoja de estilos usa un vidrio CSS equivalente (fallback). */
 (function () {
   // pills contenedores: en pantallas táctiles se abren con un toque
-  document.addEventListener('click', e => { const l = e.target.closest && e.target.closest('.morph .lbl'); if (l) l.parentElement.classList.toggle('open'); else document.querySelectorAll('.morph.open').forEach(m => { if (!m.contains(e.target)) m.classList.remove('open'); }); });
+  document.addEventListener('click', e => { const l = e.target.closest && e.target.closest('.morph .lbl'); if (l) l.parentElement.classList.toggle('open'); else document.querySelectorAll('.morph.open').forEach(m => { if (!m.contains(e.target)) m.classList.remove('open'); }); document.body.classList.toggle('navopen', !!document.querySelector('#nav.open')); });
   let src = document.getElementById('c'), bgDraw = null;
   const gc = document.createElement('canvas'); gc.id = 'glass';
   if (src) src.parentNode.insertBefore(gc, src.nextSibling);
@@ -137,10 +137,11 @@ void main(){
   const eo = el => { let o = 1; while (el && el !== document.body) { o *= parseFloat(getComputedStyle(el).opacity); el = el.parentElement; } return o; };
   let mx = -99, my = -99, lt = performance.now() / 1000;
   document.addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY; }, { passive: true });
+  ['pointerup', 'pointercancel'].forEach(t => document.addEventListener(t, e => { if (e.pointerType === 'touch') { mx = -99; my = -99; } }, { passive: true }));
 
   function frame() {
     try {
-      const W = innerWidth, H = innerHeight, dpr = Math.min(window.devicePixelRatio || 1, 2), now = performance.now() / 1000, dt = Math.min(.05, now - lt); lt = now, hero = document.getElementById('hero'), ho = hero ? eo(hero) : 0;
+      const W = innerWidth, H = innerHeight, dpr = Math.min(window.devicePixelRatio || 1, W < 760 ? 1.5 : 2), now = performance.now() / 1000, dt = Math.min(.05, now - lt); lt = now, hero = document.getElementById('hero'), ho = hero ? eo(hero) : 0;
       if (gc.width !== Math.round(W * dpr) || gc.height !== Math.round(H * dpr)) { gc.width = Math.round(W * dpr); gc.height = Math.round(H * dpr); gl.viewport(0, 0, gc.width, gc.height); }
       const R = new Float32Array(64), Rr = new Float32Array(16), E = new Float32Array(16); let n = 0;
       SEL.forEach(s => document.querySelectorAll(s).forEach(el => {
@@ -161,3 +162,4 @@ void main(){
   }
   requestAnimationFrame(frame);
 })();
+
