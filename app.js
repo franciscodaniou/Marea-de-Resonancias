@@ -277,6 +277,8 @@ panel.addEventListener('click', e => { const b = e.target.closest('.it'); if (b)
 back.onclick = () => focus(null);
 addEventListener('keydown', e => { if (e.key === 'Escape') focus(null); });
 document.querySelectorAll('#ctl button').forEach(b => b.onclick = () => { flt = b.dataset.f; document.querySelectorAll('#ctl button').forEach(o => o.classList.toggle('on', o === b)); document.querySelector('#ctl .lbl').textContent = 'Franja · ' + b.textContent; document.getElementById('ctl').classList.remove('open'); b.blur(); render(); });
+document.getElementById('next').onclick = () => document.getElementById('hero').classList.add('s2');
+document.getElementById('prev').onclick = () => document.getElementById('hero').classList.remove('s2');
 document.getElementById('go').onclick = () => { document.getElementById('hero').classList.add('off'); document.body.classList.remove('heroing'); };
 document.querySelector('#leg .lgb').innerHTML = `<div class="lcols">
   <div class="lc"><h4>Color · fuente de sonido</h4><ul class="dots">${Object.keys(COL).map(k => `<li><i style="background:${COL[k]}"></i>${CAT[k]}</li>`).join('')}</ul></div>
@@ -297,4 +299,3 @@ addEventListener('keydown', e => { if (e.key === 'Escape' && innerWidth < 1100) 
 addEventListener('resize', () => { legMeasure(); const m = innerWidth >= 1100; if (m !== legMode) { legMode = m; legSet(m); } });
 legMeasure(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { legMeasure(); size(); });
 addEventListener('resize', size); size(); render(); requestAnimationFrame(frame);
-
