@@ -5,6 +5,22 @@
 <header><b>Marea de resonancias</b><nav id="nav" class="morph"><span class="lbl" tabindex="0">Inicio</span><a class="mb" href="index.html">Visualización</a><a class="mb on" href="about.html">Acerca del estudio</a></nav></header>
 <div class="wrap">
 <section class="top"><h1>Marea de resonancias</h1><p class="sub">Atlas sonoro del Barrio Puerto</p><div class="brow"><a class="btn" href="index.html">Ver la visualización →</a><a class="btn" href="https://wiki.ead.pucv.cl/Proyecto_de_Visualizaci%C3%B3n_-_Grupo_2">Proyecto grupal en la wiki ↗</a><a class="btn" href="https://wiki.ead.pucv.cl/Visualizaci%C3%B3n_de_Datos_Interactiva_TDS_2026_-_Francisco_Daniou">Proyecto individual en la wiki ↗</a></div></section>
+<section class="card wide"><h2>Hallazgos</h2>
+<p class="lead2">El ruido del Barrio Puerto no se juzga solo por cuántos decibeles tiene, sino por qué lo produce y dónde ocurre. Cada hallazgo se puede comprobar en la visualización.</p>
+<div class="g2">
+<div class="hl"><h3>1 · El día sube de volumen y la hora punta es el techo</h3>
+<p>El promedio pasa de 63,4 dB en la mañana (17 mediciones) a 68,8 dB en la tarde (15) y 72,2 dB en la hora punta (6). La subida se repite en Muelle Prat (62,7 → 68,5), Plaza Sotomayor (67,2 → 74,7) y Calle Serrano (60,8 → 72,0).</p>
+<p class="how">Cómo verlo: filtro «Franja»; en el panel de cada sector, «dB promedio por franja».</p></div>
+<div class="hl"><h3>2 · Sotomayor concentra la saturación</h3>
+<p>Es el sector con mayor promedio (70,9 dB frente a 65,0–67,0 dB en los demás), 10 de sus 11 fichas son vehiculares y sus flujos son los más altos (2,5 peatonal y 2,7 vehicular de 3). Cuatro de sus seis encuestas dicen que el sonido incomoda.</p>
+<p class="how">Cómo verlo: color coral, flujo «Alto» y movimiento errático en su figura; comparación entre sectores en el panel.</p></div>
+<div class="hl"><h3>3 · El agrado no sigue a los decibeles</h3>
+<p>Muelle Prat y Calle Serrano promedian unos 65 dB y tienen agrado alto (1,29 y 1,20; ninguna de sus 12 encuestas incomoda). Sotomayor está a 5 o 6 dB más y su agrado es −0,33. El Muelle tiene los picos más altos (hasta 89 dB) y aun así sus 7 respuestas son positivas: pesa más qué suena (mar, voces, comercio) que cuánto suena.</p>
+<p class="how">Cómo verlo: compare el rótulo de agrado con el de dB promedio en la vista general. Es una lectura con muestras pequeñas, no una causa demostrada.</p></div>
+<div class="hl"><h3>4 · Cada lugar tiene una firma sonora</h3>
+<p>Muelle Prat es el más diverso (portuaria, humana, vehicular y comercial) y el de mayor rango entre mínimo y máximo (31 dB en promedio). Calle Serrano es comercial y más parejo (17 dB). Plaza Echaurren es humana y estable (14 dB), pero con solo 3 fichas y 2 encuestas no permite concluir.</p>
+<p class="how">Cómo verlo: lados y color de cada figura; filtro por fuente al tocar un color de la leyenda.</p></div>
+</div></section>
 <div class="cols"><div class="col">
 
 <section class="card"><h2>Planteamiento general</h2>
@@ -87,7 +103,43 @@
 <li><b>Vista expandida:</b> aislamiento de un sector. Despliega la lista de sus fichas y un panel de detalle con cifras, niveles de flujo y la cita textual, fusionando la métrica cuantitativa con la experiencia cualitativa.</li></ol></section>
 
 </div></div>
+<section class="card wide"><h2>Criterios y límites de los datos</h2>
+<div class="g2"><ul>
+<li><b>Mediciones únicas:</b> las fichas BP-17, BP-18 y BP-19 son una sola medición (15:30, Muelle Prat) con tres fuentes simultáneas. Cuenta en las tres fuentes, pero sus decibeles y flujos se cuentan una vez: 38 mediciones únicas de 40 fichas.</li>
+<li><b>Valor atípico:</b> esa medición registra 10,0 y 121,4 dB. Se acota visualmente a 95 dB y no se usa como máximo de referencia (el máximo del Muelle es 89 dB).</li>
+<li><b>Fuente «comercial»:</b> separa captadores, música de locales, cortinas y locatarios de las voces humanas (8 fichas recategorizadas por el equipo).</li>
+<li><b>Lados de la figura:</b> corresponden a las fuentes distintas del sector (Muelle Prat 7, Sotomayor 5, Serrano 5, Echaurren 4), no a la cantidad de mediciones.</li></ul>
+<ul>
+<li><b>Agrado:</b> escala de −1 a 2 calculada sobre las 20 encuestas. Es distinta de la escala de 1 a 5 de la tabla perceptual del informe, que parte de otra muestra: no son comparables.</li>
+<li><b>Instrumentos:</b> las mediciones usan Apple Watch, Decibel Meter, Decibel X y NIOSH SLM, por lo que los decibeles no son estrictamente comparables.</li>
+<li><b>Muestras pequeñas:</b> Echaurren tiene 3 fichas y 2 encuestas; la hora punta, 6 mediciones.</li>
+<li><b>Interpretación del equipo:</b> el movimiento errático según el agrado y la deformación según el dB por hora son decisiones expresivas, no estándares de la disciplina.</li>
+<li><b>Buenos Aires:</b> Puente de la Mujer y Plaza de Mayo se integrarán al modelo; hoy la visualización tiene cuatro sectores.</li></ul></div>
+<p class="how">Datos abiertos: <a href="data.json">data.json</a> y <a href="data.js">data.js</a> (con la fuente y los criterios de preparación).</p></section>
+<section class="card wide"><h2>Uso de IA</h2>
+<p class="lead2">La IA (Claude, de Anthropic) se usó como apoyo técnico para ampliar lo que se podía construir. Las decisiones de diseño, la selección de datos y el punto de vista son del autor.</p>
+<div class="g3">
+<div><h3>Decisiones del autor</h3><ul>
+<li>Pregunta orientadora y enfoque del estudio.</li>
+<li>Selección y cruce de los datos (fichas y encuestas por sector).</li>
+<li>Estilo: arte de datos generativo y vidrio líquido, con sus referencias.</li>
+<li>El lugar como polígono rotado, color según la fuente predominante y flujos que recorren la geometría.</li>
+<li>Metáfora del vidrio como fenómeno acústico y estructura del inicio.</li>
+<li>Criterios de exclusión de datos y textos del proyecto.</li></ul></div>
+<div><h3>Propuesto por la IA y revisado por el autor</h3><ul>
+<li>Nombre «Marea de resonancias».</li>
+<li>Agitación del movimiento según el agrado.</li>
+<li>La ficha como hebras que pulsan y el marcador poligonal.</li>
+<li>Borradores de fundamentos y wireframes, que el autor corrigió.</li>
+<li>Propuesta de criterios para mediciones repetidas y valores atípicos.</li></ul></div>
+<div><h3>Implementado por la IA</h3><ul>
+<li>Código de la visualización (canvas) y de la interfaz.</li>
+<li>Shader WebGL del vidrio líquido y su respaldo en CSS.</li>
+<li>Versión móvil y accesibilidad básica.</li>
+<li>Pruebas en navegador y corrección de errores, con verificación del autor en su teléfono.</li></ul></div>
+</div></section>
 <p class="foot">Proyecto grupal: <a href="https://wiki.ead.pucv.cl/Proyecto_de_Visualizaci%C3%B3n_-_Grupo_2">Proyecto de Visualización – Grupo 2</a> · Proyecto individual: <a href="https://wiki.ead.pucv.cl/Visualizaci%C3%B3n_de_Datos_Interactiva_TDS_2026_-_Francisco_Daniou">Visualización de Datos Interactiva TDS 2026 – Francisco Daniou</a> · Taller de Diseño de Servicios 2026</p>
 </div>
 <script src="glass.js"></script>
 </body></html>
+
