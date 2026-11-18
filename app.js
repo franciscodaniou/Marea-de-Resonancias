@@ -6,66 +6,14 @@
    · metabola (silueta líquida) = perfil de dB promedio según la hora
    · halo = agrado percibido en encuestas (coral → ámbar → turquesa) */
 
-const SECT = ['Muelle Prat', 'Plaza Sotomayor', 'Calle Serrano', 'Plaza Echaurren'];
-const SUB = ['borde abierto al mar', 'explanada de bordes duros', 'corredor encerrado', 'claro rodeado de muros'];
 const COL = { V: '#ff6b5e', H: '#f4c25b', C: '#e86bd0', M: '#8f9bff', N: '#4fd1c5' };
 const CAT = { V: 'Vehicular', H: 'Humana (voces, música)', C: 'Comercial (locales, captadores)', M: 'Mecánica / portuaria', N: 'Natural' };
 const rgbOf = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, n >> 8 & 255, n & 255]; };
 const SH = { V: 'Vehicular', H: 'Humana', C: 'Comercial', M: 'Portuaria', N: 'Natural' };
-const QUOTE = [
-  'Aunque estén varias cosas pasando... resulta muy agradable estar aquí tranquilo y ver el mar.',
-  'Son muchos sonidos pasando a la vez.',
-  'En Serrano hay más tranquilidad comparado con el tránsito y bocinazos de Sotomayor.',
-  'Bajó el sonido ambiental, más viento.'
-];
-// [hora, sector, dBmín, dBprom, dBmáx, flujo peatonal 1-3, flujo vehicular 1-3, tipo, fuente, fenómeno]
-const F = [
-  ['14:40', 0, 53, 64, 79, 2, 1, 'M', 'Ruido portuario / camiones', 'Competencia entre fondo difuso portuario y picos mecánicos'],
-  ['10:08', 0, 50, 54, 70, 1, 2, 'M', 'Camiones portuarios', 'Ampliación sonora al salir de barreras TPV'],
-  ['17:36', 0, 58, 67, 89, 3, 2, 'M', 'Motores de camión', 'Gran barco atracado genera sonidos inusuales de carga'],
-  ['17:15', 0, 25, 65.4, 80.5, 3, 2, 'H', 'Lancheros gritando', 'Gritos de ofertas rompen el murmullo'],
-  ['14:56', 1, 62, 72, 80, 3, 3, 'V', 'Tránsito / micros', 'El semáforo dirige el volumen de las conversaciones'],
-  ['10:35', 1, 54, 55, 75, 2, 3, 'V', 'Vehículos', 'Pausas en rojo dejan oír pisadas y banda lejana'],
-  ['17:34', 1, 25, 71.1, 84.5, 2, 3, 'V', 'Tránsito pesado / bocinazos', 'Caja de resonancia: fachadas continuas amplifican'],
-  ['15:09', 2, 57, 62, 68, 1, 1, 'V', 'Rodaje de adoquín', 'Tubo sonoro íntimo; el adoquín frena al auto'],
-  ['10:51', 2, 50, 55, 60, 2, 1, 'H', 'Música y conversaciones', 'Poco tránsito: se oyen carretilla y gaviotas'],
-  ['15:17', 3, 66, 69, 72, 2, 1, 'H', 'Voces / canto', 'Pileta seca proyecta el canto en el anillo de bancas'],
-  ['11:02', 3, 55, 62, 77, 2, 1, 'H', 'Música y conversaciones', 'Desplazarse al interior atenúa el ruido de esquinas'],
-  ['15:40', 0, 59, 66, 81, 3, 1, 'H', 'Turistas / zumbido portuario', 'El pico cambia de origen mecánico a grupo humano'],
-  ['11:30', 0, 56, 62, 78, 3, 1, 'H', 'Conversaciones de grupo', 'Más voces atenúan la atención a los camiones'],
-  ['15:55', 1, 62, 73, 87, 3, 3, 'V', 'Micros / comercio', 'El comercio de esquina marca el pico'],
-  ['16:06', 2, 65, 74, 86, 1, 3, 'V', 'Rodaje rápido sobre adoquín', 'Pasillo íntimo → corredor exprés'],
-  ['16:16', 3, 65, 70, 79, 2, 1, 'H', 'Voces / camiones de esquina', 'La curva obliga paso lento; las voces sostienen el nivel'],
-  ['15:30', 0, 10, 69.5, 121.4, 3, 2, 'H', 'Voces de lancheros', 'Ofertas de paseos dominan la explanada (142 peatones/10 min)'],
-  ['15:30', 0, 10, 69.5, 121.4, 3, 2, 'V', 'Tránsito vehicular / camión', 'Eventos móviles de alta intensidad (26 vehículos/10 min)'],
-  ['15:30', 0, 10, 69.5, 121.4, 3, 2, 'M', 'Grúas y maquinaria', 'Fondo mecánico continuo'],
-  ['16:40', 2, 66, 76, 87, 2, 3, 'V', 'Traqueteo vehicular', 'Calzada estrechada obliga marcha rápida peatonal'],
-  ['17:10', 0, 56, 69, 82, 3, 1, 'H', 'Captadores / motores náuticos', 'El altoparlante polariza al público hacia la baranda'],
-  ['17:40', 1, 64, 75, 85, 3, 3, 'V', 'Tránsito pesado hora punta', 'Atochamiento genera eco envolvente'],
-  ['18:05', 2, 61, 72, 81, 3, 3, 'H', 'Cierre de cortinas metálicas', 'Peak seco marca el apagado comercial'],
-  ['18:30', 0, 58, 70, 83, 1, 3, 'M', 'Camiones / alarmas de retroceso', 'El muelle pasa de turístico a cierre industrial'],
-  ['18:50', 1, 67, 78, 88, 3, 3, 'V', 'Congestión de buses', 'Colapso acústico en paraderos; se anula la condición cívica'],
-  ['10:45', 2, 53, 59, 67, 2, 1, 'H', 'Intercambio vocal de locatarios', 'Abastecimiento matinal y desaceleración de furgón'],
-  ['11:15', 0, 54, 63, 74, 2, 1, 'M', 'Actividad portuaria / camiones', 'Casco de barcos refleja el sonido hacia la explanada'],
-  ['11:40', 1, 58, 71, 81, 3, 3, 'V', 'Micros en aceleración', 'Losas deterioradas amplifican de forma percusiva'],
-  ['11:55', 2, 55, 62, 70, 3, 1, 'H', 'Murmullo de transeúntes', 'Zaguanes funcionan como cámaras de eco'],
-  ['12:15', 0, 52, 60, 69, 2, 1, 'H', 'Guías con megáfono', 'La voz reorganiza espacialmente al grupo'],
-  ['12:35', 1, 54, 64, 73, 2, 2, 'N', 'Fuente de agua / tránsito difuso', 'La fuente delimita un radio de enmascaramiento'],
-  ['11:00', 0, 55, 75, 79, 1, 1, 'H', 'Canto / intervención musical', 'La música delimita el radio y atrae público'],
-  ['11:20', 1, 59, 77, 81, 3, 3, 'V', 'Frenos de micros / sirena', 'Paso de ambulancia quiebra el fondo'],
-  ['11:35', 2, 54, 66, 78, 1, 1, 'H', 'Música de locales', 'Superposición gradual entre fachadas continuas'],
-  ['15:00', 0, 56, 65, 77, 1, 2, 'H', 'Títeres y música', 'Risas infantiles concentran la atención vecinal'],
-  ['15:15', 1, 60, 75, 87, 3, 3, 'V', 'Bocinazos', 'Bocinazos simultáneos superponen el fondo'],
-  ['13:50', 2, 54, 62, 70, 2, 1, 'H', 'Captadores de restaurantes', 'Captadores compiten entre sí ofreciendo menús'],
-  ['09:40', 0, 54, 62, 70, 1, 1, 'M', 'Camiones y persona cantando', 'Alternan con la actividad de borde costero'],
-  ['10:00', 1, 60, 69, 82, 1, 1, 'V', 'Frenos, micros y bocinazos', 'Dominan la esquina con Cochrane'],
-  ['10:18', 2, 54, 62, 68, 1, 1, 'H', 'Música de locales', 'Música y paso peatonal a la altura de pasaje Goñi']
-].map((r, i) => ({ id: 'BP-' + String(i + 1).padStart(2, '0'), t: r[0], m: +r[0].slice(0, 2) * 60 + +r[0].slice(3), s: r[1],
+const F = FICHAS.map((r, i) => ({ id: 'BP-' + String(i + 1).padStart(2, '0'), t: r[0], m: +r[0].slice(0, 2) * 60 + +r[0].slice(3), s: r[1],
   mn: r[2], pr: r[3], mx: r[4], fp: r[5], fv: r[6], c: r[7], src: r[8], ph: r[9] }));
-[8, 20, 22, 25, 28, 33, 36, 39].forEach(i => F[i].c = 'C');
 const DOM = [0, 1, 2, 3].map(s => { const n = {}; F.filter(f => f.s === s).forEach(f => n[f.c] = (n[f.c] || 0) + 1); let b = 'M', v = 0; ['M', 'V', 'C', 'H', 'N'].forEach(c => { if ((n[c] || 0) > v) { v = n[c]; b = c; } }); return b; });
-// encuestas [sector, agrado (2 me gusta · 1 un poco · 0 da igual · -1 incomoda), dB]
-const E = [[0,1,71.4],[0,1,75],[3,1,54],[3,-1,75.4],[2,0,74.3],[0,1],[0,2],[0,1],[0,1],[1,-1],[1,-1],[1,0],[1,-1],[1,-1],[2,0],[2,2],[2,2],[2,2],[0,2],[1,2]];
+const E = ENCUESTAS;
 
 const FILTERS = { all: [0, 1e4], am: [0, 756], pm: [757, 1049], pk: [1050, 1e4] };
 let flt = 'all', want = null, foc = null, k = 0, pf = null, hov = null, hs = null, W, H, dpr, T = 0, Rb, Rf, FX, FY, ctr = [], G = [], pkey = '';
@@ -76,7 +24,12 @@ const agr = a => { const t = cl((a + 1) / 3, 0, 1); return t < .5 ? mix([255, 10
 const hex = (h, a) => { const n = parseInt(h.slice(1), 16); return `rgba(${n >> 16},${n >> 8 & 255},${n & 255},${a})`; };
 const mean = (a, f) => a.length ? a.reduce((s, v) => s + f(v), 0) / a.length : 0;
 const agrSec = s => mean(E.filter(e => e[0] === s), e => e[1]);
-const on = f => f.m >= FILTERS[flt][0] && f.m <= FILTERS[flt][1];
+let srcF = null; // filtro por fuente (se activa tocando un color de la leyenda)
+const on = f => f.m >= FILTERS[flt][0] && f.m <= FILTERS[flt][1] && (!srcF || f.c === srcF);
+const RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; // movimiento reducido
+// una misma medición puede tener varias fuentes (BP-17 a 19): sus dB y flujos se cuentan una sola vez
+const uniq = fs => { const seen = new Set(); return fs.filter(f => { const k = [f.s, f.t, f.mn, f.pr, f.mx].join('|'); if (seen.has(k)) return false; seen.add(k); return true; }); };
+const dbAvg = s => mean(uniq(F.filter(f => f.s === s)), f => f.pr);
 const angM = m => -Math.PI / 2 + cl((m - 580) / 570, 0, 1) * Math.PI * 1.9;
 const rad = (d, R) => R * (.2 + .8 * (cl(d, 20, 95) - 20) / 75);
 const wid = f => .13 + .04 * f.fv;
@@ -84,9 +37,14 @@ const wid = f => .13 + .04 * f.fv;
 // flujos: personas = puntos lentos · vehículos = estelas rápidas (cantidad y velocidad ∝ nivel de flujo)
 const FL = [0, 1, 2, 3].map(() => ({ p: Array.from({ length: 130 }, () => ({ a: 0, li: 3, u: 0, sg: Math.random() < .5 ? 1 : -1, ph: Math.random() * 6.28, sm: .3 + Math.random() * 1.5, t: Math.random() * 3, pause: 0, tl: 3 + Math.random() * 20, sz: 2.2 + Math.random() * 2.6 })), v: Array.from({ length: 30 }, (_, i) => ({ a: 0, li: Math.random() * 26, u: Math.random() * 8, sg: i % 2 ? 1 : -1, ph: Math.random() * 6.28, sm: .5 + Math.random() * 1.1, t: Math.random() * 3, tl: Math.random() * 26 })) }));
 const DIR = [.35, -.5, 0, 1.2], LV = ['', 'Bajo', 'Medio', 'Alto'];
-const lvl = s => { const fs = F.filter(f => f.s === s && on(f)); return pf && pf.s === s ? [pf.fp, pf.fv] : [mean(fs, f => f.fp) || 1, mean(fs, f => f.fv) || 1]; };
+const lvl = s => { const fs = uniq(F.filter(f => f.s === s && on(f))); return pf && pf.s === s ? [pf.fp, pf.fv] : [mean(fs, f => f.fp) || 1, mean(fs, f => f.fv) || 1]; };
 const lvn = v => LV[cl(Math.round(v), 1, 3)];
 const cen = (g, f) => { const a = angM(f.m); return [g.cx + Math.cos(a) * g.R * .45, g.cy + Math.sin(a) * g.R * .45, g.R * (.16 + .34 * cl((f.pr - 50) / 30, 0, 1))]; };
+const bar = (lab, v, hi, lo = 45, hi2 = 90) => `<div${hi ? ' class="hi"' : ''}>${lab}<span class="tr"><i style="width:${v == null ? 0 : cl((v - lo) / (hi2 - lo), 0, 1) * 100}%"></i></span><b>${v == null ? '–' : v.toFixed(0)}</b></div>`;
+function perfilHtml(s) { // patrón horario del sector y comparación entre sectores (dB promedio, mediciones únicas)
+  const mine = uniq(F.filter(f => f.s === s)), fr = [['Mañana', 'am'], ['Tarde', 'pm'], ['Hora punta', 'pk']].map(([n, k]) => { const q = mine.filter(f => f.m >= FILTERS[k][0] && f.m <= FILTERS[k][1]); return bar(n, q.length ? mean(q, f => f.pr) : null, false); }).join('');
+  return `<div class="pf"><h5>dB promedio por franja</h5>${fr}<h5>Comparación entre sectores</h5>${SECT.map((n, i) => bar(n, dbAvg(i), i === s)).join('')}</div>`;
+}
 function flowHtml(s) { const [p, v] = lvl(s); return `<div class="fl"><div>Personas<span class="tr"><i style="width:${p / 3 * 100}%"></i></span><b>${lvn(p)}</b></div><div class="v">Vehículos<span class="tr"><i style="width:${v / 3 * 100}%"></i></span><b>${lvn(v)}</b></div></div>`; }
 
 function size() {
@@ -97,7 +55,7 @@ function size() {
 }
 function layout() { // las figuras se reacomodan en sincronía con el pill/leyenda «Cómo leer»
   const mob = W < 760;
-  const top0 = W < 1100 ? 64 : 72 + leg.offsetHeight + 14, LB = mob ? 84 : 74, gh = H - (mob ? 76 : 84) - top0, gw = W - (mob ? 28 : 44), x0 = mob ? 14 : 22;
+  const top0 = W < 1100 ? 64 : 72 + leg.offsetHeight + 14, LB = mob ? 98 : 90, gh = H - (mob ? 76 : 84) - top0, gw = W - (mob ? 28 : 44), x0 = mob ? 14 : 22;
   const rA = Math.min(gw / 4 / 2.05, (gh - LB) / 2.2), rB = Math.min(gw / 2 / 2.05, (gh / 2 - LB) / 2.2), row = rA >= rB;
   Rb = Math.max(rA, rB); const bh = 2.2 * Rb + LB, off = row ? (gh - bh) / 2 : (gh / 2 - bh) / 2;
   ctr = [0, 1, 2, 3].map(i => row ? [x0 + gw * (i + .5) / 4, top0 + off + 8 + Rb * 1.08] : [x0 + gw * (i % 2 + .5) / 2, top0 + (gh / 2) * Math.floor(i / 2) + off + 8 + Rb * 1.08]);
@@ -120,7 +78,7 @@ function geoms() {
 
 // perfil de dB por hora: deforma la figura del lugar
 function prof(s) {
-  const fs = F.filter(f => f.s === s && on(f)), base = mean(F.filter(f => f.s === s), f => f.pr), N = 72, out = [];
+  const fs = uniq(F.filter(f => f.s === s && on(f))), base = mean(uniq(F.filter(f => f.s === s)), f => f.pr), N = 72, out = [];
   for (let i = 0; i < N; i++) { const a = -Math.PI / 2 + i / N * 6.2832; let w = 0, v = 0;
     fs.forEach(f => { const d = Math.atan2(Math.sin(a - angM(f.m)), Math.cos(a - angM(f.m))), q = Math.exp(-d * d / .25); w += q; v += q * f.pr; });
     out.push((v + base * .5) / (w + .5)); }
@@ -146,8 +104,8 @@ function rayHit(row, cx, cy, a) {
 function drawSector(s) {
   const g = G[s], { cx, cy, R, al, kk } = g; if (al < .01) return;
   const c = rgbOf(COL[DOM[s]]), all = F.filter(f => f.s === s);
-  const { out, base } = prof(s), m = cl(3 + Math.round(all.length / 3), 4, 9), Ro = R * (.86 + .14 * cl((base - 52) / 26, 0, 1)),
-    dl = .045 + mean(all, f => f.mx - f.mn) / 420, NL = 26, sd = s % 2 ? 1 : -1, sa = pf ? .3 : 1, rot0 = T * .05 * sd;
+  const { out, base } = prof(s), m = 3 + new Set(all.map(f => f.c)).size, Ro = R * (.86 + .14 * cl((base - 52) / 26, 0, 1)),
+    dl = .045 + mean(uniq(all), f => f.mx - f.mn) / 420, NL = 26, sd = s % 2 ? 1 : -1, sa = pf ? .3 : 1, rot0 = T * (RM ? .2 : 1) * .05 * sd;
   const pm = A => { const u = ((((A + Math.PI / 2) / 6.2832) % 1) + 1) % 1 * out.length, i = Math.floor(u), t = u - i; return 1 + (lerp(out[i % out.length], out[(i + 1) % out.length], t) - base) / 35; };
   const pts = [];
   for (let i = 0; i <= NL; i++) { const r = Ro * (1 - .88 * i / NL), rot = i * dl * sd + rot0, row = [];
@@ -173,7 +131,7 @@ function drawSector(s) {
   x.globalCompositeOperation = 'source-over';
   fl.forEach(f => {
     let o = 1; if (pf && pf !== f) o = .2;
-    const h = hov === f || pf === f, a = angM(f.m), w = wid(f) * 1.15, rp = rad(f.pr, R), col = COL[f.c], ph = T * (1 + f.pr / 45);
+    const h = hov === f || pf === f, a = angM(f.m), w = wid(f) * 1.15, rp = rad(f.pr, R), col = COL[f.c], ph = T * (RM ? .2 : 1) * (1 + f.pr / 45);
     x.lineCap = 'round'; x.lineWidth = h ? 2.8 : 1.9;
     ow.get(f).forEach(q => {
       const pw = Math.pow(.5 + .5 * Math.sin(ph - q[5] / R * 9), 2.5); // pulso que viaja de dB mín a dB máx
@@ -223,14 +181,16 @@ function frame(ms) {
   const lh = leg.offsetHeight; if (W >= 1100 && Math.abs(lh - lastLh) > 1) { lastLh = lh; layout(); document.documentElement.style.setProperty('--lb', (72 + lh + 14) + 'px'); } const dt = Math.min(.05, T - lastT); lastT = T; k += ((want === null ? 0 : 1) - k) * .09;
   if (want === null && k < .003) { k = 0; foc = null; } else if (want !== null) foc = want;
   geoms(); x.globalCompositeOperation = 'source-over'; x.fillStyle = '#070a14'; x.fillRect(0, 0, W, H);
-  curDt = dt; for (let s = 0; s < 4; s++) drawSector(s);
+  curDt = dt * (RM ? .2 : 1); for (let s = 0; s < 4; s++) drawSector(s);
   x.globalCompositeOperation = 'source-over'; x.textAlign = 'center';
   G.forEach((g, s) => {
     if (g.al < .05) return; const c = rgbOf(COL[DOM[s]]), big = g.kk > .5, mob = W < 760, [p, v] = lvl(s), y = g.cy + g.R * 1.12 + (big ? (mob ? 24 : 32) : (mob ? 18 : 22));
     x.globalAlpha = g.al; x.fillStyle = '#fff'; x.font = `700 ${big ? (mob ? 20 : 28) : (mob ? 14 : 20)}px Helvetica,Arial`; x.fillText(SECT[s].toUpperCase(), g.cx, y);
     x.font = `${big ? (mob ? 13 : 16) : (mob ? 11 : 14)}px Helvetica,Arial`; x.fillStyle = `rgb(${c})`;
-    if (mob && !big) { x.fillText(SH[DOM[s]] + ' · agrado ' + agrSec(s).toFixed(2), g.cx, y + 15); x.fillStyle = '#fff'; x.fillText('Personas: ' + lvn(p), g.cx, y + 29); x.fillText('Vehículos: ' + lvn(v), g.cx, y + 43); }
-    else { x.fillText('Predomina: ' + SH[DOM[s]] + ' · agrado ' + agrSec(s).toFixed(2), g.cx, y + (big ? (mob ? 18 : 24) : 21)); x.fillStyle = '#fff'; x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, y + (big ? (mob ? 35 : 46) : 41)); }
+    const dbl = dbAvg(s).toFixed(1) + ' dB promedio';
+    if (mob && !big) { x.fillText(SH[DOM[s]] + ' · agrado ' + agrSec(s).toFixed(2), g.cx, y + 15); x.fillStyle = '#cfd8ea'; x.fillText(dbl, g.cx, y + 29); x.fillStyle = '#fff'; x.fillText('Personas: ' + lvn(p), g.cx, y + 43); x.fillText('Vehículos: ' + lvn(v), g.cx, y + 57); }
+    else if (!big) { x.fillText('Predomina: ' + SH[DOM[s]] + ' · agrado ' + agrSec(s).toFixed(2), g.cx, y + 21); x.fillStyle = '#cfd8ea'; x.fillText(dbl, g.cx, y + 40); x.fillStyle = '#fff'; x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, y + 59); }
+    else { x.fillText('Predomina: ' + SH[DOM[s]] + ' · agrado ' + agrSec(s).toFixed(2), g.cx, y + (mob ? 18 : 24)); x.fillStyle = '#fff'; x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, y + (mob ? 35 : 46)); }
     x.globalAlpha = 1;
   });
   requestAnimationFrame(frame);
@@ -239,15 +199,15 @@ function frame(ms) {
 const hint = document.getElementById('hint');
 function render() {
   panel.style.display = want !== null ? 'block' : 'none'; hint.style.display = want !== null ? 'none' : 'block';
-  const s = want !== null ? want : hs, key = [want, flt, pf && pf.id, s].join();
+  const s = want !== null ? want : hs, key = [want, flt, srcF, pf && pf.id, s].join();
   if (key === pkey || want === null) return; pkey = key; const sc = panel.scrollTop;
   if (s === null) { panel.className = ''; panel.innerHTML = '<h2>Explora los cuatro sectores</h2><small>Pasa el cursor sobre un sector y haz clic para expandirlo y aislarlo; luego elige una ficha.</small>'; return; }
-  const fs = F.filter(f => f.s === s && on(f)), es = E.filter(e => e[0] === s), a = agrSec(s), db = es.filter(e => e[2]), mood = a > .8 ? 'agrado' : a < 0 ? 'molestia' : 'neutral';
+  const fs = uniq(F.filter(f => f.s === s && on(f))), es = E.filter(e => e[0] === s), a = agrSec(s), db = es.filter(e => e[2]), mood = a > .8 ? 'agrado' : a < 0 ? 'molestia' : 'neutral';
   let h = `<h2>${SECT[s]}</h2><small>${SUB[s]} · ${fs.length} fichas visibles</small><div class="g">
     <div>dB promedio<b>${mean(fs, f => f.pr).toFixed(1)}</b></div><div>dB máx. registrado<b>${fs.length ? Math.max(...fs.map(f => f.mx)) : '–'}</b></div>
     <div>Flujo peatonal / vehicular (1-3)<b>${mean(fs, f => f.fp).toFixed(1)} / ${mean(fs, f => f.fv).toFixed(1)}</b></div>
     <div>Agrado (−1…2) · n=${es.length}<b style="color:rgb(${agr(a)})">${a.toFixed(2)} · ${mood}</b></div></div>`;
-  h += flowHtml(s);
+  h += flowHtml(s) + perfilHtml(s);
   if (db.length) h += `<small>dB medidos en encuestas: ${mean(db, e => e[2]).toFixed(1)} (n=${db.length})</small>`;
   h += `<q>${QUOTE[s]}</q>`;
   if (want === null) h += '<small class="hint">Clic para expandir este sector</small>';
@@ -260,7 +220,7 @@ function render() {
 
 function pick(e) {
   const mx = e.clientX, my = e.clientY; hs = null; hov = null;
-  G.forEach((g, s) => { if (g.al < .5) return; const inFig = Math.hypot(mx - g.cx, my - g.cy) < g.R * 1.1, inLbl = want === null && Math.abs(mx - g.cx) < Math.max(g.R, W < 760 ? 70 : 110) && my > g.cy + g.R * .95 && my < g.cy + g.R * 1.12 + 72; if ((inFig && (foc === null || k > .5)) || inLbl) hs = s; }); // la figura y su nombre abren el mismo sector
+  G.forEach((g, s) => { if (g.al < .5) return; const inFig = Math.hypot(mx - g.cx, my - g.cy) < g.R * 1.1, inLbl = want === null && Math.abs(mx - g.cx) < Math.max(g.R, W < 760 ? 70 : 110) && my > g.cy + g.R * .95 && my < g.cy + g.R * 1.12 + 92; if ((inFig && (foc === null || k > .5)) || inLbl) hs = s; }); // la figura y su nombre abren el mismo sector
   if (hs !== null) {
     const g = G[hs], a = Math.atan2(my - g.cy, mx - g.cx); let best = 9;
     F.forEach(q => { if (q.s !== hs || !on(q)) return; const d = Math.abs(Math.atan2(Math.sin(a - angM(q.m)), Math.cos(a - angM(q.m)))); if (d < wid(q) / 2 + .03 && d < best && Math.hypot(mx - g.cx, my - g.cy) > g.R * .15 && Math.hypot(mx - g.cx, my - g.cy) < g.R * 1.1) { best = d; hov = q; } });
@@ -269,7 +229,7 @@ function pick(e) {
   else tip.style.display = 'none';
   cv.style.cursor = hs !== null ? 'pointer' : 'default'; render();
 }
-function focus(s) { want = s; pf = null; back.style.display = s === null ? 'none' : 'block'; pkey = ''; render(); }
+function focus(s) { if (innerWidth >= 1100) legSet(s === null); /* escritorio: la leyenda se pliega al expandir un sector */ want = s; pf = null; back.style.display = s === null ? 'none' : 'block'; pkey = ''; render(); }
 
 cv.addEventListener('mousemove', pick);
 cv.addEventListener('click', e => { pick(e); if (want === null) { if (hs !== null) focus(hs); } else if (hov) { pf = pf === hov ? null : hov; render(); } });
@@ -281,11 +241,16 @@ document.getElementById('next').onclick = () => document.getElementById('hero').
 document.getElementById('prev').onclick = () => document.getElementById('hero').classList.remove('s2');
 document.getElementById('go').onclick = () => { document.getElementById('hero').classList.add('off'); document.body.classList.remove('heroing'); };
 document.querySelector('#leg .lgb').innerHTML = `<div class="lcols">
-  <div class="lc"><h4>Color · fuente de sonido</h4><ul class="dots">${Object.keys(COL).map(k => `<li><i style="background:${COL[k]}"></i>${CAT[k]}</li>`).join('')}</ul></div>
-  <div class="lc"><h4>Figura · un lugar</h4><ul><li><b>Color:</b> fuente que predomina</li><li><b>Lados:</b> n.º de fichas</li><li><b>Deformación:</b> dB según la hora</li></ul></div>
+  <div class="lc"><h4>Color · fuente de sonido</h4><ul class="dots">${Object.keys(COL).map(k => `<li data-c="${k}" tabindex="0"><i style="background:${COL[k]}"></i>${CAT[k]}</li>`).join('')}</ul><p class="hn">Toca un color para filtrar</p></div>
+  <div class="lc"><h4>Figura · un lugar</h4><ul><li><b>Color:</b> fuente que predomina</li><li><b>Lados:</b> n.º de fuentes distintas</li><li><b>Deformación:</b> dB según la hora</li></ul></div>
   <div class="lc"><h4>Ficha · una medición</h4><ul><li><b>Posición:</b> hora, en sentido horario desde arriba</li><li><b>Tramo iluminado:</b> dB mínimo → máximo</li><li><b>Trazo grueso y punto:</b> dB promedio</li></ul></div>
   <div class="lc"><h4>Flujos · recorren el lugar</h4><ul><li><b>● Puntos lentos:</b> personas</li><li><b>━ Estelas rápidas:</b> vehículos</li><li><b>Más cantidad y velocidad:</b> más flujo</li><li><b>Movimiento errático:</b> menor agrado</li></ul></div></div>`;
 // «Cómo leer»: pill que se transforma en el contenedor de la leyenda (escritorio: abierta por defecto; móvil: cerrada)
+document.querySelector('#leg .lgb').addEventListener('click', e => {
+  const li = e.target.closest('li[data-c]'); if (!li) return; srcF = srcF === li.dataset.c ? null : li.dataset.c; pkey = '';
+  document.querySelectorAll('#leg li[data-c]').forEach(o => { o.classList.toggle('act', o.dataset.c === srcF); o.classList.toggle('dim', !!srcF && o.dataset.c !== srcF); }); render();
+});
+document.querySelector('#leg .lgb').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.target.click(); } });
 const leg = document.getElementById('leg'), lgin = leg.querySelector('.lgin'), lgt = document.getElementById('lgbtn');
 function legMeasure() {
   const oh = Math.min(lgin.offsetHeight, innerHeight - 150);
@@ -298,4 +263,6 @@ cv.addEventListener('click', () => { if (innerWidth < 1100) legSet(false); });
 addEventListener('keydown', e => { if (e.key === 'Escape' && innerWidth < 1100) legSet(false); });
 addEventListener('resize', () => { legMeasure(); const m = innerWidth >= 1100; if (m !== legMode) { legMode = m; legSet(m); } });
 legMeasure(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { legMeasure(); size(); });
+cv.tabIndex = 0; cv.setAttribute('aria-label', 'Modelo visual de cuatro sectores. Teclas 1 a 4: expandir un sector. Escape: volver.');
+addEventListener('keydown', e => { if (/^[1-4]$/.test(e.key) && !document.body.classList.contains('heroing')) focus(+e.key - 1); });
 addEventListener('resize', size); size(); render(); requestAnimationFrame(frame);
