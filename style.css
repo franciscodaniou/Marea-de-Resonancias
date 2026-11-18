@@ -227,3 +227,25 @@ body.navopen header b{opacity:0}
 #hero .row{display:flex;gap:12px;flex-wrap:wrap}
 .brow{display:flex;gap:12px;flex-wrap:wrap}
 .foot a{color:var(--N)}
+/* v13: filtro por fuente, perfil por franja y comparación */
+.lc .dots li{cursor:pointer;transition:opacity .25s}
+.lc .dots li:hover b,.lc .dots li:hover{color:var(--fg)}
+.lc .dots li.act{color:var(--fg);font-weight:700}.lc .dots li.dim{opacity:.38}
+.lc .hn{font-size:12px;color:var(--mut);margin:6px 0 0}
+.pf h5{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--mut);margin:14px 0 4px;font-weight:600}
+.pf div{display:grid;grid-template-columns:112px 1fr 32px;align-items:center;gap:10px;margin:4px 0;font-size:14px}
+.pf .tr{height:7px;border-radius:4px;background:rgba(255,255,255,.12);overflow:hidden}.pf i{display:block;height:100%;background:#cfd8ea;border-radius:4px}
+.pf .hi{color:var(--fg);font-weight:700}.pf .hi i{background:var(--N)}.pf b{text-align:right;font-weight:600}
+.lc li:focus-visible,#c:focus-visible,.lgt:focus-visible{outline:2px solid var(--N);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition-duration:.01s!important}}
+/* about: tarjetas anchas */
+.card.wide{margin:0 0 22px}
+.card.wide .lead2{font-size:18px;color:var(--fg);max-width:60em;margin:0 0 16px}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 40px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 36px}
+.hl h3{font-size:19px;margin:14px 0 6px}
+.how{font-size:14px!important;color:var(--mut)!important}
+.card.wide h3{font-size:18px;margin:6px 0 8px}
+.card a{color:var(--N)}
+@media(max-width:900px){.g2,.g3{grid-template-columns:1fr}}
+body.about header{padding-bottom:34px;background:linear-gradient(var(--bg) 52%,transparent)}
