@@ -16,19 +16,23 @@ Es un sitio estático, sin dependencias ni compilación.
 |---|---|
 | `index.html` | Inicio (dos secciones) y visualización |
 | `about.html` | Estudio, hallazgos, criterios de datos y uso de IA |
-| `app.js` | Modelo visual (canvas 2D), interacción, panel, leyenda |
+| `app.js` | Marea orgánica (canvas 2D), escenas por scroll, interacción, panel, leyenda |
+| `story.js` | Secciones de contraste y estadísticas (gráficas SVG desde `data.js`) |
 | `glass.js` | Capa WebGL del vidrio líquido (con respaldo en CSS) |
 | `style.css` | Estilos y diseño responsivo |
 | `data.js` / `data.json` | Datos de las 40 fichas de terreno y 20 encuestas, con fuente y criterios |
 
 ## Codificación visual
-Figura = lugar (color = fuente predominante, lados = fuentes distintas, deformación = dB según la hora) ·
-ficha = hebras que pulsan entre dB mínimo y máximo, ubicadas por hora (sentido horario desde arriba), con marcador en el promedio ·
-puntos lentos = personas y estelas rápidas = vehículos (cantidad y velocidad según el flujo) ·
-movimiento más errático = menor agrado en las encuestas.
+Malla orgánica (tubo deformado por ruido Perlin) = el lugar: color = fuente predominante, largo = hora (09:40 → 18:50), relieve = dB.
+Ficha = punto del color de su fuente (carril alrededor de la malla) que ilumina una zona: ancho = rango dB, pulso y relieve = dB promedio.
+Puntos lentos = personas y estelas rápidas = vehículos (cantidad y velocidad según el flujo), sobre la malla.
+Movimiento más errático = menor agrado en las encuestas.
 
-## Interacción
-Vista general con comparación (dB promedio y agrado por sector) → filtro por franja horaria → filtro por fuente (tocar un color de la leyenda) → sector expandido con fichas, perfil por franja y comparación. Teclas 1–4 expanden un sector; `Esc` vuelve.
+## Recorrido (scroll)
+1. Marea total: todas las fichas sobre una misma malla (tocar, filtrar, girar con el mouse).
+2. Sectores: la marea se disuelve en cuatro mallas lado a lado; clic expande un sector (teclas 1–4, `Esc` vuelve).
+3. Contraste y comparación: hallazgos por lugar con números y gráficas (`story.js`).
+4. Estadísticas: fuentes, flujos, agrado y picos del barrio.
 
 ## Datos
 Fuente: «Base de Datos – Variación Sonora Barrio Puerto» (Grupo 2). Criterios de preparación (mediciones repetidas BP-17 a 19, valor atípico de 121,4 dB, recategorización «comercial», escala de agrado, instrumentos distintos) en `data.js` y en `about.html`. Pendiente: integrar Puente de la Mujer y Plaza de Mayo (Buenos Aires).
