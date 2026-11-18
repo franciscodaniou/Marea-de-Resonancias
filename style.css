@@ -249,3 +249,33 @@ body.navopen header b{opacity:0}
 .card a{color:var(--N)}
 @media(max-width:900px){.g2,.g3{grid-template-columns:1fr}}
 body.about header{padding-bottom:34px;background:linear-gradient(var(--bg) 52%,transparent)}
+/* v14: marea orgánica con scroll · contraste y estadísticas */
+html,body{height:auto}
+body.lock,body.heroing{overflow:hidden}
+#story{position:relative}
+.spacer{height:100vh}
+.panelsec{position:relative;z-index:3;padding:96px 0 48px}
+.wrap2{max-width:1320px;margin:0 auto;padding:0 22px}
+.sech{font-size:clamp(30px,4.6vw,64px);font-weight:800;letter-spacing:-.01em;line-height:1.05;margin:0 0 10px}
+.lead3{font-size:clamp(16px,1.8vw,22px);color:var(--mut);max-width:44em;margin:0 0 28px}
+.cards4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-bottom:22px}
+.charts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.sc{padding:24px 24px 20px;border-radius:32px;display:block}
+.sc h3{margin:0;font-size:21px}.sc .sub{font-size:13px;color:var(--mut);margin-top:2px}
+.sc .big{font-size:58px;font-weight:300;line-height:1.05;margin:14px 0 4px;letter-spacing:-.02em}.sc .big small{font-size:15px;color:var(--mut);margin-left:8px;letter-spacing:0}
+.sc .chips{display:flex;gap:16px;flex-wrap:wrap;font-weight:600;font-size:15px;margin:2px 0 8px}
+.sc .fact{font-size:13.5px;color:#cfd8ea;margin-bottom:10px}.sc .fi{font-size:14.5px;line-height:1.55;color:#d9dfec;margin:0 0 6px}
+.cc{padding:24px 24px 18px;border-radius:32px;display:block}.cc h3{margin:0 0 2px;font-size:20px}.cs{margin:0 0 10px;font-size:13.5px;color:var(--mut)}
+.cc svg{display:block}.cc svg .t{fill:#cfd8ea;font:12px Helvetica,Arial,sans-serif}.cc svg .b{font-weight:700;fill:#fff}.cc svg .m{fill:#8b94a8;font-size:11px}.cc svg .k{fill:#07101c;font-weight:700;font-size:11px}.cc svg .g{stroke:rgba(255,255,255,.12);stroke-width:1}
+.peaks{list-style:none;margin:0;padding:0}.peaks li{display:grid;grid-template-columns:96px 1fr;align-items:center;gap:10px;padding:9px 0;border-top:1px solid rgba(255,255,255,.1)}
+.peaks b{font-size:34px;font-weight:300}.peaks small{font-size:13px;color:var(--mut)}.peaks span{font-size:14.5px}.peaks em{display:block;font-style:normal;font-size:12.5px;color:var(--mut)}
+.foot2{margin:26px 4px 0;color:var(--mut);font-size:13.5px}.foot2 a{color:var(--N)}
+#down{position:fixed;left:0;right:0;margin:0 auto;width:max-content;bottom:calc(26px + env(safe-area-inset-bottom,0px));z-index:4;cursor:pointer;font-family:inherit;transition:opacity .6s}
+body.deep #down,body.lock #down,body.heroing #down{opacity:0;pointer-events:none}
+body.deep #leg,body.deep #ctl,body.deep #hint,body.deep #back,body.deep #panel,body.deep #tip{opacity:0;pointer-events:none}
+body.deep header{padding-bottom:34px;background:linear-gradient(var(--bg) 52%,transparent)}
+@media(max-width:1100px){.cards4,.grid2{grid-template-columns:repeat(2,minmax(0,1fr))}.charts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.cards4,.grid2,.charts{grid-template-columns:1fr}.sc .big{font-size:48px}#down{bottom:calc(74px + env(safe-area-inset-bottom,0px))}.panelsec{padding-top:80px}}
+.cc svg .t{font-size:17px}.cc svg .m{font-size:14.5px}.cc svg .k{font-size:14px}
+body.gl .card.cc,body.gl .card.sc{background:rgba(7,10,20,.42)}
