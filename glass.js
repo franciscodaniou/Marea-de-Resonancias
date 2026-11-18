@@ -145,7 +145,7 @@ void main(){
       if (gc.width !== Math.round(W * dpr) || gc.height !== Math.round(H * dpr)) { gc.width = Math.round(W * dpr); gc.height = Math.round(H * dpr); gl.viewport(0, 0, gc.width, gc.height); }
       const R = new Float32Array(64), Rr = new Float32Array(16), E = new Float32Array(16); let n = 0;
       SEL.forEach(s => document.querySelectorAll(s).forEach(el => {
-        if (n >= 16) return; const b = el.getBoundingClientRect(); if (b.width < 4 || b.height < 4) return;
+        if (n >= 16) return; const b = el.getBoundingClientRect(); if (b.width < 4 || b.height < 4 || b.bottom < -40 || b.top > innerHeight + 40) return;
         const cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || eo(el) < .05) return;
         const inside = mx >= b.left && mx <= b.right && my >= b.top && my <= b.bottom; let s = el._e || 0, v = el._v || 0; v += ((inside ? 1 : 0) - s) * 170 * dt; v *= Math.exp(-13 * dt); s += v * dt; el._e = s; el._v = v; // resorte: crece con un leve rebote
         const sp = Math.max(0, s), g = (b.width > 420 || b.height > 220 ? 3 : 6) * sp + (el.classList.contains('on') ? 2 : 0), w = b.width + 2 * g, h = b.height + 2 * g;
@@ -162,4 +162,3 @@ void main(){
   }
   requestAnimationFrame(frame);
 })();
-
