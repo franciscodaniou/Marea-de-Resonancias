@@ -13,13 +13,13 @@
 <p class="how">Cómo verlo: filtro «Franja»; en el panel de cada sector, «dB promedio por franja».</p></div>
 <div class="hl"><h3>2 · Sotomayor concentra la saturación</h3>
 <p>Es el sector con mayor promedio (70,9 dB frente a 65,0–67,0 dB en los demás), 10 de sus 11 fichas son vehiculares y sus flujos son los más altos (2,5 peatonal y 2,7 vehicular de 3). Cuatro de sus seis encuestas dicen que el sonido incomoda.</p>
-<p class="how">Cómo verlo: color coral, flujo «Alto» y movimiento errático en su figura; comparación entre sectores en el panel.</p></div>
+<p class="how">Cómo verlo: color coral, flujo «Alto» y movimiento errático en su malla; comparación entre sectores en el panel.</p></div>
 <div class="hl"><h3>3 · El agrado no sigue a los decibeles</h3>
 <p>Muelle Prat y Calle Serrano promedian unos 65 dB y tienen agrado alto (1,29 y 1,20; ninguna de sus 12 encuestas incomoda). Sotomayor está a 5 o 6 dB más y su agrado es −0,33. El Muelle tiene los picos más altos (hasta 89 dB) y aun así sus 7 respuestas son positivas: pesa más qué suena (mar, voces, comercio) que cuánto suena.</p>
 <p class="how">Cómo verlo: compare el rótulo de agrado con el de dB promedio en la vista general. Es una lectura con muestras pequeñas, no una causa demostrada.</p></div>
 <div class="hl"><h3>4 · Cada lugar tiene una firma sonora</h3>
 <p>Muelle Prat es el más diverso (portuaria, humana, vehicular y comercial) y el de mayor rango entre mínimo y máximo (31 dB en promedio). Calle Serrano es comercial y más parejo (17 dB). Plaza Echaurren es humana y estable (14 dB), pero con solo 3 fichas y 2 encuestas no permite concluir.</p>
-<p class="how">Cómo verlo: lados y color de cada figura; filtro por fuente al tocar un color de la leyenda.</p></div>
+<p class="how">Cómo verlo: color y relieve de cada malla; filtro por fuente al tocar un color de la leyenda.</p></div>
 </div></section>
 <div class="cols"><div class="col">
 
@@ -49,12 +49,12 @@
 <ul>
 <li><b>Objetivo:</b> mostrar la variación de fuentes y niveles sonoros por lugar y horario, cruzando mediciones de terreno empíricas y de percepción ciudadana.</li>
 <li><b>Mapeo de variables:</b><ul>
-<li><i>Hora:</i> define la posición de la medición en la figura (organizada en sentido horario).</li>
-<li><i>Decibeles (mínimo, promedio, máximo):</i> definen la amplitud, la longitud del tramo iluminado y el recorrido del pulso en las hebras.</li>
-<li><i>Fuente sonora predominante:</i> define el color base de la geometría y de las hebras.</li>
+<li><i>Hora:</i> define la posición de la medición a lo largo de la malla.</li>
+<li><i>Decibeles (mínimo, promedio, máximo):</i> definen el ancho de la zona iluminada, el relieve de la malla y el ritmo del pulso.</li>
+<li><i>Fuente sonora:</i> define el color de cada punto y el color de cada lugar (su fuente predominante).</li>
 <li><i>Flujos (peatonal y vehicular):</i> controlan la cantidad y la velocidad de los elementos móviles (puntos y estelas).</li>
 <li><i>Nivel de agrado:</i> determina el grado de agitación o nerviosismo general del movimiento de la figura.</li></ul></li>
-<li><b>Representación espacial:</b> utiliza polígonos compuestos por capas anidadas y giradas para evocar la morfología arquitectónica de cada sector (como el encierro o la apertura del espacio).</li>
+<li><b>Representación espacial:</b> una malla orgánica en movimiento por lugar, que se deforma como una marea para evocar la morfología del espacio; todas juntas forman la marea total.</li>
 <li><b>Interfaz e interacción:</b> despliegue mediante una vista general comparativa, filtros por franjas horarias y paneles de detalle que unen las métricas cuantitativas con las citas textuales cualitativas.</li></ul></section>
 
 <section class="card"><h2>Inventario de datos</h2>
@@ -79,28 +79,25 @@
 <section class="card"><h2>Datos que no se incluyeron</h2>
 <p>Se excluyeron el observador y el instrumento de medición por ser datos estrictamente metodológicos. No se integraron la relación con el barrio ni horarios habituales (la mayoría son visitantes y la variable no discrimina). Los datos de lugar más ruidoso/tranquilo y razón de la percepción se descartaron para evitar solapamientos con el nivel de agrado y las citas textuales.</p></section>
 <section class="card"><h2>Figuración</h2>
-<h3>El lugar como figura</h3>
-<p>Cada sector se representa como un polígono compuesto por capas anidadas y giradas, que forman una trama de líneas. Esta decisión nace de una premisa central del estudio grupal: la forma del espacio determina cómo se oye el sonido, porque lo filtra, lo concentra o lo devuelve. La apertura, los bordes, el pavimento y la vegetación orientan a su vez la conducta de las personas (si pasan, se detienen o permanecen).</p>
-<p>Representar el lugar como una geometría, y no como una barra o un punto, permite que esa premisa sea visible. Las capas superpuestas evocan la reverberación entre las fachadas continuas, y las aristas recuerdan los bordes duros de Sotomayor frente a la apertura del Muelle.</p>
-<p>El color de cada figura corresponde a la fuente de sonido predominante del lugar. El Muelle Prat es portuario mientras que la Plaza Sotomayor es vehicular. Se eligió el color porque la fuente es una categoría y no una cantidad, y el tono permite distinguir categorías sin pedir lectura.</p>
-<h3>La ficha como evento dentro del lugar</h3>
-<p>Cada medición es un conjunto de hebras dentro de la figura, iluminadas con el color de su fuente. Se ordenan en sentido horario desde arriba (09:40 a 18:50).</p>
-<p>La distancia al centro marca el nivel de sonido, trazando un polígono sobre la capa del promedio. El tramo iluminado va del mínimo al máximo registrado: una ficha corta refleja un sonido estable (murmullo en Echaurren) y una larga un evento irruptivo (picos de micros en Sotomayor de hasta 88 dB).</p>
-<p>Sobre cada hebra viaja un pulso del mínimo al máximo, acelerándose a mayor nivel promedio, devolviendo al dato su carácter de suceso temporal. Las hebras llevan un contorno oscuro para evitar pérdida de contraste visual cuando el color de la ficha y el sector coinciden.</p>
+<h3>La marea de resonancias</h3>
+<p>Cada lugar es una malla orgánica en movimiento, un tubo que se deforma como una marea. Esta decisión nace de una premisa del estudio grupal: la forma del espacio determina cómo se oye el sonido, porque lo filtra, lo concentra o lo devuelve. La malla no es una barra ni un punto: se hincha donde el sonido es más fuerte y se calma donde no, como el espacio que lo contiene.</p>
+<p>El visor comienza con la <b>marea total</b>: las fichas de los cuatro lugares sobre una misma malla, donde cada lugar tiñe un tramo con el color de su fuente predominante. Al desplegarla, la marea se disuelve y da lugar a cuatro mallas lado a lado, una por lugar.</p>
+<h3>La ficha como punto que ilumina la malla</h3>
+<p>Cada medición es un punto del color de su fuente. Su posición a lo largo de la malla es la hora (de 09:40 a 18:50) y alrededor de ella cada fuente tiene su carril. El punto ilumina una zona de la malla cuyo ancho es el rango de decibeles (mínimo a máximo), pulsa más rápido a mayor nivel promedio y levanta el relieve en proporción a ese promedio. Cada tramo iluminado tiene un solo color, el de la ficha más fuerte.</p>
 <h3>Los flujos: personas y vehículos</h3>
-<p>El espacio es recorrido por dos poblaciones gráficas en las aristas y capas:</p>
-<ul><li><b>Puntos lentos:</b> representan a las personas.</li><li><b>Estelas rápidas:</b> representan a los vehículos.</li></ul>
-<p>La cantidad y velocidad dependen de los flujos registrados. Sotomayor presenta saturación mixta de puntos y estelas, mientras Echaurren tiene predominio peatonal casi sin estelas. Las trayectorias incluyen pausas y cambios de ritmo (las estelas ondulan según semáforos, los puntos se detienen en barandas).</p>
+<p>Sobre la malla circulan dos poblaciones: <b>puntos lentos</b> (personas), que orbitan, se detienen y cambian de rumbo, y <b>estelas rápidas</b> (vehículos), que recorren el largo de la malla, frenan y aceleran en oleadas. Su cantidad y velocidad dependen de los flujos registrados: Sotomayor se ve saturada y Echaurren casi sin estelas.</p>
 <h3>El movimiento como expresión del agrado</h3>
-<p>El grado de agitación del movimiento depende del agrado que las encuestas registran para cada lugar: cuanto menor es el agrado, más errático el movimiento. Esta decisión se sustenta en el hallazgo central: el malestar sonoro no depende solo del nivel de decibeles, sino de la predictibilidad y el sentido de la fuente. Los sonidos naturales y la voz humana se valoran y se asocian al descanso; los mecánicos impulsivos generan rechazo y fatiga auditiva. Así, Sotomayor, con el agrado más bajo, se ve nerviosa, mientras que el Muelle, que registra picos altos pero es percibido como más tranquilo, se ve calmo.</p></section>
+<p>Cuanto menor es el agrado que las encuestas registran para un lugar, más errático es el movimiento de su malla y de sus flujos. Sotomayor, con el agrado más bajo, se ve nerviosa; el Muelle, con picos altos pero percibido como tranquilo, se ve calmo. Sustenta la idea de que el malestar no depende solo del nivel de decibeles, sino del sentido de la fuente.</p></section>
 
 <section class="card"><h2>Interacción</h2>
-<h3>Exploración y lectura</h3>
-<p>La interacción sigue una secuencia modular:</p>
+<h3>Recorrido por scroll</h3>
+<p>La visualización se recorre hacia abajo, en cuatro momentos:</p>
 <ol>
-<li><b>Vista general:</b> panorámica comparativa de los lugares.</li>
-<li><b>Filtro por franja horaria:</b> selectores de mañana, tarde y hora punta. Permite observar fenómenos evolutivos como la escalada vespertina (atochamiento y cierre comercial entre las 17:30 y las 18:50).</li>
-<li><b>Vista expandida:</b> aislamiento de un sector. Despliega la lista de sus fichas y un panel de detalle con cifras, niveles de flujo y la cita textual, fusionando la métrica cuantitativa con la experiencia cualitativa.</li></ol></section>
+<li><b>Marea total:</b> todas las fichas sobre una misma malla. Se puede tocar una ficha, filtrar por franja o por fuente y girar la malla arrastrando.</li>
+<li><b>Sectores:</b> la marea se disuelve en cuatro mallas lado a lado, con su dB promedio, agrado y flujos. Un clic expande y aísla un sector, con su panel de detalle.</li>
+<li><b>Contraste y comparación:</b> los hallazgos de cada lugar en texto, números grandes y gráficas (intensidad, agrado frente a decibeles y escalada por franja horaria).</li>
+<li><b>Estadísticas:</b> qué suena, cuánta gente y tráfico hay, cómo se siente cada lugar y los picos más altos del barrio.</li></ol>
+<p>Un botón de despliegue acompaña cada paso y el botón «Cómo leer» explica el código visual.</p></section>
 
 </div></div>
 <section class="card wide"><h2>Criterios y límites de los datos</h2>
@@ -108,7 +105,7 @@
 <li><b>Mediciones únicas:</b> las fichas BP-17, BP-18 y BP-19 son una sola medición (15:30, Muelle Prat) con tres fuentes simultáneas. Cuenta en las tres fuentes, pero sus decibeles y flujos se cuentan una vez: 38 mediciones únicas de 40 fichas.</li>
 <li><b>Valor atípico:</b> esa medición registra 10,0 y 121,4 dB. Se acota visualmente a 95 dB y no se usa como máximo de referencia (el máximo del Muelle es 89 dB).</li>
 <li><b>Fuente «comercial»:</b> separa captadores, música de locales, cortinas y locatarios de las voces humanas (8 fichas recategorizadas por el equipo).</li>
-<li><b>Lados de la figura:</b> corresponden a las fuentes distintas del sector (Muelle Prat 7, Sotomayor 5, Serrano 5, Echaurren 4), no a la cantidad de mediciones.</li></ul>
+<li><b>Malla:</b> el largo es la hora, los carriles de alrededor son las fuentes y el relieve crece con el dB promedio de cada ficha; no codifica la cantidad de mediciones.</li></ul>
 <ul>
 <li><b>Agrado:</b> escala de −1 a 2 calculada sobre las 20 encuestas. Es distinta de la escala de 1 a 5 de la tabla perceptual del informe, que parte de otra muestra: no son comparables.</li>
 <li><b>Instrumentos:</b> las mediciones usan Apple Watch, Decibel Meter, Decibel X y NIOSH SLM, por lo que los decibeles no son estrictamente comparables.</li>
@@ -123,7 +120,7 @@
 <li>Pregunta orientadora y enfoque del estudio.</li>
 <li>Selección y cruce de los datos (fichas y encuestas por sector).</li>
 <li>Estilo: arte de datos generativo y vidrio líquido, con sus referencias.</li>
-<li>El lugar como polígono rotado, color según la fuente predominante y flujos que recorren la geometría.</li>
+<li>El lugar como malla orgánica (código de figuración propio, adaptado al modelo), color según la fuente predominante y flujos que recorren la malla.</li>
 <li>Metáfora del vidrio como fenómeno acústico y estructura del inicio.</li>
 <li>Criterios de exclusión de datos y textos del proyecto.</li></ul></div>
 <div><h3>Propuesto por la IA y revisado por el autor</h3><ul>
@@ -142,4 +139,3 @@
 </div>
 <script src="glass.js"></script>
 </body></html>
-
