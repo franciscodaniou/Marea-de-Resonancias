@@ -42,3 +42,4 @@ La IA (Claude, de Anthropic) apoyó la implementación técnica (canvas, shader 
 
 ## Autor
 Francisco Daniou · Taller de Diseño de Servicios 2026.
+ 
