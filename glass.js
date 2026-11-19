@@ -14,13 +14,13 @@
   else { src = document.createElement('canvas'); bgDraw = makeBg(src); document.body.insertBefore(gc, document.body.firstChild); }
   // fondo para páginas sin visualización: polígonos string-art lentos que el vidrio refracta
   function makeBg(cv) {
-    const c = cv.getContext('2d'), COLS = ['#8f9bff', '#ff6b5e', '#f4c25b', '#e86bd0'];
+    const c = cv.getContext('2d'), COLS = ['#4f5bb0', '#c8483b', '#c58a14', '#a53a8b'];
     return t => {
       const W = innerWidth, H = innerHeight; if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
-      c.fillStyle = '#070a14'; c.fillRect(0, 0, W, H); c.lineWidth = 1;
+      c.fillStyle = '#DCDDD3'; c.fillRect(0, 0, W, H); c.lineWidth = 1;
       COLS.forEach((col, k) => {
         const cx = W * (.16 + .68 * k / 3 + .03 * Math.sin(t * .2 + k)), cy = H * (.3 + .38 * (k % 2) + .03 * Math.cos(t * .17 + k)), R = Math.min(W, H) * .36, m = 5 + k;
-        for (let i = 0; i < 30; i++) { const r = R * (1 - .9 * i / 30), rot = i * .06 * (k % 2 ? 1 : -1) + t * .05; c.strokeStyle = col + '66'; c.beginPath();
+        for (let i = 0; i < 30; i++) { const r = R * (1 - .9 * i / 30), rot = i * .06 * (k % 2 ? 1 : -1) + t * .05; c.strokeStyle = col + '88'; c.beginPath();
           for (let q = 0; q <= m; q++) { const A = rot + q * 6.2832 / m, x = cx + Math.cos(A) * r, y = cy + Math.sin(A) * r; q ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke(); }
       });
     };
@@ -76,7 +76,7 @@ vec3 blurSample(vec2 p){
     float a = float(i) * 1.0471976;
     acc += texture2D(uTex, (p + vec2(cos(a), sin(a)) * 2.5) / uRes).rgb;
   }
-  return acc / 6.0 * (1.0 - 0.78 * uHero);
+  return mix(acc / 6.0, vec3(0.863, 0.867, 0.827), 0.72 * uHero);
 }
 vec3 bgSample(vec2 p){
   vec3 c = texture2D(uTex, p / uRes).rgb;
@@ -86,7 +86,7 @@ vec3 bgSample(vec2 p){
       float a = float(i) * 1.0471976;
       w += texture2D(uTex, (p + vec2(cos(a), sin(a)) * 10.0) / uRes).rgb + texture2D(uTex, (p + vec2(cos(a + 0.5), sin(a + 0.5)) * 22.0) / uRes).rgb;
     }
-    c = mix(c, w / 12.0, uHero) * (1.0 - 0.78 * uHero);
+    c = mix(mix(c, w / 12.0, uHero), vec3(0.863, 0.867, 0.827), 0.72 * uHero);
   }
   return c;
 }
@@ -94,6 +94,7 @@ void main(){
   vec2 p = vec2(gl_FragCoord.x, uRes.y * uDens - gl_FragCoord.y) / uDens;
   vec3 base = bgSample(p);
   float d = scene(p);
+  base *= 1.0 - 0.2 * (1.0 - smoothstep(-6.0, 24.0, scene(p - vec2(5.0, 11.0))));   // sombra suave sobre el fondo claro
   if (d > 1.5) { gl_FragColor = vec4(base, 1.0); return; }
 
   float t = max(-d, 0.0);
@@ -105,8 +106,8 @@ void main(){
   vec3 col = vec3(blurSample(p + off * 1.10).r, blurSample(p + off).g, blurSample(p + off * 0.90).b);
 
   float lum = dot(col, vec3(0.299, 0.587, 0.114));
-  col = mix(vec3(lum), col, 1.25) * 1.08;
-  col += vec3(0.055) + vec3(0.05) * (1.0 - smoothstep(0.0, 36.0, t));   // transparencia neutra
+  col = mix(vec3(lum), col, 1.15);
+  col = mix(col, vec3(1.0), 0.16 + 0.12 * (1.0 - smoothstep(0.0, 36.0, t)));   // vidrio esmerilado neutro
   vec2 mv = p - uM;
   col += vec3(1.0) * exp(-dot(mv, mv) / 9800.0) * en * 0.22;            // brillo especular que sigue al cursor
 
@@ -115,7 +116,8 @@ void main(){
   float s2 = pow(max(dot(n, -Ld), 0.0), 3.0);
   float rim = 1.0 - smoothstep(0.0, 9.0, t);
   float line = 1.0 - smoothstep(0.0, 1.6, t);
-  col += vec3(1.0) * ((s1 * 0.8 + s2 * 0.35) * rim + line * (0.25 + 0.5 * s1)) * (1.0 + 1.4 * en);
+  col += vec3(1.0) * (s1 * 0.9 * rim + line * (0.35 + 0.5 * s1)) * (1.0 + 1.4 * en);
+  col -= vec3(0.17, 0.15, 0.11) * (s2 * rim * 0.9 + line * 0.12);
 
   float a = 1.0 - smoothstep(-0.8, 0.8, d);
   gl_FragColor = vec4(mix(base, col, a), 1.0);
