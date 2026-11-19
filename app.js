@@ -6,7 +6,7 @@
    · metabola (silueta líquida) = perfil de dB promedio según la hora
    · halo = agrado percibido en encuestas (coral → ámbar → turquesa) */
 
-const COL = { V: '#c8483b', H: '#c58a14', C: '#a53a8b', M: '#4f5bb0', N: '#1f8f82' }; // paleta sobre fondo salvia
+const COL = { V: '#c8483b', H: '#c58a14', C: '#a53a8b', M: '#4f5bb0', N: '#5f8a4b' }; // paleta sobre fondo salvia
 const CAT = { V: 'Vehicular', H: 'Humana (voces, música)', C: 'Comercial (locales, captadores)', M: 'Mecánica / portuaria', N: 'Natural' };
 const rgbOf = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, n >> 8 & 255, n & 255]; };
 const SH = { V: 'Vehicular', H: 'Humana', C: 'Comercial', M: 'Portuaria', N: 'Natural' };
@@ -15,13 +15,14 @@ const F = FICHAS.map((r, i) => ({ id: 'BP-' + String(i + 1).padStart(2, '0'), t:
 const DOM = [0, 1, 2, 3].map(s => { const n = {}; F.filter(f => f.s === s).forEach(f => n[f.c] = (n[f.c] || 0) + 1); let b = 'M', v = 0; ['M', 'V', 'C', 'H', 'N'].forEach(c => { if ((n[c] || 0) > v) { v = n[c]; b = c; } }); return b; });
 const E = ENCUESTAS;
 
+let CMX = 0, CMY = 0, CMR = 100, cA = 0; const kc = [0, 0, 0, 0]; // comparativa: la malla acompaña al texto
 let CX0 = 0, CY0 = 0, S0 = 100, eS = 0, amb = 0, ee = 0, Aglob = 1; // centro y escala de la marea total; progreso de escena
 const FILTERS = { all: [0, 1e4], am: [0, 756], pm: [757, 1049], pk: [1050, 1e4] };
 let flt = 'all', want = null, foc = null, k = 0, pf = null, hov = null, hs = null, W, H, dpr, T = 0, Rb, Rf, FX, FY, ctr = [], G = [], pkey = '';
 const cv = document.getElementById('c'), x = cv.getContext('2d'), tip = document.getElementById('tip'), panel = document.getElementById('panel'), back = document.getElementById('back');
 const lerp = (a, b, t) => a + (b - a) * t, cl = (v, a, b) => Math.max(a, Math.min(b, v));
 const mix = (a, b, t) => a.map((v, i) => Math.round(lerp(v, b[i], t)));
-const agr = a => { const t = cl((a + 1) / 3, 0, 1); return t < .5 ? mix([200, 72, 59], [197, 138, 20], t * 2) : mix([197, 138, 20], [31, 143, 130], (t - .5) * 2); };
+const agr = a => { const t = cl((a + 1) / 3, 0, 1); return t < .5 ? mix([200, 72, 59], [197, 138, 20], t * 2) : mix([197, 138, 20], [95, 138, 75], (t - .5) * 2); };
 const hex = (h, a) => { const n = parseInt(h.slice(1), 16); return `rgba(${n >> 16},${n >> 8 & 255},${n & 255},${a})`; };
 const mean = (a, f) => a.length ? a.reduce((s, v) => s + f(v), 0) / a.length : 0;
 const agrSec = s => mean(E.filter(e => e[0] === s), e => e[1]);
@@ -60,6 +61,7 @@ function layout() { // las figuras se reacomodan en sincronía con el pill/leyen
   const rA = Math.min(gw / 4 / 2.05, (gh - LB) / 2.2), rB = Math.min(gw / 2 / 2.05, (gh / 2 - LB) / 2.2), row = rA >= rB;
   Rb = Math.max(rA, rB); const bh = 2.2 * Rb + LB, off = row ? (gh - bh) / 2 : (gh / 2 - bh) / 2;
   ctr = [0, 1, 2, 3].map(i => row ? [x0 + gw * (i + .5) / 4, top0 + off + 8 + Rb * 1.08] : [x0 + gw * (i % 2 + .5) / 2, top0 + (gh / 2) * Math.floor(i / 2) + off + 8 + Rb * 1.08]);
+  CMX = mob ? W / 2 : W * .27; CMY = mob ? H * .2 : H * .5; CMR = mob ? Math.min(W * .26, H * .12) : Math.min(W * .17, H * .3);
   CX0 = x0 + gw / 2; CY0 = top0 + gh / 2 + (mob ? -8 : 0); S0 = Math.min(gw * (mob ? .24 : .15), gh * (mob ? .3 : .36));
   if (mob) { // móvil: figura arriba, panel como hoja inferior (la mitad inferior de la pantalla)
     const pt = Math.round(H * .5), t1 = 100, A = pt - t1 - 6;
@@ -73,8 +75,9 @@ function layout() { // las figuras se reacomodan en sincronía con el pill/leyen
 
 function geoms() {
   G = [0, 1, 2, 3].map(s => {
-    const kk = foc === s ? k : 0;
-    return { cx: lerp(ctr[s][0], FX, kk), cy: lerp(ctr[s][1], FY, kk), R: lerp(Rb, Rf, kk), al: foc === null || foc === s ? 1 : 1 - k, kk };
+    const kk = foc === s ? k : 0; let cx = lerp(ctr[s][0], FX, kk), cy = lerp(ctr[s][1], FY, kk), R = lerp(Rb, Rf, kk), al = foc === null || foc === s ? 1 : 1 - k;
+    if (cA > .001) { const q = kc[s]; cx = lerp(cx, CMX, q); cy = lerp(cy, CMY, q); R = lerp(R, CMR, q); al *= lerp(1 - cA, 1, q); }
+    return { cx, cy, R, al, kk };
   });
 }
 
@@ -155,12 +158,15 @@ function drawMesh(s, al, e1) {
   x.strokeStyle = `rgba(${c},${.26 * al})`; x.beginPath();
   for (let j = 0; j < NA; j++) { x.moveTo(m.SX[j], m.SY[j]); for (let i = 1; i <= NZ; i++) x.lineTo(m.SX[i * n1 + j], m.SY[i * n1 + j]); }
   x.stroke();
-  for (let i = 0; i <= NZ; i++) for (let j = 0; j <= NA; j++) { // tramos iluminados
+  for (let i = 0; i <= NZ; i++) for (let j = 0; j <= NA; j++) { // tramos iluminados: halo, color y núcleo claro (efecto luminoso sobre fondo claro)
     const id = i * n1 + j, w = m.LW[id]; if (w < .1) continue;
-    x.strokeStyle = `rgba(${CRGB[m.LC[id]]},${Math.min(1, w) * al})`; x.lineWidth = W < 760 ? (w > 1.05 ? 2.1 : 1.15) : (w > 1.05 ? 3 : 1.8); x.beginPath();
+    const wv = Math.min(1, w), lw = W < 760 ? (w > 1.05 ? 2.1 : 1.3) : (w > 1.05 ? 3 : 1.9), cc = CRGB[m.LC[id]];
+    x.beginPath();
     if (j < NA) { x.moveTo(m.SX[id], m.SY[id]); x.lineTo(m.SX[id + 1], m.SY[id + 1]); }
     if (i < NZ) { x.moveTo(m.SX[id], m.SY[id]); x.lineTo(m.SX[id + n1], m.SY[id + n1]); }
-    x.stroke();
+    x.lineWidth = lw * 4.4; x.strokeStyle = `rgba(${cc},${.14 * wv * al})`; x.stroke();
+    x.lineWidth = lw; x.strokeStyle = `rgba(${cc},${wv * al})`; x.stroke();
+    x.lineWidth = lw * .38; x.strokeStyle = `rgba(255,255,255,${.6 * wv * al})`; x.stroke();
   }
 }
 const DOTS = [];
@@ -175,14 +181,25 @@ function calcDots(ee0) {
     DOTS.push({ f, x: lerp(CX0, g.cx, ev) + lerp(bx, qx, ev) * kf, y: lerp(CY0, g.cy, ev) + lerp(by, qy, ev) * kf, al });
   });
 }
+const lite = (c, t) => c.map(v => Math.round(v + (255 - v) * t)), dark = (c, t) => c.map(v => Math.round(v * (1 - t)));
+const CRGBA = CK.map(q => rgbOf(COL[q]));
+function bead(px, py, r, rgb, a, h) {
+  const c = rgb.join(','), lt = lite(rgb, .6).join(','), dk = dark(rgb, .32).join(','), mob = W < 760;
+  let g = x.createRadialGradient(px + r * .3, py + r * .75, 0, px + r * .3, py + r * .75, r * 2);              // sombra suave bajo la cuenta
+  g.addColorStop(0, `rgba(59,66,52,${.3 * a})`); g.addColorStop(1, 'rgba(59,66,52,0)'); x.fillStyle = g; x.beginPath(); x.arc(px + r * .3, py + r * .75, r * 2, 0, TAU); x.fill();
+  g = x.createRadialGradient(px, py, r * .7, px, py, r * 2.8);                                                     // resplandor tenue del color de la fuente
+  g.addColorStop(0, `rgba(${c},${.24 * a})`); g.addColorStop(1, `rgba(${c},0)`); x.fillStyle = g; x.beginPath(); x.arc(px, py, r * 2.8, 0, TAU); x.fill();
+  g = x.createRadialGradient(px - r * .35, py - r * .4, r * .08, px, py, r);                                       // cuerpo de vidrio
+  g.addColorStop(0, `rgba(${lt},${a})`); g.addColorStop(.55, `rgba(${c},${a})`); g.addColorStop(1, `rgba(${dk},${a})`); x.fillStyle = g; x.beginPath(); x.arc(px, py, r, 0, TAU); x.fill();
+  g = x.createLinearGradient(px - r, py - r, px + r, py + r);                                                      // borde: luz arriba-izquierda, sombra abajo-derecha
+  g.addColorStop(0, `rgba(255,255,255,${.95 * a})`); g.addColorStop(.5, 'rgba(255,255,255,0)'); g.addColorStop(1, `rgba(${dk},${.55 * a})`);
+  x.strokeStyle = g; x.lineWidth = mob ? .9 : 1.3; x.beginPath(); x.arc(px, py, r - .4, 0, TAU); x.stroke();
+  x.fillStyle = `rgba(255,255,255,${.8 * a})`; x.beginPath(); x.ellipse(px - r * .34, py - r * .42, r * .3, r * .17, -.65, 0, TAU); x.fill(); // brillo especular
+  if (h) { x.strokeStyle = `rgba(${c},${.55 * a})`; x.lineWidth = 1.2; x.beginPath(); x.arc(px, py, r * 1.55, 0, TAU); x.stroke(); }
+}
 function drawDots() {
-  const mob = W < 760;
-  x.globalCompositeOperation = 'source-over';
-  DOTS.forEach(d => { const f = d.f, h = hov === f || pf === f, r = (mob ? 4.2 : 5.5) * (h ? 1.8 : 1), a = d.al * (pf && pf !== f ? .25 : 1);
-    x.fillStyle = hex(COL[f.c], .13 * a); x.beginPath(); x.arc(d.x, d.y, r * 3.4, 0, TAU); x.fill(); x.fillStyle = hex(COL[f.c], .22 * a); x.beginPath(); x.arc(d.x, d.y, r * 1.9, 0, TAU); x.fill(); });
-  x.globalCompositeOperation = 'source-over';
-  DOTS.forEach(d => { const f = d.f, h = hov === f || pf === f, r = (mob ? 4.2 : 5.5) * (h ? 1.8 : 1), a = d.al * (pf && pf !== f ? .25 : 1);
-    x.fillStyle = hex(COL[f.c], a); x.strokeStyle = `rgba(255,255,255,${a})`; x.lineWidth = mob ? (h ? 1.5 : 1) : (h ? 2 : 1.4); x.beginPath(); x.arc(d.x, d.y, r, 0, TAU); x.fill(); x.stroke(); });
+  const mob = W < 760; x.globalCompositeOperation = 'source-over';
+  DOTS.forEach(d => { const f = d.f, h = hov === f || pf === f; bead(d.x, d.y, (mob ? 4.4 : 6) * (h ? 1.6 : 1), CRGBA[CI[f.c]], d.al * (pf && pf !== f ? .25 : 1), h); });
 }
 const ptOn = (s, u, fr) => { // punto de la malla (u: largo, fr: vuelta 0-1) por interpolación bilineal de los vértices proyectados
   const m = MS[s], fi = cl(u, 0, 1) * NZ, fj = (((fr % 1) + 1) % 1) * NA, i = Math.min(NZ - 1, Math.floor(fi)), j = Math.min(NA - 1, Math.floor(fj)), a = fi - i, b = fj - j, o = i * (NA + 1) + j, o2 = o + NA + 1;
@@ -198,7 +215,7 @@ function flows(s, dt, al) {
     const spd = q.pause > 0 ? .01 : lerp(.02, .1, tp) * q.sm * (1 + ag * .9 * Math.sin(T * 2.7 + q.ph));
     q.fr = (q.fr + spd * dt * q.sg + 1) % 1; q.u = cl(q.u + (q.tu - q.u) * dt * (.15 + ag * .6) + Math.sin(T * 1.3 + q.ph) * dt * ag * .08, .01, .99);
     const p = ptOn(s, q.u, q.fr), j = ag * 6;
-    x.fillStyle = `rgba(70,52,28,${(.34 + .3 * Math.sin(T * 2 + q.ph)) * q.a * al})`; x.beginPath(); x.arc(p[0] + Math.cos(T * 2.1 + q.ph) * j, p[1] + Math.sin(T * 1.7 + q.ph * 2) * j, q.sz * (W < 760 ? .6 : .82), 0, TAU); x.fill();
+    x.fillStyle = `rgba(70,78,62,${(.34 + .3 * Math.sin(T * 2 + q.ph)) * q.a * al})`; x.beginPath(); x.arc(p[0] + Math.cos(T * 2.1 + q.ph) * j, p[1] + Math.sin(T * 1.7 + q.ph * 2) * j, q.sz * (W < 760 ? .6 : .82), 0, TAU); x.fill();
   });
   x.lineWidth = W < 760 ? 2 : 3;
   FL[s].v.forEach((q, i) => {
@@ -206,7 +223,7 @@ function flows(s, dt, al) {
     q.t -= dt; if (q.t <= 0) { q.t = 1 + Math.random() * 3; q.tf = Math.random(); if (Math.random() < .25) q.sg = -q.sg; }
     const brake = .35 + .65 * Math.abs(Math.sin(T * (.5 + q.sm * .5) + q.ph)), spd = lerp(.07, .35, tv) * q.sm * brake * (1 + ag * .6 * Math.sin(T * 4 + q.ph)), Lu = Math.min(.3, spd * .3 + .04);
     q.u += spd * dt * q.sg; if (q.u > 1) q.u -= 1; if (q.u < 0) q.u += 1; q.fr += (q.tf - q.fr) * dt * .4;
-    x.strokeStyle = `rgba(47,36,24,${.85 * q.a * al})`; x.beginPath();
+    x.strokeStyle = `rgba(59,66,52,${.85 * q.a * al})`; x.beginPath();
     for (let j = 0; j <= 4; j++) { const p = ptOn(s, cl(q.u - q.sg * Lu * j / 4, 0, 1), q.fr); j ? x.lineTo(p[0], p[1]) : x.moveTo(p[0], p[1]); }
     x.stroke();
   });
@@ -220,11 +237,15 @@ function frame(ms) {
   if (want === null && k < .003) { k = 0; foc = null; } else if (want !== null) foc = want;
   // scroll → marea total (arriba) → sectores → ambiente (contraste y estadísticas)
   const vh = innerHeight, sy0 = window.scrollY, hero = document.body.classList.contains('heroing');
-  amb = hero || want !== null ? 0 : cl((sy0 - 1.0 * vh) / (.6 * vh), 0, 1);
+  const stEl = document.querySelectorAll('.step'), chEl = document.querySelector('.charts2'); let cT = 0, cS = -1;
+  amb = hero || want !== null ? 0 : chEl ? cl((vh * .95 - chEl.getBoundingClientRect().top) / (.5 * vh), 0, 1) : cl((sy0 - 1.0 * vh) / (.6 * vh), 0, 1);
+  if (stEl.length && !hero && want === null) { const f0 = stEl[0].getBoundingClientRect(), l0 = stEl[stEl.length - 1].getBoundingClientRect(); cT = cl((vh * .9 - f0.top) / (vh * .3), 0, 1) * cl((l0.bottom - vh * .45) / (vh * .3), 0, 1);
+    let best = 1e9; stEl.forEach((el, q) => { const r = el.getBoundingClientRect(), d = Math.abs((r.top + r.bottom) / 2 - vh / 2); if (d < best) { best = d; cS = q; } }); }
+  cA += (cT - cA) * (1 - Math.exp(-dt * 5)); for (let s = 0; s < 4; s++) kc[s] += ((cT > .02 && s === cS ? 1 : 0) - kc[s]) * (1 - Math.exp(-dt * 4));
   const tt0 = cl(sy0 / (.9 * vh), 0, 1), eT = want !== null ? 1 : hero ? 0 : tt0 * tt0 * (3 - 2 * tt0);
   eS += (eT - eS) * (1 - Math.exp(-dt * 5)); if (Math.abs(eT - eS) < .002) eS = eT;
   ee = eS * (1 - amb); Aglob = lerp(1, .14, amb);
-  const deep = amb > .25, tide = eS < .5; if (deep !== lastDeep) { lastDeep = deep; document.body.classList.toggle('deep', deep); } if (tide !== lastTide) { lastTide = tide; document.body.classList.toggle('tide', tide); }
+  const deep = amb > .25 || cA > .08, tide = eS < .5; if (deep !== lastDeep) { lastDeep = deep; document.body.classList.toggle('deep', deep); } if (tide !== lastTide) { lastTide = tide; document.body.classList.toggle('tide', tide); }
   const rm = RM ? .2 : 1, ry = Math.sin(T * rm * .17) * .62 + oy, rx = -.28 + Math.sin(T * rm * .11 + 1) * .14 + ox; // se favorecen las vistas de las bases del tubo cY = Math.cos(ry); sY = Math.sin(ry); cX = Math.cos(rx); sX = Math.sin(rx);
   geoms(); x.globalCompositeOperation = 'source-over'; x.fillStyle = '#DCDDD3'; x.fillRect(0, 0, W, H);
   curDt = dt * rm;
@@ -232,15 +253,15 @@ function frame(ms) {
   for (let s = 0; s < 4; s++) { const al = G[s].al * Aglob; if (al > .01) { drawMesh(s, al, evOf(ee, .5)); flows(s, curDt, al); } }
   calcDots(ee); drawDots();
   x.globalCompositeOperation = 'source-over'; x.textAlign = 'center';
-  const lab = cl((eS - .6) / .35, 0, 1) * (1 - amb);
+  const lab = cl((eS - .6) / .35, 0, 1) * (1 - amb) * (1 - cA);
   if (lab > .05) G.forEach((g, s) => {
     if (g.al < .05) return; const c = rgbOf(COL[DOM[s]]), big = g.kk > .5, mob = W < 760, [p, v] = lvl(s), y = g.cy + g.R * 1.12 + (big ? (mob ? 24 : 32) : (mob ? 18 : 22));
-    x.globalAlpha = g.al * lab; x.fillStyle = '#2f2418'; x.font = `700 ${big ? (mob ? 20 : 28) : (mob ? 14 : 20)}px Helvetica,Arial`; x.fillText(SECT[s].toUpperCase(), g.cx, y);
+    x.globalAlpha = g.al * lab; x.fillStyle = '#3b4234'; x.font = `700 ${big ? (mob ? 20 : 28) : (mob ? 14 : 20)}px Helvetica,Arial`; x.fillText(SECT[s].toUpperCase(), g.cx, y);
     x.font = `${big ? (mob ? 13 : 16) : (mob ? 11 : 14)}px Helvetica,Arial`; x.fillStyle = `rgb(${c})`;
     const dbl = dbAvg(s).toFixed(1) + ' dB promedio';
-    if (mob && !big) { x.fillText(SH[DOM[s]] + ' · agrado ' + agrSec(s).toFixed(2), g.cx, y + 15); x.fillStyle = '#5a4a33'; x.fillText(dbl, g.cx, y + 29); x.fillStyle = '#2f2418'; x.fillText('Personas: ' + lvn(p), g.cx, y + 43); x.fillText('Vehículos: ' + lvn(v), g.cx, y + 57); }
-    else if (!big) { x.fillText('Predomina: ' + SH[DOM[s]] + ' · agrado ' + agrSec(s).toFixed(2), g.cx, y + 21); x.fillStyle = '#5a4a33'; x.fillText(dbl, g.cx, y + 40); x.fillStyle = '#2f2418'; x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, y + 59); }
-    else { x.fillText('Predomina: ' + SH[DOM[s]] + ' · agrado ' + agrSec(s).toFixed(2), g.cx, y + (mob ? 18 : 24)); x.fillStyle = '#2f2418'; x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, y + (mob ? 35 : 46)); }
+    if (mob && !big) { x.fillText(SH[DOM[s]] + ' · agrado ' + agrSec(s).toFixed(2), g.cx, y + 15); x.fillStyle = '#5E6655'; x.fillText(dbl, g.cx, y + 29); x.fillStyle = '#3b4234'; x.fillText('Personas: ' + lvn(p), g.cx, y + 43); x.fillText('Vehículos: ' + lvn(v), g.cx, y + 57); }
+    else if (!big) { x.fillText('Predomina: ' + SH[DOM[s]] + ' · agrado ' + agrSec(s).toFixed(2), g.cx, y + 21); x.fillStyle = '#5E6655'; x.fillText(dbl, g.cx, y + 40); x.fillStyle = '#3b4234'; x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, y + 59); }
+    else { x.fillText('Predomina: ' + SH[DOM[s]] + ' · agrado ' + agrSec(s).toFixed(2), g.cx, y + (mob ? 18 : 24)); x.fillStyle = '#3b4234'; x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, y + (mob ? 35 : 46)); }
     x.globalAlpha = 1;
   });
   const ht = want !== null ? '' : (tide ? 'Marea total · toca una ficha' : 'Clic en un sector para expandirlo · teclas 1–4'); if (ht !== lastHt) { lastHt = ht; hint.textContent = ht; }
@@ -308,10 +329,15 @@ document.querySelector('#leg .lgb').innerHTML = `<div class="lcols">
   <div class="lc"><h4>Ficha · una medición</h4><ul><li><b>Punto:</b> color de su fuente</li><li><b>Zona iluminada:</b> ancho = rango dB mín → máx</li><li><b>Relieve bajo el punto:</b> dB promedio</li></ul></div>
   <div class="lc"><h4>Flujos · recorren la malla</h4><ul><li><b>● Puntos lentos:</b> personas</li><li><b>━ Estelas rápidas:</b> vehículos</li><li><b>Más cantidad y velocidad:</b> más flujo</li></ul></div></div>`;
 // «Cómo leer»: pill que se transforma en el contenedor de la leyenda (escritorio: abierta por defecto; móvil: cerrada)
-document.querySelector('#leg .lgb').addEventListener('click', e => {
-  const li = e.target.closest('li[data-c]'); if (!li) return; srcF = srcF === li.dataset.c ? null : li.dataset.c; pkey = '';
-  document.querySelectorAll('#leg li[data-c]').forEach(o => { o.classList.toggle('act', o.dataset.c === srcF); o.classList.toggle('dim', !!srcF && o.dataset.c !== srcF); }); render();
-});
+function setSrc(c) { // filtro por fuente de sonido: leyenda y pill «Fuente» comparten el mismo estado
+  srcF = c || null; pkey = '';
+  document.querySelectorAll('#leg li[data-c]').forEach(o => { o.classList.toggle('act', o.dataset.c === srcF); o.classList.toggle('dim', !!srcF && o.dataset.c !== srcF); });
+  document.querySelectorAll('#cts button').forEach(o => o.classList.toggle('on', (o.dataset.c || null) === srcF));
+  document.querySelector('#cts .lbl').textContent = 'Fuente · ' + (srcF ? SH[srcF] : 'Todas'); document.getElementById('cts').classList.remove('open'); render();
+}
+document.querySelector('#leg .lgb').addEventListener('click', e => { const li = e.target.closest('li[data-c]'); if (li) setSrc(srcF === li.dataset.c ? null : li.dataset.c); });
+document.querySelectorAll('#cts button[data-c]').forEach(b => { b.insertAdjacentHTML('afterbegin', `<i style="background:${COL[b.dataset.c]}"></i>`); });
+document.querySelectorAll('#cts button').forEach(b => b.onclick = () => { setSrc(b.dataset.c); b.blur(); });
 document.querySelector('#leg .lgb').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.target.click(); } });
 const leg = document.getElementById('leg'), lgin = leg.querySelector('.lgin'), lgt = document.getElementById('lgbtn');
 function legMeasure() {
