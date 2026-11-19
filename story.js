@@ -1,4 +1,4 @@
-/* Contraste, comparación y estadísticas por sector (secciones bajo la visualización).
+/* Comparativa por sector (la malla se acompaña), gráficas que se transforman, estadísticas y explicación del código.
    Todo se calcula desde data.js (mediciones únicas: BP-17 a 19 cuentan una vez en dB y flujos). */
 (function () {
   const S = [0, 1, 2, 3].map(s => {
@@ -11,40 +11,124 @@
     'El techo del barrio: micros y bocinas dominan (10 de 11 mediciones) y los flujos son los más altos. 4 de 6 personas lo sienten incómodo.',
     'Un tubo comercial: captadores, música de locales y cortinas. Es tranquilo en la mañana y salta a 72 dB en la hora punta.',
     'Voces y canto en torno a la pileta seca: el sonido más parejo. Con 3 mediciones y 2 encuestas es una lectura preliminar.'];
-  const T_ = (w, h, inner) => `<svg viewBox="0 0 ${w} ${h}" width="100%" role="img">${inner}</svg>`;
-  const tx = (xx, yy, t, cl2 = '', an = 'start') => `<text class="t ${cl2}" x="${xx}" y="${yy}" text-anchor="${an}">${t}</text>`;
-  const card = d => `<div class="blk"><div class="bh"><h3>${SECT[d.s]}</h3><div class="sub">${SUB[d.s]} · ${d.n} mediciones</div></div><article class="card sc">
+  const RM = matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const NS = 'http://www.w3.org/2000/svg';
+  const card = d => `<section class="step" data-s="${d.s}"><div class="blk"><div class="bh"><h3>${SECT[d.s]}</h3><div class="sub">${SUB[d.s]} · ${d.n} mediciones</div></div><article class="card sc">
     <div class="big" style="color:${d.hex}">${d.db.toFixed(1)}<small>dB promedio</small></div>
     <div class="chips"><span style="color:${d.hex}">● ${SH[DOM[d.s]]}</span><span style="color:rgb(${agr(d.ag)})">agrado ${d.ag.toFixed(2)}</span></div>
     <div class="fact">Máximo ${d.mx} dB · flujo peatonal ${d.fp.toFixed(1)} · vehicular ${d.fv.toFixed(1)}</div><p class="fi">${FI[d.s]}</p>
-    <div class="pf"><h5>dB promedio por franja</h5>${['Mañana', 'Tarde', 'Hora punta'].map((n, i) => bar(n, d.fr[i], false)).join('')}</div></article></div>`;
-  const cA = () => { let h = ''; [50, 60, 70, 80, 90].forEach(v => { const xx = 150 + (v - 40) / 55 * 340; h += `<line class="g" x1="${xx}" x2="${xx}" y1="12" y2="200"/>` + tx(xx, 214, v, 'm', 'middle'); });
-    S.forEach((d, i) => { const y = 24 + i * 44, w = (d.db - 40) / 55 * 340, wm = (d.mx - 40) / 55 * 340; h += tx(0, y + 11, SECT[i], 'b') + tx(0, y + 26, `prom ${d.db.toFixed(1)} · máx ${d.mx}`, 'm') + `<rect x="150" y="${y}" width="${w}" height="14" rx="7" fill="${d.hex}" opacity=".9"/><line x1="${150 + wm}" x2="${150 + wm}" y1="${y - 4}" y2="${y + 18}" stroke="#2f2418" stroke-width="2.5"/>`; });
-    return T_(520, 222, h); };
-  const cB = () => { let h = ''; [60, 64, 68, 72].forEach(v => { const xx = 50 + (v - 60) / 14 * 450; h += `<line class="g" x1="${xx}" x2="${xx}" y1="14" y2="206"/>` + tx(xx, 226, v, 'm', 'middle'); });
-    [-1, 0, 1, 2].forEach(v => { const yy = 206 - (v + 1) / 3 * 190; h += `<line class="g" x1="50" x2="500" y1="${yy}" y2="${yy}"/>` + tx(40, yy + 4, v, 'm', 'end'); });
-    const dy = [-14, 24, 24, -14];
-    S.forEach((d, i) => { const xx = 50 + (d.db - 60) / 14 * 450, yy = 206 - (d.ag + 1) / 3 * 190; h += `<circle cx="${xx}" cy="${yy}" r="10" fill="${d.hex}" opacity=".9"/>` + tx(xx, yy + dy[i] + (i === 2 ? 0 : 0), SECT[i].split(' ').pop(), 'b', 'middle'); });
-    return T_(520, 238, h + tx(500, 238, 'dB promedio →', 'm', 'end') + tx(0, 10, 'agrado ↑', 'm')); };
-  const cC = () => { let h = ''; [60, 70, 80].forEach(v => { const yy = 206 - (v - 55) / 25 * 190; h += `<line class="g" x1="40" x2="500" y1="${yy}" y2="${yy}"/>` + tx(32, yy + 4, v, 'm', 'end'); });
-    const xs = [90, 250, 410]; ['Mañana', 'Tarde', 'Hora punta'].forEach((n, i) => { h += tx(xs[i], 226, n, 'm', 'middle'); });
-    S.forEach((d, i) => { const pts = d.fr.map((v, j) => v == null ? null : [xs[j], 206 - (v - 55) / 25 * 190]).filter(Boolean); h += `<polyline points="${pts.map(p => p.join(',')).join(' ')}" fill="none" stroke="${d.hex}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>` + pts.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="5" fill="${d.hex}"/>`).join('') + tx(pts[pts.length - 1][0] + 10, pts[pts.length - 1][1] + 4, SECT[i].split(' ').pop(), 'b'); });
-    return T_(520, 238, h); };
-  const cD = () => { let h = ''; S.forEach((d, i) => { const y = 14 + i * 40; h += tx(0, y + 13, SECT[i], 'b'); let xx = 140; d.cats.forEach((c, k) => { if (!c) return; const w = c * 22; h += `<rect x="${xx}" y="${y}" width="${w - 2}" height="20" rx="4" fill="${COL[CK[k]]}" opacity=".9"/>` + (c > 1 ? tx(xx + w / 2 - 1, y + 14, c, 'k', 'middle') : ''); xx += w; }); h += tx(xx + 4, y + 14, d.cats.reduce((a, b) => a + b, 0), 'm'); });
-    CK.forEach((c, k) => { h += `<circle cx="${8 + k * 98}" cy="190" r="5" fill="${COL[c]}"/>` + tx(18 + k * 98, 194, SH[c], 'm'); }); return T_(520, 204, h); };
-  const cE = () => { let h = ''; S.forEach((d, i) => { const y = 10 + i * 42; h += tx(0, y + 14, SECT[i], 'b') + `<rect x="140" y="${y}" width="${d.fp / 3 * 300}" height="10" rx="5" fill="#8a6d3b"/>` + tx(146 + d.fp / 3 * 300, y + 9, d.fp.toFixed(1), 'm') + `<rect x="140" y="${y + 15}" width="${d.fv / 3 * 300}" height="10" rx="5" fill="#c8483b"/>` + tx(146 + d.fv / 3 * 300, y + 24, d.fv.toFixed(1), 'm'); });
-    return T_(520, 190, h + `<circle cx="8" cy="176" r="5" fill="#8a6d3b"/>` + tx(18, 180, 'Personas (1 a 3)', 'm') + `<circle cx="168" cy="176" r="5" fill="#c8483b"/>` + tx(178, 180, 'Vehículos (1 a 3)', 'm')); };
-  const cF = () => { const colr = ['#c8483b', '#9a8f7d', '#6fb3a4', '#1f8f82'], nm = ['Incomoda', 'Da igual', 'Gusta un poco', 'Gusta']; let h = ''; S.forEach((d, i) => { const y = 14 + i * 40; h += tx(0, y + 13, SECT[i], 'b'); let xx = 140; d.ags.forEach((c, k) => { if (!c) return; const w = c * 48; h += `<rect x="${xx}" y="${y}" width="${w - 2}" height="20" rx="4" fill="${colr[k]}"/>` + tx(xx + w / 2 - 1, y + 14, c, 'k', 'middle'); xx += w; }); h += tx(xx + 4, y + 14, `n=${d.ne}`, 'm'); });
-    nm.forEach((n, k) => { h += `<circle cx="${8 + k * 118}" cy="190" r="5" fill="${colr[k]}"/>` + tx(18 + k * 118, 194, n, 'm'); }); return T_(520, 204, h); };
+    <div class="pf"><h5>dB promedio por franja</h5>${['Mañana', 'Tarde', 'Hora punta'].map((n, i) => bar(n, d.fr[i], false)).join('')}</div></article></div></section>`;
+
+  /* ---- motor de transformación: cada vista es un mapa id → forma; los ids compartidos se interpolan ---- */
+  const INK = '#5E6655', MUT = '#8F9984', GR = '#C4C7B9';
+  const hx = c => { c = c.replace('#', ''); return [0, 2, 4].map(i => parseInt(c.substr(i, 2), 16)); };
+  const mixc = (a, b, t) => { const A = hx(a), B = hx(b); return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, '0')).join(''); };
+  const V = () => { const m = {}; m.add = (id, t, a, o = {}) => { m[id] = Object.assign({ t, a }, o); return m; }; return m; };
+  const rect = (v, id, x, y, w, h, f, o = 1, r = 4) => v.add(id, 'rect', { x, y, w, h, o, r }, { f });
+  const circ = (v, id, x, y, r, f, o = 1) => v.add(id, 'circle', { x, y, r, o }, { f });
+  const line = (v, id, x1, y1, x2, y2, s, o = 1, sw = 1) => v.add(id, 'line', { x1, y1, x2, y2, o, sw }, { f: s });
+  const text = (v, id, x, y, s, k = 'm', an = 'start', o = 1) => v.add(id, 'text', { x, y, o }, { txt: String(s), k, an });
+  const nm = i => SECT[i].split(' ').pop();
+
+  /* Grupo A · intensidad por lugar <-> evolución por franja */
+  const A = {
+    a: () => { const v = V(); [50, 60, 70, 80, 90].forEach(t => { const x = 150 + (t - 40) / 55 * 340; line(v, 'ag' + t, x, 12, x, 200, GR); text(v, 'at' + t, x, 216, t, 'm', 'middle'); });
+      S.forEach((d, i) => { const y = 24 + i * 44, w = (d.db - 40) / 55 * 340, wm = 150 + (d.mx - 40) / 55 * 340;
+        text(v, 'n' + i, 0, y + 11, SECT[i], 'b'); text(v, 's' + i, 0, y + 26, `prom ${d.db.toFixed(1)} · máx ${d.mx}`, 'm');
+        rect(v, 'b' + i, 150, y, w, 14, d.hex, .92, 7); line(v, 'mx' + i, wm, y - 4, wm, y + 18, INK, 1, 2.5);
+        for (let j = 0; j < 3; j++) circ(v, `p${i}${j}`, 150 + w, y + 7, 0, d.hex, 0);
+        for (let j = 0; j < 2; j++) line(v, `q${i}${j}`, 150 + w, y + 7, 150 + w, y + 7, d.hex, 0, 3); }); return v; },
+    b: () => { const v = V(), xs = [90, 250, 410], Y = x => 206 - (x - 55) / 25 * 190;
+      [60, 70, 80].forEach(t => { line(v, 'ag' + (t - 10), 40, Y(t), 500, Y(t), GR); text(v, 'at' + (t - 10), 32, Y(t) + 4, t, 'm', 'end'); });
+      ['Mañana', 'Tarde', 'Hora punta'].forEach((n, j) => text(v, 'x' + j, xs[j], 228, n, 'm', 'middle'));
+      S.forEach((d, i) => { const P = d.fr.map((q, j) => q == null ? null : [xs[j], Y(q)]);
+        text(v, 'n' + i, P[2] ? P[2][0] + 12 : 420, (P[2] || P[1])[1] + 4 + [8, 0, 0, -7][i], nm(i), 'b'); text(v, 's' + i, 0, 0, '', 'm', 'start', 0);
+        rect(v, 'b' + i, 150, 0, 0, 0, d.hex, 0, 7); line(v, 'mx' + i, 150, 0, 150, 0, INK, 0);
+        P.forEach((p, j) => p && circ(v, `p${i}${j}`, p[0], p[1], 5.5, d.hex, 1));
+        for (let j = 0; j < 2; j++) if (P[j] && P[j + 1]) line(v, `q${i}${j}`, P[j][0], P[j][1], P[j + 1][0], P[j + 1][1], d.hex, 1, 3); }); return v; },
+    ta: ['Intensidad', 'dB promedio (barra) y máximo (marca oscura)'], tb: ['La hora punta es el techo', 'dB promedio por franja: mañana, tarde, hora punta'], la: 'Por lugar', lb: 'Por hora', h: 240 };
+
+  /* Grupo B · agrado frente a dB <-> respuestas de agrado */
+  const B = {
+    a: () => { const v = V(), X = q => 50 + (q - 60) / 14 * 450, Y = a => 206 - (a + 1) / 3 * 190, dy = [-14, 24, 24, -14];
+      [60, 64, 68, 72].forEach(t => { line(v, 'gx' + t, X(t), 14, X(t), 206, GR); text(v, 'tx' + t, X(t), 226, t, 'm', 'middle'); });
+      [-1, 0, 1, 2].forEach(t => { line(v, 'gy' + t, 50, Y(t), 500, Y(t), GR); text(v, 'ty' + t, 40, Y(t) + 4, t, 'm', 'end'); });
+      text(v, 'ax', 500, 238, 'dB promedio →', 'm', 'end'); text(v, 'ay', 0, 10, 'agrado ↑', 'm');
+      S.forEach((d, i) => { const x = X(d.db), y = Y(d.ag); circ(v, 'c' + i, x, y, 10, d.hex, .92); text(v, 'n' + i, x, y + dy[i], nm(i), 'b', 'middle');
+        for (let k = 0; k < 4; k++) rect(v, `r${i}${k}`, x, y, 0, 0, '#c8483b', 0); }); return v; },
+    b: () => { const v = V(), col = ['#c8483b', '#a39f8a', '#8fae78', '#5f8a4b'], nmz = ['Incomoda', 'Da igual', 'Gusta un poco', 'Gusta'];
+      S.forEach((d, i) => { const y = 14 + i * 40; text(v, 'n' + i, 0, y + 13, SECT[i], 'b'); let x = 140;
+        d.ags.forEach((c, k) => { rect(v, `r${i}${k}`, x, y, Math.max(c * 48 - 2, 0), 20, col[k], c ? 1 : 0); if (c > 1) text(v, `k${i}${k}`, x + c * 24 - 1, y + 14, c, 'k', 'middle'); x += c * 48; });
+        text(v, 'e' + i, x + 4, y + 14, `n=${d.ne}`, 'm'); circ(v, 'c' + i, 140, y + 10, 0, d.hex, 0); });
+      nmz.forEach((n, k) => { circ(v, 'lg' + k, 8 + k * 118, 190, 5, col[k]); text(v, 'lt' + k, 18 + k * 118, 194, n, 'm'); }); return v; },
+    ta: ['El agrado no sigue a los decibeles', 'Cada lugar según su dB promedio y su agrado'], tb: ['¿Cómo se siente?', 'Respuestas de agrado de las encuestas por lugar'], la: 'Agrado vs dB', lb: 'Respuestas', h: 244 };
+
+  /* Grupo C · qué suena <-> cuánta gente y tráfico */
+  const C = {
+    a: () => { const v = V(); S.forEach((d, i) => { const y = 14 + i * 40; text(v, 'n' + i, 0, y + 13, SECT[i], 'b'); let x = 140;
+        d.cats.forEach((c, k) => { rect(v, `f${i}${k}`, x, y, Math.max(c * 22 - 2, 0), 20, COL[CK[k]], c ? .92 : 0); if (c > 1) text(v, `k${i}${k}`, x + c * 11 - 1, y + 14, c, 'k', 'middle'); x += c * 22; });
+        text(v, 'e' + i, x + 4, y + 14, d.cats.reduce((a, b) => a + b, 0), 'm'); });
+      CK.forEach((c, k) => { circ(v, 'lg' + k, 8 + k * 98, 190, 5, COL[c]); text(v, 'lt' + k, 18 + k * 98, 194, SH[c], 'm'); }); return v; },
+    b: () => { const v = V(); S.forEach((d, i) => { const y = 10 + i * 42; text(v, 'n' + i, 0, y + 14, SECT[i], 'b');
+        rect(v, `f${i}0`, 140, y, d.fp / 3 * 300, 10, '#7a8468', 1, 5); text(v, 'e' + i, 146 + d.fp / 3 * 300, y + 9, d.fp.toFixed(1), 'm');
+        rect(v, `f${i}1`, 140, y + 15, d.fv / 3 * 300, 10, '#c8483b', 1, 5); text(v, 'e' + i + 'b', 146 + d.fv / 3 * 300, y + 24, d.fv.toFixed(1), 'm');
+        for (let k = 2; k < 5; k++) rect(v, `f${i}${k}`, 140, y + 20, 0, 0, COL[CK[k]], 0); });
+      circ(v, 'lg0', 8, 176, 5, '#7a8468'); text(v, 'lt0', 18, 180, 'Personas (1 a 3)', 'm'); circ(v, 'lg1', 168, 176, 5, '#c8483b'); text(v, 'lt1', 178, 180, 'Vehículos (1 a 3)', 'm'); return v; },
+    ta: ['¿Qué suena?', 'Fichas por fuente de sonido y lugar'], tb: ['¿Cuánta gente y tráfico?', 'Nivel de flujo medio de 1 (bajo) a 3 (alto)'], la: 'Fuentes', lb: 'Flujos', h: 204 };
+
+  const mk = (t, at) => { const e = document.createElementNS(NS, t); for (const k in at) e.setAttribute(k, at[k]); return e; };
+  function Morph(root, G) {
+    root.innerHTML = `<div class="bh"><h3></h3><p class="cs"></p></div><div class="tg" role="group"><button data-v="a" class="on">${G.la}</button><button data-v="b">${G.lb}</button></div><div class="card cc"></div>`;
+    const svg = mk('svg', { viewBox: `0 0 520 ${G.h}`, width: '100%', role: 'img' }); root.querySelector('.cc').appendChild(svg);
+    const H3 = root.querySelector('h3'), CS = root.querySelector('.cs'), el = {}, cur = {}; let cv = 'a', raf = 0;
+    const draw = (id, s) => { const e = el[id]; if (!e) return; const a = s.a;
+      if (s.t === 'rect') { e.setAttribute('x', a.x); e.setAttribute('y', a.y); e.setAttribute('width', Math.max(a.w, 0)); e.setAttribute('height', Math.max(a.h, 0)); e.setAttribute('rx', Math.min(a.r, Math.max(a.h, 0) / 2)); e.setAttribute('fill', s.f); }
+      else if (s.t === 'circle') { e.setAttribute('cx', a.x); e.setAttribute('cy', a.y); e.setAttribute('r', Math.max(a.r, 0)); e.setAttribute('fill', s.f); }
+      else if (s.t === 'line') { e.setAttribute('x1', a.x1); e.setAttribute('y1', a.y1); e.setAttribute('x2', a.x2); e.setAttribute('y2', a.y2); e.setAttribute('stroke', s.f); e.setAttribute('stroke-width', a.sw); e.setAttribute('stroke-linecap', 'round'); }
+      else { e.setAttribute('x', a.x); e.setAttribute('y', a.y); e.setAttribute('class', 't ' + s.k); e.setAttribute('text-anchor', s.an); if (e.textContent !== s.txt) e.textContent = s.txt; }
+      e.setAttribute('opacity', Math.max(0, Math.min(1, a.o))); };
+    const ensure = (id, s) => { if (!el[id]) { el[id] = mk(s.t === 'rect' ? 'rect' : s.t === 'circle' ? 'circle' : s.t === 'line' ? 'line' : 'text', {}); svg.appendChild(el[id]); } };
+    const ghost = s => { const g = JSON.parse(JSON.stringify(s)); g.a.o = 0; return g; };
+    function go(to, instant) {
+      const A_ = G[to](), from = {}; for (const id in cur) from[id] = cur[id];
+      const ids = new Set([...Object.keys(from), ...Object.keys(A_)].filter(k => k !== 'add'));
+      const S0 = {}, S1 = {}; ids.forEach(id => { S0[id] = from[id] || ghost(A_[id]); S1[id] = A_[id] || ghost(from[id]); if (!from[id]) S0[id].txt = S1[id].txt; if (!A_[id]) S1[id].txt = S0[id].txt; ensure(id, S1[id]); });
+      H3.textContent = G['t' + to][0]; CS.textContent = G['t' + to][1]; cv = to; cancelAnimationFrame(raf);
+      const T0 = performance.now(), D = instant || RM ? 0 : 750, ez = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      const step = now => { const t = D ? Math.min((now - T0) / D, 1) : 1, k = ez(t);
+        ids.forEach(id => { const a = S0[id], b = S1[id], o = { t: b.t, a: {}, f: b.f, k: b.k, an: b.an, txt: t < .5 ? a.txt : b.txt };
+          for (const q in b.a) o.a[q] = a.a[q] + (b.a[q] - a.a[q]) * k;
+          if (a.f && b.f && b.t !== 'text') o.f = mixc(a.f, b.f, k); cur[id] = o; draw(id, o); });
+        if (t < 1) raf = requestAnimationFrame(step); else ids.forEach(id => { if (!A_[id]) { el[id].remove(); delete el[id]; delete cur[id]; } else cur[id] = A_[id]; }); };
+      raf = requestAnimationFrame(step); }
+    root.querySelectorAll('.tg button').forEach(b => b.addEventListener('click', () => { if (b.dataset.v === cv) return; root.querySelectorAll('.tg button').forEach(x => x.classList.toggle('on', x === b)); go(b.dataset.v); }));
+    go('a', true); }
+
   const peaks = () => uniq(F).filter(f => f.mx < 100).sort((a, b) => b.mx - a.mx).slice(0, 6).map(f => `<li><b style="color:${COL[f.c]}">${f.mx}<small> dB</small></b><span>${f.src}<em>${SECT[f.s]} · ${f.t} h</em></span></li>`).join('');
-  const ch = (t, c, svg) => `<div class="blk"><div class="bh"><h3>${t}</h3><p class="cs">${c}</p></div><div class="card cc">${svg}</div></div>`;
+
   document.getElementById('s3').innerHTML = `<div class="wrap2"><h2 class="sech">Contraste y comparación</h2>
-    <p class="lead3">¿Cómo varían las fuentes y la intensidad del sonido según el lugar y la hora? Cuatro lugares del Barrio Puerto, cuatro respuestas distintas.</p>
-    <div class="cards4">${S.map(card).join('')}</div>
-    <div class="charts">${ch('Intensidad', 'dB promedio (barra) y máximo (marca oscura)', cA())}${ch('El agrado no sigue a los decibeles', 'Cada lugar según su dB promedio y su agrado', cB())}${ch('La hora punta es el techo', 'dB promedio por franja horaria', cC())}</div></div>`;
+    <p class="lead3">¿Cómo varían las fuentes y la intensidad del sonido según el lugar y la hora? Mientras lees cada lugar, la malla se acerca y se transforma para mostrarlo.</p></div>
+    <div class="steps">${S.map(card).join('')}</div>
+    <div class="wrap2 charts2"><h2 class="sech">Las mismas cifras, de otra forma</h2><p class="lead3">Cada gráfica se transforma en otra del mismo tema con el botón.</p><div class="grid2"><div class="mg" id="gA"></div><div class="mg" id="gB"></div></div></div>`;
   document.getElementById('s4').innerHTML = `<div class="wrap2"><h2 class="sech">Estadísticas del Barrio Puerto</h2>
-    <p class="lead3">Qué suena, cuánta gente y tráfico hay, cómo se siente cada lugar y dónde están los picos.</p>
-    <div class="grid2">${ch('¿Qué suena?', 'Fichas por fuente de sonido y lugar', cD())}${ch('¿Cuánta gente y tráfico?', 'Nivel de flujo medio de 1 (bajo) a 3 (alto)', cE())}${ch('¿Cómo se siente?', 'Respuestas de agrado de las encuestas', cF())}
-    <div class="blk"><div class="bh"><h3>Los picos del barrio</h3><p class="cs">Las seis mediciones más altas (dB máximo)</p></div><div class="card cc"><ol class="peaks">${peaks()}</ol></div></div></div>
+    <p class="lead3">Qué suena, cuánta gente y tráfico hay, y dónde están los picos.</p>
+    <div class="grid2"><div class="mg" id="gC"></div><div class="blk"><div class="bh"><h3>Los picos del barrio</h3><p class="cs">Las seis mediciones más altas (dB máximo)</p></div><div class="card cc"><ol class="peaks">${peaks()}</ol></div></div></div>
     <p class="foot2">Fuente: Base de Datos – Variación Sonora Barrio Puerto. Criterios y límites en <a href="about.html">Acerca del estudio</a>; datos en <a href="data.json">data.json</a>.</p></div>`;
+  Morph(document.getElementById('gA'), A); Morph(document.getElementById('gB'), B); Morph(document.getElementById('gC'), C);
+
+  document.getElementById('s5').innerHTML = `<div class="wrap2"><h2 class="sech">Cómo funciona</h2>
+    <p class="lead3">La lógica del código, en palabras simples.</p>
+    <div class="console"><div class="cbar"><i></i><i></i><i></i><span>marea — explicar</span></div><pre><span class="pm">$</span> marea --explicar
+<span class="ok">1 · datos</span>   data.js guarda las 40 fichas y 20 encuestas. Se unen por lugar.
+<span class="ok">2 · malla</span>   cada lugar es un tubo de puntos. Un ruido suave (Perlin) lo ondula;
+           su largo es la hora, su relieve son los decibeles y cada carril es una fuente.
+<span class="ok">3 · fichas</span>  cada medición es una perla sobre la malla, del color de su fuente.
+<span class="ok">4 · flujos</span>  puntos lentos son personas; estelas rápidas, vehículos.
+           Cuanto menos agrado, más agitado el movimiento.
+<span class="ok">5 · scroll</span>  al bajar, el tubo total se parte en cuatro y luego se acerca al lugar
+           que lees. Los filtros solo apagan lo que no coincide.
+<span class="ok">6 · vidrio</span>  glass.js dibuja los contenedores con un shader: refracta lo que
+           hay detrás, como el sonido atravesando una fachada.
+<span class="pm">$</span> <span class="cur"></span></pre></div></div>`;
 })();
+
