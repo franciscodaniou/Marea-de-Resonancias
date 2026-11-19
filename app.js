@@ -6,7 +6,7 @@
    · metabola (silueta líquida) = perfil de dB promedio según la hora
    · halo = agrado percibido en encuestas (coral → ámbar → turquesa) */
 
-const COL = { V: '#ff6b5e', H: '#f4c25b', C: '#e86bd0', M: '#8f9bff', N: '#4fd1c5' };
+const COL = { V: '#c8483b', H: '#c58a14', C: '#a53a8b', M: '#4f5bb0', N: '#1f8f82' }; // paleta sobre fondo salvia
 const CAT = { V: 'Vehicular', H: 'Humana (voces, música)', C: 'Comercial (locales, captadores)', M: 'Mecánica / portuaria', N: 'Natural' };
 const rgbOf = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, n >> 8 & 255, n & 255]; };
 const SH = { V: 'Vehicular', H: 'Humana', C: 'Comercial', M: 'Portuaria', N: 'Natural' };
@@ -21,7 +21,7 @@ let flt = 'all', want = null, foc = null, k = 0, pf = null, hov = null, hs = nul
 const cv = document.getElementById('c'), x = cv.getContext('2d'), tip = document.getElementById('tip'), panel = document.getElementById('panel'), back = document.getElementById('back');
 const lerp = (a, b, t) => a + (b - a) * t, cl = (v, a, b) => Math.max(a, Math.min(b, v));
 const mix = (a, b, t) => a.map((v, i) => Math.round(lerp(v, b[i], t)));
-const agr = a => { const t = cl((a + 1) / 3, 0, 1); return t < .5 ? mix([255, 107, 94], [244, 194, 91], t * 2) : mix([244, 194, 91], [79, 209, 197], (t - .5) * 2); };
+const agr = a => { const t = cl((a + 1) / 3, 0, 1); return t < .5 ? mix([200, 72, 59], [197, 138, 20], t * 2) : mix([197, 138, 20], [31, 143, 130], (t - .5) * 2); };
 const hex = (h, a) => { const n = parseInt(h.slice(1), 16); return `rgba(${n >> 16},${n >> 8 & 255},${n & 255},${a})`; };
 const mean = (a, f) => a.length ? a.reduce((s, v) => s + f(v), 0) / a.length : 0;
 const agrSec = s => mean(E.filter(e => e[0] === s), e => e[1]);
@@ -80,7 +80,7 @@ function geoms() {
 
 // ===== Marea de resonancias: malla orgánica (tubo deformado por ruido Perlin) =====
 // Malla: largo = hora (09:40 → 18:50) · alrededor = fuente de sonido · relieve = dB · color = lugar · puntos = fichas
-const TAU = Math.PI * 2, NZ = 30, NA = 28, NV = (NZ + 1) * (NA + 1), LZ = 3.2, FP = 1000;
+const TAU = Math.PI * 2, NZ = 30, NA = 28, NV = (NZ + 1) * (NA + 1), LZ = 3.2, FP = 560;
 const mulberry = a => () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
 const PERM = (() => { const p = [], r = mulberry(7); for (let i = 0; i < 256; i++) p[i] = i; for (let i = 255; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [p[i], p[j]] = [p[j], p[i]]; } return p.concat(p); })();
 const fade = t => t * t * t * (t * (t * 6 - 15) + 10);
@@ -147,17 +147,17 @@ function lightMesh(s) { // cada ficha ilumina parte de la malla; cada tramo tien
 }
 function drawMesh(s, al, e1) {
   const m = MS[s], c = rgbOf(COL[DOM[s]]).join(','), n1 = NA + 1;
-  x.globalCompositeOperation = 'lighter'; x.lineJoin = 'round'; x.lineCap = 'round'; x.lineWidth = 1;
-  x.strokeStyle = `rgba(${c},${.34 * al})`; x.beginPath();
+  x.globalCompositeOperation = 'source-over'; x.lineJoin = 'round'; x.lineCap = 'round'; x.lineWidth = 1;
+  x.strokeStyle = `rgba(${c},${.42 * al})`; x.beginPath();
   for (let i = 0; i <= NZ; i++) { const o = i * n1; x.moveTo(m.SX[o], m.SY[o]); for (let j = 1; j <= NA; j++) x.lineTo(m.SX[o + j], m.SY[o + j]); }
   x.stroke();
-  if (e1 > .5) { x.strokeStyle = `rgba(${c},${.34 * al * cl((e1 - .5) / .4, 0, 1)})`; x.beginPath(); for (let i = 0; i <= NZ; i++) { const o = i * n1; x.moveTo(m.SX[o + NA], m.SY[o + NA]); x.lineTo(m.SX[o], m.SY[o]); } x.stroke(); }
-  x.strokeStyle = `rgba(${c},${.19 * al})`; x.beginPath();
+  if (e1 > .5) { x.strokeStyle = `rgba(${c},${.42 * al * cl((e1 - .5) / .4, 0, 1)})`; x.beginPath(); for (let i = 0; i <= NZ; i++) { const o = i * n1; x.moveTo(m.SX[o + NA], m.SY[o + NA]); x.lineTo(m.SX[o], m.SY[o]); } x.stroke(); }
+  x.strokeStyle = `rgba(${c},${.26 * al})`; x.beginPath();
   for (let j = 0; j < NA; j++) { x.moveTo(m.SX[j], m.SY[j]); for (let i = 1; i <= NZ; i++) x.lineTo(m.SX[i * n1 + j], m.SY[i * n1 + j]); }
   x.stroke();
   for (let i = 0; i <= NZ; i++) for (let j = 0; j <= NA; j++) { // tramos iluminados
     const id = i * n1 + j, w = m.LW[id]; if (w < .1) continue;
-    x.strokeStyle = `rgba(${CRGB[m.LC[id]]},${Math.min(1, w) * al})`; x.lineWidth = w > 1.05 ? 3 : 1.8; x.beginPath();
+    x.strokeStyle = `rgba(${CRGB[m.LC[id]]},${Math.min(1, w) * al})`; x.lineWidth = W < 760 ? (w > 1.05 ? 2.1 : 1.15) : (w > 1.05 ? 3 : 1.8); x.beginPath();
     if (j < NA) { x.moveTo(m.SX[id], m.SY[id]); x.lineTo(m.SX[id + 1], m.SY[id + 1]); }
     if (i < NZ) { x.moveTo(m.SX[id], m.SY[id]); x.lineTo(m.SX[id + n1], m.SY[id + n1]); }
     x.stroke();
@@ -177,12 +177,12 @@ function calcDots(ee0) {
 }
 function drawDots() {
   const mob = W < 760;
-  x.globalCompositeOperation = 'lighter';
-  DOTS.forEach(d => { const f = d.f, h = hov === f || pf === f, r = (mob ? 6.5 : 5.5) * (h ? 1.8 : 1), a = d.al * (pf && pf !== f ? .25 : 1);
+  x.globalCompositeOperation = 'source-over';
+  DOTS.forEach(d => { const f = d.f, h = hov === f || pf === f, r = (mob ? 4.2 : 5.5) * (h ? 1.8 : 1), a = d.al * (pf && pf !== f ? .25 : 1);
     x.fillStyle = hex(COL[f.c], .13 * a); x.beginPath(); x.arc(d.x, d.y, r * 3.4, 0, TAU); x.fill(); x.fillStyle = hex(COL[f.c], .22 * a); x.beginPath(); x.arc(d.x, d.y, r * 1.9, 0, TAU); x.fill(); });
   x.globalCompositeOperation = 'source-over';
-  DOTS.forEach(d => { const f = d.f, h = hov === f || pf === f, r = (mob ? 6.5 : 5.5) * (h ? 1.8 : 1), a = d.al * (pf && pf !== f ? .25 : 1);
-    x.fillStyle = hex(COL[f.c], a); x.strokeStyle = `rgba(255,255,255,${a})`; x.lineWidth = h ? 2 : 1.4; x.beginPath(); x.arc(d.x, d.y, r, 0, TAU); x.fill(); x.stroke(); });
+  DOTS.forEach(d => { const f = d.f, h = hov === f || pf === f, r = (mob ? 4.2 : 5.5) * (h ? 1.8 : 1), a = d.al * (pf && pf !== f ? .25 : 1);
+    x.fillStyle = hex(COL[f.c], a); x.strokeStyle = `rgba(255,255,255,${a})`; x.lineWidth = mob ? (h ? 1.5 : 1) : (h ? 2 : 1.4); x.beginPath(); x.arc(d.x, d.y, r, 0, TAU); x.fill(); x.stroke(); });
 }
 const ptOn = (s, u, fr) => { // punto de la malla (u: largo, fr: vuelta 0-1) por interpolación bilineal de los vértices proyectados
   const m = MS[s], fi = cl(u, 0, 1) * NZ, fj = (((fr % 1) + 1) % 1) * NA, i = Math.min(NZ - 1, Math.floor(fi)), j = Math.min(NA - 1, Math.floor(fj)), a = fi - i, b = fj - j, o = i * (NA + 1) + j, o2 = o + NA + 1;
@@ -190,7 +190,7 @@ const ptOn = (s, u, fr) => { // punto de la malla (u: largo, fr: vuelta 0-1) por
 };
 function flows(s, dt, al) {
   const [lp, lv] = lvl(s), tp = (lp - 1) / 2, tv = (lv - 1) / 2, nP = Math.round(lerp(10, 130, tp)), nV = Math.round(lerp(2, 30, tv)), ag = cl(1 - (agrSec(s) + 1) / 3, 0, 1);
-  x.globalCompositeOperation = 'lighter'; x.lineCap = 'round'; x.lineJoin = 'round';
+  x.globalCompositeOperation = 'source-over'; x.lineCap = 'round'; x.lineJoin = 'round';
   FL[s].p.forEach((q, i) => {
     q.a += ((i < nP ? 1 : 0) - q.a) * .08; if (q.a < .03) { q.u = Math.random(); q.fr = Math.random(); return; }
     q.t -= dt; if (q.t <= 0) { q.t = .8 + Math.random() * (4 - 2.5 * ag); if (Math.random() < .35) q.sg = -q.sg; q.pause = Math.random() < .3 * (1 - ag * .5) ? 1 + Math.random() * 2.5 : 0; q.tu = Math.random(); }
@@ -198,15 +198,15 @@ function flows(s, dt, al) {
     const spd = q.pause > 0 ? .01 : lerp(.02, .1, tp) * q.sm * (1 + ag * .9 * Math.sin(T * 2.7 + q.ph));
     q.fr = (q.fr + spd * dt * q.sg + 1) % 1; q.u = cl(q.u + (q.tu - q.u) * dt * (.15 + ag * .6) + Math.sin(T * 1.3 + q.ph) * dt * ag * .08, .01, .99);
     const p = ptOn(s, q.u, q.fr), j = ag * 6;
-    x.fillStyle = `rgba(255,244,214,${(.55 + .4 * Math.sin(T * 2 + q.ph)) * q.a * al})`; x.beginPath(); x.arc(p[0] + Math.cos(T * 2.1 + q.ph) * j, p[1] + Math.sin(T * 1.7 + q.ph * 2) * j, q.sz, 0, TAU); x.fill();
+    x.fillStyle = `rgba(70,52,28,${(.34 + .3 * Math.sin(T * 2 + q.ph)) * q.a * al})`; x.beginPath(); x.arc(p[0] + Math.cos(T * 2.1 + q.ph) * j, p[1] + Math.sin(T * 1.7 + q.ph * 2) * j, q.sz * (W < 760 ? .6 : .82), 0, TAU); x.fill();
   });
-  x.lineWidth = 3;
+  x.lineWidth = W < 760 ? 2 : 3;
   FL[s].v.forEach((q, i) => {
     q.a += ((i < nV ? 1 : 0) - q.a) * .08; if (q.a < .03) return;
     q.t -= dt; if (q.t <= 0) { q.t = 1 + Math.random() * 3; q.tf = Math.random(); if (Math.random() < .25) q.sg = -q.sg; }
     const brake = .35 + .65 * Math.abs(Math.sin(T * (.5 + q.sm * .5) + q.ph)), spd = lerp(.07, .35, tv) * q.sm * brake * (1 + ag * .6 * Math.sin(T * 4 + q.ph)), Lu = Math.min(.3, spd * .3 + .04);
     q.u += spd * dt * q.sg; if (q.u > 1) q.u -= 1; if (q.u < 0) q.u += 1; q.fr += (q.tf - q.fr) * dt * .4;
-    x.strokeStyle = `rgba(255,255,255,${.9 * q.a * al})`; x.beginPath();
+    x.strokeStyle = `rgba(47,36,24,${.85 * q.a * al})`; x.beginPath();
     for (let j = 0; j <= 4; j++) { const p = ptOn(s, cl(q.u - q.sg * Lu * j / 4, 0, 1), q.fr); j ? x.lineTo(p[0], p[1]) : x.moveTo(p[0], p[1]); }
     x.stroke();
   });
@@ -225,8 +225,8 @@ function frame(ms) {
   eS += (eT - eS) * (1 - Math.exp(-dt * 5)); if (Math.abs(eT - eS) < .002) eS = eT;
   ee = eS * (1 - amb); Aglob = lerp(1, .14, amb);
   const deep = amb > .25, tide = eS < .5; if (deep !== lastDeep) { lastDeep = deep; document.body.classList.toggle('deep', deep); } if (tide !== lastTide) { lastTide = tide; document.body.classList.toggle('tide', tide); }
-  const rm = RM ? .2 : 1, ry = T * rm * .12 + oy, rx = -.5 + ox; cY = Math.cos(ry); sY = Math.sin(ry); cX = Math.cos(rx); sX = Math.sin(rx);
-  geoms(); x.globalCompositeOperation = 'source-over'; x.fillStyle = '#070a14'; x.fillRect(0, 0, W, H);
+  const rm = RM ? .2 : 1, ry = Math.sin(T * rm * .17) * .62 + oy, rx = -.28 + Math.sin(T * rm * .11 + 1) * .14 + ox; // se favorecen las vistas de las bases del tubo cY = Math.cos(ry); sY = Math.sin(ry); cX = Math.cos(rx); sX = Math.sin(rx);
+  geoms(); x.globalCompositeOperation = 'source-over'; x.fillStyle = '#DCDDD3'; x.fillRect(0, 0, W, H);
   curDt = dt * rm;
   for (let s = 0; s < 4; s++) { updMesh(s, ee); lightMesh(s); }
   for (let s = 0; s < 4; s++) { const al = G[s].al * Aglob; if (al > .01) { drawMesh(s, al, evOf(ee, .5)); flows(s, curDt, al); } }
@@ -235,12 +235,12 @@ function frame(ms) {
   const lab = cl((eS - .6) / .35, 0, 1) * (1 - amb);
   if (lab > .05) G.forEach((g, s) => {
     if (g.al < .05) return; const c = rgbOf(COL[DOM[s]]), big = g.kk > .5, mob = W < 760, [p, v] = lvl(s), y = g.cy + g.R * 1.12 + (big ? (mob ? 24 : 32) : (mob ? 18 : 22));
-    x.globalAlpha = g.al * lab; x.fillStyle = '#fff'; x.font = `700 ${big ? (mob ? 20 : 28) : (mob ? 14 : 20)}px Helvetica,Arial`; x.fillText(SECT[s].toUpperCase(), g.cx, y);
+    x.globalAlpha = g.al * lab; x.fillStyle = '#2f2418'; x.font = `700 ${big ? (mob ? 20 : 28) : (mob ? 14 : 20)}px Helvetica,Arial`; x.fillText(SECT[s].toUpperCase(), g.cx, y);
     x.font = `${big ? (mob ? 13 : 16) : (mob ? 11 : 14)}px Helvetica,Arial`; x.fillStyle = `rgb(${c})`;
     const dbl = dbAvg(s).toFixed(1) + ' dB promedio';
-    if (mob && !big) { x.fillText(SH[DOM[s]] + ' · agrado ' + agrSec(s).toFixed(2), g.cx, y + 15); x.fillStyle = '#cfd8ea'; x.fillText(dbl, g.cx, y + 29); x.fillStyle = '#fff'; x.fillText('Personas: ' + lvn(p), g.cx, y + 43); x.fillText('Vehículos: ' + lvn(v), g.cx, y + 57); }
-    else if (!big) { x.fillText('Predomina: ' + SH[DOM[s]] + ' · agrado ' + agrSec(s).toFixed(2), g.cx, y + 21); x.fillStyle = '#cfd8ea'; x.fillText(dbl, g.cx, y + 40); x.fillStyle = '#fff'; x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, y + 59); }
-    else { x.fillText('Predomina: ' + SH[DOM[s]] + ' · agrado ' + agrSec(s).toFixed(2), g.cx, y + (mob ? 18 : 24)); x.fillStyle = '#fff'; x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, y + (mob ? 35 : 46)); }
+    if (mob && !big) { x.fillText(SH[DOM[s]] + ' · agrado ' + agrSec(s).toFixed(2), g.cx, y + 15); x.fillStyle = '#5a4a33'; x.fillText(dbl, g.cx, y + 29); x.fillStyle = '#2f2418'; x.fillText('Personas: ' + lvn(p), g.cx, y + 43); x.fillText('Vehículos: ' + lvn(v), g.cx, y + 57); }
+    else if (!big) { x.fillText('Predomina: ' + SH[DOM[s]] + ' · agrado ' + agrSec(s).toFixed(2), g.cx, y + 21); x.fillStyle = '#5a4a33'; x.fillText(dbl, g.cx, y + 40); x.fillStyle = '#2f2418'; x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, y + 59); }
+    else { x.fillText('Predomina: ' + SH[DOM[s]] + ' · agrado ' + agrSec(s).toFixed(2), g.cx, y + (mob ? 18 : 24)); x.fillStyle = '#2f2418'; x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, y + (mob ? 35 : 46)); }
     x.globalAlpha = 1;
   });
   const ht = want !== null ? '' : (tide ? 'Marea total · toca una ficha' : 'Clic en un sector para expandirlo · teclas 1–4'); if (ht !== lastHt) { lastHt = ht; hint.textContent = ht; }
