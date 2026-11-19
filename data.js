@@ -62,3 +62,4 @@ const FICHAS = [
 ];
 // ENCUESTAS: [sector (0-3), agrado (−1…2), dB medido durante la encuesta (si se registró)]
 const ENCUESTAS = [[0,1,71.4],[0,1,75],[3,1,54],[3,-1,75.4],[2,0,74.3],[0,1],[0,2],[0,1],[0,1],[1,-1],[1,-1],[1,0],[1,-1],[1,-1],[2,0],[2,2],[2,2],[2,2],[0,2],[1,2]];
+ 
