@@ -71,16 +71,16 @@
 
   /* Grupo C · qué suena <-> cuánta gente y tráfico */
   const C = {
-    a: () => { const v = V(); S.forEach((d, i) => { const y = 14 + i * 40; text(v, 'n' + i, 0, y + 13, SECT[i], 'b'); let x = 140;
+    a: () => { const v = V(); S.forEach((d, i) => { const y = 18 + i * 62; text(v, 'n' + i, 0, y + 13, SECT[i], 'b'); let x = 140;
         d.cats.forEach((c, k) => { rect(v, `f${i}${k}`, x, y, Math.max(c * 22 - 2, 0), 20, COL[CK[k]], c ? .92 : 0); if (c > 1) text(v, `k${i}${k}`, x + c * 11 - 1, y + 14, c, 'k', 'middle'); x += c * 22; });
         text(v, 'e' + i, x + 4, y + 14, d.cats.reduce((a, b) => a + b, 0), 'm'); });
-      CK.forEach((c, k) => { circ(v, 'lg' + k, 8 + k * 98, 190, 5, COL[c]); text(v, 'lt' + k, 18 + k * 98, 194, SH[c], 'm'); }); return v; },
-    b: () => { const v = V(); S.forEach((d, i) => { const y = 10 + i * 42; text(v, 'n' + i, 0, y + 14, SECT[i], 'b');
+      CK.forEach((c, k) => { circ(v, 'lg' + k, 8 + k * 98, 280, 5, COL[c]); text(v, 'lt' + k, 18 + k * 98, 284, SH[c], 'm'); }); return v; },
+    b: () => { const v = V(); S.forEach((d, i) => { const y = 14 + i * 62; text(v, 'n' + i, 0, y + 14, SECT[i], 'b');
         rect(v, `f${i}0`, 140, y, d.fp / 3 * 300, 10, '#7a8468', 1, 5); text(v, 'e' + i, 146 + d.fp / 3 * 300, y + 9, d.fp.toFixed(1), 'm');
         rect(v, `f${i}1`, 140, y + 15, d.fv / 3 * 300, 10, '#D20A2E', 1, 5); text(v, 'e' + i + 'b', 146 + d.fv / 3 * 300, y + 24, d.fv.toFixed(1), 'm');
         for (let k = 2; k < 5; k++) rect(v, `f${i}${k}`, 140, y + 20, 0, 0, COL[CK[k]], 0); });
-      circ(v, 'lg0', 8, 176, 5, '#7a8468'); text(v, 'lt0', 18, 180, 'Personas (1 a 3)', 'm'); circ(v, 'lg1', 168, 176, 5, '#D20A2E'); text(v, 'lt1', 178, 180, 'Vehículos (1 a 3)', 'm'); return v; },
-    ta: ['¿Qué suena?', 'Fichas por fuente de sonido y lugar'], tb: ['¿Cuánta gente y tráfico?', 'Nivel de flujo medio de 1 (bajo) a 3 (alto)'], la: 'Fuentes', lb: 'Flujos', h: 204 };
+      circ(v, 'lg0', 8, 280, 5, '#7a8468'); text(v, 'lt0', 18, 284, 'Personas (1 a 3)', 'm'); circ(v, 'lg1', 168, 280, 5, '#D20A2E'); text(v, 'lt1', 178, 284, 'Vehículos (1 a 3)', 'm'); return v; },
+    ta: ['¿Qué suena?', 'Fichas por fuente de sonido y lugar'], tb: ['¿Cuánta gente y tráfico?', 'Nivel de flujo medio de 1 (bajo) a 3 (alto)'], la: 'Fuentes', lb: 'Flujos', h: 304 };
 
   /* Grupo D · partitura: cada ficha es una nota (línea = fuente, posición = hora, tamaño = dB) */
   const D = (() => {
@@ -124,7 +124,7 @@
     tg.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { if (b.dataset.v === cv) return; tg.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); place(); go(b.dataset.v); }));
     go('a', true); }
 
-  const peaks = () => uniq(F).filter(f => f.mx < 100).sort((a, b) => b.mx - a.mx).slice(0, 6).map(f => `<li><b style="color:${COL[f.c]}">${f.mx}<small> dB</small></b><span>${f.src}<em>${SECT[f.s]} · ${f.t} h</em></span></li>`).join('');
+  const peaks = () => uniq(F).filter(f => f.mx < 100).sort((a, b) => b.mx - a.mx).slice(0, 6).map(f => `<li><b style="color:${COL[f.c]}">${f.mx}<small> dB</small></b><span>${f.src}<em>${SECT[f.s]} · ${f.t} h</em><i class="pb"><u style="width:${cl01((f.mx - 60) / 35) * 100}%;background:${COL[f.c]}"></u></i></span></li>`).join('');
 
   document.getElementById('s3').innerHTML = `<div class="steps"><div class="cmpw"><div class="cmp"><h2>Contraste y comparación</h2><p class="cq"></p>
       <div class="ft">${FN.map(f => `<span>${f[0]}<em> ${f[1]}</em></span>`).join('')}</div>
@@ -138,12 +138,15 @@
       <div class="ptr"><div class="mg" id="gD"></div></div></div>`;
   document.getElementById('s4').innerHTML = `<div class="wrap2"><h2 class="sech">Estadísticas del Barrio Puerto</h2>
     <p class="lead3">Qué suena, cuánta gente y tráfico hay, y dónde están los picos.</p>
-    <div class="grid2"><div class="mg" id="gC"></div><div class="blk"><div class="bh"><h3>Los picos del barrio</h3><p class="cs">Las seis mediciones más altas (dB máximo)</p></div><div class="card cc"><ol class="peaks">${peaks()}</ol></div></div></div>
+    <div class="grid2"><div class="mg" id="gC"></div><div class="blk"><div class="bh"><h3>Los picos del barrio</h3><p class="cs">Las seis mediciones más altas (dB máximo)</p></div><div class="tg st"><span>De mayor a menor</span></div><div class="card cc"><ol class="peaks">${peaks()}</ol></div></div></div>
     <p class="foot2">Fuente: Base de Datos – Variación Sonora Barrio Puerto. Criterios y límites en <a href="about.html">Acerca del estudio</a>; datos en <a href="data.json">data.json</a>.</p></div>`;
   Morph(document.getElementById('gA'), A); Morph(document.getElementById('gB'), B); Morph(document.getElementById('gC'), C); Morph(document.getElementById('gD'), D);
-  { const u = uniq(F), fr = FN.map(([n, , k]) => { const q = F.filter(f => f.m >= FILTERS[k][0] && f.m <= FILTERS[k][1]), c = CK.map(c => q.filter(f => f.c === c).length), t = c.indexOf(Math.max(...c)); return `<li><b>${n}</b> · ${q.length} notas · domina <span style="color:${COL[CK[t]]}">${SH[CK[t]].toLowerCase()}</span> (${c[t]})</li>`; }).join('');
+  { const SN = { V: 'los vehículos', H: 'las voces', C: 'el comercio', M: 'el puerto', N: 'la naturaleza' }, fr = FN.map(([n, , k]) => { const q = F.filter(f => f.m >= FILTERS[k][0] && f.m <= FILTERS[k][1]), c = CK.map(c => q.filter(f => f.c === c).length), t = c.indexOf(Math.max(...c)); return `<li><b>${n}</b> <span>predomina ${SN[CK[t]]}</span></li>`; }).join('');
     const lg = document.createElement('div'); lg.className = 'rd2 lg'; lg.id = 'rd2'; document.querySelector('#gD .tg').before(lg);
-    lg.innerHTML = `<ul class="rl r4"><li><b>Líneas</b> · las cinco fuentes: vehicular, humana, comercial, portuaria y natural.</li><li><b>Posición</b> · la hora de la medición (09:40 a 18:50).</li><li><b>Tamaño</b> · dB promedio de la ficha.</li><li><b>Acorde</b> · BP-17, 18 y 19 son una misma medición con tres fuentes a la vez.</li></ul><ul class="rl r3">${fr}</ul><p class="rn">${F.length} fichas = ${u.length} mediciones únicas. Con tan pocas notas por franja, los patrones son una lectura preliminar.</p>`; }
+    const gl = { dot: '<svg viewBox="0 0 40 28"><circle cx="20" cy="14" r="7" fill="currentColor"/></svg>', time: '<svg viewBox="0 0 40 28"><path d="M4 14h30M28 8l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      rows: '<svg viewBox="0 0 40 28"><path d="M5 6h30M5 14h30M5 22h30" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>', size: '<svg viewBox="0 0 40 28"><circle cx="10" cy="15" r="3.5" fill="currentColor"/><circle cx="27" cy="14" r="8" fill="currentColor"/></svg>' };
+    lg.innerHTML = `<h5>Cómo leer este gráfico</h5><ul class="how"><li>${gl.dot}<p><b>Cada punto</b> es una medición hecha en terreno.</p></li><li>${gl.time}<p><b>De izquierda a derecha</b> pasa el día, de las 09:40 a las 18:50.</p></li><li>${gl.rows}<p><b>Cada fila</b> es un tipo de sonido: vehículos, voces, comercio, puerto o naturaleza.</p></li><li>${gl.size}<p><b>Más grande</b> significa más fuerte, medido en decibeles (dB).</p></li></ul>
+      <div class="see"><h5>Lo que se ve</h5><ul>${fr}</ul><p class="rn">Puntos casi juntos en la misma hora son sonidos que se oyeron a la vez. Son pocas mediciones (${uniq(F).length}), así que los patrones son pistas, no conclusiones.</p></div>`; }
 
   document.getElementById('s5').innerHTML = `<div class="wrap2"><h2 class="sech">Cómo funciona</h2>
     <p class="lead3">La lógica del código, en palabras simples.</p>
