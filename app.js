@@ -309,15 +309,15 @@ function render() {
 }
 
 let dragM = null, dragged = false;
-cv.addEventListener('pointerdown', e => { if (e.pointerType === 'mouse' && e.button === 0) dragM = { x: e.clientX, y: e.clientY, mv: 0 }; });
-addEventListener('pointermove', e => { if (!dragM) return; const dx = e.clientX - dragM.x, dy = e.clientY - dragM.y; dragM.mv += Math.abs(dx) + Math.abs(dy); dragM.x = e.clientX; dragM.y = e.clientY; if (dragM.mv > 6) { oy += dx * .006; ox = cl(ox + dy * .006, -1.1, 1.1); } });
-addEventListener('pointerup', () => { if (dragM && dragM.mv > 6) { dragged = true; setTimeout(() => dragged = false, 60); } dragM = null; });
+cv.addEventListener('pointerdown', e => { if (e.pointerType === 'mouse' && e.button === 0) dragM = { x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, mv: 0 }; });
+addEventListener('pointermove', e => { if (!dragM) return; const dx = e.clientX - dragM.x, dy = e.clientY - dragM.y; dragM.mv = Math.max(dragM.mv, Math.hypot(e.clientX - dragM.sx, e.clientY - dragM.sy)); dragM.x = e.clientX; dragM.y = e.clientY; if (dragM.mv > 10) { oy += dx * .006; ox = cl(ox + dy * .006, -1.1, 1.1); } });
+addEventListener('pointerup', () => { if (dragM && dragM.mv > 10) { dragged = true; setTimeout(() => dragged = false, 60); } dragM = null; });
 function pick(e) {
   const mx = e.clientX, my = e.clientY; hs = null; hov = null;
   if (amb < .2) {
     let best = Math.pow(W < 760 ? 24 : 17, 2);
     DOTS.forEach(d => { const q = (d.x - mx) * (d.x - mx) + (d.y - my) * (d.y - my); if (d.al > .3 && q < best) { best = q; hov = d.f; } });
-    if (eS > .85) G.forEach((g, s) => { if (g.al < .5) return; const inFig = Math.hypot(mx - g.cx, my - g.cy) < g.R * 1.1, inLbl = want === null && Math.abs(mx - g.cx) < Math.max(g.R, W < 760 ? 70 : 110) && my > g.cy + g.R * .95 && my < g.cy + g.R * 1.12 + 92; if ((inFig && (foc === null || k > .5)) || inLbl) hs = s; });
+    if (eS > .85) G.forEach((g, s) => { if (g.al < .5) return; const inFig = Math.hypot(mx - g.cx, my - g.cy) < g.R * 1.25 || (want === null && Math.abs(mx - g.cx) < Math.max(g.R * 1.1, W < 760 ? 60 : 90) && my > g.cy - g.R * 1.1 && my < g.cy + g.R * 1.12), inLbl = want === null && Math.abs(mx - g.cx) < Math.max(g.R, W < 760 ? 70 : 110) && my > g.cy + g.R * .95 && my < g.cy + g.R * 1.12 + 92; if ((inFig && (want === null || k > .5)) || inLbl) hs = s; });
   }
   if (hov) { tip.innerHTML = `<b>${hov.id} · ${hov.t} h</b>${hov.src}<br>${hov.nd ? 'sin dB medido · intensidad ' + FICHAS[F.indexOf(hov)][10] + '/5' : hov.mn + '–' + hov.mx + ' dB · prom ' + hov.pr}<br><span style="color:${COL[hov.c]}">${CAT[hov.c]}</span><br><i>${hov.ph}</i>`; tip.style.display = 'block'; tip.style.left = Math.max(8, Math.min(mx + 16, W - 280)) + 'px'; tip.style.top = (W < 760 ? Math.max(60, my - 130) : my + 16) + 'px'; }
   else tip.style.display = 'none';

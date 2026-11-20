@@ -526,3 +526,6 @@ body:not(.deep) #leg,body:not(.deep) #ctl,body:not(.deep) #cts,body:not(.deep) #
 @media(max-width:1100px){.pk button{padding:4px 5px;font-size:11px}.pk{gap:3px}.pk>b{width:16px}}
 /* v37 · fila inferior alineada: mismas alturas, mismo borde inferior y misma tipografía */
 @media(min-width:901px){#ctl,#cts{bottom:22px}#hint,#down{box-sizing:border-box;height:46px;text-align:center;padding:0 24px;font-size:16px;line-height:44px;white-space:nowrap;bottom:calc(22px + env(safe-area-inset-bottom,0px))}#hint{left:396px;right:auto;transform:none;max-width:calc(100vw - 760px);overflow:hidden;text-overflow:ellipsis}}
+/* v38 · aviso de la marea arriba al centro: ya no choca con Franja/Fuente ni con sus menús */
+@media(min-width:901px){#hint{top:22px;bottom:auto;left:max(340px,calc(50% - 150px));right:auto;transform:none;max-width:calc(100vw - 560px)}}
+body:has(#cts:hover) #down,body:has(#cts:focus-within) #down,body:has(#ctl:hover) #down{opacity:0;pointer-events:none}
