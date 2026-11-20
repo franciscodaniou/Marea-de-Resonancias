@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="theme-color" content="#DCDDD3"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Acerca de Marea de resonancias</title><link rel="stylesheet" href="style.css?v=21"></head>
+<title>Acerca de Marea de resonancias</title><link rel="stylesheet" href="style.css?v=23"></head>
 <body class="about">
 <header><b>Marea de resonancias</b><nav id="nav" class="morph"><span class="lbl" tabindex="0">Inicio</span><a class="mb" href="index.html">Visualización</a><a class="mb on" href="about.html">Acerca del estudio</a></nav></header>
+<canvas id="c" aria-hidden="true"></canvas>
+<div hidden><div id="leg"><div class="lgin"><button id="lgbtn" class="lgt" aria-expanded="false">Cómo leer</button><div class="lgb"></div></div></div><div id="bar"><div id="ctl" class="morph"><span class="lbl" tabindex="0">Franja · Todo el día</span><button class="mb on" data-f="all">Todo el día</button><button class="mb" data-f="am">Mañana</button><button class="mb" data-f="pm">Tarde</button><button class="mb" data-f="pk">Hora punta</button></div><div id="cts" class="morph"><span class="lbl" tabindex="0">Fuente · Todas</span><button class="mb on" data-c="">Todas</button><button class="mb" data-c="V">Vehicular</button><button class="mb" data-c="H">Humana</button><button class="mb" data-c="C">Comercial</button><button class="mb" data-c="M">Portuaria</button><button class="mb" data-c="N">Natural</button></div></div><div id="panel"></div><button id="back"></button><div id="hint"></div><div id="tip"></div><button id="down"></button><section id="hero" class="off"><button id="next"></button><button id="prev"></button><button id="go"></button></section></div>
 <div class="wrap">
 <section class="top"><h1>Marea de resonancias</h1><p class="sub">Atlas sonoro del Barrio Puerto</p><div class="brow"><a class="btn" href="index.html">Ver la visualización →</a><a class="btn" href="https://wiki.ead.pucv.cl/Proyecto_de_Visualizaci%C3%B3n_-_Grupo_2">Proyecto grupal en la wiki ↗</a><a class="btn" href="https://wiki.ead.pucv.cl/Visualizaci%C3%B3n_de_Datos_Interactiva_TDS_2026_-_Francisco_Daniou">Proyecto individual en la wiki ↗</a></div></section>
 <section class="card wide"><h2>Hallazgos</h2>
@@ -111,14 +113,14 @@
 <li><b>Muestras pequeñas:</b> Echaurren tiene 3 fichas y 2 encuestas; la hora punta, 6 mediciones.</li>
 <li><b>Interpretación del equipo:</b> el movimiento errático según el agrado y la deformación según el dB por hora son decisiones expresivas, no estándares de la disciplina.</li>
 </ul></div>
-<p class="how">Datos abiertos: <a href="data.json">data.json</a> y <a href="data.js?v=21">data.js</a> (con la fuente y los criterios de preparación).</p></section>
+<p class="how">Datos abiertos: <a href="data.json">data.json</a> y <a href="data.js?v=23">data.js</a> (con la fuente y los criterios de preparación).</p></section>
 <section class="card wide"><h2>Uso de IA</h2>
 <p class="lead2">La IA (Claude, de Anthropic) se usó como apoyo técnico para ampliar lo que se podía construir. Las decisiones de diseño, la selección de datos y el punto de vista son del autor.</p>
 <div class="g3">
 <div><h3>Decisiones del autor</h3><ul>
 <li>Pregunta orientadora y enfoque del estudio.</li>
 <li>Selección y cruce de los datos (fichas y encuestas por sector).</li>
-<li>Estilo: arte de datos generativo y vidrio líquido, con sus referencias.</li>
+<li>Estilo: arte de datos generativo y glassmorfismo, con sus referencias.</li>
 <li>El lugar como malla orgánica (código de figuración propio, adaptado al modelo), color según la fuente predominante y flujos que recorren la malla.</li>
 <li>Metáfora del vidrio como fenómeno acústico y estructura del inicio.</li>
 <li>Criterios de exclusión de datos y textos del proyecto.</li></ul></div>
@@ -128,11 +130,11 @@
 <li>Propuesta de criterios para mediciones repetidas y valores atípicos.</li></ul></div>
 <div><h3>Implementado por la IA</h3><ul>
 <li>Código de la visualización (canvas) y de la interfaz.</li>
-<li>Shader WebGL del vidrio líquido y su respaldo en CSS.</li>
+<li>Shader WebGL del efecto glassmorfismo y su respaldo en CSS.</li>
 <li>Versión móvil y accesibilidad básica.</li>
 <li>Pruebas en navegador y corrección de errores, con verificación del autor en su teléfono.</li></ul></div>
 </div></section>
 <p class="foot">Proyecto grupal: <a href="https://wiki.ead.pucv.cl/Proyecto_de_Visualizaci%C3%B3n_-_Grupo_2">Proyecto de Visualización – Grupo 2</a> · Proyecto individual: <a href="https://wiki.ead.pucv.cl/Visualizaci%C3%B3n_de_Datos_Interactiva_TDS_2026_-_Francisco_Daniou">Visualización de Datos Interactiva TDS 2026 – Francisco Daniou</a> · Taller de Diseño de Servicios 2026</p>
 </div>
-<script src="glass.js?v=21"></script>
+<script src="data.js?v=23"></script><script src="app.js?v=23"></script><script src="glass.js?v=23"></script>
 </body></html>
