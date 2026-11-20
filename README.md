@@ -18,7 +18,7 @@ Es un sitio estático, sin dependencias ni compilación.
 | `about.html` | Estudio, hallazgos, criterios de datos y uso de IA |
 | `app.js` | Marea orgánica (canvas 2D), escenas por scroll, interacción, panel, leyenda |
 | `story.js` | Secciones de contraste y estadísticas (gráficas SVG desde `data.js`) |
-| `glass.js` | Capa WebGL del vidrio líquido (con respaldo en CSS) |
+| `glass.js` | Capa WebGL del glassmorfismo (con respaldo en CSS) |
 | `style.css` | Estilos y diseño responsivo |
 | `data.js` / `data.json` | Datos de las 40 fichas de terreno y 20 encuestas, con fuente y criterios |
 
@@ -42,4 +42,3 @@ La IA (Claude, de Anthropic) apoyó la implementación técnica (canvas, shader 
 
 ## Autor
 Francisco Daniou · Taller de Diseño de Servicios 2026.
- 
