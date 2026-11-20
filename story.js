@@ -55,8 +55,8 @@
       [-1, 0, 1, 2].forEach(t => { line(v, 'gy' + t, 50, Y(t), 500, Y(t), GR); text(v, 'ty' + t, 40, Y(t) + 4, t, 'm', 'end'); });
       text(v, 'ax', 500, 238, 'dB promedio →', 'm', 'end'); text(v, 'ay', 0, 10, 'agrado ↑', 'm');
       S.forEach((d, i) => { const x = X(d.db), y = Y(d.ag); circ(v, 'c' + i, x, y, 10, d.hex, .92); text(v, 'n' + i, x, y + dy[i], nm(i), 'b', 'middle');
-        for (let k = 0; k < 4; k++) rect(v, `r${i}${k}`, x, y, 0, 0, '#c8483b', 0); }); return v; },
-    b: () => { const v = V(), col = ['#c8483b', '#a39f8a', '#8fae78', '#5f8a4b'], nmz = ['Incomoda', 'Da igual', 'Gusta un poco', 'Gusta'];
+        for (let k = 0; k < 4; k++) rect(v, `r${i}${k}`, x, y, 0, 0, '#D20A2E', 0); }); return v; },
+    b: () => { const v = V(), col = ['#D20A2E', '#a39f8a', '#5E9C8F', '#00675B'], nmz = ['Incomoda', 'Da igual', 'Gusta un poco', 'Gusta'];
       S.forEach((d, i) => { const y = 14 + i * 40; text(v, 'n' + i, 0, y + 13, SECT[i], 'b'); let x = 140;
         d.ags.forEach((c, k) => { rect(v, `r${i}${k}`, x, y, Math.max(c * 48 - 2, 0), 20, col[k], c ? 1 : 0); if (c > 1) text(v, `k${i}${k}`, x + c * 24 - 1, y + 14, c, 'k', 'middle'); x += c * 48; });
         text(v, 'e' + i, x + 4, y + 14, `n=${d.ne}`, 'm'); circ(v, 'c' + i, 140, y + 10, 0, d.hex, 0); });
@@ -71,9 +71,9 @@
       CK.forEach((c, k) => { circ(v, 'lg' + k, 8 + k * 98, 190, 5, COL[c]); text(v, 'lt' + k, 18 + k * 98, 194, SH[c], 'm'); }); return v; },
     b: () => { const v = V(); S.forEach((d, i) => { const y = 10 + i * 42; text(v, 'n' + i, 0, y + 14, SECT[i], 'b');
         rect(v, `f${i}0`, 140, y, d.fp / 3 * 300, 10, '#7a8468', 1, 5); text(v, 'e' + i, 146 + d.fp / 3 * 300, y + 9, d.fp.toFixed(1), 'm');
-        rect(v, `f${i}1`, 140, y + 15, d.fv / 3 * 300, 10, '#c8483b', 1, 5); text(v, 'e' + i + 'b', 146 + d.fv / 3 * 300, y + 24, d.fv.toFixed(1), 'm');
+        rect(v, `f${i}1`, 140, y + 15, d.fv / 3 * 300, 10, '#D20A2E', 1, 5); text(v, 'e' + i + 'b', 146 + d.fv / 3 * 300, y + 24, d.fv.toFixed(1), 'm');
         for (let k = 2; k < 5; k++) rect(v, `f${i}${k}`, 140, y + 20, 0, 0, COL[CK[k]], 0); });
-      circ(v, 'lg0', 8, 176, 5, '#7a8468'); text(v, 'lt0', 18, 180, 'Personas (1 a 3)', 'm'); circ(v, 'lg1', 168, 176, 5, '#c8483b'); text(v, 'lt1', 178, 180, 'Vehículos (1 a 3)', 'm'); return v; },
+      circ(v, 'lg0', 8, 176, 5, '#7a8468'); text(v, 'lt0', 18, 180, 'Personas (1 a 3)', 'm'); circ(v, 'lg1', 168, 176, 5, '#D20A2E'); text(v, 'lt1', 178, 180, 'Vehículos (1 a 3)', 'm'); return v; },
     ta: ['¿Qué suena?', 'Fichas por fuente de sonido y lugar'], tb: ['¿Cuánta gente y tráfico?', 'Nivel de flujo medio de 1 (bajo) a 3 (alto)'], la: 'Fuentes', lb: 'Flujos', h: 204 };
 
   const mk = (t, at) => { const e = document.createElementNS(NS, t); for (const k in at) e.setAttribute(k, at[k]); return e; };
@@ -101,7 +101,9 @@
           if (a.f && b.f && b.t !== 'text') o.f = mixc(a.f, b.f, k); cur[id] = o; draw(id, o); });
         if (t < 1) raf = requestAnimationFrame(step); else ids.forEach(id => { if (!A_[id]) { el[id].remove(); delete el[id]; delete cur[id]; } else cur[id] = A_[id]; }); };
       raf = requestAnimationFrame(step); }
-    root.querySelectorAll('.tg button').forEach(b => b.addEventListener('click', () => { if (b.dataset.v === cv) return; root.querySelectorAll('.tg button').forEach(x => x.classList.toggle('on', x === b)); go(b.dataset.v); }));
+    const tg = root.querySelector('.tg'), th = document.createElement('i'); th.className = 'th'; tg.prepend(th);
+    const place = () => { const b = tg.querySelector('button.on'); th.style.left = b.offsetLeft + 'px'; th.style.width = b.offsetWidth + 'px'; }; place(); addEventListener('resize', place); addEventListener('load', place); if (document.fonts) document.fonts.ready.then(place);
+    tg.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { if (b.dataset.v === cv) return; tg.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); place(); go(b.dataset.v); }));
     go('a', true); }
 
   const peaks = () => uniq(F).filter(f => f.mx < 100).sort((a, b) => b.mx - a.mx).slice(0, 6).map(f => `<li><b style="color:${COL[f.c]}">${f.mx}<small> dB</small></b><span>${f.src}<em>${SECT[f.s]} · ${f.t} h</em></span></li>`).join('');
