@@ -1,28 +1,29 @@
 /* Comparativa por sector (la malla se acompaña), gráficas que se transforman, estadísticas y explicación del código.
    Todo se calcula desde data.js (mediciones únicas: BP-17 a 19 cuentan una vez en dB y flujos). */
 (function () {
-  const S = [0, 1, 2, 3].map(s => {
-    const all = F.filter(f => f.s === s), q = uniq(all), es = E.filter(e => e[0] === s), bk = k => { const r = q.filter(f => f.m >= FILTERS[k][0] && f.m <= FILTERS[k][1]); return r.length ? mean(r, f => f.pr) : null; };
-    return { s, n: q.length, db: mean(q, f => f.pr), mx: Math.max(...q.filter(f => f.mx < 100).map(f => f.mx)), ag: agrSec(s), ne: es.length, fp: mean(q, f => f.fp), fv: mean(q, f => f.fv),
+  const S = NSX.map(s => {
+    const all = F.filter(f => f.s === s), q = uniq(all), qr = real(q), es = E.filter(e => e[0] === s), bk = k => { const r = real(q).filter(f => f.m >= FILTERS[k][0] && f.m <= FILTERS[k][1]); return r.length ? mean(r, f => f.pr) : null; };
+    return { s, n: q.length, nd: !qr.length, db: qr.length ? mean(qr, f => f.pr) : null, mx: qr.length ? Math.max(...qr.filter(f => f.mx < 100).map(f => f.mx)) : null, ag: es.length ? agrSec(s) : null, ne: es.length, fp: mean(q, f => f.fp), fv: mean(q, f => f.fv),
       fr: [bk('am'), bk('pm'), bk('pk')], hex: COL[DOM[s]], cats: CK.map(c => all.filter(f => f.c === c).length), ags: [-1, 0, 1, 2].map(v => es.filter(e => e[1] === v).length), inc: es.filter(e => e[1] < 0).length };
   });
   const FI = [
     'El lugar más diverso: portuaria, humana, vehicular y comercial. Tiene los picos más altos y, aun así, las 7 respuestas lo valoran bien: el mar y las voces pesan más que los decibeles.',
     'El techo del barrio: micros y bocinas dominan (10 de 11 mediciones) y los flujos son los más altos. 4 de 6 personas lo sienten incómodo.',
     'Un tubo comercial: captadores, música de locales y cortinas. Es tranquilo en la mañana y salta a 72 dB en la hora punta.',
-    'Voces y canto en torno a la pileta seca: el sonido más parejo. Con 3 mediciones y 2 encuestas es una lectura preliminar.'];
+    'Voces y canto en torno a la pileta seca: el sonido más parejo. Con 3 mediciones y 2 encuestas es una lectura preliminar.',
+    'Buenos Aires, primer registro: tránsito intenso de la avenida y mucha gente a pie. Con el semáforo en rojo aparece un lapso de silencio. Una sola medición, sin dB ni encuestas: lectura preliminar.'];
   const cl01 = v => Math.max(0, Math.min(1, v));
   const RM = matchMedia('(prefers-reduced-motion:reduce)').matches;
-  const NS = 'http://www.w3.org/2000/svg';
+  const SVGNS = 'http://www.w3.org/2000/svg';
   const AGN = ['Incomoda', 'Da igual', 'Gusta un poco', 'Gusta'];
   const FN = [['Mañana', '09:40–12:36', 'am'], ['Tarde', '12:37–17:29', 'pm'], ['Hora punta', '17:30–18:50', 'pk']];
   S.forEach(d => { const q = uniq(F.filter(f => f.s === d.s)); d.fn = FN.map(([, , k]) => q.filter(f => f.m >= FILTERS[k][0] && f.m <= FILTERS[k][1]).length); });
   const card = d => `<section class="step" data-s="${d.s}"><div class="stk"><div class="blk"><div class="bh"><h3>${SECT[d.s]}</h3><div class="sub">${SUB[d.s]} · ${d.n} mediciones</div></div><article class="card sc">
-    <div class="big" style="color:${d.hex}">${d.db.toFixed(1)}<small>dB promedio</small></div>
-    <div class="chips"><span style="color:${d.hex}">● ${SH[DOM[d.s]]}</span><span style="color:rgb(${agr(d.ag)})">agrado ${d.ag.toFixed(2)}</span></div>
+    <div class="big" style="color:${d.hex}">${d.db == null ? '<span class="nd">sin dB</span>' : d.db.toFixed(1)}<small>${d.db == null ? 'sin medir · relieve por intensidad percibida' : 'dB promedio'}</small></div>
+    <div class="chips"><span style="color:${d.hex}">● ${SH[DOM[d.s]]}</span>${d.ag == null ? '<span>sin encuestas</span>' : `<span style="color:rgb(${agr(d.ag)})">agrado ${d.ag.toFixed(2)}</span>`}</div>
     <div class="fnow"><b class="fn"></b><span class="fh"></span><span class="fv"></span></div>
-    <div class="ag"><div class="agb">${d.ags.map((c, k) => c ? `<span style="flex:${c};background:${AGC[k]}" title="${AGN[k]}: ${c}">${c}</span>` : '').join('')}</div><small>agrado · ${d.ne} respuestas: ${d.ags.map((c, k) => `<b style="color:${AGC[k]}">${c}</b> ${AGN[k].toLowerCase()}`).join(' · ')}</small><q>${QUOTE[d.s]}</q></div>
-    <div class="fact">Máximo ${d.mx} dB · flujo peatonal ${d.fp.toFixed(1)} · vehicular ${d.fv.toFixed(1)}</div><p class="fi">${FI[d.s]}</p>
+    <div class="ag${d.ne ? '' : ' na'}"><div class="agb">${d.ags.map((c, k) => c ? `<span style="flex:${c};background:${AGC[k]}" title="${AGN[k]}: ${c}">${c}</span>` : '').join('')}</div><small>agrado · ${d.ne} respuestas: ${d.ags.map((c, k) => `<b style="color:${AGC[k]}">${c}</b> ${AGN[k].toLowerCase()}`).join(' · ')}</small><q>${QUOTE[d.s]}</q></div>
+    <div class="fact">${d.mx == null ? 'Sin dB medido' : 'Máximo ' + d.mx + ' dB'} · flujo peatonal ${d.fp.toFixed(1)} · vehicular ${d.fv.toFixed(1)}</div><p class="fi">${FI[d.s]}</p>
     <div class="pf"><h5>dB promedio por franja</h5>${['Mañana', 'Tarde', 'Hora punta'].map((n, i) => bar(n, d.fr[i], false)).join('')}</div></article></div></div></section>`;
 
   /* ---- motor de transformación: cada vista es un mapa id → forma; los ids compartidos se interpolan ---- */
@@ -39,16 +40,16 @@
   /* Grupo A · intensidad por lugar <-> evolución por franja */
   const A = {
     a: () => { const v = V(); [50, 60, 70, 80, 90].forEach(t => { const x = 150 + (t - 40) / 55 * 340; line(v, 'ag' + t, x, 12, x, 200, GR); text(v, 'at' + t, x, 216, t, 'm', 'middle'); });
-      S.forEach((d, i) => { const y = 24 + i * 44, w = (d.db - 40) / 55 * 340, wm = 150 + (d.mx - 40) / 55 * 340;
-        text(v, 'n' + i, 0, y + 11, SECT[i], 'b'); text(v, 's' + i, 0, y + 26, `prom ${d.db.toFixed(1)} · máx ${d.mx}`, 'm');
-        rect(v, 'b' + i, 150, y, w, 14, d.hex, .92, 7); line(v, 'mx' + i, wm, y - 4, wm, y + 18, INK, 1, 2.5);
+      S.forEach((d, i) => { const y = 20 + i * 40, nd = d.db == null, w = nd ? 0 : (d.db - 40) / 55 * 340, wm = nd ? 150 : 150 + (d.mx - 40) / 55 * 340;
+        text(v, 'n' + i, 0, y + 11, SECT[i], 'b'); text(v, 's' + i, 0, y + 26, nd ? 'sin dB medido' : `prom ${d.db.toFixed(1)} · máx ${d.mx}`, 'm');
+        rect(v, 'b' + i, 150, y, w, 14, d.hex, nd ? 0 : .92, 7); line(v, 'mx' + i, wm, y - 4, wm, y + 18, INK, nd ? 0 : 1, 2.5);
         for (let j = 0; j < 3; j++) circ(v, `p${i}${j}`, 150 + w, y + 7, 0, d.hex, 0);
         for (let j = 0; j < 2; j++) line(v, `q${i}${j}`, 150 + w, y + 7, 150 + w, y + 7, d.hex, 0, 3); }); return v; },
     b: () => { const v = V(), xs = [90, 250, 410], Y = x => 206 - (x - 55) / 25 * 190;
       [60, 70, 80].forEach(t => { line(v, 'ag' + (t - 10), 40, Y(t), 500, Y(t), GR); text(v, 'at' + (t - 10), 32, Y(t) + 4, t, 'm', 'end'); });
       ['Mañana', 'Tarde', 'Hora punta'].forEach((n, j) => text(v, 'x' + j, xs[j], 228, n, 'm', 'middle'));
-      S.forEach((d, i) => { const P = d.fr.map((q, j) => q == null ? null : [xs[j], Y(q)]);
-        text(v, 'n' + i, P[2] ? P[2][0] + 12 : 420, (P[2] || P[1])[1] + 4 + [8, 0, 0, -7][i], nm(i), 'b'); text(v, 's' + i, 0, 0, '', 'm', 'start', 0);
+      S.forEach((d, i) => { const P = d.fr.map((q, j) => q == null ? null : [xs[j], Y(q)]), L = P[2] || P[1] || P[0];
+        text(v, 'n' + i, L ? L[0] + 12 : 420, L ? L[1] + 4 + [8, 0, 0, -7, 0][i] : 0, nm(i), 'b', 'start', L ? 1 : 0); text(v, 's' + i, 0, 0, '', 'm', 'start', 0);
         rect(v, 'b' + i, 150, 0, 0, 0, d.hex, 0, 7); line(v, 'mx' + i, 150, 0, 150, 0, INK, 0);
         P.forEach((p, j) => p && circ(v, `p${i}${j}`, p[0], p[1], 5.5, d.hex, 1));
         for (let j = 0; j < 2; j++) if (P[j] && P[j + 1]) line(v, `q${i}${j}`, P[j][0], P[j][1], P[j + 1][0], P[j + 1][1], d.hex, 1, 3); }); return v; },
@@ -56,26 +57,26 @@
 
   /* Grupo B · agrado frente a dB <-> respuestas de agrado */
   const B = {
-    a: () => { const v = V(), X = q => 50 + (q - 60) / 14 * 450, Y = a => 206 - (a + 1) / 3 * 190, dy = [-14, 24, 24, -14];
+    a: () => { const v = V(), X = q => 50 + (q - 60) / 14 * 450, Y = a => 206 - (a + 1) / 3 * 190, dy = [-14, 24, 24, -14, 24];
       [60, 64, 68, 72].forEach(t => { line(v, 'gx' + t, X(t), 14, X(t), 206, GR); text(v, 'tx' + t, X(t), 226, t, 'm', 'middle'); });
       [-1, 0, 1, 2].forEach(t => { line(v, 'gy' + t, 50, Y(t), 500, Y(t), GR); text(v, 'ty' + t, 40, Y(t) + 4, t, 'm', 'end'); });
       text(v, 'ax', 500, 238, 'dB promedio →', 'm', 'end'); text(v, 'ay', 0, 10, 'agrado ↑', 'm');
-      S.forEach((d, i) => { const x = X(d.db), y = Y(d.ag); circ(v, 'c' + i, x, y, 10, d.hex, .92); text(v, 'n' + i, x, y + dy[i], nm(i), 'b', 'middle');
+      S.forEach((d, i) => { const nn = d.db == null || d.ag == null, x = nn ? 520 : X(d.db), y = nn ? 120 : Y(d.ag); circ(v, 'c' + i, x, y, nn ? 0 : 10, d.hex, nn ? 0 : .92); text(v, 'n' + i, x, y + dy[i], nm(i), 'b', 'middle', nn ? 0 : 1);
         for (let k = 0; k < 4; k++) rect(v, `r${i}${k}`, x, y, 0, 0, '#D20A2E', 0); }); return v; },
     b: () => { const v = V(), col = ['#D20A2E', '#a39f8a', '#5E9C8F', '#00675B'], nmz = ['Incomoda', 'Da igual', 'Gusta un poco', 'Gusta'];
-      S.forEach((d, i) => { const y = 14 + i * 40; text(v, 'n' + i, 0, y + 13, SECT[i], 'b'); let x = 140;
+      S.forEach((d, i) => { const y = 10 + i * 36; text(v, 'n' + i, 0, y + 13, SECT[i], 'b'); let x = 140;
         d.ags.forEach((c, k) => { rect(v, `r${i}${k}`, x, y, Math.max(c * 48 - 2, 0), 20, col[k], c ? 1 : 0); if (c > 1) text(v, `k${i}${k}`, x + c * 24 - 1, y + 14, c, 'k', 'middle'); x += c * 48; });
-        text(v, 'e' + i, x + 4, y + 14, `n=${d.ne}`, 'm'); circ(v, 'c' + i, 140, y + 10, 0, d.hex, 0); });
+        text(v, 'e' + i, x + 4, y + 14, d.ne ? `n=${d.ne}` : 'sin encuestas', 'm'); circ(v, 'c' + i, 140, y + 10, 0, d.hex, 0); });
       nmz.forEach((n, k) => { circ(v, 'lg' + k, 8 + k * 118, 190, 5, col[k]); text(v, 'lt' + k, 18 + k * 118, 194, n, 'm'); }); return v; },
     ta: ['El agrado no sigue a los decibeles', 'Cada lugar según su dB promedio y su agrado'], tb: ['¿Cómo se siente?', 'Respuestas de agrado de las encuestas por lugar'], la: 'Agrado vs dB', lb: 'Respuestas', h: 244 };
 
   /* Grupo C · qué suena <-> cuánta gente y tráfico */
   const C = {
-    a: () => { const v = V(); S.forEach((d, i) => { const y = 18 + i * 62; text(v, 'n' + i, 0, y + 13, SECT[i], 'b'); let x = 140;
+    a: () => { const v = V(); S.forEach((d, i) => { const y = 14 + i * 54; text(v, 'n' + i, 0, y + 13, SECT[i], 'b'); let x = 140;
         d.cats.forEach((c, k) => { rect(v, `f${i}${k}`, x, y, Math.max(c * 22 - 2, 0), 20, COL[CK[k]], c ? .92 : 0); if (c > 1) text(v, `k${i}${k}`, x + c * 11 - 1, y + 14, c, 'k', 'middle'); x += c * 22; });
         text(v, 'e' + i, x + 4, y + 14, d.cats.reduce((a, b) => a + b, 0), 'm'); });
       CK.forEach((c, k) => { circ(v, 'lg' + k, 8 + k * 98, 280, 5, COL[c]); text(v, 'lt' + k, 18 + k * 98, 284, SH[c], 'm'); }); return v; },
-    b: () => { const v = V(); S.forEach((d, i) => { const y = 14 + i * 62; text(v, 'n' + i, 0, y + 14, SECT[i], 'b');
+    b: () => { const v = V(); S.forEach((d, i) => { const y = 12 + i * 54; text(v, 'n' + i, 0, y + 14, SECT[i], 'b');
         rect(v, `f${i}0`, 140, y, d.fp / 3 * 300, 10, '#7a8468', 1, 5); text(v, 'e' + i, 146 + d.fp / 3 * 300, y + 9, d.fp.toFixed(1), 'm');
         rect(v, `f${i}1`, 140, y + 15, d.fv / 3 * 300, 10, '#D20A2E', 1, 5); text(v, 'e' + i + 'b', 146 + d.fv / 3 * 300, y + 24, d.fv.toFixed(1), 'm');
         for (let k = 2; k < 5; k++) rect(v, `f${i}${k}`, 140, y + 20, 0, 0, COL[CK[k]], 0); });
@@ -87,14 +88,14 @@
     const WD = innerWidth >= 900 ? 1040 : 520, X = m => 98 + (m - 580) / 570 * (WD - 118), rr = (f, k) => (3 + cl01((f.pr - 50) / 35) * 5.5) * k, TK = [[600, '10:00'], [720, '12:00'], [840, '14:00'], [960, '16:00'], [1080, '18:00']];
     const common = (v, y0, y1, ya, hh) => { [756.5, 1049.5].forEach((m, i) => line(v, 'fd' + i, X(m), y0, X(m), y1, GR, 1, 1)); [['Mañana', 668], ['Tarde', 902], ['Hora punta', 1100]].forEach(([n, m], i) => text(v, 'fl' + i, X(m), 14, n, 'm', 'middle'));
       TK.forEach(([m, t]) => text(v, 'tk' + m, X(m), ya, t, 'm', 'middle')); CK.forEach((c, k) => { circ(v, 'lg' + k, 8 + k * 98, hh - 12, 5, COL[c]); text(v, 'lt' + k, 18 + k * 98, hh - 8, SH[c], 'm'); }); };
-    return { w: WD, h: 330, la: 'Todo el barrio', lb: 'Por lugar',
+    return { w: WD, h: 352, la: 'Todo el barrio', lb: 'Por lugar',
       ta: ['La partitura del barrio', 'Línea = fuente · posición = hora · tamaño = dB'], tb: ['Una partitura por lugar', 'Las mismas notas, ahora en el pentagrama de cada lugar'],
-      a: () => { const v = V(), Y = k => 44 + k * 46; CK.forEach((c, k) => { line(v, 'La' + k, 98, Y(k), WD - 20, Y(k), GR, 1, 1); text(v, 'sl' + k, 90, Y(k) + 4, SH[c], 'm', 'end'); }); common(v, 26, 236, 256, 330);
+      a: () => { const v = V(), Y = k => 44 + k * 50; CK.forEach((c, k) => { line(v, 'La' + k, 98, Y(k), WD - 20, Y(k), GR, 1, 1); text(v, 'sl' + k, 90, Y(k) + 4, SH[c], 'm', 'end'); }); common(v, 26, 262, 282, 352);
         F.forEach(f => circ(v, 'n' + f.id, X(f.m), Y(CK.indexOf(f.c)), rr(f, 1), COL[f.c], .88)); return v; },
-      b: () => { const v = V(), T0 = s => 40 + s * 62; S.forEach((d, i) => { text(v, 'sn' + i, 98, T0(i) - 8, SECT[i], 'b'); for (let k = 0; k < 5; k++) line(v, `Lb${i}${k}`, 98, T0(i) + k * 9, WD - 20, T0(i) + k * 9, GR, 1, 1); });
-        common(v, 26, 270, 288, 330); F.forEach(f => circ(v, 'n' + f.id, X(f.m), T0(f.s) + CK.indexOf(f.c) * 9, rr(f, .55), COL[f.c], .9)); return v; } };
+      b: () => { const v = V(), T0 = s => 40 + s * 56; S.forEach((d, i) => { text(v, 'sn' + i, 98, T0(i) - 8, SECT[i], 'b'); for (let k = 0; k < 5; k++) line(v, `Lb${i}${k}`, 98, T0(i) + k * 9, WD - 20, T0(i) + k * 9, GR, 1, 1); });
+        common(v, 26, 292, 310, 352); F.forEach(f => circ(v, 'n' + f.id, X(f.m), T0(f.s) + CK.indexOf(f.c) * 9, rr(f, .55), COL[f.c], .9)); return v; } };
   })();
-  const mk = (t, at) => { const e = document.createElementNS(NS, t); for (const k in at) e.setAttribute(k, at[k]); return e; };
+  const mk = (t, at) => { const e = document.createElementNS(SVGNS, t); for (const k in at) e.setAttribute(k, at[k]); return e; };
   function Morph(root, G) {
     root.innerHTML = `<div class="bh"><h3></h3><p class="cs"></p></div><div class="tg" role="group"><button data-v="a" class="on">${G.la}</button><button data-v="b">${G.lb}</button></div><div class="card cc"></div>`;
     const svg = mk('svg', { viewBox: `0 0 ${G.w || 520} ${G.h}`, width: '100%', role: 'img' }); root.querySelector('.cc').appendChild(svg);
@@ -124,11 +125,11 @@
     tg.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { if (b.dataset.v === cv) return; tg.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); place(); go(b.dataset.v); }));
     go('a', true); }
 
-  const peaks = () => uniq(F).filter(f => f.mx < 100).sort((a, b) => b.mx - a.mx).slice(0, 6).map(f => `<li><b style="color:${COL[f.c]}">${f.mx}<small> dB</small></b><span>${f.src}<em>${SECT[f.s]} · ${f.t} h</em><i class="pb"><u style="width:${cl01((f.mx - 60) / 35) * 100}%;background:${COL[f.c]}"></u></i></span></li>`).join('');
+  const peaks = () => real(uniq(F)).filter(f => f.mx < 100).sort((a, b) => b.mx - a.mx).slice(0, 6).map(f => `<li><b style="color:${COL[f.c]}">${f.mx}<small> dB</small></b><span>${f.src}<em>${SECT[f.s]} · ${f.t} h</em><i class="pb"><u style="width:${cl01((f.mx - 60) / 35) * 100}%;background:${COL[f.c]}"></u></i></span></li>`).join('');
 
   document.getElementById('s3').innerHTML = `<div class="steps"><div class="cmpw"><div class="cmp"><h2>Contraste y comparación</h2><p class="cq"></p>
       <div class="ft">${FN.map(f => `<span>${f[0]}<em> ${f[1]}</em></span>`).join('')}</div>
-      <div class="cp"><span class="dots">${S.map((d, i) => `<span style="background:${d.hex}"${i ? '' : ' class="on"'}></span>`).join('')}</span><span class="cn r">Lugar <i id="cmpn">1</i> de 4 · <i id="cmpt">${SECT[0]}</i></span><span class="cn c">Comparando · <i id="cmpa"></i> ↔ <i id="cmpb"></i></span></div>
+      <div class="cp"><span class="dots">${S.map((d, i) => `<span style="background:${d.hex}"${i ? '' : ' class="on"'}></span>`).join('')}</span><span class="cn r">Lugar <i id="cmpn">1</i> de ${NS} · <i id="cmpt">${SECT[0]}</i></span><span class="cn c">Comparando · <i id="cmpa"></i> ↔ <i id="cmpb"></i></span></div>
       <dl class="cl"></dl></div></div>${S.map(card).join('')}
     <section class="cstage"><div class="stk"><div class="blk"><div class="bh"><h3>Comparar dos lugares</h3><div class="sub">elige A, B y la franja · mismas escalas en mallas y barras</div></div><article class="card sc cmpc">
       ${[0, 1].map(k => `<div class="pk" data-k="${k}"><b style="color:${S[k ? 1 : 0].hex}">${'AB'[k]}</b>${S.map((d, i) => `<button data-i="${i}"><i style="background:${d.hex}"></i>${nm(i)}</button>`).join('')}</div>`).join('')}
@@ -151,13 +152,13 @@
   document.getElementById('s5').innerHTML = `<div class="wrap2"><h2 class="sech">Cómo funciona</h2>
     <p class="lead3">La lógica del código, en palabras simples.</p>
     <div class="console"><div class="cbar"><i></i><i></i><i></i><span>marea — explicar</span></div><pre><span class="pm">$</span> marea --explicar
-<span class="ok">1 · datos</span>   data.js guarda las 40 fichas y 20 encuestas. Se unen por lugar.
+<span class="ok">1 · datos</span>   data.js guarda las fichas de terreno y las encuestas. Se unen por lugar.
 <span class="ok">2 · malla</span>   cada lugar es un tubo de puntos. Un ruido suave (Perlin) lo ondula;
            su largo es la hora, su relieve son los decibeles y cada carril es una fuente.
 <span class="ok">3 · fichas</span>  cada medición es una perla sobre la malla, del color de su fuente.
 <span class="ok">4 · flujos</span>  puntos lentos son personas; estelas rápidas, vehículos.
            Cuanto menos agrado, más agitado el movimiento.
-<span class="ok">5 · scroll</span>  al bajar, el tubo total se parte en cuatro y luego se acerca al lugar
+<span class="ok">5 · scroll</span>  al bajar, el tubo total se parte en cinco y luego se acerca al lugar
            que lees. Los filtros solo apagan lo que no coincide.
 <span class="ok">6 · vidrio</span>  glass.js dibuja los contenedores con un shader: refracta lo que
            hay detrás, como el sonido atravesando una fachada.
@@ -171,8 +172,8 @@
   let cur = -1, curF = -1, saved = null, tk = 0;
   const FNM = { all: 'todo el día', am: 'la mañana', pm: 'la tarde', pk: 'la hora punta' }, pair = [0, 1]; let cf = 'all', mode = '';
   const inR = (f, k) => k === 'all' || (f.m >= FILTERS[k][0] && f.m <= FILTERS[k][1]);
-  const met = (s, k) => { const all = F.filter(f => f.s === s && inR(f, k)), q = uniq(all), c = CK.map(x => all.filter(f => f.c === x).length), mxs = q.filter(f => f.mx < 100).map(f => f.mx);
-    return { n: q.length, db: q.length ? mean(q, f => f.pr) : null, mx: mxs.length ? Math.max(...mxs) : null, fp: q.length ? mean(q, f => f.fp) : null, fv: q.length ? mean(q, f => f.fv) : null, dom: q.length ? (k === 'all' ? DOM[s] : CK[c.indexOf(Math.max(...c))]) : null, ag: S[s].ag, ne: S[s].ne }; };
+  const met = (s, k) => { const all = F.filter(f => f.s === s && inR(f, k)), q = uniq(all), qr = real(q), c = CK.map(x => all.filter(f => f.c === x).length), mxs = qr.filter(f => f.mx < 100).map(f => f.mx);
+    return { n: q.length, db: qr.length ? mean(qr, f => f.pr) : null, mx: mxs.length ? Math.max(...mxs) : null, fp: q.length ? mean(q, f => f.fp) : null, fv: q.length ? mean(q, f => f.fv) : null, dom: q.length ? (k === 'all' ? DOM[s] : CK[c.indexOf(Math.max(...c))]) : null, ag: S[s].ag, ne: S[s].ne }; };
   const ROWS = [['dB prom.', 'db', 45, 90, v => v.toFixed(1)], ['dB máx.', 'mx', 60, 100, v => v.toFixed(0)], ['Peatonal', 'fp', 1, 3, v => v.toFixed(1)], ['Vehicular', 'fv', 1, 3, v => v.toFixed(1)], ['Agrado', 'ag', -1, 2, v => v.toFixed(2)], ['Mediciones', 'n', 0, 14, v => v]];
   const bf = (m, i) => { const A = m[0], B = m[1], w = (v, lo, hi) => v == null ? 0 : cl01((v - lo) / (hi - lo)) * 100;
     return ROWS.map(([l, key, lo, hi, f]) => `<div class="bf"><b>${A[key] == null ? '–' : f(A[key])}</b><span class="ba"><i style="width:${w(A[key], lo, hi)}%;background:${S[pair[0]].hex}"></i></span><em>${l}</em><span class="bb"><i style="width:${w(B[key], lo, hi)}%;background:${S[pair[1]].hex}"></i></span><b>${B[key] == null ? '–' : f(B[key])}</b></div>`).join('')
@@ -181,7 +182,7 @@
   const renderCmp = () => { const [a, b] = pair, A = met(a, cf), B = met(b, cf); if (window.MAREA) MAREA.pair = pair.slice();
     document.getElementById('bfs').innerHTML = bf([A, B]);
     document.getElementById('cmpa').textContent = nm(a); document.getElementById('cmpb').textContent = nm(b);
-    document.getElementById('rd').innerHTML = A.db == null || B.db == null ? 'Sin mediciones en esa franja para uno de los dos lugares.' : (() => { const d = B.db - A.db; return `<b>${SECT[b]}</b> suena ${Math.abs(d).toFixed(1)} dB ${d >= 0 ? 'más fuerte' : 'más bajo'} que <b>${SECT[a]}</b> en ${FNM[cf]}. Predomina ${SH[A.dom].toLowerCase()} frente a ${SH[B.dom].toLowerCase()}. Agrado ${A.ag.toFixed(2)} frente a ${B.ag.toFixed(2)}.${Math.min(A.n, B.n) < 3 ? ` Hay ${A.n} y ${B.n} mediciones: lectura preliminar.` : ''}`; })();
+    document.getElementById('rd').innerHTML = !A.n || !B.n ? 'Sin mediciones en esa franja para uno de los dos lugares.' : A.db == null || B.db == null ? `<b>${SECT[A.db == null ? a : b]}</b> no tiene dB medido, así que la intensidad no se puede comparar en cifras. Predomina ${SH[A.dom].toLowerCase()} frente a ${SH[B.dom].toLowerCase()}. Lectura preliminar: ${A.n} y ${B.n} mediciones.` : (() => { const d = B.db - A.db; return `<b>${SECT[b]}</b> suena ${Math.abs(d).toFixed(1)} dB ${d >= 0 ? 'más fuerte' : 'más bajo'} que <b>${SECT[a]}</b> en ${FNM[cf]}. Predomina ${SH[A.dom].toLowerCase()} frente a ${SH[B.dom].toLowerCase()}. ${A.ag == null || B.ag == null ? '' : `Agrado ${A.ag.toFixed(2)} frente a ${B.ag.toFixed(2)}.`}${Math.min(A.n, B.n) < 3 ? ` Hay ${A.n} y ${B.n} mediciones: lectura preliminar.` : ''}`; })();
     document.querySelectorAll('.pk').forEach(p => p.querySelectorAll('button').forEach(x => x.classList.toggle('on', +x.dataset.i === pair[+p.dataset.k]))); if (mode === 'c') cmpDots.forEach((d, q) => d.classList.toggle('on', pair.includes(q))); };
   const lens = tg => { const th = document.createElement('i'); th.className = 'th'; tg.prepend(th); const place = () => { const b = tg.querySelector('button.on'); if (b) { th.style.left = b.offsetLeft + 'px'; th.style.width = b.offsetWidth + 'px'; } }; place(); addEventListener('resize', place); addEventListener('load', place); if (document.fonts) document.fonts.ready.then(place); return place; };
   const placeF = lens(document.getElementById('cfg'));
@@ -193,12 +194,12 @@
     if (c) renderCmp(); else cmpDots.forEach((d, q) => d.classList.toggle('on', q === cur)); };
   renderCmp(); setMode('r');
 
-  /* scroll → lugar (cuatro tramos) y, dentro de cada lugar, franja horaria (mañana → tarde → hora punta); después, modo comparar */
+  /* scroll → lugar (cinco tramos) y, dentro de cada lugar, franja horaria (mañana → tarde → hora punta); después, modo comparar */
   const stp = [...document.querySelectorAll('.step')], dots = cmpDots, cn = document.getElementById('cmpn'), ct = document.getElementById('cmpt'),
     ft = [...document.querySelectorAll('.cmp .ft span')], stepsEl = document.querySelector('.steps'), stg = document.querySelector('.cstage');
   const paint = f => stp.forEach((el, q) => { const d = S[q], v = d.fr[f], n = d.fn[f], c = el.querySelector('.fnow');
     c.querySelector('.fn').textContent = FN[f][0]; c.querySelector('.fh').textContent = FN[f][1] + ' h';
-    c.querySelector('.fv').innerHTML = n ? `<i>${v.toFixed(0)}</i> dB · ${n} ${n > 1 ? 'mediciones' : 'medición'}` : 'sin mediciones';
+    c.querySelector('.fv').innerHTML = n ? `${v == null ? '<i class="nd">sin dB</i>' : `<i>${v.toFixed(0)}</i> dB`} · ${n} ${n > 1 ? 'mediciones' : 'medición'}` : 'sin mediciones';
     el.querySelectorAll('.pf > div').forEach((r, i) => r.classList.toggle('hi', i === f)); });
   const upd = () => { tk = 0; const vh = innerHeight; let b = 1e9, k = 0;
     stp.forEach((el, q) => { const r = el.getBoundingClientRect(), d = Math.abs((r.top + r.bottom) / 2 - vh / 2); if (d < b) { b = d; k = q; } });
@@ -245,11 +246,11 @@
     if (k === 'ArrowRight' || k === 'ArrowLeft') { const d = k === 'ArrowRight' ? 1 : -1;
       if (mode === 'c') { const o = ['all', 'am', 'pm', 'pk'], j = Math.max(0, Math.min(3, o.indexOf(cf) + d)); document.querySelector(`#cfg button[data-f="${o[j]}"]`).click(); e.preventDefault(); }
       else if (act === 2) { const n = cur * 3 + curF + d; go(n < 0 ? SEC[1][2]() : n > 11 ? SEC[3][2]() : stopY(n)); e.preventDefault(); } return; }
-    if (mode === 'c' && /^[ab]$/i.test(k)) { const i = /a/i.test(k) ? 0 : 1; let n = (pair[i] + 1) % 4; if (n === pair[1 - i]) n = (n + 1) % 4; pair[i] = n; renderCmp(); sync(); e.preventDefault(); } });
+    if (mode === 'c' && /^[ab]$/i.test(k)) { const i = /a/i.test(k) ? 0 : 1; let n = (pair[i] + 1) % NS; if (n === pair[1 - i]) n = (n + 1) % NS; pair[i] = n; renderCmp(); sync(); e.preventDefault(); } });
   // restaurar la vista desde la URL (si trae sec=…) y saltar la portada
   const restore = () => { const h = location.hash.slice(1); if (!h.includes('sec=')) { ready = true; mark(); return; } const q = new URLSearchParams(h), M = window.MAREA; if (document.body.classList.contains('heroing')) document.getElementById('go').click();
     if (q.get('f')) M.setFlt(q.get('f')); if (q.get('c')) M.setSrc(q.get('c'));
-    if (q.get('A') && q.get('B')) { pair[0] = Math.max(0, Math.min(3, +q.get('A') - 1)); pair[1] = Math.max(0, Math.min(3, +q.get('B') - 1)); if (pair[0] === pair[1]) pair[1] = (pair[0] + 1) % 4; }
+    if (q.get('A') && q.get('B')) { pair[0] = Math.max(0, Math.min(NS - 1, +q.get('A') - 1)); pair[1] = Math.max(0, Math.min(NS - 1, +q.get('B') - 1)); if (pair[0] === pair[1]) pair[1] = (pair[0] + 1) % NS; }
     if (q.get('cf') && ['am', 'pm', 'pk'].includes(q.get('cf'))) { cf = q.get('cf'); document.querySelectorAll('#cfg button').forEach(x => x.classList.toggle('on', x.dataset.f === cf)); placeF(); } renderCmp();
     const i = Math.max(0, SEC.findIndex(s => s[0] === q.get('sec')));
     setTimeout(() => { scrollTo(0, SEC[i][2]()); if (q.get('s')) setTimeout(() => { if (scrollY < vhh()) scrollTo(0, SEC[1][2]()); setTimeout(() => M.focus(+q.get('s') - 1), 900); }, 400); setTimeout(() => { ready = true; mark(); }, q.get('s') ? 2200 : 900); }, 700); };

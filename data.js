@@ -8,16 +8,21 @@
    · Las fichas BP-17, BP-18 y BP-19 son UNA misma medición (15:30, Muelle Prat; 10,0 / 69,5 / 121,4 dB) con tres fuentes
      simultáneas: cuentan en las tres categorías de fuente, pero sus decibeles y flujos se cuentan una sola vez.
    · Agrado de encuestas: «me gusta» = 2 · «me gusta un poco» = 1 · «me da igual» = 0 · «me incomoda un poco» = −1.
-   · Flujos: bajo/medio/alto → 1/2/3. */
-const SECT = ['Muelle Prat', 'Plaza Sotomayor', 'Calle Serrano', 'Plaza Echaurren'];
-const SUB = ['borde abierto al mar', 'explanada de bordes duros', 'corredor encerrado', 'claro rodeado de muros'];
+   · Flujos: bajo/medio/alto → 1/2/3.
+   · Plaza de Mayo (Buenos Aires): 1 medición (BA-PI-01, 12:50) con 3 fuentes simultáneas. Sin dB válido (dbMin = 5; dbProm y dbMax vacíos):
+     no entra en promedios ni máximos; su relieve usa la intensidad percibida (1–5). Sin encuestas de agrado todavía. */
+const SECT = ['Muelle Prat', 'Plaza Sotomayor', 'Calle Serrano', 'Plaza Echaurren', 'Plaza de Mayo'];
+const NS = SECT.length;
+const SUB = ['borde abierto al mar', 'explanada de bordes duros', 'corredor encerrado', 'claro rodeado de muros', 'plaza abierta junto a avenida'];
 const QUOTE = [
   'Aunque estén varias cosas pasando... resulta muy agradable estar aquí tranquilo y ver el mar.',
   'Son muchos sonidos pasando a la vez.',
   'En Serrano hay más tranquilidad comparado con el tránsito y bocinazos de Sotomayor.',
-  'Bajó el sonido ambiental, más viento.'
+  'Bajó el sonido ambiental, más viento.',
+  'Hay cambios repentinos según el tránsito: con el semáforo en rojo los autos se detienen y se escucha un lapso de silencio.'
 ];
-// FICHAS: [hora, sector (0-3), dB mín, dB prom, dB máx, flujo peatonal 1-3, flujo vehicular 1-3, tipo de fuente, fuente, fenómeno observado]
+// FICHAS: [hora, sector (0-4), dB mín, dB prom, dB máx, flujo peatonal 1-3, flujo vehicular 1-3, tipo de fuente, fuente, fenómeno observado, intensidad percibida 1-5 (solo si no hay dB), código]
+// null en dB = sin medir (ficha BA-PI-01 de Plaza de Mayo, Buenos Aires)
 const FICHAS = [
   ['14:40', 0, 53, 64, 79, 2, 1, 'M', 'Ruido portuario / camiones', 'Competencia entre fondo difuso portuario y picos mecánicos'],
   ['10:08', 0, 50, 54, 70, 1, 2, 'M', 'Camiones portuarios', 'Ampliación sonora al salir de barreras TPV'],
@@ -58,7 +63,11 @@ const FICHAS = [
   ['13:50', 2, 54, 62, 70, 2, 1, 'C', 'Captadores de restaurantes', 'Captadores compiten entre sí ofreciendo menús'],
   ['09:40', 0, 54, 62, 70, 1, 1, 'M', 'Camiones y persona cantando', 'Alternan con la actividad de borde costero'],
   ['10:00', 1, 60, 69, 82, 1, 1, 'V', 'Frenos, micros y bocinazos', 'Dominan la esquina con Cochrane'],
-  ['10:18', 2, 54, 62, 68, 1, 1, 'C', 'Música de locales', 'Música y paso peatonal a la altura de pasaje Goñi']
+  ['10:18', 2, 54, 62, 68, 1, 1, 'C', 'Música de locales', 'Música y paso peatonal a la altura de pasaje Goñi'],
+  // Buenos Aires · BA-PI-01 · 19/11/2026 12:50–13:00 · una medición con tres fuentes simultáneas, sin dB (el medidor no quedó registrado)
+  ['12:50', 4, null, null, null, 3, 3, 'V', 'Bocinazo', 'Un auto tocó la bocina y dos personas se dieron vuelta a mirar', 2, 'BA-PI-01'],
+  ['12:50', 4, null, null, null, 3, 3, 'V', 'Autos pasando', 'Con el semáforo en rojo los autos se detienen y se oye un lapso de silencio', 4, 'BA-PI-01'],
+  ['12:50', 4, null, null, null, 3, 3, 'H', 'Personas hablando', 'Flujo peatonal alto; sin reacciones visibles ante el tránsito de la calle de atrás', 2, 'BA-PI-01']
 ];
-// ENCUESTAS: [sector (0-3), agrado (−1…2), dB medido durante la encuesta (si se registró)]
+// ENCUESTAS: [sector (0-3; Plaza de Mayo aún sin encuestas), agrado (−1…2), dB medido durante la encuesta (si se registró)]
 const ENCUESTAS = [[0,1,71.4],[0,1,75],[3,1,54],[3,-1,75.4],[2,0,74.3],[0,1],[0,2],[0,1],[0,1],[1,-1],[1,-1],[1,0],[1,-1],[1,-1],[2,0],[2,2],[2,2],[2,2],[0,2],[1,2]];

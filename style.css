@@ -518,3 +518,9 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:2px solid 
 /* v34 · salida inmediata de la UI del modelo al entrar en contraste/comparación */
 body.deep #leg,body.deep #ctl,body.deep #cts,body.deep #hint,body.deep #back,body.deep #panel,body.deep #tip,body.deep #down{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .12s linear,visibility 0s linear .12s}
 body:not(.deep) #leg,body:not(.deep) #ctl,body:not(.deep) #cts,body:not(.deep) #hint,body:not(.deep) #panel{transition:opacity .35s ease .1s,visibility 0s}
+/* v35 · Plaza de Mayo: sin dB medido */
+.nd{font-style:normal;color:var(--mut)}.big .nd{font-size:.62em;letter-spacing:-.01em}.pf small.nd{display:block;margin-top:8px;line-height:1.4}
+@media(min-width:901px){#hint{left:420px;right:auto;transform:none;bottom:30px;max-width:calc(100vw - 760px)}}
+.pk{gap:5px}.pk button{padding:5px 8px;font-size:12px;gap:4px}.pk button i{width:8px;height:8px}
+.step .ag.na .agb,.step .ag.na small{display:none}
+@media(max-width:1100px){.pk button{padding:4px 5px;font-size:11px}.pk{gap:3px}.pk>b{width:16px}}

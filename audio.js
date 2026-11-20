@@ -1,5 +1,5 @@
 /* Sonido por fuentes (prototipo opt-in, silenciado por defecto). Síntesis con Web Audio, sin archivos.
-   Qué suena depende de la escena: sector en foco, los dos lugares de «Comparar» (A a la izquierda, B a la derecha), o los cuatro lugares en estéreo.
+   Qué suena depende de la escena: sector en foco, los dos lugares de «Comparar» (A a la izquierda, B a la derecha), o los cinco lugares en estéreo.
    Mapa: fuente → timbre · dB promedio → volumen · flujo vehicular → frecuencia de pasadas · flujo peatonal → murmullo · agrado bajo → timbre más áspero.
    Para quitarlo: borrar audio.js, su <script> en index.html, el botón .snd en story.js y la llamada SND en app.js. */
 window.SND = (() => {
@@ -15,7 +15,7 @@ window.SND = (() => {
     // ruido marrón-blanco con bucle sin costura (el empalme de los extremos producía un golpe cada 3 s)
     const sr = ctx.sampleRate, len = sr * 3, X = Math.floor(sr * .4), tmp = new Float32Array(len + X); let b = 0; for (let i = 0; i < tmp.length; i++) { const w = Math.random() * 2 - 1; b = (b + .02 * w) / 1.02; tmp[i] = w * .5 + b * 6; }
     nbuf = ctx.createBuffer(1, len, sr); const d = nbuf.getChannelData(0); for (let i = 0; i < len; i++) d[i] = tmp[i]; for (let i = 0; i < X; i++) { const t = i / X; d[i] = d[i] * Math.sin(t * Math.PI / 2) + tmp[len + i] * Math.cos(t * Math.PI / 2); }
-    for (let i = 0; i < 4; i++) slots.push(slot());
+    for (let i = 0; i < NS; i++) slots.push(slot());
   }
   const osc = (type, f) => { const o = ctx.createOscillator(); o.type = type; o.frequency.value = f; o.start(); return o; };
   function slot() {
