@@ -20,7 +20,7 @@ button:hover,button.on{background:rgba(255,255,255,.12);border-color:var(--fg)}
 #leg i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
 #leg div{margin:3px 0}
 #leg hr{border:0;border-top:1px solid var(--line);margin:10px 0}
-#grad{height:6px;border-radius:3px;background:linear-gradient(90deg,#ff6b5e,#c58a14,#5f8a4b);margin:6px 0 2px}
+#grad{height:6px;border-radius:3px;background:linear-gradient(90deg,#D20A2E,#E2AC2C,#00675B);margin:6px 0 2px}
 #grad+div{display:flex;justify-content:space-between}
 #panel{position:fixed;right:22px;bottom:22px;width:min(330px,calc(100% - 44px));z-index:4;padding:18px;border:1px solid var(--line);border-radius:18px;background:rgba(14,18,32,.62);backdrop-filter:blur(16px)}
 #panel h2{font-weight:400;font-size:20px;margin-bottom:2px}
@@ -282,7 +282,7 @@ body.deep header{padding-bottom:34px;background:linear-gradient(var(--bg) 52%,tr
 body.gl .card.cc,body.gl .card.sc{background:rgba(255,255,255,.2)}
 
 /* v15: tema claro salvia (#DCDDD3) con tintas café ocre */
-:root{--bg:#DCDDD3;--fg:#3b4234;--mut:#7f8873;--line:rgba(94,102,85,.2);--V:#c8483b;--H:#c58a14;--M:#4f5bb0;--N:#5E6655}
+:root{--bg:#DCDDD3;--fg:#3b4234;--mut:#7f8873;--line:rgba(94,102,85,.2);--V:#D20A2E;--H:#E2AC2C;--M:#1A5E89;--N:#00675B}
 html,body{background:var(--bg);color:var(--fg)}
 a{color:var(--N)}
 .pf .tr,.fl .tr{background:rgba(94,102,85,.14)}.pf i,.fl i{background:#5E6655}.pf .hi i{background:var(--N)}.fl .v i{background:var(--V)}
@@ -317,7 +317,7 @@ body.heroing #bar,body.deep #bar{opacity:0;pointer-events:none}
 .mg{min-width:0}
 .tg{display:inline-flex;gap:4px;margin:0 0 10px;padding:4px;border-radius:999px;background:rgba(255,255,255,.35);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(94,102,85,.2)}
 .tg button{font:inherit;font-size:13px;padding:6px 14px;border-radius:999px;border:0;background:transparent;color:#5E6655;cursor:pointer;transition:background .3s,color .3s}
-.tg button.on{background:#5E6655;color:#DCDDD3}
+.tg button.on{color:#3b4234;font-weight:600}
 .console{background:#15181a;color:#c9d1c3;border-radius:14px;overflow:hidden;box-shadow:0 18px 50px rgba(21,24,26,.28);max-width:880px}
 .cbar{display:flex;align-items:center;gap:7px;padding:10px 14px;background:#1f2427;font:12px ui-monospace,Menlo,Consolas,monospace;color:#8F9984}
 .cbar i{width:10px;height:10px;border-radius:50%;background:#5E6655}.cbar span{margin-left:8px}
@@ -327,4 +327,11 @@ body.heroing #bar,body.deep #bar{opacity:0;pointer-events:none}
 @keyframes bl{50%{opacity:0}}
 #bar:has(.morph.open)~#down{opacity:0}
 @media(max-width:760px){.step{align-items:flex-end;justify-content:center;padding:0 12px 28px}.step .blk{width:100%}.console pre{font-size:11.5px}}
+
+/* v17 · selector liquid glass (barra de pestañas): lente deslizante sobre pastilla esmerilada */
+.tg{position:relative;padding:5px;background:rgba(255,255,255,.28);-webkit-backdrop-filter:blur(14px) saturate(1.3);backdrop-filter:blur(14px) saturate(1.3);border:1px solid rgba(255,255,255,.55);box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 6px 18px rgba(59,66,52,.12)}
+.tg button{position:relative;z-index:2;background:transparent;-webkit-tap-highlight-color:transparent}
+.tg .th{position:absolute;z-index:1;top:5px;bottom:5px;left:5px;width:60px;border-radius:999px;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.7),rgba(255,255,255,.28));border:1px solid rgba(255,255,255,.85);box-shadow:0 4px 14px rgba(59,66,52,.22),inset 0 -2px 6px rgba(94,102,85,.18),inset 0 2px 3px rgba(255,255,255,.9);-webkit-backdrop-filter:blur(3px) saturate(1.5);backdrop-filter:blur(3px) saturate(1.5);transition:left .5s cubic-bezier(.3,1.35,.5,1),width .5s cubic-bezier(.3,1.35,.5,1)}
+body.gl .tg .th{background:none;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none;border-color:transparent}
+@media(prefers-reduced-motion:reduce){.tg .th{transition:none}}
 
