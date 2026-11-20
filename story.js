@@ -84,20 +84,20 @@
 
   /* Grupo D · partitura: cada ficha es una nota (línea = fuente, posición = hora, tamaño = dB) */
   const D = (() => {
-    const X = m => 98 + (m - 580) / 570 * 402, rr = (f, k) => (3 + cl01((f.pr - 50) / 35) * 5.5) * k, TK = [[600, '10:00'], [720, '12:00'], [840, '14:00'], [960, '16:00'], [1080, '18:00']];
+    const WD = innerWidth >= 900 ? 1040 : 520, X = m => 98 + (m - 580) / 570 * (WD - 118), rr = (f, k) => (3 + cl01((f.pr - 50) / 35) * 5.5) * k, TK = [[600, '10:00'], [720, '12:00'], [840, '14:00'], [960, '16:00'], [1080, '18:00']];
     const common = (v, y0, y1, ya, hh) => { [756.5, 1049.5].forEach((m, i) => line(v, 'fd' + i, X(m), y0, X(m), y1, GR, 1, 1)); [['Mañana', 668], ['Tarde', 902], ['Hora punta', 1100]].forEach(([n, m], i) => text(v, 'fl' + i, X(m), 14, n, 'm', 'middle'));
       TK.forEach(([m, t]) => text(v, 'tk' + m, X(m), ya, t, 'm', 'middle')); CK.forEach((c, k) => { circ(v, 'lg' + k, 8 + k * 98, hh - 12, 5, COL[c]); text(v, 'lt' + k, 18 + k * 98, hh - 8, SH[c], 'm'); }); };
-    return { h: 330, la: 'Todo el barrio', lb: 'Por lugar',
+    return { w: WD, h: 330, la: 'Todo el barrio', lb: 'Por lugar',
       ta: ['La partitura del barrio', 'Línea = fuente · posición = hora · tamaño = dB'], tb: ['Una partitura por lugar', 'Las mismas notas, ahora en el pentagrama de cada lugar'],
-      a: () => { const v = V(), Y = k => 44 + k * 46; CK.forEach((c, k) => { line(v, 'La' + k, 98, Y(k), 500, Y(k), GR, 1, 1); text(v, 'sl' + k, 90, Y(k) + 4, SH[c], 'm', 'end'); }); common(v, 26, 236, 256, 330);
+      a: () => { const v = V(), Y = k => 44 + k * 46; CK.forEach((c, k) => { line(v, 'La' + k, 98, Y(k), WD - 20, Y(k), GR, 1, 1); text(v, 'sl' + k, 90, Y(k) + 4, SH[c], 'm', 'end'); }); common(v, 26, 236, 256, 330);
         F.forEach(f => circ(v, 'n' + f.id, X(f.m), Y(CK.indexOf(f.c)), rr(f, 1), COL[f.c], .88)); return v; },
-      b: () => { const v = V(), T0 = s => 40 + s * 62; S.forEach((d, i) => { text(v, 'sn' + i, 98, T0(i) - 8, SECT[i], 'b'); for (let k = 0; k < 5; k++) line(v, `Lb${i}${k}`, 98, T0(i) + k * 9, 500, T0(i) + k * 9, GR, 1, 1); });
+      b: () => { const v = V(), T0 = s => 40 + s * 62; S.forEach((d, i) => { text(v, 'sn' + i, 98, T0(i) - 8, SECT[i], 'b'); for (let k = 0; k < 5; k++) line(v, `Lb${i}${k}`, 98, T0(i) + k * 9, WD - 20, T0(i) + k * 9, GR, 1, 1); });
         common(v, 26, 270, 288, 330); F.forEach(f => circ(v, 'n' + f.id, X(f.m), T0(f.s) + CK.indexOf(f.c) * 9, rr(f, .55), COL[f.c], .9)); return v; } };
   })();
   const mk = (t, at) => { const e = document.createElementNS(NS, t); for (const k in at) e.setAttribute(k, at[k]); return e; };
   function Morph(root, G) {
     root.innerHTML = `<div class="bh"><h3></h3><p class="cs"></p></div><div class="tg" role="group"><button data-v="a" class="on">${G.la}</button><button data-v="b">${G.lb}</button></div><div class="card cc"></div>`;
-    const svg = mk('svg', { viewBox: `0 0 520 ${G.h}`, width: '100%', role: 'img' }); root.querySelector('.cc').appendChild(svg);
+    const svg = mk('svg', { viewBox: `0 0 ${G.w || 520} ${G.h}`, width: '100%', role: 'img' }); root.querySelector('.cc').appendChild(svg);
     const H3 = root.querySelector('h3'), CS = root.querySelector('.cs'), el = {}, cur = {}; let cv = 'a', raf = 0;
     const draw = (id, s) => { const e = el[id]; if (!e) return; const a = s.a;
       if (s.t === 'rect') { e.setAttribute('x', a.x); e.setAttribute('y', a.y); e.setAttribute('width', Math.max(a.w, 0)); e.setAttribute('height', Math.max(a.h, 0)); e.setAttribute('rx', Math.min(a.r, Math.max(a.h, 0) / 2)); e.setAttribute('fill', s.f); }
@@ -135,14 +135,15 @@
       <div class="tg fg" id="cfg">${[['all', 'Día'], ['am', 'Mañana'], ['pm', 'Tarde'], ['pk', 'Hora punta']].map(([k, n], i) => `<button data-f="${k}"${i ? '' : ' class="on"'}>${n}</button>`).join('')}</div>
       <div class="bfs" id="bfs"></div><p class="rd" id="rd"></p></article></div></div></section></div>
     <div class="wrap2 charts2"><h2 class="sech">Las mismas cifras, de otra forma</h2><p class="lead3">Cada gráfica se transforma en otra del mismo tema con el botón.</p><div class="grid2"><div class="mg" id="gA"></div><div class="mg" id="gB"></div></div>
-      <div class="grid2 ptr"><div class="mg" id="gD"></div><div class="blk"><div class="bh"><h3>Cómo leer la partitura</h3><p class="cs">Qué suena y cuándo, sin perder cada medición</p></div><div class="card cc rd2" id="rd2"></div></div></div></div>`;
+      <div class="ptr"><div class="mg" id="gD"></div></div></div>`;
   document.getElementById('s4').innerHTML = `<div class="wrap2"><h2 class="sech">Estadísticas del Barrio Puerto</h2>
     <p class="lead3">Qué suena, cuánta gente y tráfico hay, y dónde están los picos.</p>
     <div class="grid2"><div class="mg" id="gC"></div><div class="blk"><div class="bh"><h3>Los picos del barrio</h3><p class="cs">Las seis mediciones más altas (dB máximo)</p></div><div class="card cc"><ol class="peaks">${peaks()}</ol></div></div></div>
     <p class="foot2">Fuente: Base de Datos – Variación Sonora Barrio Puerto. Criterios y límites en <a href="about.html">Acerca del estudio</a>; datos en <a href="data.json">data.json</a>.</p></div>`;
   Morph(document.getElementById('gA'), A); Morph(document.getElementById('gB'), B); Morph(document.getElementById('gC'), C); Morph(document.getElementById('gD'), D);
   { const u = uniq(F), fr = FN.map(([n, , k]) => { const q = F.filter(f => f.m >= FILTERS[k][0] && f.m <= FILTERS[k][1]), c = CK.map(c => q.filter(f => f.c === c).length), t = c.indexOf(Math.max(...c)); return `<li><b>${n}</b> · ${q.length} notas · domina <span style="color:${COL[CK[t]]}">${SH[CK[t]].toLowerCase()}</span> (${c[t]})</li>`; }).join('');
-    document.getElementById('rd2').innerHTML = `<ul class="rl"><li><b>Líneas</b> · las cinco fuentes: vehicular, humana, comercial, portuaria y natural.</li><li><b>Posición</b> · la hora de la medición (09:40 a 18:50).</li><li><b>Tamaño</b> · dB promedio de la ficha.</li><li><b>Acorde</b> · BP-17, 18 y 19 son una misma medición con tres fuentes a la vez.</li></ul><h5>Por franja</h5><ul class="rl">${fr}</ul><p class="rn">${F.length} fichas = ${u.length} mediciones únicas. Con tan pocas notas por franja, los patrones son una lectura preliminar.</p>`; }
+    const lg = document.createElement('div'); lg.className = 'rd2 lg'; lg.id = 'rd2'; document.querySelector('#gD .tg').before(lg);
+    lg.innerHTML = `<ul class="rl r4"><li><b>Líneas</b> · las cinco fuentes: vehicular, humana, comercial, portuaria y natural.</li><li><b>Posición</b> · la hora de la medición (09:40 a 18:50).</li><li><b>Tamaño</b> · dB promedio de la ficha.</li><li><b>Acorde</b> · BP-17, 18 y 19 son una misma medición con tres fuentes a la vez.</li></ul><ul class="rl r3">${fr}</ul><p class="rn">${F.length} fichas = ${u.length} mediciones únicas. Con tan pocas notas por franja, los patrones son una lectura preliminar.</p>`; }
 
   document.getElementById('s5').innerHTML = `<div class="wrap2"><h2 class="sech">Cómo funciona</h2>
     <p class="lead3">La lógica del código, en palabras simples.</p>
