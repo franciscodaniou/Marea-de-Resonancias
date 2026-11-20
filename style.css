@@ -579,4 +579,40 @@ body:has(#cts:hover) #hint,body:has(#cts:focus-within) #hint,body:has(#ctl:hover
 .finds .fday{display:block}
 .charts2,#s4,#s5{position:relative;isolation:isolate}.charts2::before,#s4::before,#s5::before{content:'';position:absolute;top:0;bottom:0;left:-100vw;right:-100vw;background:var(--bg);z-index:-1}
 #hero ul.hl{margin:0 0 30px}
-
+/* v47 · tarjeta del sector expandido = tarjeta de comparación + registro de mediciones */
+#panel .sc.pn{padding:0;font-size:inherit;color:var(--fg)}#panel .sc.pn .bh{margin:0}
+#panel .sc.pn .big{font-size:58px}#panel .sc.pn .big small{font-size:15px}
+#panel .sc.pn .fact{margin:4px 0 8px}#panel .sc.pn .fact span{font-variant-numeric:tabular-nums}
+#panel .sc.pn .dbe{display:block;margin:2px 0 8px;font-size:12px;color:var(--mut)}
+#panel .sc.pn .hint{display:block;margin-top:10px;color:var(--N)}
+#panel .sc.pn .pf h5{margin:14px 0 4px}
+#panel .sc.pn .fl{margin:8px 0}
+#panel .det{border:1px solid rgba(255,255,255,.6);border-left:4px solid;border-radius:14px;background:rgba(255,255,255,.35);padding:8px 12px}
+#panel .list{margin-top:6px}
+#panel .it{grid-template-columns:12px 1fr 74px auto;column-gap:10px;border-radius:14px}
+#panel .it .rg{grid-column:3;grid-row:span 2;position:relative;height:6px;border-radius:3px;background:rgba(94,102,85,.16);margin:0;width:auto;align-self:center}
+#panel .it .rg i{position:absolute;top:0;height:100%;border-radius:3px;margin:0;opacity:.8}
+#panel .it .rg u{position:absolute;top:-3px;width:2px;height:12px;border-radius:1px;background:#3b4234;text-decoration:none}
+#panel .it .rg.nd{background:repeating-linear-gradient(90deg,rgba(94,102,85,.2) 0 4px,transparent 4px 8px)}
+#panel .it b{grid-column:4;font-variant-numeric:tabular-nums}
+@media(max-width:1100px){#panel .sc.pn .big{font-size:44px}}
+#panel .dbs{display:flex;align-items:center;gap:12px;margin:-2px 0 10px}#panel .dbs .dtr{flex:none;width:96px}#panel .dbs small{font-size:13px;color:var(--mut)}
+/* v48 · pills y títulos con más peso; subtítulo del panel fuera del vidrio */
+#ctl .lbl,#cts .lbl,#back{font-weight:700}#ctl .mb,#cts .mb{font-weight:600}
+#panel h2{font-weight:700}
+#psub{position:fixed;right:22px;bottom:calc(22px + 84px);width:min(400px,calc(100% - 44px));z-index:4;display:none;font-size:14px;line-height:1.4;color:var(--mut);text-align:left;padding:0 6px;transition:opacity .35s}
+body.deep #psub,body.heroing #psub{opacity:0;visibility:hidden;pointer-events:none}
+#panel .sc.pn .fact .ex{font-style:normal;color:var(--mut);font-size:.92em}
+#psub{color:#5E6655;text-shadow:0 0 10px var(--bg),0 0 4px var(--bg)}#panel:not(.big) h2{font-size:24px;white-space:nowrap;margin:0}
+/* v49 · peso solo en las palabras Franja/Fuente; Inicio, sus acciones y el botón del hero en negrita */
+#ctl .lbl,#cts .lbl{font-weight:400}#ctl .mb,#cts .mb{font-weight:400}#ctl .lbl b,#cts .lbl b{font-weight:700}
+#nav .lbl,#nav .mb,#hero button{font-weight:700}
+/* v50 · respuesta corta, conclusión arriba en la comparación */
+#ans{position:fixed;top:78px;left:50%;transform:translateX(-50%);z-index:3;max-width:min(720px,calc(100% - 340px));padding:9px 20px;border-radius:99px;background:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.65);box-shadow:0 4px 18px rgba(94,102,85,.12);font-size:15px;line-height:1.35;color:#3b4234;text-align:center;transition:opacity .35s}
+#ans a{font-weight:700;color:#3b4234;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+body.deep #ans,body.heroing #ans,body.lock #ans,body.about #ans{opacity:0;visibility:hidden;pointer-events:none}
+@media(max-width:1100px){#ans{top:62px;left:14px;right:150px;transform:none;max-width:none;font-size:12px;padding:6px 12px;border-radius:16px;text-align:left}}
+.cmpc .rd{margin:0 0 14px;font-size:15.5px;line-height:1.45;color:var(--fg)}
+@media(max-width:1100px){.cmpc .rd{font-size:12px;margin:0 0 8px}}
+/* v51 · botón inferior de acción en negrita */
+#down,#down.btn{font-weight:700}

@@ -30,4 +30,3 @@
     reset: root => manual(root, el => { el._on = false; rest(el); }) };
   addEventListener('DOMContentLoaded', () => scan());
 })();
-
