@@ -524,3 +524,5 @@ body:not(.deep) #leg,body:not(.deep) #ctl,body:not(.deep) #cts,body:not(.deep) #
 .pk{gap:5px}.pk button{padding:5px 8px;font-size:12px;gap:4px}.pk button i{width:8px;height:8px}
 .step .ag.na .agb,.step .ag.na small{display:none}
 @media(max-width:1100px){.pk button{padding:4px 5px;font-size:11px}.pk{gap:3px}.pk>b{width:16px}}
+/* v37 · fila inferior alineada: mismas alturas, mismo borde inferior y misma tipografía */
+@media(min-width:901px){#ctl,#cts{bottom:22px}#hint,#down{box-sizing:border-box;height:46px;text-align:center;padding:0 24px;font-size:16px;line-height:44px;white-space:nowrap;bottom:calc(22px + env(safe-area-inset-bottom,0px))}#hint{left:396px;right:auto;transform:none;max-width:calc(100vw - 760px);overflow:hidden;text-overflow:ellipsis}}
