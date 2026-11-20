@@ -14,7 +14,7 @@
   else { src = document.createElement('canvas'); bgDraw = makeBg(src); document.body.insertBefore(gc, document.body.firstChild); }
   // fondo para páginas sin visualización: polígonos string-art lentos que el vidrio refracta
   function makeBg(cv) {
-    const c = cv.getContext('2d'), COLS = ['#4f5bb0', '#c8483b', '#c58a14', '#a53a8b'];
+    const c = cv.getContext('2d'), COLS = ['#1A5E89', '#D20A2E', '#E2AC2C', '#6150A2'];
     return t => {
       const W = innerWidth, H = innerHeight; if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
       c.fillStyle = '#DCDDD3'; c.fillRect(0, 0, W, H); c.lineWidth = 1;
@@ -135,7 +135,7 @@ void main(){
   const U = n => gl.getUniformLocation(pr, n), uTex = U('uTex'), uRes = U('uRes'), uDens = U('uDens'), uT = U('uT'), uR = U('uR'), uRr = U('uRr'), uE = U('uE'), uM = U('uM'), uHero = U('uHero');
   gl.uniform1i(uTex, 0);
 
-  const SEL = ['#leg', '.morph .lbl', '.morph .mb', '#panel', '#back', '#hint', '#tip', '#hero button', '.card', '.btn'];
+  const SEL = ['#leg', '.morph .lbl', '.morph .mb', '#panel', '#back', '#hint', '#tip', '#hero button', '.card', '.btn', '.tg .th'];
   const eo = el => { let o = 1; while (el && el !== document.body) { o *= parseFloat(getComputedStyle(el).opacity); el = el.parentElement; } return o; };
   let mx = -99, my = -99, lt = performance.now() / 1000;
   document.addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY; }, { passive: true });
@@ -148,7 +148,7 @@ void main(){
       const R = new Float32Array(64), Rr = new Float32Array(16), E = new Float32Array(16); let n = 0;
       SEL.forEach(s => document.querySelectorAll(s).forEach(el => {
         if (n >= 16) return; const b = el.getBoundingClientRect(); if (b.width < 4 || b.height < 4 || b.bottom < -40 || b.top > innerHeight + 40) return;
-        const cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || eo(el) < .05) return;
+        const cs = getComputedStyle(el); if ((document.body.classList.contains('heroing') || document.body.classList.contains('deep')) && el.closest('#bar')) return; if (el.matches('.mb') && b.width < 28) return; if (cs.display === 'none' || cs.visibility === 'hidden' || eo(el) < .05) return;
         const inside = mx >= b.left && mx <= b.right && my >= b.top && my <= b.bottom; let s = el._e || 0, v = el._v || 0; v += ((inside ? 1 : 0) - s) * 170 * dt; v *= Math.exp(-13 * dt); s += v * dt; el._e = s; el._v = v; // resorte: crece con un leve rebote
         const sp = Math.max(0, s), g = (b.width > 420 || b.height > 220 ? 3 : 6) * sp + (el.classList.contains('on') ? 2 : 0), w = b.width + 2 * g, h = b.height + 2 * g;
         R.set([b.left - g, b.top - g, w, h], n * 4); Rr[n] = Math.min(parseFloat(cs.borderTopLeftRadius) || 20, h / 2, w / 2) + g * .5; E[n] = Math.min(1, sp); n++;
@@ -164,4 +164,3 @@ void main(){
   }
   requestAnimationFrame(frame);
 })();
- 
