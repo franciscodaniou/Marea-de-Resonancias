@@ -545,3 +545,9 @@ body:has(#cts:hover) #hint,body:has(#cts:focus-within) #hint,body:has(#ctl:hover
 .fv i[data-n],.big [data-n]{font-variant-numeric:tabular-nums}
 .bf b,.peaks b,.sc .fact span,.chips i{font-variant-numeric:tabular-nums}
 @media(prefers-reduced-motion:reduce){[data-w],[data-reveal]{transition:none!important}}
+/* v43 · más holgura de lectura por scroll, alto visible real en móvil y «pop» del dB grande */
+.step{height:340vh!important}
+.step .stk,.cstage .stk{height:100vh;height:100svh}
+@media(max-width:1100px){.step .stk,.cstage .stk{padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))}}
+@keyframes vpop{0%{opacity:0;transform:translateY(22px) scale(.82);filter:blur(10px);letter-spacing:.06em}55%{opacity:1;filter:blur(0)}100%{opacity:1;transform:none;filter:none;letter-spacing:inherit}}
+.big [data-big]{display:inline-block;transform-origin:0 70%}.big [data-big].vp{animation:vpop 1.1s cubic-bezier(.2,.9,.25,1) both}

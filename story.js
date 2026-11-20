@@ -20,7 +20,7 @@
   const FN = [['Mañana', '09:40–12:36', 'am'], ['Tarde', '12:37–17:29', 'pm'], ['Hora punta', '17:30–18:50', 'pk']];
   S.forEach(d => { const q = uniq(F.filter(f => f.s === d.s)); d.fn = FN.map(([, , k]) => q.filter(f => f.m >= FILTERS[k][0] && f.m <= FILTERS[k][1]).length); });
   const card = d => `<section class="step" data-s="${d.s}"><div class="stk"><div class="blk"><div class="bh"><h3>${SECT[d.s]}</h3><div class="sub">${SUB[d.s]} · ${d.n} mediciones</div></div><article class="card sc">
-    <div class="big" style="color:${d.hex}">${d.db == null ? '<span class="nd">sin dB</span>' : `<span data-n="${d.db.toFixed(1)}" data-dec="1">${d.db.toFixed(1)}</span>`}<small>${d.db == null ? 'sin medir · relieve por intensidad percibida' : 'dB promedio'}</small></div>
+    <div class="big" style="color:${d.hex}">${d.db == null ? '<span class="nd">sin dB</span>' : `<span data-big data-n="${d.db.toFixed(1)}" data-dec="1">${d.db.toFixed(1)}</span>`}<small>${d.db == null ? 'sin medir · relieve por intensidad percibida' : 'dB promedio'}</small></div>
     <div class="chips"><span style="color:${d.hex}">● ${SH[DOM[d.s]]}</span>${d.ag == null ? '<span>sin encuestas</span>' : `<span style="color:rgb(${agr(d.ag)})">agrado <i style="font-style:normal" data-n="${d.ag.toFixed(2)}" data-dec="2">${d.ag.toFixed(2)}</i></span>`}</div>
     <div class="fnow"><b class="fn"></b><span class="fh"></span><span class="fv"></span></div>
     <div class="ag${d.ne ? '' : ' na'}"><div class="agb" data-reveal>${d.ags.map((c, k) => c ? `<span style="flex:${c};background:${AGC[k]}" title="${AGN[k]}: ${c}">${c}</span>` : '').join('')}</div><small>agrado · ${d.ne} respuestas: ${d.ags.map((c, k) => `<b style="color:${AGC[k]}">${c}</b> ${AGN[k].toLowerCase()}`).join(' · ')}</small><q>${QUOTE[d.s]}</q></div>
@@ -129,7 +129,7 @@
     /* entrada: las marcas (barras, puntos, notas) crecen en cascada al entrar en pantalla y se reinician al salir */
     const zero = () => { Object.keys(el).forEach(id => { el[id].remove(); delete el[id]; delete cur[id]; }); const m = G[cv](); for (const id in m) { if (id === 'add') continue; const s = JSON.parse(JSON.stringify(m[id]));
         if (s.t === 'rect') s.a.w = 0; else if (s.t === 'circle') s.a.r = 0; else if (s.t === 'line' && s.f !== GR) s.a.o = 0; ensure(id, s); draw(id, s); cur[id] = s; } };
-    if (!RM && 'IntersectionObserver' in window) { let on = false; new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { if (!on) { on = true; cancelAnimationFrame(raf); zero(); go(cv, false, true); } } else if (on) { on = false; cancelAnimationFrame(raf); zero(); } }), { threshold: .3 }).observe(root.querySelector('.cc')); } }
+    if (!RM && 'IntersectionObserver' in window) { let on = false; zero(); new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting && e.intersectionRatio >= .3) { if (!on) { on = true; cancelAnimationFrame(raf); zero(); go(cv, false, true); } } else if (!e.isIntersecting && on) { on = false; cancelAnimationFrame(raf); zero(); } }), { threshold: [0, .3, .6] }).observe(root.querySelector('.cc')); } }
 
   const peaks = () => real(uniq(F)).filter(f => f.mx < 100).sort((a, b) => b.mx - a.mx).slice(0, 6).map(f => `<li><b style="color:${COL[f.c]}"><span data-n="${f.mx}">${f.mx}</span><small> dB</small></b><span>${f.src}<em>${SECT[f.s]} · ${f.t} h</em><i class="pb"><u style="width:${cl01((f.mx - 60) / 35) * 100}%;background:${COL[f.c]}" data-w="${(cl01((f.mx - 60) / 35) * 100).toFixed(1)}"></u></i></span></li>`).join('');
 
@@ -206,13 +206,15 @@
     ft = [...document.querySelectorAll('.cmp .ft span')], stepsEl = document.querySelector('.steps'), stg = document.querySelector('.cstage');
   const paint = f => stp.forEach((el, q) => { const d = S[q], v = d.fr[f], n = d.fn[f], c = el.querySelector('.fnow');
     c.querySelector('.fn').textContent = FN[f][0]; c.querySelector('.fh').textContent = FN[f][1] + ' h';
-    c.querySelector('.fv').innerHTML = n ? `${v == null ? '<i class="nd">sin dB</i>' : `<i data-n="${v.toFixed(0)}">${v.toFixed(0)}</i> dB`} · ${n} ${n > 1 ? 'mediciones' : 'medición'}` : 'sin mediciones'; if (window.VITA) VITA.scan(c);
+    c.querySelector('.fv').innerHTML = n ? `${v == null ? '<i class="nd">sin dB</i>' : `<i data-n="${v.toFixed(0)}">${v.toFixed(0)}</i> dB`} · ${n} ${n > 1 ? 'mediciones' : 'medición'}` : 'sin mediciones'; if (window.VITA) { VITA.scan(c); if (q === vk) VITA.play(c); }
     el.querySelectorAll('.pf > div').forEach((r, i) => r.classList.toggle('hi', i === f)); });
+  let vk = -1;
   const upd = () => { tk = 0; const vh = innerHeight; let b = 1e9, k = 0;
     stp.forEach((el, q) => { const r = el.getBoundingClientRect(), d = Math.abs((r.top + r.bottom) / 2 - vh / 2); if (d < b) { b = d; k = q; } });
-    const r = stp[k].getBoundingClientRect(), sr = stepsEl.getBoundingClientRect(), gr = stg.getBoundingClientRect(), p = cl01((vh / 2 - r.top) / r.height), f = Math.min(2, Math.floor(p * 3)), w = p * 3 - f,
+    const r = stp[k].getBoundingClientRect(), sr = stepsEl.getBoundingClientRect(), gr = stg.getBoundingClientRect(), p = cl01((vh * .25 - r.top) / (r.height - vh * 1.15)), f = Math.min(2, Math.floor(p * 3)), w = p * 3 - f,
       inside = sr.top < vh * .5 && sr.bottom > vh * .5, cmp = inside && gr.top < vh * .5;
     setMode(cmp ? 'c' : 'r');
+    { const act = inside && !cmp ? k : -1; if (act !== vk) { if (window.VITA) { if (vk >= 0) VITA.reset(stp[vk]); if (act >= 0) VITA.play(stp[act]); } vk = act; } }
     if (k !== cur) { cur = k; cn.textContent = k + 1; ct.textContent = SECT[k]; if (!cmp) dots.forEach((d, q) => d.classList.toggle('on', q === k)); }
     if (f !== curF) { curF = f; paint(f); }
     const fi = cmp ? ['am', 'pm', 'pk'].indexOf(cf) : f; ft.forEach((e, j) => { e.classList.toggle('on', j === fi); e.style.setProperty('--p', cmp ? (j === fi ? 1 : 0) : j < f ? 1 : j === f ? w : 0); });
