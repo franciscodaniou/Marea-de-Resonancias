@@ -1,9 +1,9 @@
-/* Vidrio líquido para la interfaz · WebGL1 + fragment shader (Safari, Firefox y Chromium)
+/* Glassmorfismo para la interfaz · WebGL1 + fragment shader (Safari, Firefox y Chromium)
    Los contenedores y botones del DOM se pasan al shader como cajas redondeadas que se funden
-   (unión suave, como metabolas). Sobre ese campo de distancia se aplica la receta del vidrio líquido:
+   (unión suave, como metabolas). Sobre ese campo de distancia se aplica la receta del glassmorfismo:
    refracción de borde (bisel), separación cromática por canal (R 1.10 · G 1.00 · B 0.90),
    desenfoque, luz de borde y, al acercar el cursor, un brillo especular que lo sigue y un
-   crecimiento con resorte (como el liquid glass de iOS).
+   crecimiento con resorte (con resorte).
    Si WebGL no está disponible, la hoja de estilos usa un vidrio CSS equivalente (fallback). */
 (function () {
   // pills contenedores: en pantallas táctiles se abren con un toque
@@ -160,7 +160,7 @@ void main(){
       if (gc.width !== Math.round(W * dpr) || gc.height !== Math.round(H * dpr)) { gc.width = Math.round(W * dpr); gc.height = Math.round(H * dpr); gl.viewport(0, 0, gc.width, gc.height); }
       const R = new Float32Array(64), Rr = new Float32Array(16), E = new Float32Array(16); let n = 0;
       SEL.forEach(s => document.querySelectorAll(s).forEach(el => {
-        if (n >= 16 || el.closest('.card, #story')) return; const b = el.getBoundingClientRect(); if (b.width < 4 || b.height < 4 || b.bottom < -40 || b.top > innerHeight + 40) return;
+        if (n >= 16 || el.closest('.card, #story') || (document.body.classList.contains('about') && el.matches('.btn'))) return; const b = el.getBoundingClientRect(); if (b.width < 4 || b.height < 4 || b.bottom < -40 || b.top > innerHeight + 40) return;
         const cs = getComputedStyle(el); if ((document.body.classList.contains('heroing') || document.body.classList.contains('deep')) && el.closest('#bar')) return; if (el.matches('.mb') && b.width < 28) return; if (cs.display === 'none' || cs.visibility === 'hidden' || eo(el) < .05) return;
         const inside = mx >= b.left && mx <= b.right && my >= b.top && my <= b.bottom; let s = el._e || 0, v = el._v || 0; v += ((inside ? 1 : 0) - s) * 170 * dt; v *= Math.exp(-13 * dt); s += v * dt; el._e = s; el._v = v; // resorte: crece con un leve rebote
         const sp = Math.max(0, s), g = (b.width > 420 || b.height > 220 ? 3 : 6) * sp + (el.classList.contains('on') ? 2 : 0), w = b.width + 2 * g, h = b.height + 2 * g;
