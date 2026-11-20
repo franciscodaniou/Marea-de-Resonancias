@@ -252,7 +252,7 @@
     if (f !== curF) { curF = f; paint(f); }
     const fi = cmp ? ['am', 'pm', 'pk'].indexOf(cf) : f; ft.forEach((e, j) => { e.classList.toggle('on', j === fi); e.style.setProperty('--p', cmp ? (j === fi ? 1 : 0) : j < f ? 1 : j === f ? w : 0); });
     if (window.MAREA) { if (inside) { if (saved === null) saved = MAREA.flt; MAREA.setFlt(cmp ? cf : FN[f][2]); } else if (saved !== null) { MAREA.setFlt(saved); saved = null; } }
-    const lim = 68 + cmpEl.offsetHeight + 40, o = cl01((vh * .85 - sr.top) / 120) * cl01((sr.bottom - lim) / 90);
+    const lim = 68 + cmpEl.offsetHeight + 40, o = cl01((vh * .08 - sr.top) / 90) * cl01((sr.bottom - lim) / 90);
     cmpEl.style.opacity = o; cmpEl.style.visibility = o < .02 ? 'hidden' : 'visible'; };
   document.addEventListener('click', e => { const mb = e.target.closest('.cmin'); if (mb) { const b = mb.closest('.blk'), o = b.classList.toggle('open'); mb.setAttribute('aria-expanded', o); mb.textContent = o ? 'Ocultar detalle ▴' : 'Ver detalle ▾'; if (o && window.VITA) VITA.play(b); return; } const g = e.target.closest('#ans a'); if (g) { e.preventDefault(); scrollTo({ top: abs(q1('.finds')) - 40, behavior: 'smooth' }); return; } const a = e.target.closest('.fc'); if (!a) return; e.preventDefault(); const el = stp[+a.dataset.s]; if (el) scrollTo({ top: el.getBoundingClientRect().top + scrollY + el.offsetHeight * .22, behavior: 'smooth' }); });
   addEventListener('scroll', () => { if (!tk) tk = requestAnimationFrame(upd); }, { passive: true }); addEventListener('resize', upd); upd();
