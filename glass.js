@@ -13,16 +13,29 @@
   if (src) src.parentNode.insertBefore(gc, src.nextSibling);
   else { src = document.createElement('canvas'); bgDraw = makeBg(src); document.body.insertBefore(gc, document.body.firstChild); }
   // fondo para páginas sin visualización: polígonos string-art lentos que el vidrio refracta
-  function makeBg(cv) {
-    const c = cv.getContext('2d'), COLS = ['#1A5E89', '#D20A2E', '#E2AC2C', '#6150A2'];
+  function makeBg(cv) {            // fondo de about: la "marea total" del modelo (tubo anillado, un cuarto por sector)
+    const c = cv.getContext('2d'), COLS = ['#1A5E89', '#D20A2E', '#E2AC2C', '#6150A2'], NU = 64, NV = 22, TAU = 6.2832;
+    const nz = (x, y, z, t) => (Math.sin(1.7 * x + t * .3 + Math.sin(2.1 * y + t * .2)) + Math.sin(2.3 * y - 1.3 * z + t * .25) + Math.sin(1.1 * z + 1.9 * x - t * .2)) / 3;
     return t => {
       const W = innerWidth, H = innerHeight; if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
-      c.fillStyle = '#DCDDD3'; c.fillRect(0, 0, W, H); c.lineWidth = 1;
-      COLS.forEach((col, k) => {
-        const cx = W * (.16 + .68 * k / 3 + .03 * Math.sin(t * .2 + k)), cy = H * (.3 + .38 * (k % 2) + .03 * Math.cos(t * .17 + k)), R = Math.min(W, H) * .36, m = 5 + k;
-        for (let i = 0; i < 30; i++) { const r = R * (1 - .9 * i / 30), rot = i * .06 * (k % 2 ? 1 : -1) + t * .05; c.strokeStyle = col + '88'; c.beginPath();
-          for (let q = 0; q <= m; q++) { const A = rot + q * 6.2832 / m, x = cx + Math.cos(A) * r, y = cy + Math.sin(A) * r; q ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke(); }
-      });
+      c.fillStyle = '#DCDDD3'; c.fillRect(0, 0, W, H);
+      const R0 = Math.min(W, H) * .30, FP = R0 * 4.2, cx = W * .5, cy = H * .5, ry = t * .06, rx = -.9 + .12 * Math.sin(t * .1), cY = Math.cos(ry), sY = Math.sin(ry), cX = Math.cos(rx), sX = Math.sin(rx);
+      const P = [];
+      for (let u = 0; u <= NU; u++) { const th = u / NU * TAU, row = []; for (let v = 0; v < NV; v++) { const ph = v / NV * TAU;
+          const k = nz(Math.cos(th) * 1.4, Math.sin(th) * 1.4, Math.cos(ph) * .9, t), r = R0 * (.26 + .22 * (.5 + .5 * Math.sin(u / NU * TAU * 2 + t * .2)) + .16 * k);
+          let x = (R0 + r * Math.cos(ph)) * Math.cos(th), y = (R0 + r * Math.cos(ph)) * Math.sin(th), z = r * Math.sin(ph) * 1.6;
+          const x1 = x * cY + z * sY, z1 = -x * sY + z * cY, y2 = y * cX - z1 * sX, z2 = y * sX + z1 * cX, s = FP / (FP + z2 + R0);
+          row.push([cx + x1 * s, cy + y2 * s]); } P.push(row); }
+      c.lineWidth = 1; c.lineJoin = 'round';
+      for (let q = 0; q < 4; q++) {
+        c.strokeStyle = COLS[q] + '66'; c.beginPath();
+        for (let u = q * NU / 4; u <= (q + 1) * NU / 4; u++) for (let v = 0; v < NV; v++) { const p = P[u][v]; if (u === q * NU / 4) { v ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]); } }
+        c.stroke(); c.beginPath();
+        for (let v = 0; v < NV; v += 1) { for (let u = q * NU / 4; u <= (q + 1) * NU / 4; u++) { const p = P[u][v]; u === q * NU / 4 ? c.moveTo(p[0], p[1]) : c.lineTo(p[0], p[1]); } }
+        c.stroke(); c.beginPath();
+        for (let u = q * NU / 4; u <= (q + 1) * NU / 4; u += 2) { for (let v = 0; v <= NV; v++) { const p = P[u][v % NV]; v ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]); } }
+        c.stroke();
+      }
     };
   }
   let gl = null; try { gl = gc.getContext('webgl', { antialias: false, alpha: false }) || gc.getContext('experimental-webgl'); } catch (e) { }
