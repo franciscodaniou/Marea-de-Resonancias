@@ -15,7 +15,7 @@ const F = FICHAS.map((r, i) => ({ id: 'BP-' + String(i + 1).padStart(2, '0'), t:
 const DOM = [0, 1, 2, 3].map(s => { const n = {}; F.filter(f => f.s === s).forEach(f => n[f.c] = (n[f.c] || 0) + 1); let b = 'M', v = 0; ['M', 'V', 'C', 'H', 'N'].forEach(c => { if ((n[c] || 0) > v) { v = n[c]; b = c; } }); return b; });
 const E = ENCUESTAS;
 
-let CMX = 0, CMY = 0, CMR = 100, cA = 0; const kc = [0, 0, 0, 0]; // comparativa: la malla acompaña al texto
+let CMX = 0, CMY = 0, CMR = 100, cA = 0, cm = 0, CPX = [0, 0], CPY = 0, CPR = 80; const kc = [0, 0, 0, 0]; // comparativa: la malla acompaña al texto
 let CX0 = 0, CY0 = 0, S0 = 100, eS = 0, amb = 0, ee = 0, Aglob = 1; // centro y escala de la marea total; progreso de escena
 const FILTERS = { all: [0, 1e4], am: [0, 756], pm: [757, 1049], pk: [1050, 1e4] };
 let flt = 'all', want = null, foc = null, k = 0, pf = null, hov = null, hs = null, W, H, dpr, T = 0, Rb, Rf, FX, FY, ctr = [], G = [], pkey = '';
@@ -62,6 +62,7 @@ function layout() { // las figuras se reacomodan en sincronía con el pill/leyen
   Rb = Math.max(rA, rB); const bh = 2.2 * Rb + LB, off = row ? (gh - bh) / 2 : (gh / 2 - bh) / 2;
   ctr = [0, 1, 2, 3].map(i => row ? [x0 + gw * (i + .5) / 4, top0 + off + 8 + Rb * 1.08] : [x0 + gw * (i % 2 + .5) / 2, top0 + (gh / 2) * Math.floor(i / 2) + off + 8 + Rb * 1.08]);
   CMX = mob ? W / 2 : W * .27; CMY = mob ? H * .325 : H * .64; CMR = mob ? Math.min(W * .19, H * .072) : Math.min(W * .15, H * .23);
+  CPX = mob ? [W * .27, W * .73] : [W * .13, W * .355]; CPY = mob ? H * .385 : H * .76; CPR = mob ? Math.min(W * .21, H * .09) : Math.min(W * .09, H * .16);
   CX0 = x0 + gw / 2; CY0 = top0 + gh / 2 + (mob ? -8 : 0); S0 = Math.min(gw * (mob ? .24 : .15), gh * (mob ? .3 : .36));
   if (mob) { // móvil: figura arriba, panel como hoja inferior (la mitad inferior de la pantalla)
     const pt = Math.round(H * .5), t1 = 100, A = pt - t1 - 6;
@@ -73,10 +74,12 @@ function layout() { // las figuras se reacomodan en sincronía con el pill/leyen
   }
 }
 
+const PAIR = () => (window.MAREA && MAREA.pair) || [0, 1];
+const AGS = [0, 1, 2, 3].map(s => [-1, 0, 1, 2].map(v => E.filter(e => e[0] === s && e[1] === v).length)), AGC = ['#D20A2E', '#a39f8a', '#5E9C8F', '#00675B'];
 function geoms() {
   G = [0, 1, 2, 3].map(s => {
     const kk = foc === s ? k : 0; let cx = lerp(ctr[s][0], FX, kk), cy = lerp(ctr[s][1], FY, kk), R = lerp(Rb, Rf, kk), al = foc === null || foc === s ? 1 : 1 - k;
-    if (cA > .001) { const q = kc[s]; cx = lerp(cx, CMX, q); cy = lerp(cy, CMY, q); R = lerp(R, CMR, q); al *= lerp(1 - cA, 1, q); }
+    if (cA > .001) { const q = kc[s], pi = PAIR().indexOf(s), tm = pi >= 0 ? cm : 0; cx = lerp(cx, lerp(CMX, CPX[pi] || CMX, tm), q); cy = lerp(cy, lerp(CMY, CPY, tm), q); R = lerp(R, lerp(CMR, CPR, tm), q); al *= lerp(1 - cA, 1, q); }
     return { cx, cy, R, al, kk };
   });
 }
@@ -236,11 +239,11 @@ function frame(ms) {
   if (want === null && k < .003) { k = 0; foc = null; } else if (want !== null) foc = want;
   // scroll → marea total (arriba) → sectores → ambiente (contraste y estadísticas)
   const vh = innerHeight, sy0 = window.scrollY, hero = document.body.classList.contains('heroing') || document.body.classList.contains('about');
-  const stEl = document.querySelectorAll('.step'), chEl = document.querySelector('.charts2'); let cT = 0, cS = -1;
+  const stEl = document.querySelectorAll('.step'), chEl = document.querySelector('.charts2'), csE = document.querySelector('.cstage'); let cT = 0, cS = -1, cmpT = 0;
   amb = hero || want !== null ? 0 : chEl ? cl((vh * .95 - chEl.getBoundingClientRect().top) / (.5 * vh), 0, 1) : cl((sy0 - 1.0 * vh) / (.6 * vh), 0, 1);
-  if (stEl.length && !hero && want === null) { const f0 = stEl[0].getBoundingClientRect(), l0 = stEl[stEl.length - 1].getBoundingClientRect(); cT = cl((vh * .9 - f0.top) / (vh * .3), 0, 1) * cl((l0.bottom - vh * .45) / (vh * .3), 0, 1);
-    let best = 1e9; stEl.forEach((el, q) => { const r = el.getBoundingClientRect(), d = Math.abs((r.top + r.bottom) / 2 - vh / 2); if (d < best) { best = d; cS = q; } }); }
-  cA += (cT - cA) * (1 - Math.exp(-dt * 5)); for (let s = 0; s < 4; s++) kc[s] += ((cT > .02 && s === cS ? 1 : 0) - kc[s]) * (1 - Math.exp(-dt * 4));
+  if (stEl.length && !hero && want === null) { const f0 = stEl[0].getBoundingClientRect(), l0 = (csE || stEl[stEl.length - 1]).getBoundingClientRect(); cT = cl((vh * .9 - f0.top) / (vh * .3), 0, 1) * cl((l0.bottom - vh * .45) / (vh * .3), 0, 1);
+    let best = 1e9; stEl.forEach((el, q) => { const r = el.getBoundingClientRect(), d = Math.abs((r.top + r.bottom) / 2 - vh / 2); if (d < best) { best = d; cS = q; } }); if (csE && csE.getBoundingClientRect().top < vh * .5) cmpT = 1; }
+  cA += (cT - cA) * (1 - Math.exp(-dt * 5)); cm += (cmpT - cm) * (1 - Math.exp(-dt * 5)); for (let s = 0; s < 4; s++) kc[s] += ((cT > .02 && (cmpT ? PAIR().includes(s) : s === cS) ? 1 : 0) - kc[s]) * (1 - Math.exp(-dt * 4));
   const tt0 = cl(sy0 / (.9 * vh), 0, 1), eT = want !== null ? 1 : hero ? 0 : tt0 * tt0 * (3 - 2 * tt0);
   eS += (eT - eS) * (1 - Math.exp(-dt * 5)); if (Math.abs(eT - eS) < .002) eS = eT;
   ee = eS * (1 - amb); Aglob = document.body.classList.contains('about') ? .6 : lerp(1, .14, amb);
@@ -252,6 +255,14 @@ function frame(ms) {
   for (let s = 0; s < 4; s++) { const al = G[s].al * Aglob; if (al > .01) { drawMesh(s, al, evOf(ee, .5)); flows(s, curDt, al); } }
   calcDots(ee); drawDots();
   x.globalCompositeOperation = 'source-over'; x.textAlign = 'center';
+  // anillo de agrado (encuestas) en los lugares acoplados; en la comparación, además A/B, nombre y agrado
+  { const mobq = W < 760; G.forEach((g, s) => { const q = kc[s] * cA; if (q < .04) return; const ags = AGS[s], tot = ags.reduce((p, c) => p + c, 0) || 1, r0 = g.R * .62; let a0 = -Math.PI / 2;
+    x.lineWidth = mobq ? 3.5 : 5; x.lineCap = 'butt'; ags.forEach((c, i) => { if (!c) return; const a1 = a0 + TAU * c / tot; x.globalAlpha = q * .92; x.strokeStyle = AGC[i]; x.beginPath(); x.arc(g.cx, g.cy, r0, a0 + .035, a1 - .035); x.stroke(); a0 = a1; });
+    const pi = PAIR().indexOf(s), qc = pi >= 0 ? cm * kc[s] * cA : 0;
+    if (qc > .25) { const c = rgbOf(COL[DOM[s]]); x.globalAlpha = qc; x.fillStyle = '#3b4234'; x.font = `700 ${mobq ? 13 : 18}px Helvetica,Arial`; x.fillText(SECT[s].toUpperCase(), g.cx, g.cy + r0 + (mobq ? 20 : 30));
+      x.font = `${mobq ? 11 : 14}px Helvetica,Arial`; x.fillStyle = '#5E6655'; x.fillText(`agrado ${agrSec(s).toFixed(2)} · ${tot} respuestas`, g.cx, g.cy + r0 + (mobq ? 34 : 50));
+      x.font = `800 ${mobq ? 15 : 22}px Helvetica,Arial`; x.fillStyle = `rgb(${c})`; x.fillText('AB'[pi], g.cx, g.cy - r0 - (mobq ? 8 : 12)); }
+    x.globalAlpha = 1; }); }
   const lab = cl((eS - .6) / .35, 0, 1) * (1 - amb) * (1 - cA);
   if (lab > .05) G.forEach((g, s) => {
     if (g.al < .05) return; const c = rgbOf(COL[DOM[s]]), big = g.kk > .5, mob = W < 760, [p, v] = lvl(s), y = g.cy + g.R * 1.12 + (big ? (mob ? 24 : 32) : (mob ? 18 : 22));
@@ -320,7 +331,7 @@ back.onclick = () => focus(null);
 addEventListener('keydown', e => { if (e.key === 'Escape') focus(null); });
 document.querySelectorAll('#ctl button').forEach(b => b.onclick = () => { flt = b.dataset.f; document.querySelectorAll('#ctl button').forEach(o => o.classList.toggle('on', o === b)); document.querySelector('#ctl .lbl').textContent = 'Franja · ' + b.textContent; document.getElementById('ctl').classList.remove('open'); b.blur(); render(); });
 
-window.MAREA = { get flt() { return flt; }, setFlt(f) { if (flt === f) return; flt = f; const b = document.querySelector(`#ctl button[data-f="${f}"]`); document.querySelectorAll('#ctl button').forEach(o => o.classList.toggle('on', o === b)); if (b) document.querySelector('#ctl .lbl').textContent = 'Franja · ' + b.textContent; render(); } }; // la comparativa avanza la franja horaria con el scroll
+window.MAREA = { pair: [0, 1], get flt() { return flt; }, setFlt(f) { if (flt === f) return; flt = f; const b = document.querySelector(`#ctl button[data-f="${f}"]`); document.querySelectorAll('#ctl button').forEach(o => o.classList.toggle('on', o === b)); if (b) document.querySelector('#ctl .lbl').textContent = 'Franja · ' + b.textContent; render(); } }; // la comparativa avanza la franja horaria con el scroll
 document.getElementById('next').onclick = () => document.getElementById('hero').classList.add('s2');
 document.getElementById('prev').onclick = () => document.getElementById('hero').classList.remove('s2');
 document.getElementById('go').onclick = () => { document.getElementById('hero').classList.add('off'); document.body.classList.remove('heroing'); };

@@ -26,13 +26,14 @@ Es un sitio estático, sin dependencias ni compilación.
 Malla orgánica (tubo deformado por ruido Perlin) = el lugar: color = fuente predominante, largo = hora (09:40 → 18:50), relieve = dB.
 Ficha = punto del color de su fuente (carril alrededor de la malla) que ilumina una zona: ancho = rango dB, pulso y relieve = dB promedio.
 Puntos lentos = personas y estelas rápidas = vehículos (cantidad y velocidad según el flujo), sobre la malla.
-Movimiento más errático = menor agrado en las encuestas.
+Movimiento más errático = menor agrado en las encuestas. Anillo = respuestas de agrado (incomoda · da igual · gusta un poco · gusta).
 
 ## Recorrido (scroll)
 1. Marea total: todas las fichas sobre una misma malla (tocar, filtrar por franja o fuente, girar con el mouse).
 2. Sectores: la marea se disuelve en cuatro mallas lado a lado; clic expande un sector (teclas 1–4, `Esc` vuelve).
-3. Contraste y comparación: título y leyenda fijos; cada lugar dura tres tramos de scroll (mañana → tarde → hora punta) que filtran la malla; luego pasa al siguiente lugar y reinicia en mañana. Al salir se restaura el filtro previo.
-4. Gráficas que se transforman: intensidad (por lugar / por hora) y agrado (agrado vs dB / respuestas), con el mismo botón.
+3. Contraste y comparación (recorrido): título y leyenda fijos; cada lugar dura tres tramos de scroll (mañana → tarde → hora punta) que filtran la malla; luego pasa al siguiente lugar y reinicia en mañana. Al salir se restaura el filtro previo.
+3b. Modo comparar: se eligen dos lugares (A, B) y una franja; mallas con la misma escala, barras divergentes (dB, máximo, flujos, agrado, n) y lectura automática. El agrado no se filtra por franja (la encuesta no registra hora).
+4. Gráficas que se transforman: intensidad (por lugar / por hora) y agrado (agrado vs dB / respuestas), con el mismo botón; partitura (cada ficha es una nota: línea = fuente, posición = hora, tamaño = dB; todo el barrio o por lugar).
 5. Estadísticas y consola «Cómo funciona»: fuentes, flujos, picos y malla en vivo.
 
 Wireframes: `wireframe.svg/png` (escritorio) y `wireframe-movil.svg/png`.
