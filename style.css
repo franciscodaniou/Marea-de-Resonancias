@@ -532,3 +532,11 @@ body:has(#cts:hover) #down,body:has(#cts:focus-within) #down,body:has(#ctl:hover
 /* v39 · aviso de vuelta en la fila inferior (alineado con los botones); se oculta mientras se abre Franja/Fuente */
 @media(min-width:901px){#hint{top:auto;bottom:calc(22px + env(safe-area-inset-bottom,0px));left:396px;right:auto;transform:none;max-width:calc(100vw - 760px)}}
 body:has(#cts:hover) #hint,body:has(#cts:focus-within) #hint,body:has(#ctl:hover) #hint,body:has(#ctl:focus-within) #hint{opacity:0;pointer-events:none}
+/* v40 · seis lugares */
+@media(max-width:1100px){.pk{flex-wrap:wrap}}
+.pk{display:grid!important;grid-template-columns:22px repeat(3,1fr);gap:5px!important;align-items:center}
+.pk button{justify-content:center;min-width:0;padding:5px 6px!important}.pk button:nth-of-type(4){grid-column:2}
+@media(max-width:1100px){.pk{gap:4px!important}.pk>b{width:auto}}
+/* v40 · la barra de secciones ya no bloquea clics (los rótulos ocultos ocupaban ~160 px a la derecha) */
+#sec{pointer-events:none}#sec button{pointer-events:auto;position:relative}
+#sec button span{position:absolute;right:calc(100% + 2px);top:50%;margin-top:-13px}

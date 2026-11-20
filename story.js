@@ -11,7 +11,8 @@
     'El techo del barrio: micros y bocinas dominan (10 de 11 mediciones) y los flujos son los más altos. 4 de 6 personas lo sienten incómodo.',
     'Un tubo comercial: captadores, música de locales y cortinas. Es tranquilo en la mañana y salta a 72 dB en la hora punta.',
     'Voces y canto en torno a la pileta seca: el sonido más parejo. Con 3 mediciones y 2 encuestas es una lectura preliminar.',
-    'Buenos Aires, primer registro: tránsito intenso de la avenida y mucha gente a pie. Con el semáforo en rojo aparece un lapso de silencio. Una sola medición, sin dB ni encuestas: lectura preliminar.'];
+    'Buenos Aires, primer registro: tránsito intenso de la avenida y mucha gente a pie. Con el semáforo en rojo aparece un lapso de silencio. Una sola medición, sin dB ni encuestas: lectura preliminar.',
+    'Buenos Aires, borde del río: el zumbido de la ciudad como aura de fondo, con viento, maquinaria del puente y aves. La gente pasa de largo. Una sola medición, sin dB ni encuestas: lectura preliminar.'];
   const cl01 = v => Math.max(0, Math.min(1, v));
   const RM = matchMedia('(prefers-reduced-motion:reduce)').matches;
   const SVGNS = 'http://www.w3.org/2000/svg';
@@ -35,12 +36,12 @@
   const circ = (v, id, x, y, r, f, o = 1) => v.add(id, 'circle', { x, y, r, o }, { f });
   const line = (v, id, x1, y1, x2, y2, s, o = 1, sw = 1) => v.add(id, 'line', { x1, y1, x2, y2, o, sw }, { f: s });
   const text = (v, id, x, y, s, k = 'm', an = 'start', o = 1) => v.add(id, 'text', { x, y, o }, { txt: String(s), k, an });
-  const nm = i => SECT[i].split(' ').pop();
+  const nm = i => SHORT[i];
 
   /* Grupo A · intensidad por lugar <-> evolución por franja */
   const A = {
     a: () => { const v = V(); [50, 60, 70, 80, 90].forEach(t => { const x = 150 + (t - 40) / 55 * 340; line(v, 'ag' + t, x, 12, x, 200, GR); text(v, 'at' + t, x, 216, t, 'm', 'middle'); });
-      S.forEach((d, i) => { const y = 20 + i * 40, nd = d.db == null, w = nd ? 0 : (d.db - 40) / 55 * 340, wm = nd ? 150 : 150 + (d.mx - 40) / 55 * 340;
+      S.forEach((d, i) => { const y = 18 + i * 34, nd = d.db == null, w = nd ? 0 : (d.db - 40) / 55 * 340, wm = nd ? 150 : 150 + (d.mx - 40) / 55 * 340;
         text(v, 'n' + i, 0, y + 11, SECT[i], 'b'); text(v, 's' + i, 0, y + 26, nd ? 'sin dB medido' : `prom ${d.db.toFixed(1)} · máx ${d.mx}`, 'm');
         rect(v, 'b' + i, 150, y, w, 14, d.hex, nd ? 0 : .92, 7); line(v, 'mx' + i, wm, y - 4, wm, y + 18, INK, nd ? 0 : 1, 2.5);
         for (let j = 0; j < 3; j++) circ(v, `p${i}${j}`, 150 + w, y + 7, 0, d.hex, 0);
@@ -49,7 +50,7 @@
       [60, 70, 80].forEach(t => { line(v, 'ag' + (t - 10), 40, Y(t), 500, Y(t), GR); text(v, 'at' + (t - 10), 32, Y(t) + 4, t, 'm', 'end'); });
       ['Mañana', 'Tarde', 'Hora punta'].forEach((n, j) => text(v, 'x' + j, xs[j], 228, n, 'm', 'middle'));
       S.forEach((d, i) => { const P = d.fr.map((q, j) => q == null ? null : [xs[j], Y(q)]), L = P[2] || P[1] || P[0];
-        text(v, 'n' + i, L ? L[0] + 12 : 420, L ? L[1] + 4 + [8, 0, 0, -7, 0][i] : 0, nm(i), 'b', 'start', L ? 1 : 0); text(v, 's' + i, 0, 0, '', 'm', 'start', 0);
+        text(v, 'n' + i, L ? L[0] + 12 : 420, L ? L[1] + 4 + ([8, 0, 0, -7, 0, 0][i] || 0) : 0, nm(i), 'b', 'start', L ? 1 : 0); text(v, 's' + i, 0, 0, '', 'm', 'start', 0);
         rect(v, 'b' + i, 150, 0, 0, 0, d.hex, 0, 7); line(v, 'mx' + i, 150, 0, 150, 0, INK, 0);
         P.forEach((p, j) => p && circ(v, `p${i}${j}`, p[0], p[1], 5.5, d.hex, 1));
         for (let j = 0; j < 2; j++) if (P[j] && P[j + 1]) line(v, `q${i}${j}`, P[j][0], P[j][1], P[j + 1][0], P[j + 1][1], d.hex, 1, 3); }); return v; },
@@ -57,29 +58,29 @@
 
   /* Grupo B · agrado frente a dB <-> respuestas de agrado */
   const B = {
-    a: () => { const v = V(), X = q => 50 + (q - 60) / 14 * 450, Y = a => 206 - (a + 1) / 3 * 190, dy = [-14, 24, 24, -14, 24];
+    a: () => { const v = V(), X = q => 50 + (q - 60) / 14 * 450, Y = a => 206 - (a + 1) / 3 * 190, dy = [-14, 24, 24, -14, 24, -14];
       [60, 64, 68, 72].forEach(t => { line(v, 'gx' + t, X(t), 14, X(t), 206, GR); text(v, 'tx' + t, X(t), 226, t, 'm', 'middle'); });
       [-1, 0, 1, 2].forEach(t => { line(v, 'gy' + t, 50, Y(t), 500, Y(t), GR); text(v, 'ty' + t, 40, Y(t) + 4, t, 'm', 'end'); });
       text(v, 'ax', 500, 238, 'dB promedio →', 'm', 'end'); text(v, 'ay', 0, 10, 'agrado ↑', 'm');
       S.forEach((d, i) => { const nn = d.db == null || d.ag == null, x = nn ? 520 : X(d.db), y = nn ? 120 : Y(d.ag); circ(v, 'c' + i, x, y, nn ? 0 : 10, d.hex, nn ? 0 : .92); text(v, 'n' + i, x, y + dy[i], nm(i), 'b', 'middle', nn ? 0 : 1);
         for (let k = 0; k < 4; k++) rect(v, `r${i}${k}`, x, y, 0, 0, '#D20A2E', 0); }); return v; },
     b: () => { const v = V(), col = ['#D20A2E', '#a39f8a', '#5E9C8F', '#00675B'], nmz = ['Incomoda', 'Da igual', 'Gusta un poco', 'Gusta'];
-      S.forEach((d, i) => { const y = 10 + i * 36; text(v, 'n' + i, 0, y + 13, SECT[i], 'b'); let x = 140;
-        d.ags.forEach((c, k) => { rect(v, `r${i}${k}`, x, y, Math.max(c * 48 - 2, 0), 20, col[k], c ? 1 : 0); if (c > 1) text(v, `k${i}${k}`, x + c * 24 - 1, y + 14, c, 'k', 'middle'); x += c * 48; });
-        text(v, 'e' + i, x + 4, y + 14, d.ne ? `n=${d.ne}` : 'sin encuestas', 'm'); circ(v, 'c' + i, 140, y + 10, 0, d.hex, 0); });
-      nmz.forEach((n, k) => { circ(v, 'lg' + k, 8 + k * 118, 190, 5, col[k]); text(v, 'lt' + k, 18 + k * 118, 194, n, 'm'); }); return v; },
+      S.forEach((d, i) => { const y = 8 + i * 31; text(v, 'n' + i, 0, y + 13, SECT[i], 'b'); let x = 162;
+        d.ags.forEach((c, k) => { rect(v, `r${i}${k}`, x, y, Math.max(c * 44 - 2, 0), 20, col[k], c ? 1 : 0); if (c > 1) text(v, `k${i}${k}`, x + c * 22 - 1, y + 14, c, 'k', 'middle'); x += c * 44; });
+        text(v, 'e' + i, x + 4, y + 14, d.ne ? `n=${d.ne}` : 'sin encuestas', 'm'); circ(v, 'c' + i, 162, y + 10, 0, d.hex, 0); });
+      nmz.forEach((n, k) => { circ(v, 'lg' + k, 8 + k * 118, 214, 5, col[k]); text(v, 'lt' + k, 18 + k * 118, 218, n, 'm'); }); return v; },
     ta: ['El agrado no sigue a los decibeles', 'Cada lugar según su dB promedio y su agrado'], tb: ['¿Cómo se siente?', 'Respuestas de agrado de las encuestas por lugar'], la: 'Agrado vs dB', lb: 'Respuestas', h: 244 };
 
   /* Grupo C · qué suena <-> cuánta gente y tráfico */
   const C = {
-    a: () => { const v = V(); S.forEach((d, i) => { const y = 14 + i * 54; text(v, 'n' + i, 0, y + 13, SECT[i], 'b'); let x = 140;
-        d.cats.forEach((c, k) => { rect(v, `f${i}${k}`, x, y, Math.max(c * 22 - 2, 0), 20, COL[CK[k]], c ? .92 : 0); if (c > 1) text(v, `k${i}${k}`, x + c * 11 - 1, y + 14, c, 'k', 'middle'); x += c * 22; });
+    a: () => { const v = V(); S.forEach((d, i) => { const y = 12 + i * 45; text(v, 'n' + i, 0, y + 13, SECT[i], 'b'); let x = 162;
+        d.cats.forEach((c, k) => { rect(v, `f${i}${k}`, x, y, Math.max(c * 20 - 2, 0), 20, COL[CK[k]], c ? .92 : 0); if (c > 1) text(v, `k${i}${k}`, x + c * 10 - 1, y + 14, c, 'k', 'middle'); x += c * 20; });
         text(v, 'e' + i, x + 4, y + 14, d.cats.reduce((a, b) => a + b, 0), 'm'); });
       CK.forEach((c, k) => { circ(v, 'lg' + k, 8 + k * 98, 280, 5, COL[c]); text(v, 'lt' + k, 18 + k * 98, 284, SH[c], 'm'); }); return v; },
-    b: () => { const v = V(); S.forEach((d, i) => { const y = 12 + i * 54; text(v, 'n' + i, 0, y + 14, SECT[i], 'b');
-        rect(v, `f${i}0`, 140, y, d.fp / 3 * 300, 10, '#7a8468', 1, 5); text(v, 'e' + i, 146 + d.fp / 3 * 300, y + 9, d.fp.toFixed(1), 'm');
-        rect(v, `f${i}1`, 140, y + 15, d.fv / 3 * 300, 10, '#D20A2E', 1, 5); text(v, 'e' + i + 'b', 146 + d.fv / 3 * 300, y + 24, d.fv.toFixed(1), 'm');
-        for (let k = 2; k < 5; k++) rect(v, `f${i}${k}`, 140, y + 20, 0, 0, COL[CK[k]], 0); });
+    b: () => { const v = V(); S.forEach((d, i) => { const y = 10 + i * 45; text(v, 'n' + i, 0, y + 14, SECT[i], 'b');
+        rect(v, `f${i}0`, 162, y, d.fp / 3 * 290, 10, '#7a8468', 1, 5); text(v, 'e' + i, 168 + d.fp / 3 * 290, y + 9, d.fp.toFixed(1), 'm');
+        rect(v, `f${i}1`, 162, y + 15, d.fv / 3 * 290, 10, '#D20A2E', 1, 5); text(v, 'e' + i + 'b', 168 + d.fv / 3 * 290, y + 24, d.fv.toFixed(1), 'm');
+        for (let k = 2; k < 5; k++) rect(v, `f${i}${k}`, 162, y + 20, 0, 0, COL[CK[k]], 0); });
       circ(v, 'lg0', 8, 280, 5, '#7a8468'); text(v, 'lt0', 18, 284, 'Personas (1 a 3)', 'm'); circ(v, 'lg1', 168, 280, 5, '#D20A2E'); text(v, 'lt1', 178, 284, 'Vehículos (1 a 3)', 'm'); return v; },
     ta: ['¿Qué suena?', 'Fichas por fuente de sonido y lugar'], tb: ['¿Cuánta gente y tráfico?', 'Nivel de flujo medio de 1 (bajo) a 3 (alto)'], la: 'Fuentes', lb: 'Flujos', h: 304 };
 
@@ -88,12 +89,12 @@
     const WD = innerWidth >= 900 ? 1040 : 520, X = m => 98 + (m - 580) / 570 * (WD - 118), rr = (f, k) => (3 + cl01((f.pr - 50) / 35) * 5.5) * k, TK = [[600, '10:00'], [720, '12:00'], [840, '14:00'], [960, '16:00'], [1080, '18:00']];
     const common = (v, y0, y1, ya, hh) => { [756.5, 1049.5].forEach((m, i) => line(v, 'fd' + i, X(m), y0, X(m), y1, GR, 1, 1)); [['Mañana', 668], ['Tarde', 902], ['Hora punta', 1100]].forEach(([n, m], i) => text(v, 'fl' + i, X(m), 14, n, 'm', 'middle'));
       TK.forEach(([m, t]) => text(v, 'tk' + m, X(m), ya, t, 'm', 'middle')); CK.forEach((c, k) => { circ(v, 'lg' + k, 8 + k * 98, hh - 12, 5, COL[c]); text(v, 'lt' + k, 18 + k * 98, hh - 8, SH[c], 'm'); }); };
-    return { w: WD, h: 352, la: 'Todo el barrio', lb: 'Por lugar',
+    return { w: WD, h: 380, la: 'Todo el barrio', lb: 'Por lugar',
       ta: ['La partitura del barrio', 'Línea = fuente · posición = hora · tamaño = dB'], tb: ['Una partitura por lugar', 'Las mismas notas, ahora en el pentagrama de cada lugar'],
-      a: () => { const v = V(), Y = k => 44 + k * 50; CK.forEach((c, k) => { line(v, 'La' + k, 98, Y(k), WD - 20, Y(k), GR, 1, 1); text(v, 'sl' + k, 90, Y(k) + 4, SH[c], 'm', 'end'); }); common(v, 26, 262, 282, 352);
+      a: () => { const v = V(), Y = k => 44 + k * 50; CK.forEach((c, k) => { line(v, 'La' + k, 98, Y(k), WD - 20, Y(k), GR, 1, 1); text(v, 'sl' + k, 90, Y(k) + 4, SH[c], 'm', 'end'); }); common(v, 26, 262, 282, 380);
         F.forEach(f => circ(v, 'n' + f.id, X(f.m), Y(CK.indexOf(f.c)), rr(f, 1), COL[f.c], .88)); return v; },
-      b: () => { const v = V(), T0 = s => 40 + s * 56; S.forEach((d, i) => { text(v, 'sn' + i, 98, T0(i) - 8, SECT[i], 'b'); for (let k = 0; k < 5; k++) line(v, `Lb${i}${k}`, 98, T0(i) + k * 9, WD - 20, T0(i) + k * 9, GR, 1, 1); });
-        common(v, 26, 292, 310, 352); F.forEach(f => circ(v, 'n' + f.id, X(f.m), T0(f.s) + CK.indexOf(f.c) * 9, rr(f, .55), COL[f.c], .9)); return v; } };
+      b: () => { const v = V(), T0 = s => 40 + s * 50; S.forEach((d, i) => { text(v, 'sn' + i, 98, T0(i) - 8, SECT[i], 'b'); for (let k = 0; k < 5; k++) line(v, `Lb${i}${k}`, 98, T0(i) + k * 9, WD - 20, T0(i) + k * 9, GR, 1, 1); });
+        common(v, 26, 330, 348, 380); F.forEach(f => circ(v, 'n' + f.id, X(f.m), T0(f.s) + CK.indexOf(f.c) * 9, rr(f, .55), COL[f.c], .9)); return v; } };
   })();
   const mk = (t, at) => { const e = document.createElementNS(SVGNS, t); for (const k in at) e.setAttribute(k, at[k]); return e; };
   function Morph(root, G) {
@@ -158,7 +159,7 @@
 <span class="ok">3 · fichas</span>  cada medición es una perla sobre la malla, del color de su fuente.
 <span class="ok">4 · flujos</span>  puntos lentos son personas; estelas rápidas, vehículos.
            Cuanto menos agrado, más agitado el movimiento.
-<span class="ok">5 · scroll</span>  al bajar, el tubo total se parte en cinco y luego se acerca al lugar
+<span class="ok">5 · scroll</span>  al bajar, el tubo total se parte en seis y luego se acerca al lugar
            que lees. Los filtros solo apagan lo que no coincide.
 <span class="ok">6 · vidrio</span>  glass.js dibuja los contenedores con un shader: refracta lo que
            hay detrás, como el sonido atravesando una fachada.
@@ -194,7 +195,7 @@
     if (c) renderCmp(); else cmpDots.forEach((d, q) => d.classList.toggle('on', q === cur)); };
   renderCmp(); setMode('r');
 
-  /* scroll → lugar (cinco tramos) y, dentro de cada lugar, franja horaria (mañana → tarde → hora punta); después, modo comparar */
+  /* scroll → lugar (seis tramos) y, dentro de cada lugar, franja horaria (mañana → tarde → hora punta); después, modo comparar */
   const stp = [...document.querySelectorAll('.step')], dots = cmpDots, cn = document.getElementById('cmpn'), ct = document.getElementById('cmpt'),
     ft = [...document.querySelectorAll('.cmp .ft span')], stepsEl = document.querySelector('.steps'), stg = document.querySelector('.cstage');
   const paint = f => stp.forEach((el, q) => { const d = S[q], v = d.fr[f], n = d.fn[f], c = el.querySelector('.fnow');

@@ -14,10 +14,10 @@ const F = FICHAS.map((r, i) => { const nd = r[2] == null, gp = nd ? 48 + ((r[10]
   return { id: r[11] ? r[11] + '·' + (i - FICHAS.findIndex(q => q[11] === r[11]) + 1) : 'BP-' + String(i + 1).padStart(2, '0'), t: r[0], m: +r[0].slice(0, 2) * 60 + +r[0].slice(3), s: r[1], nd,
   mn: nd ? gp - 5 : r[2], pr: gp, mx: nd ? gp + 5 : r[4], fp: r[5], fv: r[6], c: r[7], src: r[8], ph: r[9] }; });
 const NSX = Array.from({ length: NS }, (_, i) => i), real = fs => fs.filter(f => !f.nd), hasAg = s => E.some(e => e[0] === s);
-const DOM = NSX.map(s => { const n = {}; F.filter(f => f.s === s).forEach(f => n[f.c] = (n[f.c] || 0) + 1); let b = 'M', v = 0; ['M', 'V', 'C', 'H', 'N'].forEach(c => { if ((n[c] || 0) > v) { v = n[c]; b = c; } }); return b; });
+const DOM = NSX.map(s => { if (PRED[s]) return PRED[s]; const n = {}; F.filter(f => f.s === s).forEach(f => n[f.c] = (n[f.c] || 0) + 1); let b = 'M', v = 0; ['M', 'V', 'C', 'H', 'N'].forEach(c => { if ((n[c] || 0) > v) { v = n[c]; b = c; } }); return b; });
 const E = ENCUESTAS;
 
-let CMX = 0, CMY = 0, CMR = 100, cA = 0, cm = 0, CPX = [0, 0], CPY = 0, CPR = 80; const kc = Array(NS).fill(0); // comparativa: la malla acompaña al texto
+let LW = 200, CMX = 0, CMY = 0, CMR = 100, cA = 0, cm = 0, CPX = [0, 0], CPY = 0, CPR = 80; const kc = Array(NS).fill(0); // comparativa: la malla acompaña al texto
 let CX0 = 0, CY0 = 0, S0 = 100, eS = 0, amb = 0, ee = 0, Aglob = 1; // centro y escala de la marea total; progreso de escena
 const FILTERS = { all: [0, 1e4], am: [0, 756], pm: [757, 1049], pk: [1050, 1e4] };
 let flt = 'all', want = null, foc = null, k = 0, pf = null, hov = null, hs = null, W, H, dpr, T = 0, Rb, Rf, FX, FY, ctr = [], G = [], pkey = '';
@@ -41,7 +41,7 @@ const wid = f => .13 + .04 * f.fv;
 
 // flujos: personas = puntos lentos · vehículos = estelas rápidas (cantidad y velocidad ∝ nivel de flujo)
 const FL = NSX.map(() => ({ p: Array.from({ length: 130 }, () => ({ a: 0, u: Math.random(), fr: Math.random(), sg: Math.random() < .5 ? 1 : -1, ph: Math.random() * 6.28, sm: .3 + Math.random() * 1.5, t: Math.random() * 3, pause: 0, tu: Math.random(), sz: 2.2 + Math.random() * 2.6 })), v: Array.from({ length: 30 }, (_, i) => ({ a: 0, u: Math.random(), fr: Math.random(), sg: i % 2 ? 1 : -1, ph: Math.random() * 6.28, sm: .5 + Math.random() * 1.1, t: Math.random() * 3, tf: Math.random() })) }));
-const DIR = [.35, -.5, 0, 1.2, -.9], LV = ['', 'Bajo', 'Medio', 'Alto'];
+const DIR = [.35, -.5, 0, 1.2, -.9, .7], LV = ['', 'Bajo', 'Medio', 'Alto'];
 const lvl = s => { const fs = uniq(F.filter(f => f.s === s && on(f))); return pf && pf.s === s ? [pf.fp, pf.fv] : [mean(fs, f => f.fp) || 1, mean(fs, f => f.fv) || 1]; };
 const lvn = v => LV[cl(Math.round(v), 1, 3)];
 const cen = (g, f) => { const a = angM(f.m); return [g.cx + Math.cos(a) * g.R * .45, g.cy + Math.sin(a) * g.R * .45, g.R * (.16 + .34 * cl((f.pr - 50) / 30, 0, 1))]; };
@@ -61,9 +61,11 @@ function size() {
 function layout() { // las figuras se reacomodan en sincronía con el pill/leyenda «Cómo leer»
   const mob = W < 760;
   const top0 = W < 1100 ? 64 : 72 + leg.offsetHeight + 14, LB = mob ? 98 : 90, gh = H - (mob ? 124 : 100) - top0, gw = W - (mob ? 28 : 76), x0 = mob ? 14 : 22;
-  const NR = Math.ceil(NS / 2), rA = Math.min(gw / NS / 2.05, (gh - LB) / 2.2), rB = Math.min(gw / 2 / 2.05, (gh / NR - LB) / 2.2), row = rA >= rB;
-  Rb = Math.max(rA, rB); const bh = 2.2 * Rb + LB, off = row ? (gh - bh) / 2 : (gh / NR - bh) / 2;
-  ctr = NSX.map(i => row ? [x0 + gw * (i + .5) / NS, top0 + off + 8 + Rb * 1.08] : [x0 + gw * ((i % 2 + .5) / 2 + (i === NS - 1 && NS % 2 ? .25 : 0)), top0 + (gh / NR) * Math.floor(i / 2) + off + 8 + Rb * 1.08]);
+  const minCw = mob ? 170 : 190; let best = null; // columnas: todas en fila, 3 o 2; el ancho de celda debe alojar la etiqueta
+  (mob ? [2] : [NS, 3, 2]).forEach(c => { const nr = Math.ceil(NS / c); if (c > 2 && gw / c < minCw) return; const r = Math.min(gw / c / 2.05, (gh / nr - LB) / 2.2); if (!best || r > best.r) best = { c, nr, r }; });
+  if (!best) { const nr = Math.ceil(NS / 2); best = { c: 2, nr, r: Math.min(gw / 2 / 2.05, (gh / nr - LB) / 2.2) }; }
+  Rb = best.r; LW = gw / best.c; const bh = 2.2 * Rb + LB, off = (gh / best.nr - bh) / 2;
+  ctr = NSX.map(i => { const rw = Math.floor(i / best.c), inRow = Math.min(best.c, NS - rw * best.c), cx = i % best.c + (best.c - inRow) / 2; return [x0 + gw * (cx + .5) / best.c, top0 + (gh / best.nr) * rw + off + 8 + Rb * 1.08]; });
   CMX = mob ? W / 2 : W * .27; CMY = mob ? H * .30 : H * .70; CMR = mob ? Math.min(W * .19, H * .072) : Math.min(W * .15, H * .23);
   CPX = mob ? [W * .27, W * .73] : [W * .15, W * .4]; CPY = mob ? H * .385 : H * .72; CPR = mob ? Math.min(W * .27, H * .115) : Math.min(W * .13, H * .24);
   CX0 = x0 + gw / 2; CY0 = top0 + gh / 2 + (mob ? -8 : 0); S0 = Math.min(gw * (mob ? .24 : .15), gh * (mob ? .3 : .36));
@@ -273,13 +275,14 @@ function frame(ms) {
   const lab = cl((eS - .6) / .35, 0, 1) * (1 - amb) * (1 - cl(cA * 4, 0, 1));
   if (lab > .05) G.forEach((g, s) => {
     if (g.al < .05) return; const c = rgbOf(COL[DOM[s]]), big = g.kk > .5, mob = W < 760, [p, v] = lvl(s), y = g.cy + g.R * 1.12 + (big ? (mob ? 24 : 32) : (mob ? 18 : 22));
+    const sc = big || mob ? 1 : Math.min(1, (LW - 14) / 250); x.save(); if (sc < 1) { x.translate(g.cx, y); x.scale(sc, sc); x.translate(-g.cx, -y); }
     x.globalAlpha = g.al * lab; x.fillStyle = '#3b4234'; x.font = `700 ${big ? (mob ? 20 : 28) : (mob ? 14 : 20)}px Helvetica,Arial`; x.fillText(SECT[s].toUpperCase(), g.cx, y);
     x.font = `${big ? (mob ? 13 : 16) : (mob ? 11 : 14)}px Helvetica,Arial`; x.fillStyle = `rgb(${c})`;
     const dbl = dbL(s);
     if (mob && !big) { x.fillText(SH[DOM[s]] + ' · ' + agL(s), g.cx, y + 15); x.fillStyle = '#5E6655'; x.fillText(dbl, g.cx, y + 29); x.fillStyle = '#3b4234'; x.fillText('Personas: ' + lvn(p), g.cx, y + 43); x.fillText('Vehículos: ' + lvn(v), g.cx, y + 57); }
     else if (!big) { x.fillText('Predomina: ' + SH[DOM[s]] + ' · ' + agL(s), g.cx, y + 21); x.fillStyle = '#5E6655'; x.fillText(dbl, g.cx, y + 40); x.fillStyle = '#3b4234'; x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, y + 59); }
     else { x.fillText('Predomina: ' + SH[DOM[s]] + ' · ' + agL(s), g.cx, y + (mob ? 18 : 24)); x.fillStyle = '#3b4234'; x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, y + (mob ? 35 : 46)); }
-    x.globalAlpha = 1;
+    x.restore(); x.globalAlpha = 1;
   });
   const ht = want !== null ? '' : (tide ? 'Marea total · toca una ficha' : 'Clic en un sector para expandirlo · teclas 1–' + NS); if (ht !== lastHt) { lastHt = ht; hint.textContent = ht; }
   const dw = document.getElementById('down'), dl = tide ? 'Desplegar sectores ↓' : 'Contraste y comparación ↓'; if (dw.textContent !== dl) dw.textContent = dl;
@@ -291,7 +294,7 @@ function render() {
   panel.style.display = want !== null ? 'block' : 'none'; hint.style.display = want !== null ? 'none' : 'block';
   const s = want !== null ? want : hs, key = [want, flt, srcF, pf && pf.id, s].join();
   if (key === pkey || want === null) return; pkey = key; const sc = panel.scrollTop;
-  if (s === null) { panel.className = ''; panel.innerHTML = '<h2>Explora los cinco sectores</h2><small>Pasa el cursor sobre un sector y haz clic para expandirlo y aislarlo; luego elige una ficha.</small>'; return; }
+  if (s === null) { panel.className = ''; panel.innerHTML = '<h2>Explora los seis sectores</h2><small>Pasa el cursor sobre un sector y haz clic para expandirlo y aislarlo; luego elige una ficha.</small>'; return; }
   const fs = uniq(F.filter(f => f.s === s && on(f))), es = E.filter(e => e[0] === s), a = agrSec(s), db = es.filter(e => e[2]), mood = a > .8 ? 'agrado' : a < 0 ? 'molestia' : 'neutral';
   let h = `<h2>${SECT[s]}</h2><small>${SUB[s]} · ${fs.length} fichas visibles</small><div class="g">
     <div>dB promedio<b>${real(fs).length ? mean(real(fs), f => f.pr).toFixed(1) : 'sin medir'}</b></div><div>dB máx. registrado<b>${real(fs).length ? Math.max(...real(fs).map(f => f.mx)) : '–'}</b></div>
@@ -317,7 +320,7 @@ function pick(e) {
   if (amb < .2) {
     let best = Math.pow(W < 760 ? 24 : 17, 2);
     DOTS.forEach(d => { const q = (d.x - mx) * (d.x - mx) + (d.y - my) * (d.y - my); if (d.al > .3 && q < best) { best = q; hov = d.f; } });
-    if (eS > .85) G.forEach((g, s) => { if (g.al < .5) return; const inFig = Math.hypot(mx - g.cx, my - g.cy) < g.R * 1.25 || (want === null && Math.abs(mx - g.cx) < Math.max(g.R * 1.1, W < 760 ? 60 : 90) && my > g.cy - g.R * 1.1 && my < g.cy + g.R * 1.12), inLbl = want === null && Math.abs(mx - g.cx) < Math.max(g.R, W < 760 ? 70 : 110) && my > g.cy + g.R * .95 && my < g.cy + g.R * 1.12 + 92; if ((inFig && (want === null || k > .5)) || inLbl) hs = s; });
+    if (eS > .85) G.forEach((g, s) => { if (g.al < .5) return; const inFig = Math.hypot(mx - g.cx, my - g.cy) < g.R * 1.25 || (want === null && Math.abs(mx - g.cx) < Math.max(g.R * 1.1, W < 760 ? 60 : 90) && my > g.cy - g.R * 1.1 && my < g.cy + g.R * 1.12), inLbl = want === null && Math.abs(mx - g.cx) < Math.min(LW / 2, Math.max(g.R, W < 760 ? 70 : 110)) && my > g.cy + g.R * .95 && my < g.cy + g.R * 1.12 + 92; if ((inFig && (want === null || k > .5)) || inLbl) hs = s; });
   }
   if (hov) { tip.innerHTML = `<b>${hov.id} · ${hov.t} h</b>${hov.src}<br>${hov.nd ? 'sin dB medido · intensidad ' + FICHAS[F.indexOf(hov)][10] + '/5' : hov.mn + '–' + hov.mx + ' dB · prom ' + hov.pr}<br><span style="color:${COL[hov.c]}">${CAT[hov.c]}</span><br><i>${hov.ph}</i>`; tip.style.display = 'block'; tip.style.left = Math.max(8, Math.min(mx + 16, W - 280)) + 'px'; tip.style.top = (W < 760 ? Math.max(60, my - 130) : my + 16) + 'px'; }
   else tip.style.display = 'none';
@@ -371,6 +374,6 @@ cv.addEventListener('click', () => { if (innerWidth < 1100) legSet(false); });
 addEventListener('keydown', e => { if (e.key === 'Escape' && innerWidth < 1100) legSet(false); });
 addEventListener('resize', () => { legMeasure(); const m = innerWidth >= 1100; if (m !== legMode) { legMode = m; legSet(m); } });
 legMeasure(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { legMeasure(); size(); });
-cv.tabIndex = 0; cv.setAttribute('aria-label', 'Modelo visual de cinco sectores. Teclas 1 a 5: expandir un sector. Escape: volver.');
-addEventListener('keydown', e => { if (/^[1-5]$/.test(e.key) && !document.body.classList.contains('heroing')) focus(+e.key - 1); });
+cv.tabIndex = 0; cv.setAttribute('aria-label', 'Modelo visual de seis sectores. Teclas 1 a 6: expandir un sector. Escape: volver.');
+addEventListener('keydown', e => { if (/^[1-9]$/.test(e.key) && +e.key <= NS && !document.body.classList.contains('heroing')) focus(+e.key - 1); });
 addEventListener('resize', size); size(); render(); requestAnimationFrame(frame);

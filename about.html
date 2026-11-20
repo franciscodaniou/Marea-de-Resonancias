@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="theme-color" content="#DCDDD3"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Acerca de Marea de resonancias</title><link rel="stylesheet" href="style.css?v=39"></head>
+<title>Acerca de Marea de resonancias</title><link rel="stylesheet" href="style.css?v=40"></head>
 <body class="about">
 <header><b>Marea de resonancias</b><nav id="nav" class="morph"><span class="lbl" tabindex="0">Inicio</span><a class="mb" href="index.html">Visualización</a><a class="mb on" href="about.html">Acerca del estudio</a></nav></header>
 <canvas id="c" aria-hidden="true"></canvas>
@@ -27,7 +27,7 @@
 
 <section class="card"><h2>Planteamiento general</h2>
 <p>Marea de resonancias responde a la pregunta central del estudio grupal, abordando el paisaje sonoro desde sus variaciones temporales y espaciales. Sobre esta base, se tomó una decisión estructural: el sonido se muestra como un conjunto de figuras vivas, una por lugar, cuyo aspecto y movimiento cambian con los datos. Los sectores de estudio se presentan lado a lado con el mismo formato. Así, la diferencia entre ellos se percibe de un vistazo.</p>
-<p>La visualización cruza dos fuentes del levantamiento: las 43 fichas de terreno (niveles de sonido, fuentes, flujos y fenómenos observados) y las 20 encuestas de percepción (agrado y citas textuales). Desde noviembre de 2026 se suma el primer registro de Buenos Aires, Plaza de Mayo (ficha BA-PI-01, 19 de noviembre, 12:50–13:00), con tres fuentes simultáneas.</p></section>
+<p>La visualización cruza dos fuentes del levantamiento: las 47 fichas de terreno (niveles de sonido, fuentes, flujos y fenómenos observados) y las 20 encuestas de percepción (agrado y citas textuales). Desde noviembre de 2026 se suman los primeros registros de Buenos Aires: Plaza de Mayo (BA-PI-01, 12:50–13:00) y Puente de la Mujer (BA-M-02, 12:29–12:40), ambos del 19 de noviembre.</p></section>
 
 <section class="card"><h2>Definiciones previas del estudio grupal</h2>
 <p>Antes de la estructuración de los datos y el modelo visual, el levantamiento grupal estableció los criterios y categorías fundamentales que guían el proyecto.</p>
@@ -60,7 +60,7 @@
 <li><b>Interfaz e interacción:</b> despliegue mediante una vista general comparativa, filtros por franjas horarias y paneles de detalle que unen las métricas cuantitativas con las citas textuales cualitativas.</li></ul></section>
 
 <section class="card"><h2>Inventario de datos</h2>
-<p>Del levantamiento del Barrio Puerto se seleccionó solo la información que responde a la pregunta del estudio. Se usaron dos tablas de la base de datos, la de las 43 fichas de terreno (39 mediciones únicas) y la de las 20 encuestas de percepción. Estas se vincularon por sector, así, cada lugar reúne lo que se midió y lo que se sintió.</p>
+<p>Del levantamiento del Barrio Puerto se seleccionó solo la información que responde a la pregunta del estudio. Se usaron dos tablas de la base de datos, la de las 47 fichas de terreno (39 mediciones únicas) y la de las 20 encuestas de percepción. Estas se vincularon por sector, así, cada lugar reúne lo que se midió y lo que se sintió.</p>
 <h3>Datos de las fichas de terreno</h3>
 <ul>
 <li><b>Sector o lugar:</b> se tomó el nombre de cada punto, que es la unidad de la visualización. Cada figura representa un sector, y el estudio se organiza justamente en torno a la comparación entre sus tipologías espaciales, desde el borde abierto del Muelle Prat hasta el corredor encerrado de la Calle Serrano.</li>
@@ -83,7 +83,7 @@
 <section class="card"><h2>Figuración</h2>
 <h3>La marea de resonancias</h3>
 <p>Cada lugar es una malla orgánica en movimiento, un tubo que se deforma como una marea. Esta decisión nace de una premisa del estudio grupal: la forma del espacio determina cómo se oye el sonido, porque lo filtra, lo concentra o lo devuelve. La malla no es una barra ni un punto: se hincha donde el sonido es más fuerte y se calma donde no, como el espacio que lo contiene.</p>
-<p>El visor comienza con la <b>marea total</b>: las fichas de los cinco lugares sobre una misma malla, donde cada lugar tiñe un tramo con el color de su fuente predominante. Al desplegarla, la marea se disuelve y da lugar a cinco mallas lado a lado, una por lugar.</p>
+<p>El visor comienza con la <b>marea total</b>: las fichas de los seis lugares sobre una misma malla, donde cada lugar tiñe un tramo con el color de su fuente predominante. Al desplegarla, la marea se disuelve y da lugar a cinco mallas lado a lado, una por lugar.</p>
 <h3>La ficha como punto que ilumina la malla</h3>
 <p>Cada medición es un punto del color de su fuente. Su posición a lo largo de la malla es la hora (de 09:40 a 18:50) y alrededor de ella cada fuente tiene su carril. El punto ilumina una zona de la malla cuyo ancho es el rango de decibeles (mínimo a máximo), pulsa más rápido a mayor nivel promedio y levanta el relieve en proporción a ese promedio. Cada tramo iluminado tiene un solo color, el de la ficha más fuerte.</p>
 <h3>Los flujos: personas y vehículos</h3>
@@ -98,13 +98,13 @@
 <p>La visualización se recorre hacia abajo, en seis momentos:</p>
 <ol>
 <li><b>Marea total:</b> todas las fichas sobre una misma malla. Se puede tocar una ficha, filtrar por franja o por fuente y girar la malla arrastrando.</li>
-<li><b>Sectores:</b> la marea se disuelve en cinco mallas lado a lado, con su dB promedio, agrado y flujos. Un clic expande y aísla un sector, con su panel de detalle.</li>
+<li><b>Sectores:</b> la marea se disuelve en seis mallas lado a lado, con su dB promedio, agrado y flujos. Un clic expande y aísla un sector, con su panel de detalle.</li>
 <li><b>Contraste y comparación:</b> el título y la leyenda quedan fijos mientras dura la sección. Cada lugar ocupa tres tramos de scroll: mañana, tarde y hora punta. La malla se filtra por esa franja y la tarjeta muestra su horario, dB promedio y número de mediciones; al terminar el cuarto lugar se restaura el filtro previo.</li>
 <li><b>Modo comparar:</b> al final de la comparación se eligen dos lugares (A y B) y una franja. Las dos mallas se muestran con la misma escala y barras que crecen desde el centro comparan dB, máximo, flujos, agrado y número de mediciones, con una lectura automática de la diferencia. El agrado no se filtra por franja porque las encuestas no registran hora.</li>
 <li><b>Gráficas que se transforman:</b> las mismas cifras cambian de forma con un botón (intensidad por lugar o por hora; agrado frente a dB o respuestas).</li>
 <li><b>Partitura:</b> cada ficha es una nota. La línea es su fuente de sonido, la posición su hora y el tamaño su dB. Se ve todo el barrio o un pentagrama por lugar.</li>
 <li><b>Estadísticas y consola:</b> qué suena, cuánta gente y tráfico hay, cómo se siente cada lugar, los picos más altos y una consola «Cómo funciona» con la malla en vivo.</li></ol>
-<p>El botón «Cómo leer» explica el código visual. A la derecha, un indicador de secciones permite saltar entre ellas y copiar un enlace que restaura la vista (sección, filtros, lugares A y B y franja). Sonido opcional (silenciado por defecto, botón del indicador o tecla M): cada fuente tiene su timbre y el volumen sigue los dB del lugar. Atajos: ← → (paso o franja), A y B (lugar en Comparar), N y P (sección), 1–5 (sector), M (sonido), ? (ayuda). La interfaz usa glassmorfismo (WebGL en controles fijos y CSS en lo que se desplaza).</p></section>
+<p>El botón «Cómo leer» explica el código visual. A la derecha, un indicador de secciones permite saltar entre ellas y copiar un enlace que restaura la vista (sección, filtros, lugares A y B y franja). Sonido opcional (silenciado por defecto, botón del indicador o tecla M): cada fuente tiene su timbre y el volumen sigue los dB del lugar. Atajos: ← → (paso o franja), A y B (lugar en Comparar), N y P (sección), 1–6 (sector), M (sonido), ? (ayuda). La interfaz usa glassmorfismo (WebGL en controles fijos y CSS en lo que se desplaza).</p></section>
 
 </div></div>
 <section class="card wide"><h2>Criterios y límites de los datos</h2>
@@ -112,6 +112,7 @@
 <li><b>Fuente «comercial»:</b> separa captadores, música de locales, cortinas y locatarios de las voces humanas (8 fichas recategorizadas por el equipo).</li>
 <li><b>Malla:</b> el largo es la hora, los carriles de alrededor son las fuentes y el relieve crece con el dB promedio de cada ficha; no codifica la cantidad de mediciones.</li>
 <li><b>Plaza de Mayo (Buenos Aires):</b> una sola medición con tres fuentes (bocinazo, autos pasando y personas hablando), flujos altos de personas y vehículos. La ficha trae dbMin = 5 sin promedio ni máximo, un valor inválido que no se usó: el lugar figura «sin dB medido», queda fuera de promedios, máximos y picos, y su relieve en la malla se dibuja por la intensidad percibida (1–5) de cada fuente. Tampoco tiene encuestas, así que su agrado aparece como «sin encuestas». Se corrigió la ortografía de «Veichular» y la fuente «Sonido/ bocinazo» quedó como «Bocinazo». Es una lectura preliminar a la espera de más registros de Buenos Aires.</li>
+<li><b>Puente de la Mujer (Buenos Aires):</b> una medición (BA-M-02, 19 de noviembre, 12:29–12:40) con cuatro fuentes: vehículos de la ciudad, trabajos en el puente, gente que pasa conversando y aves. Tampoco trae dB. «Trabajos en el puente» no tiene intensidad, así que su relieve usa el valor medio solo para dibujar la malla. El observador describe el viento y la ciudad como aura de fondo y no marca una fuente; en la visualización figura como Vehicular, por el zumbido constante de autos que relata. Lectura preliminar.</li>
 <li><b>Agrado:</b> escala de −1 a 2 calculada sobre las 20 encuestas. Es distinta de la escala de 1 a 5 de la tabla perceptual del informe, que parte de otra muestra: no son comparables.</li>
 </ul>
 <ul>
@@ -119,7 +120,7 @@
 <li><b>Muestras pequeñas:</b> Echaurren tiene 3 fichas y 2 encuestas; la hora punta, 6 mediciones.</li>
 <li><b>Interpretación del equipo:</b> el movimiento errático según el agrado y la deformación según el dB por hora son decisiones expresivas, no estándares de la disciplina.</li>
 </ul></div>
-<p class="how">Datos abiertos: <a href="data.json">data.json</a> y <a href="data.js?v=39">data.js</a> (con la fuente y los criterios de preparación).</p></section>
+<p class="how">Datos abiertos: <a href="data.json">data.json</a> y <a href="data.js?v=40">data.js</a> (con la fuente y los criterios de preparación).</p></section>
 <section class="card wide"><h2>Uso de IA</h2>
 <p class="lead2">La IA (Claude, de Anthropic) se usó como apoyo técnico para ampliar lo que se podía construir. Las decisiones de diseño, la selección de datos y el punto de vista son del autor.</p>
 <div class="g3">
@@ -142,5 +143,5 @@
 </div></section>
 <p class="foot">Proyecto grupal: <a href="https://wiki.ead.pucv.cl/Proyecto_de_Visualizaci%C3%B3n_-_Grupo_2">Proyecto de Visualización – Grupo 2</a> · Proyecto individual: <a href="https://wiki.ead.pucv.cl/Visualizaci%C3%B3n_de_Datos_Interactiva_TDS_2026_-_Francisco_Daniou">Visualización de Datos Interactiva TDS 2026 – Francisco Daniou</a> · Taller de Diseño de Servicios 2026</p>
 </div>
-<script src="data.js?v=39"></script><script src="app.js?v=39"></script><script src="glass.js?v=39"></script>
+<script src="data.js?v=40"></script><script src="app.js?v=40"></script><script src="glass.js?v=40"></script>
 </body></html>

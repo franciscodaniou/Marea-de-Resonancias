@@ -9,17 +9,21 @@
      simultáneas: cuentan en las tres categorías de fuente, pero sus decibeles y flujos se cuentan una sola vez.
    · Agrado de encuestas: «me gusta» = 2 · «me gusta un poco» = 1 · «me da igual» = 0 · «me incomoda un poco» = −1.
    · Flujos: bajo/medio/alto → 1/2/3.
+   · Puente de la Mujer (Buenos Aires, BA-M-02, 12:29): 1 medición con 4 fuentes, también sin dB; su fuente predominante (Vehicular) la fija PRED porque las fichas empatan.
    · Plaza de Mayo (Buenos Aires): 1 medición (BA-PI-01, 12:50) con 3 fuentes simultáneas. Sin dB válido (dbMin = 5; dbProm y dbMax vacíos):
      no entra en promedios ni máximos; su relieve usa la intensidad percibida (1–5). Sin encuestas de agrado todavía. */
-const SECT = ['Muelle Prat', 'Plaza Sotomayor', 'Calle Serrano', 'Plaza Echaurren', 'Plaza de Mayo'];
+const SECT = ['Muelle Prat', 'Plaza Sotomayor', 'Calle Serrano', 'Plaza Echaurren', 'Plaza de Mayo', 'Puente de la Mujer'];
+const SHORT = ['Prat', 'Sotomayor', 'Serrano', 'Echaurren', 'Mayo', 'Puente'];
+const PRED = { 5: 'V' }; // fuente predominante indicada por el observador cuando las fichas empatan
 const NS = SECT.length;
-const SUB = ['borde abierto al mar', 'explanada de bordes duros', 'corredor encerrado', 'claro rodeado de muros', 'plaza abierta junto a avenida'];
+const SUB = ['borde abierto al mar', 'explanada de bordes duros', 'corredor encerrado', 'claro rodeado de muros', 'plaza abierta junto a avenida', 'borde costero junto al río'];
 const QUOTE = [
   'Aunque estén varias cosas pasando... resulta muy agradable estar aquí tranquilo y ver el mar.',
   'Son muchos sonidos pasando a la vez.',
   'En Serrano hay más tranquilidad comparado con el tránsito y bocinazos de Sotomayor.',
   'Bajó el sonido ambiental, más viento.',
-  'Hay cambios repentinos según el tránsito: con el semáforo en rojo los autos se detienen y se escucha un lapso de silencio.'
+  'Hay cambios repentinos según el tránsito: con el semáforo en rojo los autos se detienen y se escucha un lapso de silencio.',
+  'La gente pasa muy a la rápida, todos están al paso; es una zona agradable para pasar el rato en la sombra, pero es muy al paso.'
 ];
 // FICHAS: [hora, sector (0-4), dB mín, dB prom, dB máx, flujo peatonal 1-3, flujo vehicular 1-3, tipo de fuente, fuente, fenómeno observado, intensidad percibida 1-5 (solo si no hay dB), código]
 // null en dB = sin medir (ficha BA-PI-01 de Plaza de Mayo, Buenos Aires)
@@ -67,7 +71,12 @@ const FICHAS = [
   // Buenos Aires · BA-PI-01 · 19/11/2026 12:50–13:00 · una medición con tres fuentes simultáneas, sin dB (el medidor no quedó registrado)
   ['12:50', 4, null, null, null, 3, 3, 'V', 'Bocinazo', 'Un auto tocó la bocina y dos personas se dieron vuelta a mirar', 2, 'BA-PI-01'],
   ['12:50', 4, null, null, null, 3, 3, 'V', 'Autos pasando', 'Con el semáforo en rojo los autos se detienen y se oye un lapso de silencio', 4, 'BA-PI-01'],
-  ['12:50', 4, null, null, null, 3, 3, 'H', 'Personas hablando', 'Flujo peatonal alto; sin reacciones visibles ante el tránsito de la calle de atrás', 2, 'BA-PI-01']
+  ['12:50', 4, null, null, null, 3, 3, 'H', 'Personas hablando', 'Flujo peatonal alto; sin reacciones visibles ante el tránsito de la calle de atrás', 2, 'BA-PI-01'],
+  // Buenos Aires · BA-M-02 · Puente de la Mujer · 19/11/2026 12:29–12:40 · cuatro fuentes simultáneas, sin dB
+  ['12:29', 5, null, null, null, 2, 1, 'V', 'Vehículos en la ciudad', 'Zumbido constante de autos que llega desde la ciudad, como un aura de fondo', 4, 'BA-M-02'],
+  ['12:29', 5, null, null, null, 2, 1, 'M', 'Trabajos en el puente', 'Maquinaria que se siente de a momentos', null, 'BA-M-02'],
+  ['12:29', 5, null, null, null, 2, 1, 'H', 'Gente caminando y conversando', 'La gente pasa muy a la rápida, todos van de paso', 2, 'BA-M-02'],
+  ['12:29', 5, null, null, null, 2, 1, 'N', 'Aves', 'Los árboles cercanos atraen aves que a ratos llenan el ambiente con su canto', 2, 'BA-M-02']
 ];
 // ENCUESTAS: [sector (0-3; Plaza de Mayo aún sin encuestas), agrado (−1…2), dB medido durante la encuesta (si se registró)]
 const ENCUESTAS = [[0,1,71.4],[0,1,75],[3,1,54],[3,-1,75.4],[2,0,74.3],[0,1],[0,2],[0,1],[0,1],[1,-1],[1,-1],[1,0],[1,-1],[1,-1],[2,0],[2,2],[2,2],[2,2],[0,2],[1,2]];
