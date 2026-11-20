@@ -60,7 +60,7 @@ function size() {
 }
 function layout() { // las figuras se reacomodan en sincronía con el pill/leyenda «Cómo leer»
   const mob = W < 760;
-  const top0 = W < 1100 ? 64 : 72 + leg.offsetHeight + 14, LB = mob ? 98 : 90, gh = H - (mob ? 124 : 100) - top0, gw = W - (mob ? 28 : 76), x0 = mob ? 14 : 22;
+  const top0 = W < 760 ? 108 : W < 1100 ? 64 : 72 + leg.offsetHeight + 14, LB = mob ? 128 : 118, gh = H - (mob ? 124 : 100) - top0, gw = W - (mob ? 28 : 76), x0 = mob ? 14 : 22;
   const minCw = mob ? 170 : 190; let best = null; // columnas: todas en fila, 3 o 2; el ancho de celda debe alojar la etiqueta
   (mob ? [2] : [NS, 3, 2]).forEach(c => { const nr = Math.ceil(NS / c); if (c > 2 && gw / c < minCw) return; const r = Math.min(gw / c / 2.05, (gh / nr - LB) / 2.2); if (!best || r > best.r) best = { c, nr, r }; });
   if (!best) { const nr = Math.ceil(NS / 2); best = { c: 2, nr, r: Math.min(gw / 2 / 2.05, (gh / nr - LB) / 2.2) }; }
@@ -244,7 +244,7 @@ function frame(ms) {
   if (want === null && k < .003) { k = 0; foc = null; } else if (want !== null) foc = want;
   // scroll → marea total (arriba) → sectores → ambiente (contraste y estadísticas)
   const vh = innerHeight, sy0 = window.scrollY, hero = document.body.classList.contains('heroing') || document.body.classList.contains('about');
-  const stEl = document.querySelectorAll('.step'), chEl = document.querySelector('.charts2'), csE = document.querySelector('.cstage'); let cT = 0, cS = -1, cmpT = 0;
+  const stEl = document.querySelectorAll('.step'), chEl = document.querySelector('.finds') || document.querySelector('.charts2'), csE = document.querySelector('.cstage'); let cT = 0, cS = -1, cmpT = 0;
   amb = hero || want !== null ? 0 : chEl ? cl((vh * .95 - chEl.getBoundingClientRect().top) / (.5 * vh), 0, 1) : cl((sy0 - 1.0 * vh) / (.6 * vh), 0, 1);
   if (stEl.length && !hero && want === null) { const f0 = stEl[0].getBoundingClientRect(), l0 = (csE || stEl[stEl.length - 1]).getBoundingClientRect(); cT = cl((vh * .9 - f0.top) / (vh * .3), 0, 1) * cl((l0.bottom - vh * .45) / (vh * .3), 0, 1);
     let best = 1e9; stEl.forEach((el, q) => { const r = el.getBoundingClientRect(), d = Math.abs((r.top + r.bottom) / 2 - vh / 2); if (d < best) { best = d; cS = q; } }); if (csE && csE.getBoundingClientRect().top < vh * .5) cmpT = 1; }
@@ -269,22 +269,26 @@ function frame(ms) {
     x.lineWidth = mobq ? 1.2 : 1.5; x.lineCap = 'butt'; { const sw = 1 - Math.pow(1 - cl((q - .04) / .55, 0, 1), 3); let cum = 0; ags.forEach((c, i) => { if (!c) return; const f0 = cum / tot, f1 = (cum + c) / tot, e1 = Math.min(f1, sw); cum += c; if (e1 <= f0 + .002) return; x.globalAlpha = q * .8; x.strokeStyle = AGC[i]; x.beginPath(); x.arc(g.cx, g.cy, r0, a0 + TAU * f0 + .035, a0 + TAU * e1 - (e1 === f1 ? .035 : 0)); x.stroke(); }); } // el anillo de agrado se dibuja al acoplarse
     const pi = PAIR().indexOf(s), qc = pi >= 0 ? cm * kc[s] * cA : 0;
     if (qc > .25) { const c = rgbOf(COL[DOM[s]]); x.globalAlpha = qc; x.fillStyle = '#3b4234'; x.font = `700 ${mobq ? 13 : 18}px Helvetica,Arial`; x.fillText(SECT[s].toUpperCase(), g.cx, g.cy + r0 + (mobq ? 20 : 30));
-      x.font = `${mobq ? 11 : 14}px Helvetica,Arial`; x.fillStyle = '#5E6655'; x.fillText(hasAg(s) ? `agrado ${agrSec(s).toFixed(2)} · ${tot} respuestas` : 'sin encuestas de agrado', g.cx, g.cy + r0 + (mobq ? 34 : 50));
+      x.font = `${mobq ? 11 : 14}px Helvetica,Arial`; x.fillStyle = '#5E6655'; x.fillText(hasAg(s) ? `agrado percibido ${agrSec(s).toFixed(2)} · ${tot} respuestas` : 'sin encuestas de agrado', g.cx, g.cy + r0 + (mobq ? 34 : 50));
       x.font = `800 ${mobq ? 15 : 22}px Helvetica,Arial`; x.fillStyle = `rgb(${c})`; x.fillText('AB'[pi], g.cx, g.cy - r0 - (mobq ? 8 : 12)); }
     x.globalAlpha = 1; }); }
   const lab = cl((eS - .6) / .35, 0, 1) * (1 - amb) * (1 - cl(cA * 4, 0, 1));
+  if (lab > .05 && want === null && W >= 760) { const mob = W < 760, yt = Math.min(...G.map(g => g.cy - g.R)) - (mob ? 26 : 40); x.globalAlpha = lab * .9; x.fillStyle = '#5E6655'; x.font = `${mob ? 12 : 16}px Helvetica,Arial`; x.fillText(mob ? 'Un anillo = un lugar · color = qué suena · barra = qué tan fuerte' : 'Un anillo es un lugar · el color es qué suena · la barra es qué tan fuerte (dB)', W / 2, yt); x.globalAlpha = 1; }
   if (lab > .05) G.forEach((g, s) => {
     if (g.al < .05) return; const c = rgbOf(COL[DOM[s]]), big = g.kk > .5, mob = W < 760, [p, v] = lvl(s), y = g.cy + g.R * 1.12 + (big ? (mob ? 24 : 32) : (mob ? 18 : 22));
     const sc = big || mob ? 1 : Math.min(1, (LW - 14) / 250); x.save(); if (sc < 1) { x.translate(g.cx, y); x.scale(sc, sc); x.translate(-g.cx, -y); }
     x.globalAlpha = g.al * lab; x.fillStyle = '#3b4234'; x.font = `700 ${big ? (mob ? 20 : 28) : (mob ? 14 : 20)}px Helvetica,Arial`; x.fillText(SECT[s].toUpperCase(), g.cx, y);
     x.font = `${big ? (mob ? 13 : 16) : (mob ? 11 : 14)}px Helvetica,Arial`; x.fillStyle = `rgb(${c})`;
     const dbl = dbAvg(s) == null ? dbL(s) : (dbAvg(s) * cl(lab * 1.15, 0, 1)).toFixed(1) + ' dB promedio';
-    if (mob && !big) { x.fillText(SH[DOM[s]] + ' · ' + agL(s), g.cx, y + 15); x.fillStyle = '#5E6655'; x.fillText(dbl, g.cx, y + 29); x.fillStyle = '#3b4234'; x.fillText('Personas: ' + lvn(p), g.cx, y + 43); x.fillText('Vehículos: ' + lvn(v), g.cx, y + 57); }
-    else if (!big) { x.fillText('Predomina: ' + SH[DOM[s]] + ' · ' + agL(s), g.cx, y + 21); x.fillStyle = '#5E6655'; x.fillText(dbl, g.cx, y + 40); x.fillStyle = '#3b4234'; x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, y + 59); }
+    if (!big) { const nd = dbAvg(s) == null, dv = nd ? 0 : dbAvg(s) * cl(lab * 1.15, 0, 1), o1 = mob ? 20 : 30, bw = mob ? 96 : 150, by = y + o1 + 8; // intensidad legible: número grande + barra con la misma escala en todos los lugares
+      x.fillStyle = `rgb(${c})`; x.font = nd ? `${mob ? 12 : 15}px Helvetica,Arial` : `700 ${mob ? 20 : 26}px Helvetica,Arial`; x.fillText(nd ? 'sin dB medido' : dv.toFixed(1) + ' dB', g.cx, y + o1);
+      x.globalAlpha = g.al * lab * .22; x.fillStyle = '#5E6655'; x.fillRect(g.cx - bw / 2, by, bw, 6); if (!nd) { x.globalAlpha = g.al * lab * .9; x.fillStyle = `rgb(${c})`; x.fillRect(g.cx - bw / 2, by, bw * cl((dv - 40) / 55, 0, 1), 6); } x.globalAlpha = g.al * lab;
+      x.font = `${mob ? 11 : 14}px Helvetica,Arial`; x.fillStyle = `rgb(${c})`; x.fillText((mob ? '' : 'Predomina: ') + SH[DOM[s]] + ' · ' + agL(s), g.cx, by + (mob ? 22 : 28)); x.fillStyle = '#3b4234';
+      if (mob) { x.fillText('Personas: ' + lvn(p), g.cx, by + 36); x.fillText('Vehículos: ' + lvn(v), g.cx, by + 50); } else x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, by + 46); }
     else { x.fillText('Predomina: ' + SH[DOM[s]] + ' · ' + agL(s), g.cx, y + (mob ? 18 : 24)); x.fillStyle = '#3b4234'; x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, y + (mob ? 35 : 46)); }
     x.restore(); x.globalAlpha = 1;
   });
-  const ht = want !== null ? '' : (tide ? 'Marea total · toca una ficha' : 'Clic en un sector para expandirlo · teclas 1–' + NS); if (ht !== lastHt) { lastHt = ht; hint.textContent = ht; }
+  const ht = want !== null ? '' : (tide ? 'Todas las mediciones · toca un punto' : 'Clic en un sector para expandirlo · teclas 1–' + NS); if (ht !== lastHt) { lastHt = ht; hint.textContent = ht; }
   const dw = document.getElementById('down'), dl = tide ? 'Desplegar sectores ↓' : 'Contraste y comparación ↓'; if (dw.textContent !== dl) dw.textContent = dl;
   requestAnimationFrame(frame);
 }
@@ -294,9 +298,9 @@ function render() {
   panel.style.display = want !== null ? 'block' : 'none'; hint.style.display = want !== null ? 'none' : 'block';
   const s = want !== null ? want : hs, key = [want, flt, srcF, pf && pf.id, s].join();
   if (key === pkey || want === null) return; pkey = key; const sc = panel.scrollTop;
-  if (s === null) { panel.className = ''; panel.innerHTML = '<h2>Explora los seis sectores</h2><small>Pasa el cursor sobre un sector y haz clic para expandirlo y aislarlo; luego elige una ficha.</small>'; return; }
+  if (s === null) { panel.className = ''; panel.innerHTML = '<h2>Explora los seis sectores</h2><small>Pasa el cursor sobre un sector y haz clic para expandirlo y aislarlo; luego elige una medición.</small>'; return; }
   const fs = uniq(F.filter(f => f.s === s && on(f))), es = E.filter(e => e[0] === s), a = agrSec(s), db = es.filter(e => e[2]), mood = a > .8 ? 'agrado' : a < 0 ? 'molestia' : 'neutral';
-  let h = `<h2>${SECT[s]}</h2><small>${SUB[s]} · ${fs.length} fichas visibles</small><div class="g">
+  let h = `<h2>${SECT[s]}</h2><small>${SUB[s]} · ${fs.length} mediciones visibles</small><div class="g">
     <div>dB promedio<b${real(fs).length ? ` data-n="${mean(real(fs), f => f.pr).toFixed(1)}" data-dec="1"` : ''}>${real(fs).length ? mean(real(fs), f => f.pr).toFixed(1) : 'sin medir'}</b></div><div>dB máx. registrado<b${real(fs).length ? ` data-n="${Math.max(...real(fs).map(f => f.mx))}"` : ''}>${real(fs).length ? Math.max(...real(fs).map(f => f.mx)) : '–'}</b></div>
     <div>Flujo peatonal / vehicular (1-3)<b>${mean(fs, f => f.fp).toFixed(1)} / ${mean(fs, f => f.fv).toFixed(1)}</b></div>
     <div>Agrado (−1…2) · n=${es.length}${es.length ? `<b style="color:rgb(${agr(a)})">${a.toFixed(2)} · ${mood}</b>` : '<b>sin encuestas</b>'}</div></div>`;
@@ -343,14 +347,21 @@ addEventListener('keydown', e => { if (e.key === 'Escape') focus(null); });
 document.querySelectorAll('#ctl button').forEach(b => b.onclick = () => { flt = b.dataset.f; document.querySelectorAll('#ctl button').forEach(o => o.classList.toggle('on', o === b)); document.querySelector('#ctl .lbl').textContent = 'Franja · ' + b.textContent; document.getElementById('ctl').classList.remove('open'); b.blur(); render(); });
 
 window.MAREA = { pair: [0, 1], get want() { return want; }, get srcF() { return srcF; }, setSrc(c) { setSrc(c); }, focus(s) { focus(s); }, get flt() { return flt; }, setFlt(f) { if (flt === f) return; flt = f; const b = document.querySelector(`#ctl button[data-f="${f}"]`); document.querySelectorAll('#ctl button').forEach(o => o.classList.toggle('on', o === b)); if (b) document.querySelector('#ctl .lbl').textContent = 'Franja · ' + b.textContent; render(); } }; // la comparativa avanza la franja horaria con el scroll
-document.getElementById('next').onclick = () => document.getElementById('hero').classList.add('s2');
-document.getElementById('prev').onclick = () => document.getElementById('hero').classList.remove('s2');
 document.getElementById('go').onclick = () => { document.getElementById('hero').classList.add('off'); document.body.classList.remove('heroing'); };
-document.querySelector('#leg .lgb').innerHTML = `<div class="lcols">
-  <div class="lc"><h4>Color · fuente de sonido</h4><ul class="dots">${Object.keys(COL).map(k => `<li data-c="${k}" tabindex="0"><i style="background:${COL[k]}"></i>${CAT[k]}</li>`).join('')}</ul><p class="hn">Toca un color para filtrar</p></div>
-  <div class="lc"><h4>Malla · un lugar</h4><ul><li><b>Color:</b> fuente que predomina</li><li><b>Largo:</b> hora, de 09:40 a 18:50</li><li><b>Relieve:</b> sube donde el sonido es más fuerte</li><li><b>Movimiento errático:</b> menor agrado</li></ul></div>
-  <div class="lc"><h4>Ficha · una medición</h4><ul><li><b>Punto:</b> color de su fuente</li><li><b>Zona iluminada:</b> ancho = rango dB mín → máx</li><li><b>Relieve bajo el punto:</b> dB promedio</li></ul></div>
+// escala de referencia: traduce dB a algo cotidiano (aproximada)
+const DBW = v => v < 50 ? 'oficina o biblioteca tranquila' : v < 60 ? 'conversación suave' : v < 70 ? 'conversación fuerte o calle tranquila' : v < 80 ? 'calle con tráfico constante' : v < 90 ? 'tráfico intenso o maquinaria' : 'bocina o maquinaria muy fuerte';
+const DB_REF = [[45, 'biblioteca'], [62, 'conversación'], [77, 'tráfico'], [90, 'maquinaria']], dbPos = v => cl((v - 40) / 55, 0, 1) * 100;
+window.DBW = DBW; window.dbPos = dbPos;
+document.querySelector('#leg .lgb').innerHTML = `<div class="l3">
+  <div class="ls"><b>1</b><div><h4>El color es qué suena</h4><p>Fuente que predomina. Toca un color para filtrar.</p><ul class="dots">${Object.keys(COL).map(k => `<li data-c="${k}" tabindex="0"><i style="background:${COL[k]}"></i>${SH[k]}</li>`).join('')}</ul></div></div>
+  <div class="ls"><b>2</b><div><h4>El relieve es qué tan fuerte</h4><p>Donde la malla sube y el punto brilla, hay más decibeles (dB).</p><div class="dbs ref"><div class="dtr"><i style="width:100%"></i></div><div class="dtk">${DB_REF.map(([v, n]) => `<span style="left:${dbPos(v)}%">${n}</span>`).join('')}</div></div></div></div>
+  <div class="ls"><b>3</b><div><h4>El recorrido es la hora</h4><p>El largo de la malla va de las 09:40 a las 18:50. Puntos lentos: personas; estelas rápidas: vehículos.</p></div></div></div>
+  <button class="lmore" aria-expanded="false">Ver detalle ▾</button>
+  <div class="lcols lx">
+  <div class="lc"><h4>Malla · un lugar</h4><ul><li><b>Color:</b> fuente que predomina</li><li><b>Largo:</b> hora, de 09:40 a 18:50</li><li><b>Relieve:</b> sube donde el sonido es más fuerte</li><li><b>Movimiento errático:</b> menor agrado percibido</li></ul></div>
+  <div class="lc"><h4>Medición · un punto</h4><ul><li><b>Punto:</b> color de su fuente</li><li><b>Zona iluminada:</b> ancho = rango dB mín → máx</li><li><b>Relieve bajo el punto:</b> dB promedio</li></ul></div>
   <div class="lc"><h4>Flujos · recorren la malla</h4><ul><li><b>● Puntos lentos:</b> personas</li><li><b>━ Estelas rápidas:</b> vehículos</li><li><b>Más cantidad y velocidad:</b> más flujo</li></ul></div></div>`;
+document.querySelector('#leg .lmore').onclick = e => { const o = !leg.classList.contains('more'); leg.classList.toggle('more', o); e.currentTarget.setAttribute('aria-expanded', o); e.currentTarget.textContent = o ? 'Ocultar detalle ▴' : 'Ver detalle ▾'; legMeasure(); };
 // «Cómo leer»: pill que se transforma en el contenedor de la leyenda (escritorio: abierta por defecto; móvil: cerrada)
 function setSrc(c) { // filtro por fuente de sonido: leyenda y pill «Fuente» comparten el mismo estado
   srcF = c || null; pkey = '';
@@ -367,7 +378,7 @@ function legMeasure() {
   const oh = Math.min(lgin.offsetHeight, innerHeight - 150);
   leg.style.setProperty('--oh', oh + 'px'); document.documentElement.style.setProperty('--lb', (72 + Math.min(lgin.offsetHeight, 260) + 14) + 'px');
 }
-let legMode = innerWidth >= 1100; leg.classList.toggle('open', legMode); lgt.setAttribute('aria-expanded', legMode);
+let legMode = innerWidth >= 1100; leg.classList.toggle('open', false); lgt.setAttribute('aria-expanded', false);
 const legSet = v => { legMeasure(); leg.classList.toggle('open', v); lgt.setAttribute('aria-expanded', v); };
 lgt.onclick = () => legSet(!leg.classList.contains('open'));
 cv.addEventListener('click', () => { if (innerWidth < 1100) legSet(false); });
@@ -377,3 +388,4 @@ legMeasure(); if (document.fonts && document.fonts.ready) document.fonts.ready.t
 cv.tabIndex = 0; cv.setAttribute('aria-label', 'Modelo visual de seis sectores. Teclas 1 a 6: expandir un sector. Escape: volver.');
 addEventListener('keydown', e => { if (/^[1-9]$/.test(e.key) && +e.key <= NS && !document.body.classList.contains('heroing')) focus(+e.key - 1); });
 addEventListener('resize', size); size(); render(); requestAnimationFrame(frame);
+
