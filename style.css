@@ -551,3 +551,32 @@ body:has(#cts:hover) #hint,body:has(#cts:focus-within) #hint,body:has(#ctl:hover
 @media(max-width:1100px){.step .stk,.cstage .stk{padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))}}
 @keyframes vpop{0%{opacity:0;transform:translateY(22px) scale(.82);filter:blur(10px);letter-spacing:.06em}55%{opacity:1;filter:blur(0)}100%{opacity:1;transform:none;filter:none;letter-spacing:inherit}}
 .big [data-big]{display:inline-block;transform-origin:0 70%}.big [data-big].vp{animation:vpop 1.1s cubic-bezier(.2,.9,.25,1) both}
+/* v44 · leyenda en 3 pasos, escala dB, hallazgos */
+.l3{display:grid;grid-template-columns:1.1fr 1.2fr 1.1fr;gap:26px;padding-top:2px}
+.ls{display:flex;gap:12px;align-items:flex-start}
+.ls>b{flex:none;width:26px;height:26px;border-radius:50%;background:#5E6655;color:#eef0e6;font-size:14px;display:grid;place-items:center;margin-top:1px}
+.ls h4{margin:0 0 3px;font-size:15px;color:var(--fg)}.ls p{margin:0 0 8px;font-size:13.5px;line-height:1.4;color:var(--mut)}
+.ls .dots{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:4px 14px}.ls .dots li{margin:0;cursor:pointer;font-size:13.5px}
+.lmore{margin:14px 0 0;background:none;border:0;padding:0;font:inherit;font-size:13px;font-weight:600;color:#5E6655;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.lx{display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);grid-template-columns:repeat(3,1fr)!important}#leg.more .lx{display:grid}
+.dbs .dtr{height:7px;border-radius:4px;background:rgba(94,102,85,.16);overflow:hidden}.dbs .dtr i{display:block;height:100%;width:0;border-radius:4px;background:#5E6655;margin:0}
+.dbs.ref .dtr{background:linear-gradient(90deg,#cfd3c2,#5E6655 55%,#2f352b)}.dbs.ref .dtr i{width:0;background:none}
+.dbs.ref .dtk{position:relative;height:16px;margin-top:4px}.dbs.ref .dtk span{position:absolute;transform:translateX(-50%);font-size:11px;white-space:nowrap;color:var(--mut)}
+.card .dbs{display:flex;align-items:center;gap:12px;margin:-2px 0 10px}.card .dbs .dtr{flex:none;width:96px}.card .dbs small{font-size:13px;color:var(--mut)}
+.finds{padding-top:110px;padding-bottom:90px}
+.fgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.fd{display:flex;flex-direction:column;padding:26px 26px 22px!important}.fd .k{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);font-weight:600}
+.fd .fb{font-size:clamp(40px,4.6vw,64px);font-weight:300;line-height:1.05;margin:10px 0 6px;color:var(--fg);font-variant-numeric:tabular-nums}
+.fd h3{font-size:20px;line-height:1.2;margin:0 0 8px}.fd p{font-size:15px;line-height:1.45;color:var(--mut);margin:0 0 16px}
+.fcs{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
+.fc{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:99px;font-size:13.5px;font-weight:600;color:var(--fg);text-decoration:none;background:rgba(255,255,255,.35);border:1px solid rgba(94,102,85,.18);transition:box-shadow .25s,transform .25s,background .25s}
+.fc i{width:9px;height:9px;border-radius:50%;background:var(--c);margin:0;display:inline-block;transition:box-shadow .25s}.fc em{font-style:normal;font-weight:400;color:var(--mut)}
+.fc:hover,.fc:focus-visible{background:rgba(255,255,255,.7);transform:translateY(-1px);box-shadow:0 0 0 1px var(--c),0 4px 18px color-mix(in srgb,var(--c) 45%,transparent);outline:0}.fc:hover i,.fc:focus-visible i{box-shadow:0 0 10px 3px var(--c)}
+@media(max-width:1100px){.l3{grid-template-columns:1fr;gap:14px}.lx{grid-template-columns:1fr!important}.fgrid{grid-template-columns:1fr}.finds{padding-top:70px}}
+.finds{position:relative;isolation:isolate}.finds::before{content:'';position:absolute;top:0;bottom:0;left:-100vw;right:-100vw;background:var(--bg);z-index:-1}.dbs.ref .dtk span{font-size:10.5px}
+/* v44b · hero de una pantalla, gráfico horario, fondo sólido tras gráficas */
+.fday{grid-column:1/-1;margin-top:18px;padding:26px 26px 20px!important}.fday h3{margin:6px 0 10px}.fday svg{width:100%;height:auto;display:block;overflow:visible}.fday p{margin:12px 0 0;font-size:14px}
+.finds .fday{display:block}
+.charts2,#s4,#s5{position:relative;isolation:isolate}.charts2::before,#s4::before,#s5::before{content:'';position:absolute;top:0;bottom:0;left:-100vw;right:-100vw;background:var(--bg);z-index:-1}
+#hero ul.hl{margin:0 0 30px}
+
