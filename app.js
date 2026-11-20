@@ -61,7 +61,7 @@ function layout() { // las figuras se reacomodan en sincronía con el pill/leyen
   const rA = Math.min(gw / 4 / 2.05, (gh - LB) / 2.2), rB = Math.min(gw / 2 / 2.05, (gh / 2 - LB) / 2.2), row = rA >= rB;
   Rb = Math.max(rA, rB); const bh = 2.2 * Rb + LB, off = row ? (gh - bh) / 2 : (gh / 2 - bh) / 2;
   ctr = [0, 1, 2, 3].map(i => row ? [x0 + gw * (i + .5) / 4, top0 + off + 8 + Rb * 1.08] : [x0 + gw * (i % 2 + .5) / 2, top0 + (gh / 2) * Math.floor(i / 2) + off + 8 + Rb * 1.08]);
-  CMX = mob ? W / 2 : W * .27; CMY = mob ? H * .2 : H * .5; CMR = mob ? Math.min(W * .26, H * .12) : Math.min(W * .17, H * .3);
+  CMX = mob ? W / 2 : W * .27; CMY = mob ? H * .315 : H * .64; CMR = mob ? Math.min(W * .2, H * .085) : Math.min(W * .15, H * .23);
   CX0 = x0 + gw / 2; CY0 = top0 + gh / 2 + (mob ? -8 : 0); S0 = Math.min(gw * (mob ? .24 : .15), gh * (mob ? .3 : .36));
   if (mob) { // móvil: figura arriba, panel como hoja inferior (la mitad inferior de la pantalla)
     const pt = Math.round(H * .5), t1 = 100, A = pt - t1 - 6;
