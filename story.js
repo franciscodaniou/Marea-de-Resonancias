@@ -108,9 +108,9 @@
 
   const peaks = () => uniq(F).filter(f => f.mx < 100).sort((a, b) => b.mx - a.mx).slice(0, 6).map(f => `<li><b style="color:${COL[f.c]}">${f.mx}<small> dB</small></b><span>${f.src}<em>${SECT[f.s]} · ${f.t} h</em></span></li>`).join('');
 
-  document.getElementById('s3').innerHTML = `<div class="wrap2"><h2 class="sech">Contraste y comparación</h2>
-    <p class="lead3">¿Cómo varían las fuentes y la intensidad del sonido según el lugar y la hora? Mientras lees cada lugar, la malla se acerca y se transforma para mostrarlo.</p></div>
-    <div class="steps"><div class="cmpw"><div class="cmp card"><div class="ct"><b>Comparación · un lugar a la vez</b><span class="cn">Lugar <i id="cmpn">1</i> de 4 · <i id="cmpt">${SECT[0]}</i></span></div><div class="dots">${S.map((d, i) => `<span style="background:${d.hex}"${i ? '' : ' class="on"'}></span>`).join('')}</div><div class="cl"><span>● Color = fuente de sonido</span><span>↔ Largo = hora, 09:40–18:50</span><span>▲ Relieve = dB promedio</span><span>◉ Perlas = mediciones</span></div></div></div>${S.map(card).join('')}</div>
+  document.getElementById('s3').innerHTML = `<div class="steps"><div class="cmpw"><div class="cmp"><h2>Contraste y comparación</h2><p class="cq">¿Cómo varían las fuentes y la intensidad del sonido según el lugar y la hora? Un lugar a la vez, con el mismo modelo.</p>
+      <div class="cp"><span class="dots">${S.map((d, i) => `<span style="background:${d.hex}"${i ? '' : ' class="on"'}></span>`).join('')}</span><span class="cn">Lugar <i id="cmpn">1</i> de 4 · <i id="cmpt">${SECT[0]}</i></span></div>
+      <dl class="cl"><div><dt>Color</dt><dd>fuente de sonido que predomina</dd></div><div><dt>Largo</dt><dd>hora, de 09:40 a 18:50</dd></div><div><dt>Relieve</dt><dd>dB promedio del lugar</dd></div><div><dt>Perlas</dt><dd>una medición de terreno</dd></div><div><dt>Puntos y estelas</dt><dd>personas y vehículos</dd></div></dl></div></div>${S.map(card).join('')}</div>
     <div class="wrap2 charts2"><h2 class="sech">Las mismas cifras, de otra forma</h2><p class="lead3">Cada gráfica se transforma en otra del mismo tema con el botón.</p><div class="grid2"><div class="mg" id="gA"></div><div class="mg" id="gB"></div></div></div>`;
   document.getElementById('s4').innerHTML = `<div class="wrap2"><h2 class="sech">Estadísticas del Barrio Puerto</h2>
     <p class="lead3">Qué suena, cuánta gente y tráfico hay, y dónde están los picos.</p>
