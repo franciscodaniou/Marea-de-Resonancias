@@ -18,6 +18,7 @@ Es un sitio estático, sin dependencias ni compilación.
 | `about.html` | Estudio, hallazgos, criterios de datos y uso de IA |
 | `app.js` | Marea orgánica (canvas 2D), escenas por scroll, interacción, panel, leyenda |
 | `story.js` | Contraste por lugar y franja, gráficas que se transforman, estadísticas y consola (desde `data.js`) |
+| `audio.js` | Sonido por fuentes (prototipo opcional, síntesis Web Audio; se quita borrando el archivo y su `<script>`) |
 | `glass.js` | Capa WebGL del glassmorfismo (con respaldo en CSS) |
 | `style.css` | Estilos y diseño responsivo |
 | `data.js` / `data.json` | Datos de las 40 fichas de terreno y 20 encuestas, con fuente y criterios |

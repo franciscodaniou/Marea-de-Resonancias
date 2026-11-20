@@ -231,7 +231,7 @@ function flows(s, dt, al) {
   });
 }
 
-let lastFoc = false, lastT = 0, curDt = 0, lastLh = 0, lastHt = '', lastDeep = false, lastTide = true;
+let sndT = 0, lastBlip = null, lastFoc = false, lastT = 0, curDt = 0, lastLh = 0, lastHt = '', lastDeep = false, lastTide = true;
 function frame(ms) {
   T = ms / 1000; const dt = Math.min(.05, T - lastT); lastT = T;
   const lh = leg.offsetHeight; if (W >= 1100 && Math.abs(lh - lastLh) > 1) { lastLh = lh; layout(); document.documentElement.style.setProperty('--lb', (72 + lh + 14) + 'px'); }
@@ -244,6 +244,7 @@ function frame(ms) {
   if (stEl.length && !hero && want === null) { const f0 = stEl[0].getBoundingClientRect(), l0 = (csE || stEl[stEl.length - 1]).getBoundingClientRect(); cT = cl((vh * .9 - f0.top) / (vh * .3), 0, 1) * cl((l0.bottom - vh * .45) / (vh * .3), 0, 1);
     let best = 1e9; stEl.forEach((el, q) => { const r = el.getBoundingClientRect(), d = Math.abs((r.top + r.bottom) / 2 - vh / 2); if (d < best) { best = d; cS = q; } }); if (csE && csE.getBoundingClientRect().top < vh * .5) cmpT = 1; }
   cA += (cT - cA) * (1 - Math.exp(-dt * 5)); cm += (cmpT - cm) * (1 - Math.exp(-dt * 5)); for (let s = 0; s < 4; s++) kc[s] += ((cT > .02 && (cmpT ? PAIR().includes(s) : s === cS) ? 1 : 0) - kc[s]) * (1 - Math.exp(-dt * 4));
+  if (window.SND && SND.active) { sndT += dt; if (sndT > .2) { sndT = 0; SND.update(want !== null ? [[want, 0]] : cmpT && cT > .02 ? [[PAIR()[0], -.7], [PAIR()[1], .7]] : cT > .02 && cS >= 0 ? [[cS, 0]] : [[0, -.75], [1, -.25], [2, .25], [3, .75]], hero ? 0 : 1 - amb); } } // sonido por fuentes (opcional)
   const tt0 = cl(sy0 / (.9 * vh), 0, 1), eT = want !== null ? 1 : hero ? 0 : tt0 * tt0 * (3 - 2 * tt0);
   eS += (eT - eS) * (1 - Math.exp(-dt * 5)); if (Math.abs(eT - eS) < .002) eS = eT;
   ee = eS * (1 - amb); Aglob = document.body.classList.contains('about') ? .6 : lerp(1, .14, amb);
@@ -317,6 +318,7 @@ function pick(e) {
   }
   if (hov) { tip.innerHTML = `<b>${hov.id} · ${hov.t} h</b>${hov.src}<br>${hov.mn}–${hov.mx} dB · prom ${hov.pr}<br><span style="color:${COL[hov.c]}">${CAT[hov.c]}</span><br><i>${hov.ph}</i>`; tip.style.display = 'block'; tip.style.left = Math.max(8, Math.min(mx + 16, W - 280)) + 'px'; tip.style.top = (W < 760 ? Math.max(60, my - 130) : my + 16) + 'px'; }
   else tip.style.display = 'none';
+  if (hov !== lastBlip) { lastBlip = hov; if (hov && window.SND) SND.blip(hov.c, hov.pr); }
   cv.style.cursor = hs !== null || hov ? 'pointer' : (dragM ? 'grabbing' : 'grab'); render();
 }
 function focus(s) { if (s !== null && eS < .85) return; if (innerWidth >= 1100) legSet(s === null); /* escritorio: la leyenda se pliega al expandir un sector */ want = s; pf = null; back.style.display = s === null ? 'none' : 'block'; document.body.classList.toggle('lock', s !== null); pkey = ''; render(); }

@@ -479,3 +479,8 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:2px solid 
 #hero h1{max-width:21em}
 @media(min-width:1100px){#hero .tesis{max-width:none;width:min(100%,64em)}#hero .tesis ol{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 28px;padding:0;list-style:none}}
 @media(max-width:1100px){.cmp[data-m="r"] .cl>div:nth-child(4),.cmp[data-m="r"] .cl>div:nth-child(5){display:none}.step .sub{display:none}}
+
+/* v31 · sonido por fuentes (opcional) */
+#sec .snd{margin-top:6px;opacity:.75}#sec .snd:hover,#sec .snd.on{opacity:1}#sec .snd[hidden]{display:none}
+#sec .snd .w{opacity:0;transition:opacity .25s}#sec .snd.on .w{opacity:1}#sec .snd.on{color:#00675B}
+@media(max-width:760px){#sec .snd{display:flex}#sec .snd span{display:none}}
