@@ -45,12 +45,12 @@ const DIR = [.35, -.5, 0, 1.2, -.9, .7], LV = ['', 'Bajo', 'Medio', 'Alto'];
 const lvl = s => { const fs = uniq(F.filter(f => f.s === s && on(f))); return pf && pf.s === s ? [pf.fp, pf.fv] : [mean(fs, f => f.fp) || 1, mean(fs, f => f.fv) || 1]; };
 const lvn = v => LV[cl(Math.round(v), 1, 3)];
 const cen = (g, f) => { const a = angM(f.m); return [g.cx + Math.cos(a) * g.R * .45, g.cy + Math.sin(a) * g.R * .45, g.R * (.16 + .34 * cl((f.pr - 50) / 30, 0, 1))]; };
-const bar = (lab, v, hi, lo = 45, hi2 = 90) => `<div${hi ? ' class="hi"' : ''}>${lab}<span class="tr"><i style="width:${v == null ? 0 : cl((v - lo) / (hi2 - lo), 0, 1) * 100}%"></i></span><b>${v == null ? '–' : v.toFixed(0)}</b></div>`;
+const bar = (lab, v, hi, lo = 45, hi2 = 90) => `<div${hi ? ' class="hi"' : ''}>${lab}<span class="tr"><i style="width:${v == null ? 0 : cl((v - lo) / (hi2 - lo), 0, 1) * 100}%"${v == null ? '' : ` data-w="${(cl((v - lo) / (hi2 - lo), 0, 1) * 100).toFixed(1)}"`}></i></span><b${v == null ? '' : ` data-n="${v.toFixed(0)}"`}>${v == null ? '–' : v.toFixed(0)}</b></div>`;
 function perfilHtml(s) { // patrón horario del sector y comparación entre sectores (dB promedio, mediciones únicas)
   const mine = uniq(F.filter(f => f.s === s)), fr = [['Mañana', 'am'], ['Tarde', 'pm'], ['Hora punta', 'pk']].map(([n, k]) => { const q = real(mine.filter(f => f.m >= FILTERS[k][0] && f.m <= FILTERS[k][1])); return bar(n, q.length ? mean(q, f => f.pr) : null, false); }).join('');
   return `<div class="pf"><h5>dB promedio por franja</h5>${fr}<h5>Comparación entre sectores</h5>${SECT.map((n, i) => bar(n, dbAvg(i), i === s)).join('')}${real(mine).length ? '' : '<small class="nd">Sin dB medido en este lugar: el relieve de la malla usa la intensidad percibida.</small>'}</div>`;
 }
-function flowHtml(s) { const [p, v] = lvl(s); return `<div class="fl"><div>Personas<span class="tr"><i style="width:${p / 3 * 100}%"></i></span><b>${lvn(p)}</b></div><div class="v">Vehículos<span class="tr"><i style="width:${v / 3 * 100}%"></i></span><b>${lvn(v)}</b></div></div>`; }
+function flowHtml(s) { const [p, v] = lvl(s); return `<div class="fl"><div>Personas<span class="tr"><i style="width:${p / 3 * 100}%" data-w="${(p / 3 * 100).toFixed(1)}"></i></span><b>${lvn(p)}</b></div><div class="v">Vehículos<span class="tr"><i style="width:${v / 3 * 100}%" data-w="${(v / 3 * 100).toFixed(1)}"></i></span><b>${lvn(v)}</b></div></div>`; }
 
 function size() {
   W = innerWidth; H = innerHeight; const mob = W < 760;
@@ -266,7 +266,7 @@ function frame(ms) {
   { const mobq = W < 760; G.forEach((g, s) => { const q = kc[s] * cA; if (q < .04) return; const ags = AGS[s], tot = ags.reduce((p, c) => p + c, 0) || 1, r0 = g.R * .72; let a0 = -Math.PI / 2;
     x.save(); x.setLineDash([2, 5]); x.lineWidth = .8; x.strokeStyle = '#5E6655'; x.fillStyle = '#5E6655'; x.font = `${mobq ? 8 : 10}px Helvetica,Arial`; x.textAlign = 'left'; // anillos finos: relieve de referencia en dB
     if (!real(F.filter(f => f.s === s)).length) { /* sin dB: sin anillos de referencia */ } else [55, 65, 75, 85].forEach(d => { const rr = g.R * (.35 + .00754 * (d - 48)); x.globalAlpha = q * .3; x.beginPath(); x.arc(g.cx, g.cy, rr, 0, TAU); x.stroke(); x.globalAlpha = q * .6; x.fillText(d === 85 ? '85 dB' : d, g.cx + rr * .7071 + 2, g.cy - rr * .7071 - 1); }); x.restore();
-    x.lineWidth = mobq ? 1.2 : 1.5; x.lineCap = 'butt'; ags.forEach((c, i) => { if (!c) return; const a1 = a0 + TAU * c / tot; x.globalAlpha = q * .8; x.strokeStyle = AGC[i]; x.beginPath(); x.arc(g.cx, g.cy, r0, a0 + .035, a1 - .035); x.stroke(); a0 = a1; });
+    x.lineWidth = mobq ? 1.2 : 1.5; x.lineCap = 'butt'; { const sw = 1 - Math.pow(1 - cl((q - .04) / .55, 0, 1), 3); let cum = 0; ags.forEach((c, i) => { if (!c) return; const f0 = cum / tot, f1 = (cum + c) / tot, e1 = Math.min(f1, sw); cum += c; if (e1 <= f0 + .002) return; x.globalAlpha = q * .8; x.strokeStyle = AGC[i]; x.beginPath(); x.arc(g.cx, g.cy, r0, a0 + TAU * f0 + .035, a0 + TAU * e1 - (e1 === f1 ? .035 : 0)); x.stroke(); }); } // el anillo de agrado se dibuja al acoplarse
     const pi = PAIR().indexOf(s), qc = pi >= 0 ? cm * kc[s] * cA : 0;
     if (qc > .25) { const c = rgbOf(COL[DOM[s]]); x.globalAlpha = qc; x.fillStyle = '#3b4234'; x.font = `700 ${mobq ? 13 : 18}px Helvetica,Arial`; x.fillText(SECT[s].toUpperCase(), g.cx, g.cy + r0 + (mobq ? 20 : 30));
       x.font = `${mobq ? 11 : 14}px Helvetica,Arial`; x.fillStyle = '#5E6655'; x.fillText(hasAg(s) ? `agrado ${agrSec(s).toFixed(2)} · ${tot} respuestas` : 'sin encuestas de agrado', g.cx, g.cy + r0 + (mobq ? 34 : 50));
@@ -278,7 +278,7 @@ function frame(ms) {
     const sc = big || mob ? 1 : Math.min(1, (LW - 14) / 250); x.save(); if (sc < 1) { x.translate(g.cx, y); x.scale(sc, sc); x.translate(-g.cx, -y); }
     x.globalAlpha = g.al * lab; x.fillStyle = '#3b4234'; x.font = `700 ${big ? (mob ? 20 : 28) : (mob ? 14 : 20)}px Helvetica,Arial`; x.fillText(SECT[s].toUpperCase(), g.cx, y);
     x.font = `${big ? (mob ? 13 : 16) : (mob ? 11 : 14)}px Helvetica,Arial`; x.fillStyle = `rgb(${c})`;
-    const dbl = dbL(s);
+    const dbl = dbAvg(s) == null ? dbL(s) : (dbAvg(s) * cl(lab * 1.15, 0, 1)).toFixed(1) + ' dB promedio';
     if (mob && !big) { x.fillText(SH[DOM[s]] + ' · ' + agL(s), g.cx, y + 15); x.fillStyle = '#5E6655'; x.fillText(dbl, g.cx, y + 29); x.fillStyle = '#3b4234'; x.fillText('Personas: ' + lvn(p), g.cx, y + 43); x.fillText('Vehículos: ' + lvn(v), g.cx, y + 57); }
     else if (!big) { x.fillText('Predomina: ' + SH[DOM[s]] + ' · ' + agL(s), g.cx, y + 21); x.fillStyle = '#5E6655'; x.fillText(dbl, g.cx, y + 40); x.fillStyle = '#3b4234'; x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, y + 59); }
     else { x.fillText('Predomina: ' + SH[DOM[s]] + ' · ' + agL(s), g.cx, y + (mob ? 18 : 24)); x.fillStyle = '#3b4234'; x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, y + (mob ? 35 : 46)); }
@@ -297,7 +297,7 @@ function render() {
   if (s === null) { panel.className = ''; panel.innerHTML = '<h2>Explora los seis sectores</h2><small>Pasa el cursor sobre un sector y haz clic para expandirlo y aislarlo; luego elige una ficha.</small>'; return; }
   const fs = uniq(F.filter(f => f.s === s && on(f))), es = E.filter(e => e[0] === s), a = agrSec(s), db = es.filter(e => e[2]), mood = a > .8 ? 'agrado' : a < 0 ? 'molestia' : 'neutral';
   let h = `<h2>${SECT[s]}</h2><small>${SUB[s]} · ${fs.length} fichas visibles</small><div class="g">
-    <div>dB promedio<b>${real(fs).length ? mean(real(fs), f => f.pr).toFixed(1) : 'sin medir'}</b></div><div>dB máx. registrado<b>${real(fs).length ? Math.max(...real(fs).map(f => f.mx)) : '–'}</b></div>
+    <div>dB promedio<b${real(fs).length ? ` data-n="${mean(real(fs), f => f.pr).toFixed(1)}" data-dec="1"` : ''}>${real(fs).length ? mean(real(fs), f => f.pr).toFixed(1) : 'sin medir'}</b></div><div>dB máx. registrado<b${real(fs).length ? ` data-n="${Math.max(...real(fs).map(f => f.mx))}"` : ''}>${real(fs).length ? Math.max(...real(fs).map(f => f.mx)) : '–'}</b></div>
     <div>Flujo peatonal / vehicular (1-3)<b>${mean(fs, f => f.fp).toFixed(1)} / ${mean(fs, f => f.fv).toFixed(1)}</b></div>
     <div>Agrado (−1…2) · n=${es.length}${es.length ? `<b style="color:rgb(${agr(a)})">${a.toFixed(2)} · ${mood}</b>` : '<b>sin encuestas</b>'}</div></div>`;
   h += flowHtml(s) + perfilHtml(s);
@@ -308,7 +308,7 @@ function render() {
     if (pf) h += `<div class="det" style="border-color:${COL[pf.c]}"><b>${pf.id} · ${pf.t} h</b>${pf.src}<br>${pf.nd ? 'sin dB medido · intensidad percibida ' + FICHAS[F.indexOf(pf)][10] + '/5' : pf.mn + '–' + pf.mx + ' dB · prom. ' + pf.pr}<br>Flujo peatonal ${pf.fp}/3 · vehicular ${pf.fv}/3<br><span style="color:${COL[pf.c]}">${CAT[pf.c]}</span><br><i>${pf.ph}</i></div>`;
     h += '<div class="list">' + F.map((f, i) => f.s === s && on(f) ? `<button class="it${pf === f ? ' on' : ''}" data-i="${i}"><span style="background:${COL[f.c]}"></span>${f.id} · ${f.t}<em>${f.src}</em><b>${f.nd ? 'sin dB' : f.pr + ' dB'}</b></button>` : '').join('') + '</div>';
   }
-  panel.className = want !== null ? 'big' : ''; panel.innerHTML = h; panel.scrollTop = sc;
+  panel.className = want !== null ? 'big' : ''; panel.innerHTML = h; panel.scrollTop = sc; if (window.VITA) VITA.scan(panel);
 }
 
 let dragM = null, dragged = false;

@@ -18,6 +18,7 @@ Es un sitio estático, sin dependencias ni compilación.
 | `about.html` | Estudio, hallazgos, criterios de datos y uso de IA |
 | `app.js` | Marea orgánica (canvas 2D), escenas por scroll, interacción, panel, leyenda |
 | `story.js` | Contraste por lugar y franja, gráficas que se transforman, estadísticas y consola (desde `data.js`) |
+| `vita.js` | Vitalidad: contadores y barras que se animan al entrar en pantalla (`data-n`, `data-w`, `data-reveal`); respeta `prefers-reduced-motion`. Las gráficas SVG (`story.js`) crecen en cascada al entrar en pantalla y el anillo de agrado se dibuja al acoplarse |
 | `audio.js` | Sonido por fuentes (prototipo opcional, síntesis Web Audio; se quita borrando el archivo y su `<script>`) |
 | `glass.js` | Capa WebGL del glassmorfismo (con respaldo en CSS) |
 | `style.css` | Estilos y diseño responsivo |

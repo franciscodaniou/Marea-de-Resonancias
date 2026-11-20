@@ -540,3 +540,8 @@ body:has(#cts:hover) #hint,body:has(#cts:focus-within) #hint,body:has(#ctl:hover
 /* v40 · la barra de secciones ya no bloquea clics (los rótulos ocultos ocupaban ~160 px a la derecha) */
 #sec{pointer-events:none}#sec button{pointer-events:auto;position:relative}
 #sec button span{position:absolute;right:calc(100% + 2px);top:50%;margin-top:-13px}
+/* v41 · vitalidad: contadores y barras animados (vita.js) */
+.agb[data-reveal]{clip-path:inset(0 0 0 0 round 999px)}
+.fv i[data-n],.big [data-n]{font-variant-numeric:tabular-nums}
+.bf b,.peaks b,.sc .fact span,.chips i{font-variant-numeric:tabular-nums}
+@media(prefers-reduced-motion:reduce){[data-w],[data-reveal]{transition:none!important}}
