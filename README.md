@@ -17,7 +17,7 @@ Es un sitio estático, sin dependencias ni compilación.
 | `index.html` | Inicio (dos secciones) y visualización |
 | `about.html` | Estudio, hallazgos, criterios de datos y uso de IA |
 | `app.js` | Marea orgánica (canvas 2D), escenas por scroll, interacción, panel, leyenda |
-| `story.js` | Secciones de contraste y estadísticas (gráficas SVG desde `data.js`) |
+| `story.js` | Contraste por lugar y franja, gráficas que se transforman, estadísticas y consola (desde `data.js`) |
 | `glass.js` | Capa WebGL del glassmorfismo (con respaldo en CSS) |
 | `style.css` | Estilos y diseño responsivo |
 | `data.js` / `data.json` | Datos de las 40 fichas de terreno y 20 encuestas, con fuente y criterios |
@@ -29,10 +29,13 @@ Puntos lentos = personas y estelas rápidas = vehículos (cantidad y velocidad s
 Movimiento más errático = menor agrado en las encuestas.
 
 ## Recorrido (scroll)
-1. Marea total: todas las fichas sobre una misma malla (tocar, filtrar, girar con el mouse).
+1. Marea total: todas las fichas sobre una misma malla (tocar, filtrar por franja o fuente, girar con el mouse).
 2. Sectores: la marea se disuelve en cuatro mallas lado a lado; clic expande un sector (teclas 1–4, `Esc` vuelve).
-3. Contraste y comparación: hallazgos por lugar con números y gráficas (`story.js`).
-4. Estadísticas: fuentes, flujos, agrado y picos del barrio.
+3. Contraste y comparación: título y leyenda fijos; cada lugar dura tres tramos de scroll (mañana → tarde → hora punta) que filtran la malla; luego pasa al siguiente lugar y reinicia en mañana. Al salir se restaura el filtro previo.
+4. Gráficas que se transforman: intensidad (por lugar / por hora) y agrado (agrado vs dB / respuestas), con el mismo botón.
+5. Estadísticas y consola «Cómo funciona»: fuentes, flujos, picos y malla en vivo.
+
+Wireframes: `wireframe.svg/png` (escritorio) y `wireframe-movil.svg/png`.
 
 ## Datos
 Fuente: «Base de Datos – Variación Sonora Barrio Puerto» (Grupo 2). Criterios de preparación (mediciones repetidas BP-17 a 19, valor atípico de 121,4 dB, recategorización «comercial», escala de agrado, instrumentos distintos) en `data.js` y en `about.html`. Pendiente: integrar Puente de la Mujer y Plaza de Mayo (Buenos Aires).

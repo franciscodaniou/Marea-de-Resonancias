@@ -93,13 +93,14 @@
 
 <section class="card"><h2>Interacción</h2>
 <h3>Recorrido por scroll</h3>
-<p>La visualización se recorre hacia abajo, en cuatro momentos:</p>
+<p>La visualización se recorre hacia abajo, en cinco momentos:</p>
 <ol>
 <li><b>Marea total:</b> todas las fichas sobre una misma malla. Se puede tocar una ficha, filtrar por franja o por fuente y girar la malla arrastrando.</li>
 <li><b>Sectores:</b> la marea se disuelve en cuatro mallas lado a lado, con su dB promedio, agrado y flujos. Un clic expande y aísla un sector, con su panel de detalle.</li>
-<li><b>Contraste y comparación:</b> los hallazgos de cada lugar en texto, números grandes y gráficas (intensidad, agrado frente a decibeles y escalada por franja horaria).</li>
-<li><b>Estadísticas:</b> qué suena, cuánta gente y tráfico hay, cómo se siente cada lugar y los picos más altos del barrio.</li></ol>
-<p>Un botón de despliegue acompaña cada paso y el botón «Cómo leer» explica el código visual.</p></section>
+<li><b>Contraste y comparación:</b> el título y la leyenda quedan fijos mientras dura la sección. Cada lugar ocupa tres tramos de scroll: mañana, tarde y hora punta. La malla se filtra por esa franja y la tarjeta muestra su horario, dB promedio y número de mediciones; al terminar el cuarto lugar se restaura el filtro previo.</li>
+<li><b>Gráficas que se transforman:</b> las mismas cifras cambian de forma con un botón (intensidad por lugar o por hora; agrado frente a dB o respuestas).</li>
+<li><b>Estadísticas y consola:</b> qué suena, cuánta gente y tráfico hay, cómo se siente cada lugar, los picos más altos y una consola «Cómo funciona» con la malla en vivo.</li></ol>
+<p>El botón «Cómo leer» explica el código visual. La interfaz usa glassmorfismo (WebGL en controles fijos y CSS en lo que se desplaza).</p></section>
 
 </div></div>
 <section class="card wide"><h2>Criterios y límites de los datos</h2>
