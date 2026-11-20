@@ -13,11 +13,14 @@
     'Voces y canto en torno a la pileta seca: el sonido más parejo. Con 3 mediciones y 2 encuestas es una lectura preliminar.'];
   const RM = matchMedia('(prefers-reduced-motion:reduce)').matches;
   const NS = 'http://www.w3.org/2000/svg';
-  const card = d => `<section class="step" data-s="${d.s}"><div class="blk"><div class="bh"><h3>${SECT[d.s]}</h3><div class="sub">${SUB[d.s]} · ${d.n} mediciones</div></div><article class="card sc">
+  const FN = [['Mañana', '09:40–12:36', 'am'], ['Tarde', '12:37–17:29', 'pm'], ['Hora punta', '17:30–18:50', 'pk']];
+  S.forEach(d => { const q = uniq(F.filter(f => f.s === d.s)); d.fn = FN.map(([, , k]) => q.filter(f => f.m >= FILTERS[k][0] && f.m <= FILTERS[k][1]).length); });
+  const card = d => `<section class="step" data-s="${d.s}"><div class="stk"><div class="blk"><div class="bh"><h3>${SECT[d.s]}</h3><div class="sub">${SUB[d.s]} · ${d.n} mediciones</div></div><article class="card sc">
     <div class="big" style="color:${d.hex}">${d.db.toFixed(1)}<small>dB promedio</small></div>
     <div class="chips"><span style="color:${d.hex}">● ${SH[DOM[d.s]]}</span><span style="color:rgb(${agr(d.ag)})">agrado ${d.ag.toFixed(2)}</span></div>
+    <div class="fnow"><b class="fn"></b><span class="fh"></span><span class="fv"></span></div>
     <div class="fact">Máximo ${d.mx} dB · flujo peatonal ${d.fp.toFixed(1)} · vehicular ${d.fv.toFixed(1)}</div><p class="fi">${FI[d.s]}</p>
-    <div class="pf"><h5>dB promedio por franja</h5>${['Mañana', 'Tarde', 'Hora punta'].map((n, i) => bar(n, d.fr[i], false)).join('')}</div></article></div></section>`;
+    <div class="pf"><h5>dB promedio por franja</h5>${['Mañana', 'Tarde', 'Hora punta'].map((n, i) => bar(n, d.fr[i], false)).join('')}</div></article></div></div></section>`;
 
   /* ---- motor de transformación: cada vista es un mapa id → forma; los ids compartidos se interpolan ---- */
   const INK = '#5E6655', MUT = '#8F9984', GR = '#C4C7B9';
@@ -109,6 +112,7 @@
   const peaks = () => uniq(F).filter(f => f.mx < 100).sort((a, b) => b.mx - a.mx).slice(0, 6).map(f => `<li><b style="color:${COL[f.c]}">${f.mx}<small> dB</small></b><span>${f.src}<em>${SECT[f.s]} · ${f.t} h</em></span></li>`).join('');
 
   document.getElementById('s3').innerHTML = `<div class="steps"><div class="cmpw"><div class="cmp"><h2>Contraste y comparación</h2><p class="cq">¿Cómo varían las fuentes y la intensidad del sonido según el lugar y la hora? Un lugar a la vez, con el mismo modelo.</p>
+      <div class="ft">${FN.map(f => `<span>${f[0]}<em> ${f[1]}</em></span>`).join('')}</div>
       <div class="cp"><span class="dots">${S.map((d, i) => `<span style="background:${d.hex}"${i ? '' : ' class="on"'}></span>`).join('')}</span><span class="cn">Lugar <i id="cmpn">1</i> de 4 · <i id="cmpt">${SECT[0]}</i></span></div>
       <dl class="cl"><div><dt>Color</dt><dd>fuente de sonido que predomina</dd></div><div><dt>Largo</dt><dd>hora, de 09:40 a 18:50</dd></div><div><dt>Relieve</dt><dd>dB promedio del lugar</dd></div><div><dt>Perlas</dt><dd>una medición de terreno</dd></div><div><dt>Puntos y estelas</dt><dd>personas y vehículos</dd></div></dl></div></div>${S.map(card).join('')}</div>
     <div class="wrap2 charts2"><h2 class="sech">Las mismas cifras, de otra forma</h2><p class="lead3">Cada gráfica se transforma en otra del mismo tema con el botón.</p><div class="grid2"><div class="mg" id="gA"></div><div class="mg" id="gB"></div></div></div>`;
@@ -133,11 +137,22 @@
            hay detrás, como el sonido atravesando una fachada.
 <span class="pm">$</span> <span class="cur"></span></pre></div></div>`;
 
-  /* barra fija: indica qué lugar se compara mientras se lee */
-  const stp = [...document.querySelectorAll('.step')], dots = [...document.querySelectorAll('.cmp .dots span')], cn = document.getElementById('cmpn'), ct = document.getElementById('cmpt'); let cur = -1, tk = 0;
-  const upd = () => { tk = 0; let b = 1e9, k = 0; stp.forEach((el, q) => { const r = el.getBoundingClientRect(), d = Math.abs((r.top + r.bottom) / 2 - innerHeight / 2); if (d < b) { b = d; k = q; } });
-    if (k !== cur) { cur = k; cn.textContent = k + 1; ct.textContent = SECT[k]; dots.forEach((d, q) => d.classList.toggle('on', q === k)); } };
-  const cmpEl = document.querySelector('.cmp'), stepsEl = document.querySelector('.steps');
-  const fade = () => { const r = stepsEl.getBoundingClientRect(), lim = 68 + cmpEl.offsetHeight + 40, o = Math.max(0, Math.min(1, (r.bottom - lim) / 90)); cmpEl.style.opacity = o; cmpEl.style.visibility = o < .02 ? 'hidden' : 'visible'; };
-  addEventListener('scroll', () => { if (!tk) tk = requestAnimationFrame(() => { upd(); fade(); }); }, { passive: true }); upd(); fade();
+  /* scroll → lugar (cuatro tramos) y, dentro de cada lugar, franja horaria (mañana → tarde → hora punta) */
+  const stp = [...document.querySelectorAll('.step')], dots = [...document.querySelectorAll('.cmp .dots span')], cn = document.getElementById('cmpn'), ct = document.getElementById('cmpt'),
+    ft = [...document.querySelectorAll('.cmp .ft span')], cmpEl = document.querySelector('.cmp'), stepsEl = document.querySelector('.steps');
+  const cl01 = v => Math.max(0, Math.min(1, v)); let cur = -1, curF = -1, saved = null, tk = 0;
+  const paint = f => stp.forEach((el, q) => { const d = S[q], v = d.fr[f], n = d.fn[f], c = el.querySelector('.fnow');
+    c.querySelector('.fn').textContent = FN[f][0]; c.querySelector('.fh').textContent = FN[f][1] + ' h';
+    c.querySelector('.fv').innerHTML = n ? `<i>${v.toFixed(0)}</i> dB · ${n} ${n > 1 ? 'mediciones' : 'medición'}` : 'sin mediciones';
+    el.querySelectorAll('.pf > div').forEach((r, i) => r.classList.toggle('hi', i === f)); });
+  const upd = () => { tk = 0; const vh = innerHeight; let b = 1e9, k = 0;
+    stp.forEach((el, q) => { const r = el.getBoundingClientRect(), d = Math.abs((r.top + r.bottom) / 2 - vh / 2); if (d < b) { b = d; k = q; } });
+    const r = stp[k].getBoundingClientRect(), sr = stepsEl.getBoundingClientRect(), p = cl01((vh / 2 - r.top) / r.height), f = Math.min(2, Math.floor(p * 3)), w = p * 3 - f, inside = sr.top < vh * .5 && sr.bottom > vh * .5;
+    if (k !== cur) { cur = k; cn.textContent = k + 1; ct.textContent = SECT[k]; dots.forEach((d, q) => d.classList.toggle('on', q === k)); }
+    if (f !== curF) { curF = f; paint(f); }
+    ft.forEach((e, j) => { e.classList.toggle('on', j === f); e.style.setProperty('--p', j < f ? 1 : j === f ? w : 0); });
+    if (window.MAREA) { if (inside) { if (saved === null) saved = MAREA.flt; MAREA.setFlt(FN[f][2]); } else if (saved !== null) { MAREA.setFlt(saved); saved = null; } }
+    const lim = 68 + cmpEl.offsetHeight + 40, o = cl01((vh * .85 - sr.top) / 120) * cl01((sr.bottom - lim) / 90);
+    cmpEl.style.opacity = o; cmpEl.style.visibility = o < .02 ? 'hidden' : 'visible'; };
+  addEventListener('scroll', () => { if (!tk) tk = requestAnimationFrame(upd); }, { passive: true }); addEventListener('resize', upd); upd();
 })();
