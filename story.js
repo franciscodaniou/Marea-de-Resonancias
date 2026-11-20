@@ -21,9 +21,10 @@
   S.forEach(d => { const q = uniq(F.filter(f => f.s === d.s)); d.fn = FN.map(([, , k]) => q.filter(f => f.m >= FILTERS[k][0] && f.m <= FILTERS[k][1]).length); });
   const card = d => `<section class="step" data-s="${d.s}"><div class="stk"><div class="blk"><div class="bh"><h3>${SECT[d.s]}</h3><div class="sub">${SUB[d.s]} · ${d.n} mediciones</div></div><article class="card sc">
     <div class="big" style="color:${d.hex}">${d.db == null ? '<span class="nd">sin dB</span>' : `<span data-big data-n="${d.db.toFixed(1)}" data-dec="1">${d.db.toFixed(1)}</span>`}<small>${d.db == null ? 'sin medir · relieve por intensidad percibida' : 'dB promedio'}</small></div>
-    <div class="chips"><span style="color:${d.hex}">● ${SH[DOM[d.s]]}</span>${d.ag == null ? '<span>sin encuestas</span>' : `<span style="color:rgb(${agr(d.ag)})">agrado <i style="font-style:normal" data-n="${d.ag.toFixed(2)}" data-dec="2">${d.ag.toFixed(2)}</i></span>`}</div>
+    ${d.db == null ? '' : `<div class="dbs"><div class="dtr"><i data-w="${dbPos(d.db).toFixed(1)}" style="background:${d.hex}"></i></div><small>≈ ${DBW(d.db)}</small></div>`}
+    <div class="chips"><span style="color:${d.hex}">● ${SH[DOM[d.s]]}</span>${d.ag == null ? '<span>sin encuestas</span>' : `<span style="color:rgb(${agr(d.ag)})">agrado percibido <i style="font-style:normal" data-n="${d.ag.toFixed(2)}" data-dec="2">${d.ag.toFixed(2)}</i></span>`}</div>
     <div class="fnow"><b class="fn"></b><span class="fh"></span><span class="fv"></span></div>
-    <div class="ag${d.ne ? '' : ' na'}"><div class="agb" data-reveal>${d.ags.map((c, k) => c ? `<span style="flex:${c};background:${AGC[k]}" title="${AGN[k]}: ${c}">${c}</span>` : '').join('')}</div><small>agrado · ${d.ne} respuestas: ${d.ags.map((c, k) => `<b style="color:${AGC[k]}">${c}</b> ${AGN[k].toLowerCase()}`).join(' · ')}</small><q>${QUOTE[d.s]}</q></div>
+    <div class="ag${d.ne ? '' : ' na'}"><div class="agb" data-reveal>${d.ags.map((c, k) => c ? `<span style="flex:${c};background:${AGC[k]}" title="${AGN[k]}: ${c}">${c}</span>` : '').join('')}</div><small>agrado percibido · ${d.ne} respuestas: ${d.ags.map((c, k) => `<b style="color:${AGC[k]}">${c}</b> ${AGN[k].toLowerCase()}`).join(' · ')}</small><q>${QUOTE[d.s]}</q></div>
     <div class="fact">${d.mx == null ? 'Sin dB medido' : `Máximo <span data-n="${d.mx}">${d.mx}</span> dB`} · flujo peatonal <span data-n="${d.fp.toFixed(1)}" data-dec="1">${d.fp.toFixed(1)}</span> · vehicular <span data-n="${d.fv.toFixed(1)}" data-dec="1">${d.fv.toFixed(1)}</span></div><p class="fi">${FI[d.s]}</p>
     <div class="pf"><h5>dB promedio por franja</h5>${['Mañana', 'Tarde', 'Hora punta'].map((n, i) => bar(n, d.fr[i], false)).join('')}</div></article></div></div></section>`;
 
@@ -58,10 +59,10 @@
 
   /* Grupo B · agrado frente a dB <-> respuestas de agrado */
   const B = {
-    a: () => { const v = V(), X = q => 50 + (q - 60) / 14 * 450, Y = a => 206 - (a + 1) / 3 * 190, dy = [-14, 24, 24, -14, 24, -14];
+    a: () => { const v = V(), X = q => 120 + (q - 60) / 14 * 380, Y = a => 206 - (a + 1) / 3 * 190, dy = [-14, 24, 24, -14, 24, -14];
       [60, 64, 68, 72].forEach(t => { line(v, 'gx' + t, X(t), 14, X(t), 206, GR); text(v, 'tx' + t, X(t), 226, t, 'm', 'middle'); });
-      [-1, 0, 1, 2].forEach(t => { line(v, 'gy' + t, 50, Y(t), 500, Y(t), GR); text(v, 'ty' + t, 40, Y(t) + 4, t, 'm', 'end'); });
-      text(v, 'ax', 500, 238, 'dB promedio →', 'm', 'end'); text(v, 'ay', 0, 10, 'agrado ↑', 'm');
+      [-1, 0, 1, 2].forEach(t => { line(v, 'gy' + t, 120, Y(t), 500, Y(t), GR); text(v, 'ty' + t, 112, Y(t) + 4, ['incómoda', 'da igual', 'gusta un poco', 'gusta'][t + 1], 'm', 'end'); });
+      text(v, 'ax', 500, 238, 'dB promedio →', 'm', 'end'); text(v, 'ay', 124, 11, 'agrado percibido ↑', 'm');
       S.forEach((d, i) => { const nn = d.db == null || d.ag == null, x = nn ? 520 : X(d.db), y = nn ? 120 : Y(d.ag); circ(v, 'c' + i, x, y, nn ? 0 : 10, d.hex, nn ? 0 : .92); text(v, 'n' + i, x, y + dy[i], nm(i), 'b', 'middle', nn ? 0 : 1);
         for (let k = 0; k < 4; k++) rect(v, `r${i}${k}`, x, y, 0, 0, '#D20A2E', 0); }); return v; },
     b: () => { const v = V(), col = ['#D20A2E', '#a39f8a', '#5E9C8F', '#00675B'], nmz = ['Incomoda', 'Da igual', 'Gusta un poco', 'Gusta'];
@@ -69,7 +70,7 @@
         d.ags.forEach((c, k) => { rect(v, `r${i}${k}`, x, y, Math.max(c * 44 - 2, 0), 20, col[k], c ? 1 : 0); if (c > 1) text(v, `k${i}${k}`, x + c * 22 - 1, y + 14, c, 'k', 'middle'); x += c * 44; });
         text(v, 'e' + i, x + 4, y + 14, d.ne ? `n=${d.ne}` : 'sin encuestas', 'm'); circ(v, 'c' + i, 162, y + 10, 0, d.hex, 0); });
       nmz.forEach((n, k) => { circ(v, 'lg' + k, 8 + k * 118, 214, 5, col[k]); text(v, 'lt' + k, 18 + k * 118, 218, n, 'm'); }); return v; },
-    ta: ['El agrado no sigue a los decibeles', 'Cada lugar según su dB promedio y su agrado'], tb: ['¿Cómo se siente?', 'Respuestas de agrado de las encuestas por lugar'], la: 'Agrado vs dB', lb: 'Respuestas', h: 244 };
+    ta: ['El agrado no sigue a los decibeles', 'Promedio de lo que respondieron las personas encuestadas (de incómoda a gusta) frente al dB de cada lugar'], tb: ['¿Cómo se siente?', 'Respuestas de agrado de las encuestas por lugar'], la: 'Agrado vs dB', lb: 'Respuestas', h: 244 };
 
   /* Grupo C · qué suena <-> cuánta gente y tráfico */
   const C = {
@@ -133,6 +134,38 @@
 
   const peaks = () => real(uniq(F)).filter(f => f.mx < 100).sort((a, b) => b.mx - a.mx).slice(0, 6).map(f => `<li><b style="color:${COL[f.c]}"><span data-n="${f.mx}">${f.mx}</span><small> dB</small></b><span>${f.src}<em>${SECT[f.s]} · ${f.t} h</em><i class="pb"><u style="width:${cl01((f.mx - 60) / 35) * 100}%;background:${COL[f.c]}" data-w="${(cl01((f.mx - 60) / 35) * 100).toFixed(1)}"></u></i></span></li>`).join('');
 
+  const hourChart = () => {
+    const mob = innerWidth < 700, Wd = mob ? 360 : 940, Ht = mob ? 270 : 300, pl = mob ? 34 : 44, pr = mob ? 112 : 205, x0 = pl + 26, x1 = Wd - pr, xs = [0, 1, 2].map(j => x0 + (x1 - x0) * j / 2), Y = v => 24 + (81 - v) / 24 * (Ht - 80);
+    const names = [['Mañana', '09:40–12:36'], ['Tarde', '12:37–17:29'], ['Hora punta', '17:30–18:50']];
+    let g = [60, 70, 80].map(v => `<line x1="${pl}" x2="${Wd - 8}" y1="${Y(v)}" y2="${Y(v)}" stroke="#C4C7B9" stroke-dasharray="2 5"/><text x="${pl - 6}" y="${Y(v) + 4}" text-anchor="end" font-size="12" fill="#8F9984">${v}</text>`).join('');
+    g += names.map((n, j) => `<text x="${xs[j]}" y="${Ht - 30}" text-anchor="middle" font-size="${mob ? 12 : 14}" font-weight="700" fill="#3b4234">${n[0]}</text>${mob ? '' : `<text x="${xs[j]}" y="${Ht - 12}" text-anchor="middle" font-size="12" fill="#8F9984">${n[1]}</text>`}`).join('');
+    const ls = S.map(d => { const P = d.fr.map((q, j) => q == null ? null : [xs[j], Y(q), q]); const pts = P.filter(Boolean); if (pts.length < 1) return '';
+      const L = pts[pts.length - 1];
+      return `<g><polyline fill="none" stroke="${d.hex}" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round" points="${pts.map(p => p[0] + ',' + p[1]).join(' ')}"/>${pts.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="6" fill="${d.hex}"/>`).join('')}<text x="${L[0] + (L[0] < xs[2] ? 0 : 12)}" y="${L[1] + (L[0] < xs[2] ? -14 : 4)}" text-anchor="${L[0] < xs[2] ? 'middle' : 'start'}" font-size="${mob ? 12 : 14}" font-weight="700" fill="${d.hex}">${mob ? SHORT[d.s] : SECT[d.s]} <tspan font-weight="400" fill="#5E6655">${L[2].toFixed(1)}</tspan></text></g>`; }).join('');
+    return `<article class="card fd fday"><span class="k">Así cambia durante el día</span><h3>dB promedio por franja horaria, un lugar por línea</h3>
+      <svg data-reveal viewBox="0 0 ${Wd} ${Ht}" role="img" aria-label="Línea de dB promedio por franja horaria para cada lugar con datos">${g}${ls}</svg>
+      <p>Cada punto es el promedio de las mediciones de esa franja (a veces solo 1 o 2). Plaza de Mayo y Puente de la Mujer no tienen dB.</p></article>`;
+  };
+  const finds = () => {
+    const nr = real(uniq(F)).length, w = S.filter(d => d.db != null).sort((a, b) => b.db - a.db), hi = w[0], lo = w[w.length - 1];
+    const rise = S.map(d => { const p = d.fr.filter(x => x != null); return p.length > 1 ? [d, p[p.length - 1] - p[0]] : null; }).filter(Boolean), up = rise.filter(r => r[1] > 0).length, av = rise.reduce((a, r) => a + r[1], 0) / rise.length;
+    const chip = (d, t) => `<a class="fc" href="#" data-s="${d.s}" style="--c:${d.hex}"><i></i>${SHORT[d.s]}${t ? ' <em>' + t + '</em>' : ''}</a>`;
+    return `<section class="finds wrap2" id="finds"><h2 class="sech">Lo que dice el Barrio Puerto</h2>
+      <p class="lead3">Tres respuestas a la pregunta, leídas de las ${nr} mediciones con dB. Toca un lugar para verlo.</p>
+      <div class="fgrid">
+        <article class="card fd"><span class="k">Según el lugar</span><div class="fb"><span data-n="${hi.db.toFixed(1)}" data-dec="1">${hi.db.toFixed(1)}</span> dB</div>
+          <h3>${SECT[hi.s]} es el lugar más ruidoso</h3><p>${hi.db.toFixed(1)} dB de promedio (≈ ${DBW(hi.db)}), ${(hi.db - lo.db).toFixed(1)} dB sobre ${SECT[lo.s]}, el más tranquilo (${lo.db.toFixed(1)}).</p>
+          <div class="fcs">${chip(hi, hi.db.toFixed(1))}${chip(lo, lo.db.toFixed(1))}</div></article>
+        <article class="card fd"><span class="k">Según la fuente</span><div class="fb"><span data-n="${new Set(S.map(d => DOM[d.s])).size}">${new Set(S.map(d => DOM[d.s])).size}</span> fuentes</div>
+          <h3>Cada lugar suena distinto</h3><p>La fuente que predomina cambia de un lugar a otro: no hay un solo «ruido del barrio».</p>
+          <div class="fcs">${S.map(d => chip(d, SH[DOM[d.s]].toLowerCase())).join('')}</div></article>
+        <article class="card fd"><span class="k">Según la hora</span><div class="fb">+<span data-n="${av.toFixed(1)}" data-dec="1">${av.toFixed(1)}</span> dB</div>
+          <h3>El sonido sube a medida que avanza el día</h3><p>En ${up} de ${rise.length} lugares con datos, el último tramo medido supera a la mañana (+${av.toFixed(1)} dB en promedio). Pocas mediciones por franja: es una tendencia, no una regla.</p>
+          <div class="fcs">${rise.map(([d, v]) => chip(d, (v > 0 ? '+' : '') + v.toFixed(1))).join('')}</div></article>
+      </div>
+      ${hourChart()}
+      <p class="foot2">Plaza de Mayo y Puente de la Mujer (Buenos Aires) no tienen dB medido: no entran en estas cifras. Las equivalencias en palabras son aproximadas.</p></section>`;
+  };
   document.getElementById('s3').innerHTML = `<div class="steps"><div class="cmpw"><div class="cmp"><h2>Contraste y comparación</h2><p class="cq"></p>
       <div class="ft">${FN.map(f => `<span>${f[0]}<em> ${f[1]}</em></span>`).join('')}</div>
       <div class="cp"><span class="dots">${S.map((d, i) => `<span style="background:${d.hex}"${i ? '' : ' class="on"'}></span>`).join('')}</span><span class="cn r">Lugar <i id="cmpn">1</i> de ${NS} · <i id="cmpt">${SECT[0]}</i></span><span class="cn c">Comparando · <i id="cmpa"></i> ↔ <i id="cmpb"></i></span></div>
@@ -141,6 +174,7 @@
       ${[0, 1].map(k => `<div class="pk" data-k="${k}"><b style="color:${S[k ? 1 : 0].hex}">${'AB'[k]}</b>${S.map((d, i) => `<button data-i="${i}"><i style="background:${d.hex}"></i>${nm(i)}</button>`).join('')}</div>`).join('')}
       <div class="tg fg" id="cfg">${[['all', 'Día'], ['am', 'Mañana'], ['pm', 'Tarde'], ['pk', 'Hora punta']].map(([k, n], i) => `<button data-f="${k}"${i ? '' : ' class="on"'}>${n}</button>`).join('')}</div>
       <div class="bfs" id="bfs"></div><p class="rd" id="rd" aria-live="polite"></p></article></div></div></section></div>
+    ${finds()}
     <div class="wrap2 charts2"><h2 class="sech">Las mismas cifras, de otra forma</h2><p class="lead3">Cada gráfica se transforma en otra del mismo tema con el botón.</p><div class="grid2"><div class="mg" id="gA"></div><div class="mg" id="gB"></div></div>
       <div class="ptr"><div class="mg" id="gD"></div></div></div>`;
   document.getElementById('s4').innerHTML = `<div class="wrap2"><h2 class="sech">Estadísticas del Barrio Puerto</h2>
@@ -159,10 +193,10 @@
   document.getElementById('s5').innerHTML = `<div class="wrap2"><h2 class="sech">Cómo funciona</h2>
     <p class="lead3">La lógica del código, en palabras simples.</p>
     <div class="console"><div class="cbar"><i></i><i></i><i></i><span>marea — explicar</span></div><pre><span class="pm">$</span> marea --explicar
-<span class="ok">1 · datos</span>   data.js guarda las fichas de terreno y las encuestas. Se unen por lugar.
+<span class="ok">1 · datos</span>   data.js guarda las mediciones de terreno y las encuestas. Se unen por lugar.
 <span class="ok">2 · malla</span>   cada lugar es un tubo de puntos. Un ruido suave (Perlin) lo ondula;
            su largo es la hora, su relieve son los decibeles y cada carril es una fuente.
-<span class="ok">3 · fichas</span>  cada medición es una perla sobre la malla, del color de su fuente.
+<span class="ok">3 · puntos</span>  cada medición es un punto brillante sobre la malla, del color de su fuente.
 <span class="ok">4 · flujos</span>  puntos lentos son personas; estelas rápidas, vehículos.
            Cuanto menos agrado, más agitado el movimiento.
 <span class="ok">5 · scroll</span>  al bajar, el tubo total se parte en seis y luego se acerca al lugar
@@ -172,9 +206,9 @@
 <span class="pm">$</span> <span class="cur"></span></pre></div></div>`;
 
   /* ---- modo comparar: dos lugares frente a frente, misma franja y misma escala ---- */
-  const REC = [['Color', 'fuente de sonido que predomina'], ['Largo', 'hora, de 09:40 a 18:50'], ['Relieve', 'dB promedio del lugar'], ['Perlas', 'una medición de terreno'], ['Puntos y estelas', 'personas y vehículos'], ['Anillos', 'finos: dB de referencia · exterior: agrado']];
+  const REC = [['Color', 'fuente de sonido que predomina'], ['Largo', 'hora, de 09:40 a 18:50'], ['Relieve', 'dB promedio del lugar'], ['Puntos brillantes', 'cada uno es una medición de terreno'], ['Puntos y estelas', 'personas y vehículos'], ['Anillos', 'finos: dB de referencia · exterior: agrado percibido']];
   const RING = AGC.map((c, i) => `<span style="color:${c}">● ${AGN[i].toLowerCase()}</span>`).join(' ');
-  const CMPL = [['Mallas', 'A a la izquierda, B a la derecha, misma escala'], ['Color', 'fuente que predomina'], ['Relieve', 'dB promedio de la franja'], ['Anillos', 'finos: 55 · 65 · 75 · 85 dB · exterior: agrado ' + RING], ['Barras', 'crecen desde el centro hacia cada lugar'], ['Franja', 'filtra dB y flujos; el agrado no (la encuesta no registra hora)']];
+  const CMPL = [['Mallas', 'A a la izquierda, B a la derecha, misma escala'], ['Color', 'fuente que predomina'], ['Relieve', 'dB promedio de la franja'], ['Anillos', 'finos: 55 · 65 · 75 · 85 dB · exterior: agrado percibido ' + RING], ['Barras', 'crecen desde el centro hacia cada lugar'], ['Franja', 'filtra dB y flujos; el agrado no (la encuesta no registra hora)']];
   const CQ = ['¿Cómo varían las fuentes y la intensidad del sonido según el lugar y la hora? Un lugar a la vez, con el mismo modelo.', 'Dos lugares frente a frente, en la misma franja horaria y con la misma escala.'];
   let cur = -1, curF = -1, saved = null, tk = 0;
   const FNM = { all: 'todo el día', am: 'la mañana', pm: 'la tarde', pk: 'la hora punta' }, pair = [0, 1]; let cf = 'all', mode = '';
@@ -221,12 +255,13 @@
     if (window.MAREA) { if (inside) { if (saved === null) saved = MAREA.flt; MAREA.setFlt(cmp ? cf : FN[f][2]); } else if (saved !== null) { MAREA.setFlt(saved); saved = null; } }
     const lim = 68 + cmpEl.offsetHeight + 40, o = cl01((vh * .85 - sr.top) / 120) * cl01((sr.bottom - lim) / 90);
     cmpEl.style.opacity = o; cmpEl.style.visibility = o < .02 ? 'hidden' : 'visible'; };
+  document.addEventListener('click', e => { const a = e.target.closest('.fc'); if (!a) return; e.preventDefault(); const el = stp[+a.dataset.s]; if (el) scrollTo({ top: el.getBoundingClientRect().top + scrollY + el.offsetHeight * .22, behavior: 'smooth' }); });
   addEventListener('scroll', () => { if (!tk) tk = requestAnimationFrame(upd); }, { passive: true }); addEventListener('resize', upd); upd();
 
   /* ---- navegación por secciones, estado en la URL y teclado ---- */
   const abs = el => el.getBoundingClientRect().top + scrollY, vhh = () => innerHeight, q1 = sel => document.querySelector(sel);
   const SEC = [['barrio', 'Barrio', () => 0], ['sectores', 'Sectores', () => vhh() * 1.02], ['contraste', 'Contraste', () => abs(stepsEl)], ['comparar', 'Comparar', () => abs(stg) - vhh() * .3],
-    ['graficas', 'Gráficas', () => abs(q1('.charts2')) - 70], ['partitura', 'Partitura', () => abs(q1('#gD')) - 80], ['estadisticas', 'Estadísticas', () => abs(q1('#s4')) - 70], ['como', 'Cómo funciona', () => abs(q1('#s5')) - 70]];
+    ['hallazgos', 'Hallazgos', () => abs(q1('.finds')) - 40], ['graficas', 'Gráficas', () => abs(q1('.charts2')) - 70], ['partitura', 'Partitura', () => abs(q1('#gD')) - 80], ['estadisticas', 'Estadísticas', () => abs(q1('#s4')) - 70], ['como', 'Cómo funciona', () => abs(q1('#s5')) - 70]];
   const nav = document.createElement('nav'); nav.id = 'sec'; nav.setAttribute('aria-label', 'Secciones del atlas');
   nav.innerHTML = SEC.map(([k, n]) => `<button data-k="${k}" aria-label="${n}"><span>${n}</span><i></i></button>`).join('')
     + '<button class="snd" hidden aria-pressed="false" aria-label="Activar sonido"><span>Sonido silenciado</span><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6v4h2.6L8.5 12.6V3.4L5.1 6z"/><path class="w" d="M10.8 5.6a3.4 3.4 0 010 4.8M12.6 3.8a6 6 0 010 8.4"/></svg></button><button class="lk" aria-label="Copiar enlace a esta vista"><span>Copiar enlace</span><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6.5 9.5l3-3M5 8l-1.2 1.2a2.4 2.4 0 003.4 3.4L8.4 11.4M11 8l1.2-1.2A2.4 2.4 0 008.8 3.4L7.6 4.6"/></svg></button><button class="kb" aria-label="Atajos de teclado"><span>Atajos de teclado</span><b>?</b></button>';
@@ -265,3 +300,4 @@
     setTimeout(() => { scrollTo(0, SEC[i][2]()); if (q.get('s')) setTimeout(() => { if (scrollY < vhh()) scrollTo(0, SEC[1][2]()); setTimeout(() => M.focus(+q.get('s') - 1), 900); }, 400); setTimeout(() => { ready = true; mark(); }, q.get('s') ? 2200 : 900); }, 700); };
   restore(); mark();
 })();
+
