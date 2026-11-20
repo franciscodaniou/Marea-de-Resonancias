@@ -529,3 +529,6 @@ body:not(.deep) #leg,body:not(.deep) #ctl,body:not(.deep) #cts,body:not(.deep) #
 /* v38 · aviso de la marea arriba al centro: ya no choca con Franja/Fuente ni con sus menús */
 @media(min-width:901px){#hint{top:22px;bottom:auto;left:max(340px,calc(50% - 150px));right:auto;transform:none;max-width:calc(100vw - 560px)}}
 body:has(#cts:hover) #down,body:has(#cts:focus-within) #down,body:has(#ctl:hover) #down{opacity:0;pointer-events:none}
+/* v39 · aviso de vuelta en la fila inferior (alineado con los botones); se oculta mientras se abre Franja/Fuente */
+@media(min-width:901px){#hint{top:auto;bottom:calc(22px + env(safe-area-inset-bottom,0px));left:396px;right:auto;transform:none;max-width:calc(100vw - 760px)}}
+body:has(#cts:hover) #hint,body:has(#cts:focus-within) #hint,body:has(#ctl:hover) #hint,body:has(#ctl:focus-within) #hint{opacity:0;pointer-events:none}
