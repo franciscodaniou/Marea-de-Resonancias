@@ -6,7 +6,7 @@
    · metabola (silueta líquida) = perfil de dB promedio según la hora
    · halo = agrado percibido en encuestas (coral → ámbar → turquesa) */
 
-const COL = { V: '#c8483b', H: '#c58a14', C: '#a53a8b', M: '#4f5bb0', N: '#5f8a4b' }; // paleta sobre fondo salvia
+const COL = { V: '#D20A2E', H: '#E2AC2C', C: '#6150A2', M: '#1A5E89', N: '#00675B' }; // paleta sobre fondo salvia
 const CAT = { V: 'Vehicular', H: 'Humana (voces, música)', C: 'Comercial (locales, captadores)', M: 'Mecánica / portuaria', N: 'Natural' };
 const rgbOf = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, n >> 8 & 255, n & 255]; };
 const SH = { V: 'Vehicular', H: 'Humana', C: 'Comercial', M: 'Portuaria', N: 'Natural' };
@@ -22,7 +22,7 @@ let flt = 'all', want = null, foc = null, k = 0, pf = null, hov = null, hs = nul
 const cv = document.getElementById('c'), x = cv.getContext('2d'), tip = document.getElementById('tip'), panel = document.getElementById('panel'), back = document.getElementById('back');
 const lerp = (a, b, t) => a + (b - a) * t, cl = (v, a, b) => Math.max(a, Math.min(b, v));
 const mix = (a, b, t) => a.map((v, i) => Math.round(lerp(v, b[i], t)));
-const agr = a => { const t = cl((a + 1) / 3, 0, 1); return t < .5 ? mix([200, 72, 59], [197, 138, 20], t * 2) : mix([197, 138, 20], [95, 138, 75], (t - .5) * 2); };
+const agr = a => { const t = cl((a + 1) / 3, 0, 1); return t < .5 ? mix([210, 10, 46], [226, 172, 44], t * 2) : mix([226, 172, 44], [0, 103, 91], (t - .5) * 2); };
 const hex = (h, a) => { const n = parseInt(h.slice(1), 16); return `rgba(${n >> 16},${n >> 8 & 255},${n & 255},${a})`; };
 const mean = (a, f) => a.length ? a.reduce((s, v) => s + f(v), 0) / a.length : 0;
 const agrSec = s => mean(E.filter(e => e[0] === s), e => e[1]);
@@ -184,17 +184,16 @@ function calcDots(ee0) {
 const lite = (c, t) => c.map(v => Math.round(v + (255 - v) * t)), dark = (c, t) => c.map(v => Math.round(v * (1 - t)));
 const CRGBA = CK.map(q => rgbOf(COL[q]));
 function bead(px, py, r, rgb, a, h) {
-  const c = rgb.join(','), lt = lite(rgb, .6).join(','), dk = dark(rgb, .32).join(','), mob = W < 760;
-  let g = x.createRadialGradient(px + r * .3, py + r * .75, 0, px + r * .3, py + r * .75, r * 2);              // sombra suave bajo la cuenta
-  g.addColorStop(0, `rgba(59,66,52,${.3 * a})`); g.addColorStop(1, 'rgba(59,66,52,0)'); x.fillStyle = g; x.beginPath(); x.arc(px + r * .3, py + r * .75, r * 2, 0, TAU); x.fill();
-  g = x.createRadialGradient(px, py, r * .7, px, py, r * 2.8);                                                     // resplandor tenue del color de la fuente
-  g.addColorStop(0, `rgba(${c},${.24 * a})`); g.addColorStop(1, `rgba(${c},0)`); x.fillStyle = g; x.beginPath(); x.arc(px, py, r * 2.8, 0, TAU); x.fill();
-  g = x.createRadialGradient(px - r * .35, py - r * .4, r * .08, px, py, r);                                       // cuerpo de vidrio
-  g.addColorStop(0, `rgba(${lt},${a})`); g.addColorStop(.55, `rgba(${c},${a})`); g.addColorStop(1, `rgba(${dk},${a})`); x.fillStyle = g; x.beginPath(); x.arc(px, py, r, 0, TAU); x.fill();
-  g = x.createLinearGradient(px - r, py - r, px + r, py + r);                                                      // borde: luz arriba-izquierda, sombra abajo-derecha
-  g.addColorStop(0, `rgba(255,255,255,${.95 * a})`); g.addColorStop(.5, 'rgba(255,255,255,0)'); g.addColorStop(1, `rgba(${dk},${.55 * a})`);
-  x.strokeStyle = g; x.lineWidth = mob ? .9 : 1.3; x.beginPath(); x.arc(px, py, r - .4, 0, TAU); x.stroke();
-  x.fillStyle = `rgba(255,255,255,${.8 * a})`; x.beginPath(); x.ellipse(px - r * .34, py - r * .42, r * .3, r * .17, -.65, 0, TAU); x.fill(); // brillo especular
+  const c = rgb.join(','), lt = lite(rgb, .55).join(','), dk = dark(rgb, .4).join(','), mob = W < 760;
+  let g = x.createRadialGradient(px + r * .25, py + r * .9, 0, px + r * .25, py + r * .9, r * 2.2);             // sombra coloreada, como en el vidrio sobre superficie
+  g.addColorStop(0, `rgba(${c},${.3 * a})`); g.addColorStop(1, `rgba(${c},0)`); x.fillStyle = g; x.beginPath(); x.arc(px + r * .25, py + r * .9, r * 2.2, 0, TAU); x.fill();
+  g = x.createRadialGradient(px - r * .3, py - r * .35, r * .1, px, py, r);                                      // cuerpo translúcido: al superponerse se oscurece (lente)
+  g.addColorStop(0, `rgba(${lt},${.62 * a})`); g.addColorStop(.6, `rgba(${c},${.58 * a})`); g.addColorStop(1, `rgba(${dk},${.78 * a})`); x.fillStyle = g; x.beginPath(); x.arc(px, py, r, 0, TAU); x.fill();
+  x.lineWidth = mob ? .8 : 1.1; x.strokeStyle = `rgba(${dk},${.35 * a})`; x.beginPath(); x.arc(px, py, r * .8, 0, TAU); x.stroke();     // contorno interior de refracción
+  g = x.createLinearGradient(px - r, py - r, px + r, py + r);                                                    // borde: luz arriba-izquierda, color oscuro abajo-derecha
+  g.addColorStop(0, `rgba(255,255,255,${.95 * a})`); g.addColorStop(.45, `rgba(255,255,255,${.1 * a})`); g.addColorStop(1, `rgba(${dk},${.7 * a})`);
+  x.strokeStyle = g; x.lineWidth = mob ? 1 : 1.5; x.beginPath(); x.arc(px, py, r - .5, 0, TAU); x.stroke();
+  x.fillStyle = `rgba(255,255,255,${.7 * a})`; x.beginPath(); x.ellipse(px - r * .36, py - r * .42, r * .26, r * .13, -.65, 0, TAU); x.fill();
   if (h) { x.strokeStyle = `rgba(${c},${.55 * a})`; x.lineWidth = 1.2; x.beginPath(); x.arc(px, py, r * 1.55, 0, TAU); x.stroke(); }
 }
 function drawDots() {
