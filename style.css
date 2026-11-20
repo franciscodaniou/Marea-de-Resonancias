@@ -616,3 +616,5 @@ body.deep #ans,body.heroing #ans,body.lock #ans,body.about #ans{opacity:0;visibi
 @media(max-width:1100px){.cmpc .rd{font-size:12px;margin:0 0 8px}}
 /* v51 · botón inferior de acción en negrita */
 #down,#down.btn{font-weight:700}
+#ans{max-width:min(900px,calc(100% - 340px))}@media(max-width:1100px){#ans{max-width:none}}
+#ans{width:max-content}@media(max-width:1100px){#ans{width:auto}}
