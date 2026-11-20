@@ -137,5 +137,7 @@
   const stp = [...document.querySelectorAll('.step')], dots = [...document.querySelectorAll('.cmp .dots span')], cn = document.getElementById('cmpn'), ct = document.getElementById('cmpt'); let cur = -1, tk = 0;
   const upd = () => { tk = 0; let b = 1e9, k = 0; stp.forEach((el, q) => { const r = el.getBoundingClientRect(), d = Math.abs((r.top + r.bottom) / 2 - innerHeight / 2); if (d < b) { b = d; k = q; } });
     if (k !== cur) { cur = k; cn.textContent = k + 1; ct.textContent = SECT[k]; dots.forEach((d, q) => d.classList.toggle('on', q === k)); } };
-  addEventListener('scroll', () => { if (!tk) tk = requestAnimationFrame(upd); }, { passive: true }); upd();
+  const cmpEl = document.querySelector('.cmp'), stepsEl = document.querySelector('.steps');
+  const fade = () => { const r = stepsEl.getBoundingClientRect(), lim = 68 + cmpEl.offsetHeight + 40, o = Math.max(0, Math.min(1, (r.bottom - lim) / 90)); cmpEl.style.opacity = o; cmpEl.style.visibility = o < .02 ? 'hidden' : 'visible'; };
+  addEventListener('scroll', () => { if (!tk) tk = requestAnimationFrame(() => { upd(); fade(); }); }, { passive: true }); upd(); fade();
 })();
