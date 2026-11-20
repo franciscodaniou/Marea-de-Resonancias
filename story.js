@@ -133,7 +133,7 @@
     <section class="cstage"><div class="stk"><div class="blk"><div class="bh"><h3>Comparar dos lugares</h3><div class="sub">elige A, B y la franja · mismas escalas en mallas y barras</div></div><article class="card sc cmpc">
       ${[0, 1].map(k => `<div class="pk" data-k="${k}"><b style="color:${S[k ? 1 : 0].hex}">${'AB'[k]}</b>${S.map((d, i) => `<button data-i="${i}"><i style="background:${d.hex}"></i>${nm(i)}</button>`).join('')}</div>`).join('')}
       <div class="tg fg" id="cfg">${[['all', 'Día'], ['am', 'Mañana'], ['pm', 'Tarde'], ['pk', 'Hora punta']].map(([k, n], i) => `<button data-f="${k}"${i ? '' : ' class="on"'}>${n}</button>`).join('')}</div>
-      <div class="bfs" id="bfs"></div><p class="rd" id="rd"></p></article></div></div></section></div>
+      <div class="bfs" id="bfs"></div><p class="rd" id="rd" aria-live="polite"></p></article></div></div></section></div>
     <div class="wrap2 charts2"><h2 class="sech">Las mismas cifras, de otra forma</h2><p class="lead3">Cada gráfica se transforma en otra del mismo tema con el botón.</p><div class="grid2"><div class="mg" id="gA"></div><div class="mg" id="gB"></div></div>
       <div class="ptr"><div class="mg" id="gD"></div></div></div>`;
   document.getElementById('s4').innerHTML = `<div class="wrap2"><h2 class="sech">Estadísticas del Barrio Puerto</h2>
@@ -161,9 +161,9 @@
 <span class="pm">$</span> <span class="cur"></span></pre></div></div>`;
 
   /* ---- modo comparar: dos lugares frente a frente, misma franja y misma escala ---- */
-  const REC = [['Color', 'fuente de sonido que predomina'], ['Largo', 'hora, de 09:40 a 18:50'], ['Relieve', 'dB promedio del lugar'], ['Perlas', 'una medición de terreno'], ['Puntos y estelas', 'personas y vehículos'], ['Anillo', 'agrado en las encuestas']];
+  const REC = [['Color', 'fuente de sonido que predomina'], ['Largo', 'hora, de 09:40 a 18:50'], ['Relieve', 'dB promedio del lugar'], ['Perlas', 'una medición de terreno'], ['Puntos y estelas', 'personas y vehículos'], ['Anillos', 'finos: dB de referencia · exterior: agrado']];
   const RING = AGC.map((c, i) => `<span style="color:${c}">● ${AGN[i].toLowerCase()}</span>`).join(' ');
-  const CMPL = [['Mallas', 'A a la izquierda, B a la derecha, misma escala'], ['Color', 'fuente que predomina'], ['Relieve', 'dB promedio de la franja'], ['Anillo', 'agrado: ' + RING], ['Barras', 'crecen desde el centro hacia cada lugar'], ['Franja', 'filtra dB y flujos; el agrado no (la encuesta no registra hora)']];
+  const CMPL = [['Mallas', 'A a la izquierda, B a la derecha, misma escala'], ['Color', 'fuente que predomina'], ['Relieve', 'dB promedio de la franja'], ['Anillos', 'finos: 55 · 65 · 75 · 85 dB · exterior: agrado ' + RING], ['Barras', 'crecen desde el centro hacia cada lugar'], ['Franja', 'filtra dB y flujos; el agrado no (la encuesta no registra hora)']];
   const CQ = ['¿Cómo varían las fuentes y la intensidad del sonido según el lugar y la hora? Un lugar a la vez, con el mismo modelo.', 'Dos lugares frente a frente, en la misma franja horaria y con la misma escala.'];
   let cur = -1, curF = -1, saved = null, tk = 0;
   const FNM = { all: 'todo el día', am: 'la mañana', pm: 'la tarde', pk: 'la hora punta' }, pair = [0, 1]; let cf = 'all', mode = '';
@@ -209,4 +209,46 @@
     const lim = 68 + cmpEl.offsetHeight + 40, o = cl01((vh * .85 - sr.top) / 120) * cl01((sr.bottom - lim) / 90);
     cmpEl.style.opacity = o; cmpEl.style.visibility = o < .02 ? 'hidden' : 'visible'; };
   addEventListener('scroll', () => { if (!tk) tk = requestAnimationFrame(upd); }, { passive: true }); addEventListener('resize', upd); upd();
+
+  /* ---- navegación por secciones, estado en la URL y teclado ---- */
+  const abs = el => el.getBoundingClientRect().top + scrollY, vhh = () => innerHeight, q1 = sel => document.querySelector(sel);
+  const SEC = [['barrio', 'Barrio', () => 0], ['sectores', 'Sectores', () => vhh() * 1.02], ['contraste', 'Contraste', () => abs(stepsEl)], ['comparar', 'Comparar', () => abs(stg) - vhh() * .3],
+    ['graficas', 'Gráficas', () => abs(q1('.charts2')) - 70], ['partitura', 'Partitura', () => abs(q1('#gD')) - 80], ['estadisticas', 'Estadísticas', () => abs(q1('#s4')) - 70], ['como', 'Cómo funciona', () => abs(q1('#s5')) - 70]];
+  const nav = document.createElement('nav'); nav.id = 'sec'; nav.setAttribute('aria-label', 'Secciones del atlas');
+  nav.innerHTML = SEC.map(([k, n]) => `<button data-k="${k}" aria-label="${n}"><span>${n}</span><i></i></button>`).join('')
+    + '<button class="lk" aria-label="Copiar enlace a esta vista"><span>Copiar enlace</span><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6.5 9.5l3-3M5 8l-1.2 1.2a2.4 2.4 0 003.4 3.4L8.4 11.4M11 8l1.2-1.2A2.4 2.4 0 008.8 3.4L7.6 4.6"/></svg></button><button class="kb" aria-label="Atajos de teclado"><span>Atajos de teclado</span><b>?</b></button>';
+  document.body.appendChild(nav);
+  const kbd = document.createElement('div'); kbd.id = 'kbd'; kbd.hidden = true; kbd.setAttribute('role', 'dialog'); kbd.setAttribute('aria-label', 'Atajos de teclado');
+  kbd.innerHTML = '<h4>Atajos de teclado</h4><dl><dt>← →</dt><dd>paso anterior o siguiente (lugar y franja); en Comparar, cambia la franja</dd><dt>A · B</dt><dd>en Comparar, cambia el lugar A o B</dd><dt>N · P</dt><dd>sección siguiente o anterior</dd><dt>1 – 4</dt><dd>expande un sector · Esc vuelve</dd><dt>?</dt><dd>muestra u oculta esta ayuda</dd></dl>';
+  document.body.appendChild(kbd);
+  const sbtn = [...nav.querySelectorAll('button[data-k]')]; let act = 0, ready = false, ut = 0;
+  const go = y => scrollTo({ top: Math.max(0, y), behavior: RM ? 'auto' : 'smooth' });
+  sbtn.forEach((b, i) => b.addEventListener('click', () => go(SEC[i][2]())));
+  const hashState = () => { const q = new URLSearchParams(); q.set('sec', SEC[act][0]); const M = window.MAREA; if (M.want !== null) q.set('s', M.want + 1);
+    if (act <= 1 || M.want !== null) { if (M.flt !== 'all') q.set('f', M.flt); } if (M.srcF) q.set('c', M.srcF);
+    if (act === 3) { q.set('A', pair[0] + 1); q.set('B', pair[1] + 1); if (cf !== 'all') q.set('cf', cf); } return '#' + q.toString(); };
+  const sync = () => { if (!ready || document.body.classList.contains('heroing') || ut) return; ut = setTimeout(() => { ut = 0; try { history.replaceState(null, '', hashState()); } catch (e) { } }, 250); };
+  const mark = () => { const y = scrollY + vhh() * .35; let a = 0; SEC.forEach((s, i) => { if (y >= s[2]() - vhh() * .0) a = i; }); if (a !== act) { act = a; sbtn.forEach((b, i) => { b.classList.toggle('on', i === a); if (i === a) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current'); }); } sync(); };
+  addEventListener('scroll', () => requestAnimationFrame(mark), { passive: true }); addEventListener('resize', mark);
+  document.getElementById('cfg').addEventListener('click', sync); document.querySelectorAll('.pk').forEach(p => p.addEventListener('click', sync));
+  nav.querySelector('.lk').addEventListener('click', e => { const b = e.currentTarget, sp = b.querySelector('span'), u = location.href.split('#')[0] + hashState(), done = () => { sp.textContent = 'Enlace copiado'; setTimeout(() => sp.textContent = 'Copiar enlace', 1600); };
+    try { history.replaceState(null, '', hashState()); } catch (er) { }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(u).then(done, () => prompt('Copia este enlace', u)); else prompt('Copia este enlace', u); });
+  const tkb = () => { kbd.hidden = !kbd.hidden; }; nav.querySelector('.kb').addEventListener('click', tkb);
+  const stopY = n => { const el = stp[Math.floor(n / 3)], p = (n % 3 + .5) / 3; return abs(el) + p * el.offsetHeight - vhh() / 2; };
+  addEventListener('keydown', e => { if (e.ctrlKey || e.metaKey || e.altKey || document.body.classList.contains('heroing')) return; const t = e.target; if (t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return; const k = e.key;
+    if (k === '?') { tkb(); e.preventDefault(); return; } if (k === 'Escape') { kbd.hidden = true; return; }
+    if (/^[np]$/i.test(k)) { go(SEC[Math.max(0, Math.min(SEC.length - 1, act + (/n/i.test(k) ? 1 : -1)))][2]()); e.preventDefault(); return; }
+    if (k === 'ArrowRight' || k === 'ArrowLeft') { const d = k === 'ArrowRight' ? 1 : -1;
+      if (mode === 'c') { const o = ['all', 'am', 'pm', 'pk'], j = Math.max(0, Math.min(3, o.indexOf(cf) + d)); document.querySelector(`#cfg button[data-f="${o[j]}"]`).click(); e.preventDefault(); }
+      else if (act === 2) { const n = cur * 3 + curF + d; go(n < 0 ? SEC[1][2]() : n > 11 ? SEC[3][2]() : stopY(n)); e.preventDefault(); } return; }
+    if (mode === 'c' && /^[ab]$/i.test(k)) { const i = /a/i.test(k) ? 0 : 1; let n = (pair[i] + 1) % 4; if (n === pair[1 - i]) n = (n + 1) % 4; pair[i] = n; renderCmp(); sync(); e.preventDefault(); } });
+  // restaurar la vista desde la URL (si trae sec=…) y saltar la portada
+  const restore = () => { const h = location.hash.slice(1); if (!h.includes('sec=')) { ready = true; mark(); return; } const q = new URLSearchParams(h), M = window.MAREA; if (document.body.classList.contains('heroing')) document.getElementById('go').click();
+    if (q.get('f')) M.setFlt(q.get('f')); if (q.get('c')) M.setSrc(q.get('c'));
+    if (q.get('A') && q.get('B')) { pair[0] = Math.max(0, Math.min(3, +q.get('A') - 1)); pair[1] = Math.max(0, Math.min(3, +q.get('B') - 1)); if (pair[0] === pair[1]) pair[1] = (pair[0] + 1) % 4; }
+    if (q.get('cf') && ['am', 'pm', 'pk'].includes(q.get('cf'))) { cf = q.get('cf'); document.querySelectorAll('#cfg button').forEach(x => x.classList.toggle('on', x.dataset.f === cf)); placeF(); } renderCmp();
+    const i = Math.max(0, SEC.findIndex(s => s[0] === q.get('sec')));
+    setTimeout(() => { scrollTo(0, SEC[i][2]()); if (q.get('s')) setTimeout(() => { if (scrollY < vhh()) scrollTo(0, SEC[1][2]()); setTimeout(() => M.focus(+q.get('s') - 1), 900); }, 400); setTimeout(() => { ready = true; mark(); }, q.get('s') ? 2200 : 900); }, 700); };
+  restore(); mark();
 })();

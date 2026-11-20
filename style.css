@@ -453,3 +453,29 @@ body.about .wrap{position:relative;z-index:3}
 .rd2.lg .rn{margin:4px 0 0}
 @media(max-width:1100px){.rd2.lg .r4{grid-template-columns:repeat(2,minmax(0,1fr))}.rd2.lg .r3{grid-template-columns:1fr}}
 @media(max-width:700px){.rd2.lg .r4{grid-template-columns:1fr}.rd2.lg .rl{font-size:13px}}
+
+/* v28 · tesis en la portada, navegación por secciones, atajos de teclado y foco visible */
+#hero .tesis{max-width:40em;margin:6px 0 18px;padding:14px 18px;border-radius:22px;background:rgba(255,255,255,.32);border:1px solid rgba(255,255,255,.6)}
+#hero .tesis h5{margin:0 0 6px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--N);font-weight:700}
+#hero .tesis ol{margin:0;padding-left:20px;list-style:decimal;font-size:clamp(14px,1.25vw,17px);line-height:1.45;color:var(--fg)}
+#hero .tesis li{margin:5px 0}#hero .tesis li b{color:var(--fg)}
+#hero p.p2{margin-top:8px}
+#sec{position:fixed;right:8px;top:50%;transform:translateY(-50%);z-index:30;display:flex;flex-direction:column;align-items:flex-end;gap:0;transition:opacity .3s}
+body.heroing #sec,body.about #sec{display:none}body.foc #sec{opacity:0;pointer-events:none}
+#sec button{display:flex;align-items:center;gap:8px;padding:7px 6px;background:none;border:0;cursor:pointer;color:#5E6655;font:inherit;font-size:12.5px;-webkit-tap-highlight-color:transparent}
+#sec button span{opacity:0;transform:translateX(6px);transition:opacity .2s,transform .2s;padding:3px 10px;border-radius:99px;white-space:nowrap;pointer-events:none;background:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.9);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);box-shadow:0 4px 14px rgba(59,66,52,.14);color:#3b4234}
+#sec button i{width:8px;height:8px;border-radius:50%;border:1.5px solid #5E6655;box-sizing:border-box;transition:transform .25s,background .25s,border-color .25s}
+#sec button.on i{background:#3b4234;border-color:#3b4234;transform:scale(1.4)}
+#sec button:hover span,#sec button:focus-visible span{opacity:1;transform:none}
+#sec .lk,#sec .kb{margin-top:6px;opacity:.75}#sec .lk:hover,#sec .kb:hover{opacity:1}#sec .kb b{font-size:12px;width:16px;height:16px;line-height:14px;text-align:center;border:1.5px solid #5E6655;border-radius:50%;box-sizing:border-box}
+#sec .lk svg{margin:0 1px}
+#kbd{position:fixed;right:44px;top:50%;transform:translateY(-50%);z-index:31;width:min(320px,calc(100vw - 70px));padding:16px 18px;border-radius:22px;background:rgba(240,241,232,.9);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);border:1px solid rgba(255,255,255,.9);box-shadow:0 12px 34px rgba(59,66,52,.2);font-size:13.5px;line-height:1.4;color:#3b4234}
+#kbd[hidden]{display:none}#kbd h4{margin:0 0 8px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--N)}
+#kbd dl{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;margin:0}#kbd dt{font-weight:700;white-space:nowrap}#kbd dd{margin:0}
+button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:2px solid #3b4234;outline-offset:2px}
+@media(max-width:760px){#sec{right:2px}#sec button{padding:8px 6px}#sec button i{width:7px;height:7px}#sec .lk,#sec .kb{display:none}#kbd{display:none}}
+@media(prefers-reduced-motion:reduce){#sec button span,#sec button i{transition:none}}
+
+#hero h1{max-width:21em}
+@media(min-width:1100px){#hero .tesis{max-width:none;width:min(100%,64em)}#hero .tesis ol{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 28px;padding:0;list-style:none}}
+@media(max-width:1100px){.cmp[data-m="r"] .cl>div:nth-child(4),.cmp[data-m="r"] .cl>div:nth-child(5){display:none}.step .sub{display:none}}

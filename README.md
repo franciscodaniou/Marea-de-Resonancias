@@ -36,6 +36,8 @@ Movimiento más errático = menor agrado en las encuestas. Anillo = respuestas d
 4. Gráficas que se transforman: intensidad (por lugar / por hora) y agrado (agrado vs dB / respuestas), con el mismo botón; partitura (cada ficha es una nota: línea = fuente, posición = hora, tamaño = dB; todo el barrio o por lugar).
 5. Estadísticas y consola «Cómo funciona»: fuentes, flujos, picos y malla en vivo.
 
+Navegación: indicador lateral de secciones, enlace que restaura la vista (`#sec=…&f=…&A=…&B=…&cf=…`) y atajos de teclado (← →, A/B, N/P, 1–4, ?). Anillos finos en las mallas = relieve de referencia (55–85 dB); anillo exterior = agrado.
+
 Wireframes: `wireframe.svg/png` (escritorio) y `wireframe-movil.svg/png`.
 
 ## Datos

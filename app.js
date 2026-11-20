@@ -61,7 +61,7 @@ function layout() { // las figuras se reacomodan en sincronía con el pill/leyen
   const rA = Math.min(gw / 4 / 2.05, (gh - LB) / 2.2), rB = Math.min(gw / 2 / 2.05, (gh / 2 - LB) / 2.2), row = rA >= rB;
   Rb = Math.max(rA, rB); const bh = 2.2 * Rb + LB, off = row ? (gh - bh) / 2 : (gh / 2 - bh) / 2;
   ctr = [0, 1, 2, 3].map(i => row ? [x0 + gw * (i + .5) / 4, top0 + off + 8 + Rb * 1.08] : [x0 + gw * (i % 2 + .5) / 2, top0 + (gh / 2) * Math.floor(i / 2) + off + 8 + Rb * 1.08]);
-  CMX = mob ? W / 2 : W * .27; CMY = mob ? H * .325 : H * .64; CMR = mob ? Math.min(W * .19, H * .072) : Math.min(W * .15, H * .23);
+  CMX = mob ? W / 2 : W * .27; CMY = mob ? H * .30 : H * .70; CMR = mob ? Math.min(W * .19, H * .072) : Math.min(W * .15, H * .23);
   CPX = mob ? [W * .27, W * .73] : [W * .15, W * .4]; CPY = mob ? H * .385 : H * .72; CPR = mob ? Math.min(W * .27, H * .115) : Math.min(W * .13, H * .24);
   CX0 = x0 + gw / 2; CY0 = top0 + gh / 2 + (mob ? -8 : 0); S0 = Math.min(gw * (mob ? .24 : .15), gh * (mob ? .3 : .36));
   if (mob) { // móvil: figura arriba, panel como hoja inferior (la mitad inferior de la pantalla)
@@ -231,7 +231,7 @@ function flows(s, dt, al) {
   });
 }
 
-let lastT = 0, curDt = 0, lastLh = 0, lastHt = '', lastDeep = false, lastTide = true;
+let lastFoc = false, lastT = 0, curDt = 0, lastLh = 0, lastHt = '', lastDeep = false, lastTide = true;
 function frame(ms) {
   T = ms / 1000; const dt = Math.min(.05, T - lastT); lastT = T;
   const lh = leg.offsetHeight; if (W >= 1100 && Math.abs(lh - lastLh) > 1) { lastLh = lh; layout(); document.documentElement.style.setProperty('--lb', (72 + lh + 14) + 'px'); }
@@ -247,6 +247,7 @@ function frame(ms) {
   const tt0 = cl(sy0 / (.9 * vh), 0, 1), eT = want !== null ? 1 : hero ? 0 : tt0 * tt0 * (3 - 2 * tt0);
   eS += (eT - eS) * (1 - Math.exp(-dt * 5)); if (Math.abs(eT - eS) < .002) eS = eT;
   ee = eS * (1 - amb); Aglob = document.body.classList.contains('about') ? .6 : lerp(1, .14, amb);
+  const fo = want !== null; if (fo !== lastFoc) { lastFoc = fo; document.body.classList.toggle('foc', fo); }
   const deep = amb > .25 || cA > .08, tide = eS < .5; if (deep !== lastDeep) { lastDeep = deep; document.body.classList.toggle('deep', deep); } if (tide !== lastTide) { lastTide = tide; document.body.classList.toggle('tide', tide); }
   const rm = RM ? .2 : 1, ry = Math.sin(T * rm * .17) * .62 + oy, rx = -.28 + Math.sin(T * rm * .11 + 1) * .14 + ox; // se favorecen las vistas de las bases del tubo cY = Math.cos(ry); sY = Math.sin(ry); cX = Math.cos(rx); sX = Math.sin(rx);
   geoms(); x.globalCompositeOperation = 'source-over'; x.fillStyle = '#DCDDD3'; x.fillRect(0, 0, W, H);
@@ -256,8 +257,10 @@ function frame(ms) {
   calcDots(ee); drawDots();
   x.globalCompositeOperation = 'source-over'; x.textAlign = 'center';
   // anillo de agrado (encuestas) en los lugares acoplados; en la comparación, además A/B, nombre y agrado
-  { const mobq = W < 760; G.forEach((g, s) => { const q = kc[s] * cA; if (q < .04) return; const ags = AGS[s], tot = ags.reduce((p, c) => p + c, 0) || 1, r0 = g.R * .62; let a0 = -Math.PI / 2;
-    x.lineWidth = mobq ? 3.5 : 5; x.lineCap = 'butt'; ags.forEach((c, i) => { if (!c) return; const a1 = a0 + TAU * c / tot; x.globalAlpha = q * .92; x.strokeStyle = AGC[i]; x.beginPath(); x.arc(g.cx, g.cy, r0, a0 + .035, a1 - .035); x.stroke(); a0 = a1; });
+  { const mobq = W < 760; G.forEach((g, s) => { const q = kc[s] * cA; if (q < .04) return; const ags = AGS[s], tot = ags.reduce((p, c) => p + c, 0) || 1, r0 = g.R * .72; let a0 = -Math.PI / 2;
+    x.save(); x.setLineDash([2, 5]); x.lineWidth = .8; x.strokeStyle = '#5E6655'; x.fillStyle = '#5E6655'; x.font = `${mobq ? 8 : 10}px Helvetica,Arial`; x.textAlign = 'left'; // anillos finos: relieve de referencia en dB
+    [55, 65, 75, 85].forEach(d => { const rr = g.R * (.35 + .00754 * (d - 48)); x.globalAlpha = q * .3; x.beginPath(); x.arc(g.cx, g.cy, rr, 0, TAU); x.stroke(); x.globalAlpha = q * .6; x.fillText(d === 85 ? '85 dB' : d, g.cx + rr * .7071 + 2, g.cy - rr * .7071 - 1); }); x.restore();
+    x.lineWidth = mobq ? 1.2 : 1.5; x.lineCap = 'butt'; ags.forEach((c, i) => { if (!c) return; const a1 = a0 + TAU * c / tot; x.globalAlpha = q * .8; x.strokeStyle = AGC[i]; x.beginPath(); x.arc(g.cx, g.cy, r0, a0 + .035, a1 - .035); x.stroke(); a0 = a1; });
     const pi = PAIR().indexOf(s), qc = pi >= 0 ? cm * kc[s] * cA : 0;
     if (qc > .25) { const c = rgbOf(COL[DOM[s]]); x.globalAlpha = qc; x.fillStyle = '#3b4234'; x.font = `700 ${mobq ? 13 : 18}px Helvetica,Arial`; x.fillText(SECT[s].toUpperCase(), g.cx, g.cy + r0 + (mobq ? 20 : 30));
       x.font = `${mobq ? 11 : 14}px Helvetica,Arial`; x.fillStyle = '#5E6655'; x.fillText(`agrado ${agrSec(s).toFixed(2)} · ${tot} respuestas`, g.cx, g.cy + r0 + (mobq ? 34 : 50));
@@ -331,7 +334,7 @@ back.onclick = () => focus(null);
 addEventListener('keydown', e => { if (e.key === 'Escape') focus(null); });
 document.querySelectorAll('#ctl button').forEach(b => b.onclick = () => { flt = b.dataset.f; document.querySelectorAll('#ctl button').forEach(o => o.classList.toggle('on', o === b)); document.querySelector('#ctl .lbl').textContent = 'Franja · ' + b.textContent; document.getElementById('ctl').classList.remove('open'); b.blur(); render(); });
 
-window.MAREA = { pair: [0, 1], get flt() { return flt; }, setFlt(f) { if (flt === f) return; flt = f; const b = document.querySelector(`#ctl button[data-f="${f}"]`); document.querySelectorAll('#ctl button').forEach(o => o.classList.toggle('on', o === b)); if (b) document.querySelector('#ctl .lbl').textContent = 'Franja · ' + b.textContent; render(); } }; // la comparativa avanza la franja horaria con el scroll
+window.MAREA = { pair: [0, 1], get want() { return want; }, get srcF() { return srcF; }, setSrc(c) { setSrc(c); }, focus(s) { focus(s); }, get flt() { return flt; }, setFlt(f) { if (flt === f) return; flt = f; const b = document.querySelector(`#ctl button[data-f="${f}"]`); document.querySelectorAll('#ctl button').forEach(o => o.classList.toggle('on', o === b)); if (b) document.querySelector('#ctl .lbl').textContent = 'Franja · ' + b.textContent; render(); } }; // la comparativa avanza la franja horaria con el scroll
 document.getElementById('next').onclick = () => document.getElementById('hero').classList.add('s2');
 document.getElementById('prev').onclick = () => document.getElementById('hero').classList.remove('s2');
 document.getElementById('go').onclick = () => { document.getElementById('hero').classList.add('off'); document.body.classList.remove('heroing'); };
