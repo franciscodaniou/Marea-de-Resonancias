@@ -19,10 +19,10 @@
   const AGN = ['Incomoda', 'Da igual', 'Gusta un poco', 'Gusta'];
   const FN = [['Mañana', '09:40–12:36', 'am'], ['Tarde', '12:37–17:29', 'pm'], ['Hora punta', '17:30–18:50', 'pk']];
   S.forEach(d => { const q = uniq(F.filter(f => f.s === d.s)); d.fn = FN.map(([, , k]) => q.filter(f => f.m >= FILTERS[k][0] && f.m <= FILTERS[k][1]).length); });
-  const card = d => `<section class="step" data-s="${d.s}"><div class="stk"><div class="blk"><div class="bh"><h3>${SECT[d.s]}</h3><div class="sub">${SUB[d.s]} · ${d.n} mediciones</div></div><article class="card sc">
+  const card = d => `<section class="step" data-s="${d.s}"><div class="stk"><div class="blk"><div class="bh"><h3>${SECT[d.s]}</h3><div class="sub">${SUB[d.s]} · ${d.n} mediciones</div></div><button class="cmin" type="button" aria-expanded="false">Ver detalle ▾</button><article class="card sc">
     <div class="big" style="color:${d.hex}">${d.db == null ? '<span class="nd">sin dB</span>' : `<span data-big data-n="${d.db.toFixed(1)}" data-dec="1">${d.db.toFixed(1)}</span>`}<small>${d.db == null ? 'sin medir · relieve por intensidad percibida' : 'dB promedio'}</small></div>
     ${d.db == null ? '' : `<div class="dbs"><div class="dtr"><i data-w="${dbPos(d.db).toFixed(1)}" style="background:${d.hex}"></i></div><small>≈ ${DBW(d.db)}</small></div>`}
-    <div class="chips"><span style="color:${d.hex}">● ${SH[DOM[d.s]]}</span>${d.ag == null ? '<span>sin encuestas</span>' : `<span style="color:rgb(${agr(d.ag)})">agrado percibido <i style="font-style:normal" data-n="${d.ag.toFixed(2)}" data-dec="2">${d.ag.toFixed(2)}</i></span>`}</div>
+    <div class="chips"><span style="color:${d.hex}">● ${SH[DOM[d.s]]}</span>${d.ag == null ? '<span>sin encuestas</span>' : `<span style="color:rgb(${agr(d.ag)})">agrado percibido <i style="font-style:normal" data-n="${d.ag.toFixed(2)}" data-dec="2">${d.ag.toFixed(2)}</i> · ${AGW(d.ag)}</span>`}</div>
     <div class="fnow"><b class="fn"></b><span class="fh"></span><span class="fv"></span></div>
     <div class="ag${d.ne ? '' : ' na'}"><div class="agb" data-reveal>${d.ags.map((c, k) => c ? `<span style="flex:${c};background:${AGC[k]}" title="${AGN[k]}: ${c}">${c}</span>` : '').join('')}</div><small>agrado percibido · ${d.ne} respuestas: ${d.ags.map((c, k) => `<b style="color:${AGC[k]}">${c}</b> ${AGN[k].toLowerCase()}`).join(' · ')}</small><q>${QUOTE[d.s]}</q></div>
     <div class="fact">${d.mx == null ? 'Sin dB medido' : `Máximo <span data-n="${d.mx}">${d.mx}</span> dB`} · flujo peatonal <span data-n="${d.fp.toFixed(1)}" data-dec="1">${d.fp.toFixed(1)}</span> · vehicular <span data-n="${d.fv.toFixed(1)}" data-dec="1">${d.fv.toFixed(1)}</span></div><p class="fi">${FI[d.s]}</p>
@@ -166,7 +166,7 @@
       ${hourChart()}
       <p class="foot2">Plaza de Mayo y Puente de la Mujer (Buenos Aires) no tienen dB medido: no entran en estas cifras. Las equivalencias en palabras son aproximadas.</p></section>`;
   };
-  document.getElementById('s3').innerHTML = `<div class="steps"><div class="cmpw"><div class="cmp"><h2 id="cmph">Cada lugar, a cada hora</h2><p class="cq"></p>
+  document.getElementById('s3').innerHTML = `${finds()}<div class="steps"><div class="cmpw"><div class="cmp"><h2 id="cmph">Cada lugar, a cada hora</h2><p class="cq"></p>
       <div class="ft">${FN.map(f => `<span>${f[0]}<em> ${f[1]}</em></span>`).join('')}</div>
       <div class="cp"><span class="dots">${S.map((d, i) => `<span style="background:${d.hex}"${i ? '' : ' class="on"'}></span>`).join('')}</span><span class="cn r">Lugar <i id="cmpn">1</i> de ${NS} · <i id="cmpt">${SECT[0]}</i></span><span class="cn c">Comparando · <i id="cmpa"></i> ↔ <i id="cmpb"></i></span></div>
       <dl class="cl"></dl></div></div>${S.map(card).join('')}
@@ -174,7 +174,6 @@
       ${[0, 1].map(k => `<div class="pk" data-k="${k}"><b style="color:${S[k ? 1 : 0].hex}">${'AB'[k]}</b>${S.map((d, i) => `<button data-i="${i}"><i style="background:${d.hex}"></i>${nm(i)}</button>`).join('')}</div>`).join('')}
       <div class="tg fg" id="cfg">${[['all', 'Día'], ['am', 'Mañana'], ['pm', 'Tarde'], ['pk', 'Hora punta']].map(([k, n], i) => `<button data-f="${k}"${i ? '' : ' class="on"'}>${n}</button>`).join('')}</div>
       <div class="bfs" id="bfs"></div></article></div></div></section></div>
-    ${finds()}
     <div class="wrap2 charts2"><h2 class="sech">Las mismas cifras, de otra forma</h2><p class="lead3">Cada gráfica se transforma en otra del mismo tema con el botón.</p><div class="grid2"><div class="mg" id="gA"></div><div class="mg" id="gB"></div></div>
       <div class="ptr"><div class="mg" id="gD"></div></div></div>`;
   document.getElementById('s4').innerHTML = `<div class="wrap2"><h2 class="sech">Estadísticas del Barrio Puerto</h2>
@@ -255,13 +254,13 @@
     if (window.MAREA) { if (inside) { if (saved === null) saved = MAREA.flt; MAREA.setFlt(cmp ? cf : FN[f][2]); } else if (saved !== null) { MAREA.setFlt(saved); saved = null; } }
     const lim = 68 + cmpEl.offsetHeight + 40, o = cl01((vh * .85 - sr.top) / 120) * cl01((sr.bottom - lim) / 90);
     cmpEl.style.opacity = o; cmpEl.style.visibility = o < .02 ? 'hidden' : 'visible'; };
-  document.addEventListener('click', e => { const g = e.target.closest('#ans a'); if (g) { e.preventDefault(); scrollTo({ top: abs(q1('.finds')) - 40, behavior: 'smooth' }); return; } const a = e.target.closest('.fc'); if (!a) return; e.preventDefault(); const el = stp[+a.dataset.s]; if (el) scrollTo({ top: el.getBoundingClientRect().top + scrollY + el.offsetHeight * .22, behavior: 'smooth' }); });
+  document.addEventListener('click', e => { const mb = e.target.closest('.cmin'); if (mb) { const b = mb.closest('.blk'), o = b.classList.toggle('open'); mb.setAttribute('aria-expanded', o); mb.textContent = o ? 'Ocultar detalle ▴' : 'Ver detalle ▾'; if (o && window.VITA) VITA.play(b); return; } const g = e.target.closest('#ans a'); if (g) { e.preventDefault(); scrollTo({ top: abs(q1('.finds')) - 40, behavior: 'smooth' }); return; } const a = e.target.closest('.fc'); if (!a) return; e.preventDefault(); const el = stp[+a.dataset.s]; if (el) scrollTo({ top: el.getBoundingClientRect().top + scrollY + el.offsetHeight * .22, behavior: 'smooth' }); });
   addEventListener('scroll', () => { if (!tk) tk = requestAnimationFrame(upd); }, { passive: true }); addEventListener('resize', upd); upd();
 
   /* ---- navegación por secciones, estado en la URL y teclado ---- */
   const abs = el => el.getBoundingClientRect().top + scrollY, vhh = () => innerHeight, q1 = sel => document.querySelector(sel);
-  const SEC = [['barrio', 'Barrio', () => 0], ['sectores', 'Sectores', () => vhh() * 1.02], ['contraste', 'Lugares', () => abs(stepsEl)], ['comparar', 'Comparar', () => abs(stg) - vhh() * .3],
-    ['hallazgos', 'Hallazgos', () => abs(q1('.finds')) - 40], ['graficas', 'Gráficas', () => abs(q1('.charts2')) - 70], ['partitura', 'Qué y cuándo', () => abs(q1('#gD')) - 80], ['estadisticas', 'Estadísticas', () => abs(q1('#s4')) - 70], ['como', 'Cómo funciona', () => abs(q1('#s5')) - 70]];
+  const SEC = [['barrio', 'Barrio', () => 0], ['sectores', 'Sectores', () => vhh() * 1.02], ['hallazgos', 'Hallazgos', () => abs(q1('.finds')) - 40], ['contraste', 'Lugares', () => abs(stepsEl)], ['comparar', 'Comparar', () => abs(stg) - vhh() * .3],
+     ['graficas', 'Gráficas', () => abs(q1('.charts2')) - 70], ['partitura', 'Qué y cuándo', () => abs(q1('#gD')) - 80], ['estadisticas', 'Estadísticas', () => abs(q1('#s4')) - 70], ['como', 'Cómo funciona', () => abs(q1('#s5')) - 70]];
   const nav = document.createElement('nav'); nav.id = 'sec'; nav.setAttribute('aria-label', 'Secciones del atlas');
   nav.innerHTML = SEC.map(([k, n]) => `<button data-k="${k}" aria-label="${n}"><span>${n}</span><i></i></button>`).join('')
     + '<button class="snd" hidden aria-pressed="false" aria-label="Activar sonido"><span>Sonido silenciado</span><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6v4h2.6L8.5 12.6V3.4L5.1 6z"/><path class="w" d="M10.8 5.6a3.4 3.4 0 010 4.8M12.6 3.8a6 6 0 010 8.4"/></svg></button><button class="lk" aria-label="Copiar enlace a esta vista"><span>Copiar enlace</span><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6.5 9.5l3-3M5 8l-1.2 1.2a2.4 2.4 0 003.4 3.4L8.4 11.4M11 8l1.2-1.2A2.4 2.4 0 008.8 3.4L7.6 4.6"/></svg></button><button class="kb" aria-label="Atajos de teclado"><span>Atajos de teclado</span><b>?</b></button>';
