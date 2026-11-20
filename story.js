@@ -110,7 +110,7 @@
 
   document.getElementById('s3').innerHTML = `<div class="wrap2"><h2 class="sech">Contraste y comparación</h2>
     <p class="lead3">¿Cómo varían las fuentes y la intensidad del sonido según el lugar y la hora? Mientras lees cada lugar, la malla se acerca y se transforma para mostrarlo.</p></div>
-    <div class="steps">${S.map(card).join('')}</div>
+    <div class="steps"><div class="cmpw"><div class="cmp card"><div class="ct"><b>Comparación · un lugar a la vez</b><span class="cn">Lugar <i id="cmpn">1</i> de 4 · <i id="cmpt">${SECT[0]}</i></span></div><div class="dots">${S.map((d, i) => `<span style="background:${d.hex}"${i ? '' : ' class="on"'}></span>`).join('')}</div><div class="cl"><span>● Color = fuente de sonido</span><span>↔ Largo = hora, 09:40–18:50</span><span>▲ Relieve = dB promedio</span><span>◉ Perlas = mediciones</span></div></div></div>${S.map(card).join('')}</div>
     <div class="wrap2 charts2"><h2 class="sech">Las mismas cifras, de otra forma</h2><p class="lead3">Cada gráfica se transforma en otra del mismo tema con el botón.</p><div class="grid2"><div class="mg" id="gA"></div><div class="mg" id="gB"></div></div></div>`;
   document.getElementById('s4').innerHTML = `<div class="wrap2"><h2 class="sech">Estadísticas del Barrio Puerto</h2>
     <p class="lead3">Qué suena, cuánta gente y tráfico hay, y dónde están los picos.</p>
@@ -132,5 +132,10 @@
 <span class="ok">6 · vidrio</span>  glass.js dibuja los contenedores con un shader: refracta lo que
            hay detrás, como el sonido atravesando una fachada.
 <span class="pm">$</span> <span class="cur"></span></pre></div></div>`;
-})();
 
+  /* barra fija: indica qué lugar se compara mientras se lee */
+  const stp = [...document.querySelectorAll('.step')], dots = [...document.querySelectorAll('.cmp .dots span')], cn = document.getElementById('cmpn'), ct = document.getElementById('cmpt'); let cur = -1, tk = 0;
+  const upd = () => { tk = 0; let b = 1e9, k = 0; stp.forEach((el, q) => { const r = el.getBoundingClientRect(), d = Math.abs((r.top + r.bottom) / 2 - innerHeight / 2); if (d < b) { b = d; k = q; } });
+    if (k !== cur) { cur = k; cn.textContent = k + 1; ct.textContent = SECT[k]; dots.forEach((d, q) => d.classList.toggle('on', q === k)); } };
+  addEventListener('scroll', () => { if (!tk) tk = requestAnimationFrame(upd); }, { passive: true }); upd();
+})();
