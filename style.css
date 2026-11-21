@@ -724,3 +724,12 @@ header,body.deep header,body.about header{background:linear-gradient(rgba(220,22
 .bf.dm{grid-template-columns:1fr auto 1fr!important}.bf.dm>span{display:none}.bf.dm>b:first-child{text-align:left}.bf.dm>b:last-child{text-align:right}
 /* respiro entre el título y los puntos de progreso de «Dos lugares frente a frente» */
 @media(max-width:1100px){.cmp .cp{margin-top:12px}}
+/* v75 · menú superior en táctil: sin :hover pegado, apertura solo por toque, y sin solaparse con «Cómo leer» ni la respuesta corta */
+@media(hover:none){
+#nav:hover:not(.open) .lbl,#nav:focus-within:not(.open) .lbl{max-width:300px;padding:8px 18px;border-width:1px;opacity:1}
+#nav:hover:not(.open) .mb,#nav:focus-within:not(.open) .mb{max-width:0;padding:8px 0;margin-left:0;border-width:0;opacity:0}}
+@media(max-width:520px){
+#nav:hover:not(.open),#nav:focus-within:not(.open){flex-direction:row}
+header{z-index:12}
+body.navopen #leg,body.navopen #ans,body.navopen #hint{opacity:0!important;pointer-events:none}
+#nav.open .mb{backdrop-filter:blur(3px) saturate(1.18);-webkit-backdrop-filter:blur(3px) saturate(1.18);background-color:rgba(226,228,218,.82)}}
