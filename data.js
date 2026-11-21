@@ -1,6 +1,6 @@
 /* Datos · Marea de resonancias (Barrio Puerto)
    Fuente: «Base de Datos – Variación Sonora Barrio Puerto» (Grupo 2 · Taller de Diseño de Servicios 2026).
-   · FICHAS  = 40 fichas de terreno (segunda página del PDF)
+   · FICHAS  = 40 fichas del Barrio Puerto + las de Buenos Aires de terreno (segunda página del PDF)
    · ENCUESTAS = 20 encuestas de percepción (tercera página del PDF)
    Criterios de preparación (documentados también en about.html):
    · Tipo de fuente: V vehicular · H humana · C comercial · M portuaria/mecánica · N natural. La categoría «comercial»
@@ -9,12 +9,13 @@
      simultáneas: cuentan en las tres categorías de fuente, pero sus decibeles y flujos se cuentan una sola vez.
    · Agrado de encuestas: «me gusta» = 2 · «me gusta un poco» = 1 · «me da igual» = 0 · «me incomoda un poco» = −1.
    · Flujos: bajo/medio/alto → 1/2/3.
-   · Puente de la Mujer (Buenos Aires, BA-M-02, 12:29): 1 medición con 4 fuentes, también sin dB; su fuente predominante (Vehicular) la fija PRED porque las fichas empatan.
+   · Puente de la Mujer (Buenos Aires, BA-M-02, 12:29): 2 mediciones sin dB (BA-M-02, 4 fuentes; BA-PI-02, 21/11 11:09, 3 fuentes: música, autos y personas). Su fuente predominante sale del conteo de fichas (Humana).
    · Plaza de Mayo (Buenos Aires): 1 medición (BA-PI-01, 12:50) con 3 fuentes simultáneas. Sin dB válido (dbMin = 5; dbProm y dbMax vacíos):
      no entra en promedios ni máximos; su relieve usa la intensidad percibida (1–5). Sin encuestas de agrado todavía. */
 const SECT = ['Muelle Prat', 'Plaza Sotomayor', 'Calle Serrano', 'Plaza Echaurren', 'Plaza de Mayo', 'Puente de la Mujer'];
 const SHORT = ['Prat', 'Sotomayor', 'Serrano', 'Echaurren', 'Mayo', 'Puente'];
-const PRED = { 5: 'V' }; // fuente predominante indicada por el observador cuando las fichas empatan
+const APRA = 'Mapa Estratégico de Ruido 2018 · Agencia de Protección Ambiental (APrA), Gobierno de la Ciudad de Buenos Aires';
+const PRED = {}; // fuente predominante fijada por el equipo cuando las fichas empatan (hoy ninguna: se cuenta por fichas)
 const NS = SECT.length;
 const SUB = ['borde abierto al mar', 'explanada de bordes duros', 'corredor encerrado', 'claro rodeado de muros', 'plaza abierta junto a avenida', 'borde costero junto al río'];
 const QUOTE = [
@@ -76,7 +77,17 @@ const FICHAS = [
   ['12:29', 5, null, null, null, 2, 1, 'V', 'Vehículos en la ciudad', 'Zumbido constante de autos que llega desde la ciudad, como un aura de fondo', 4, 'BA-M-02'],
   ['12:29', 5, null, null, null, 2, 1, 'M', 'Trabajos en el puente', 'Maquinaria que se siente de a momentos', null, 'BA-M-02'],
   ['12:29', 5, null, null, null, 2, 1, 'H', 'Gente caminando y conversando', 'La gente pasa muy a la rápida, todos van de paso', 2, 'BA-M-02'],
-  ['12:29', 5, null, null, null, 2, 1, 'N', 'Aves', 'Los árboles cercanos atraen aves que a ratos llenan el ambiente con su canto', 2, 'BA-M-02']
+  ['12:29', 5, null, null, null, 2, 1, 'N', 'Aves', 'Los árboles cercanos atraen aves que a ratos llenan el ambiente con su canto', 2, 'BA-M-02'],
+  // Buenos Aires · BA-PI-02 · Puente de la Mujer · 21/11/2026 11:09–11:19 · tres fuentes simultáneas, sin dB (el medidor no quedó registrado)
+  ['11:09', 5, null, null, null, 3, 3, 'H', 'Música', 'Música en la entrada del puente, con flujo peatonal y vehicular altos', 5, 'BA-PI-02'],
+  ['11:09', 5, null, null, null, 3, 3, 'V', 'Autos pasando', 'Paso recurrente de autos (5 eventos) con ritmo irregular; sin intensidad registrada', null, 'BA-PI-02'],
+  ['11:09', 5, null, null, null, 3, 3, 'H', 'Personas', 'Conversación continua del flujo peatonal', 3, 'BA-PI-02'],
+  // Buenos Aires · referencia oficial (no es medición propia): Mapa Estratégico de Ruido 2018, APrA · GCBA. Banda modelada de día (07:01–22:00) donde más se repite en ~150 m del lugar.
+  ['14:30', 4, 70, 72.5, 75, 3, 3, 'V', 'Tránsito vehicular y ferroviario (modelo)', 'Banda modelada de día (07:01–22:00): 70–75 dB; de noche, 65–70 dB. El modelo solo incluye vehículos y trenes: no personas ni música.', null, 'APrA-2018-PM', 'apra'],
+  ['14:30', 5, 65, 67.5, 70, 3, 2, 'V', 'Tránsito vehicular y ferroviario (modelo)', 'Banda modelada de día (07:01–22:00): 65–70 dB; de noche, 55–60 dB. Hacia el agua y el interior de Puerto Madero baja a 40–55 dB. Solo vehículos y trenes.', null, 'APrA-2018-PU', 'apra'],
+  // misma referencia, banda nocturna (22:01–07:00): solo se enciende en el paso «Noche» del recorrido; en el registro aparece como ficha aparte
+  ['23:00', 4, 65, 67.5, 70, 3, 3, 'V', 'Tránsito vehicular y ferroviario (modelo)', 'Banda modelada de noche (22:01–07:00): 65–70 dB; de día, 70–75 dB. Solo vehículos y trenes.', null, 'APrA-2018-PM-N', 'apra_n'],
+  ['23:00', 5, 55, 57.5, 60, 3, 2, 'V', 'Tránsito vehicular y ferroviario (modelo)', 'Banda modelada de noche (22:01–07:00): 55–60 dB; de día, 65–70 dB. Hacia el agua baja a 30–50 dB. Solo vehículos y trenes.', null, 'APrA-2018-PU-N', 'apra_n']
 ];
 // ENCUESTAS: [sector (0-3; Plaza de Mayo aún sin encuestas), agrado (−1…2), dB medido durante la encuesta (si se registró)]
 const ENCUESTAS = [[0,1,71.4],[0,1,75],[3,1,54],[3,-1,75.4],[2,0,74.3],[0,1],[0,2],[0,1],[0,1],[1,-1],[1,-1],[1,0],[1,-1],[1,-1],[2,0],[2,2],[2,2],[2,2],[0,2],[1,2]];
