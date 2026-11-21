@@ -146,6 +146,13 @@
       <svg data-reveal viewBox="0 0 ${Wd} ${Ht}" role="img" aria-label="Línea de dB promedio por franja horaria para cada lugar con datos">${g}${ls}</svg>
       <p>Cada punto es el promedio de las mediciones de ese tramo del día (a veces solo 1 o 2). Plaza de Mayo y Puente de la Mujer no tienen dB.</p></article>`;
   };
+  const thesis = () => {
+    const w = S.filter(d => d.db != null && d.ag != null), top = w.slice().sort((a, b) => b.ag - a.ag)[0], low = w.slice().sort((a, b) => a.ag - b.ag)[0], pk = S.filter(d => d.mx != null).sort((a, b) => b.mx - a.mx)[0];
+    if (!top || !low || top === low) return '';
+    const f = v => v.toFixed(1).replace('.', ',');
+    return `<aside class="thesis"><span class="k">Mi lectura</span><p class="tq">El ruido del Barrio Puerto se juzga por qué lo produce, no por cuántos decibeles tiene.</p>
+      <p class="tp">${SECT[top.s]} promedia ${f(top.db)} dB y es el mejor valorado; ${SECT[low.s]}, ${f(Math.abs(low.db - top.db))} dB ${low.db > top.db ? 'más' : 'menos'}, es el peor valorado (${low.inc} de ${low.ne} personas lo sienten incómodo). ${pk === top ? 'Sus picos llegan a ' + pk.mx + ' dB y sigue siendo el mejor valorado.' : SECT[pk.s] + ' llega a ' + pk.mx + ' dB en sus picos y su agrado es ' + (pk.ag > 0 ? 'positivo' : 'bajo') + '.'} Con pocas encuestas por lugar es una lectura, no una causa demostrada.</p></aside>`;
+  };
   const finds = () => {
     const nr = real(uniq(F)).length, w = S.filter(d => d.db != null).sort((a, b) => b.db - a.db), hi = w[0], lo = w[w.length - 1];
     const rise = S.map(d => { const p = d.fr.filter(x => x != null); return p.length > 1 ? [d, p[p.length - 1] - p[0]] : null; }).filter(Boolean), up = rise.filter(r => r[1] > 0).length, av = rise.reduce((a, r) => a + r[1], 0) / rise.length;
@@ -164,6 +171,7 @@
           <div class="fcs">${rise.map(([d, v]) => chip(d, (v > 0 ? '+' : '') + v.toFixed(1))).join('')}</div></article>
       </div>
       ${hourChart()}
+      ${thesis()}
       <p class="foot2">Plaza de Mayo y Puente de la Mujer (Buenos Aires) no tienen dB medido: no entran en estas cifras. Las equivalencias en palabras son aproximadas.</p></section>`;
   };
   document.getElementById('s3').innerHTML = `${finds()}<div class="steps"><div class="cmpw"><div class="cmp"><h2 id="cmph">Cada lugar, a cada hora</h2><p class="cq"></p>
