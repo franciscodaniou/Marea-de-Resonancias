@@ -148,7 +148,7 @@ void main(){
   const U = n => gl.getUniformLocation(pr, n), uTex = U('uTex'), uRes = U('uRes'), uDens = U('uDens'), uT = U('uT'), uR = U('uR'), uRr = U('uRr'), uE = U('uE'), uM = U('uM'), uHero = U('uHero');
   gl.uniform1i(uTex, 0);
 
-  const SEL = ['#leg', '.morph .lbl', '.morph .mb', '#panel', '#back', '#hint', '#tip', '#hero button', '.btn'];
+  const SEL = []; // v69: los elementos ya no se dibujan en WebGL (evita ghosting); la capa solo desenfoca el fondo del hero
   const eo = el => { let o = 1; while (el && el !== document.body) { o *= parseFloat(getComputedStyle(el).opacity); el = el.parentElement; } return o; };
   let mx = -99, my = -99, lt = performance.now() / 1000;
   document.addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY; }, { passive: true });

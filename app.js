@@ -22,6 +22,10 @@ let CX0 = 0, CY0 = 0, S0 = 100, eS = 0, amb = 0, ee = 0, Aglob = 1; // centro y 
 const FILTERS = { all: [0, 1e4], am: [0, 756], pm: [757, 1049], pk: [1050, 1e4] };
 let flt = 'all', want = null, foc = null, k = 0, pf = null, hov = null, hs = null, W, H, dpr, T = 0, Rb, Rf, FX, FY, ctr = [], G = [], pkey = '';
 const cv = document.getElementById('c'), x = cv.getContext('2d'), tip = document.getElementById('tip'), panel = document.getElementById('panel'), back = document.getElementById('back');
+let carPos = 0, carTgt = 0, lastCar = false, lastCi = -1; // móvil: carrusel horizontal de sectores (uno por pantalla)
+const car = document.createElement('div'), cdots = document.createElement('div'); car.id = 'car'; cdots.id = 'cdots'; car.innerHTML = '<div class="sl"></div>'.repeat(NS); cdots.innerHTML = '<i></i>'.repeat(NS); document.body.append(car, cdots);
+car.addEventListener('scroll', () => { carTgt = car.scrollLeft / W; }, { passive: true });
+car.addEventListener('click', e => cv.dispatchEvent(new MouseEvent('click', { clientX: e.clientX, clientY: e.clientY, bubbles: true })));
 const lerp = (a, b, t) => a + (b - a) * t, cl = (v, a, b) => Math.max(a, Math.min(b, v));
 const mix = (a, b, t) => a.map((v, i) => Math.round(lerp(v, b[i], t)));
 const agr = a => { const t = cl((a + 1) / 3, 0, 1); return t < .5 ? mix([210, 10, 46], [226, 172, 44], t * 2) : mix([226, 172, 44], [0, 103, 91], (t - .5) * 2); };
@@ -67,6 +71,7 @@ function layout() { // las figuras se reacomodan en sincronía con el pill/leyen
   if (!best) { const nr = Math.ceil(NS / 2); best = { c: 2, nr, r: Math.min(gw / 2 / 2.05, (gh / nr - LB) / 2.2) }; }
   Rb = best.r; LW = gw / best.c; const bh = 2.2 * Rb + LB, off = (gh / best.nr - bh) / 2;
   ctr = NSX.map(i => { const rw = Math.floor(i / best.c), inRow = Math.min(best.c, NS - rw * best.c), cx = i % best.c + (best.c - inRow) / 2; return [x0 + gw * (cx + .5) / best.c, top0 + (gh / best.nr) * rw + off + 8 + Rb * 1.08]; });
+  if (mob) { const ghc = H - 150 - top0, LBc = 180; Rb = Math.max(70, Math.min(gw / 2.4, (ghc - LBc) / 2.2)); LW = gw; const cyc = top0 + 8 + Rb * 1.08 + Math.max(0, (ghc - LBc - 2.2 * Rb) / 2); ctr = NSX.map(i => [W / 2 + i * W, cyc]); car.style.top = top0 + 'px'; car.style.height = Math.max(0, ghc) + 'px'; cdots.style.top = (top0 + ghc + 4) + 'px'; }
   CMX = mob ? W / 2 : W * .27; CMY = mob ? H * .37 : H * .70; CMR = mob ? Math.min(W * .26, H * .115) : Math.min(W * .15, H * .23);
   CPX = mob ? [W * .27, W * .73] : [W * .15, W * .4]; CPY = mob ? H * .385 : H * .72; CPR = mob ? Math.min(W * .27, H * .115) : Math.min(W * .13, H * .24);
   CX0 = x0 + gw / 2; CY0 = top0 + gh / 2 + (mob ? -8 : 0); S0 = Math.min(gw * (mob ? .24 : .15), gh * (mob ? .3 : .36));
@@ -84,7 +89,7 @@ const PAIR = () => (window.MAREA && MAREA.pair) || [0, 1];
 const AGS = NSX.map(s => [-1, 0, 1, 2].map(v => E.filter(e => e[0] === s && e[1] === v).length)), AGC = ['#D20A2E', '#a39f8a', '#5E9C8F', '#00675B'];
 function geoms() {
   G = NSX.map(s => {
-    const kk = foc === s ? k : 0; let cx = lerp(ctr[s][0], FX, kk), cy = lerp(ctr[s][1], FY, kk), R = lerp(Rb, Rf, kk), al = foc === null || foc === s ? 1 : 1 - k;
+    const kk = foc === s ? k : 0; let cx = lerp(ctr[s][0] - (W < 760 ? carPos * W : 0), FX, kk), cy = lerp(ctr[s][1], FY, kk), R = lerp(Rb, Rf, kk), al = foc === null || foc === s ? 1 : 1 - k;
     if (cA > .001) { const q = kc[s], pi = PAIR().indexOf(s), tm = pi >= 0 ? cm : 0; cx = lerp(cx, lerp(CMX, CPX[pi] || CMX, tm), q); cy = lerp(cy, lerp(CMY - (W < 760 ? mo * H * .095 : 0), CPY, tm), q); R = lerp(R, lerp(CMR * (W < 760 ? 1 - mo * .5 : 1), CPR, tm), q); al *= lerp(1 - cA, 1, q); }
     return { cx, cy, R, al, kk };
   });
@@ -256,14 +261,18 @@ function frame(ms) {
   if (window.SND && SND.active) { sndT += dt; if (sndT > .2) { sndT = 0; SND.update(want !== null ? [[want, 0]] : cmpT && cT > .02 ? [[PAIR()[0], -.7], [PAIR()[1], .7]] : cT > .02 && cS >= 0 ? [[cS, 0]] : NSX.map(s => [s, (s / (NS - 1) * 2 - 1) * .8]), hero ? 0 : 1 - amb); } } // sonido por fuentes (opcional)
   const tt0 = cl(sy0 / (.9 * vh), 0, 1), eT = want !== null ? 1 : hero ? 0 : tt0 * tt0 * (3 - 2 * tt0);
   eS += (eT - eS) * (1 - Math.exp(-dt * 5)); if (Math.abs(eT - eS) < .002) eS = eT;
+  { const on = W < 760 && want === null && eS > .85 && cA < .05 && amb < .05 && !hero; if (on !== lastCar) { lastCar = on; car.classList.toggle('on', on); cdots.classList.toggle('on', on); }
+    carPos += (carTgt - carPos) * (1 - Math.exp(-dt * 14)); const ci = Math.round(carTgt); if (ci !== lastCi) { lastCi = ci; [...cdots.children].forEach((d, i) => d.classList.toggle('on', i === ci)); } }
   ee = eS * (1 - amb); Aglob = document.body.classList.contains('about') ? .6 : lerp(1, .27, amb);
   const fo = want !== null; if (fo !== lastFoc) { lastFoc = fo; document.body.classList.toggle('foc', fo); }
   const deep = amb > .06 || cA > .03, tide = eS < .5; if (deep !== lastDeep) { lastDeep = deep; document.body.classList.toggle('deep', deep); } if (tide !== lastTide) { lastTide = tide; document.body.classList.toggle('tide', tide); }
   const rm = RM ? .2 : 1, ry = Math.sin(T * rm * .17) * .62 + oy, rx = -.28 + Math.sin(T * rm * .11 + 1) * .14 + ox; // se favorecen las vistas de las bases del tubo cY = Math.cos(ry); sY = Math.sin(ry); cX = Math.cos(rx); sX = Math.sin(rx);
+  if (W < 1100 && cm > .01) { const bk = document.querySelector('.cstage .blk'), cp = document.querySelector('.cmp'); // comparación en pantallas chicas: los dos modelos ocupan el hueco entre el título y la tarjeta
+    if (bk && cp) { const t0 = Math.max(cp.getBoundingClientRect().bottom + 6, 96), b0 = bk.getBoundingClientRect().top - 8, h0 = b0 - t0; if (h0 > 80) { CPR = cl(h0 / 2.6, 36, Math.min(W * .27, 130)); CPY = (t0 + b0) / 2 - 4; CMR = CPR; CMY = CPY; } } }
   geoms(); x.globalCompositeOperation = 'source-over'; x.fillStyle = '#DCDDD3'; x.fillRect(0, 0, W, H);
   curDt = dt * rm;
   for (let s = 0; s < NS; s++) { updMesh(s, ee); lightMesh(s); }
-  for (let s = 0; s < NS; s++) { const al = G[s].al * Aglob; if (al > .01) { drawMesh(s, al, evOf(ee, .5)); flows(s, curDt, al); } }
+  for (let s = 0; s < NS; s++) { const al = G[s].al * Aglob; if (al > .01 && !(W < 760 && ee > .9 && Math.abs(G[s].cx - W / 2) > W * 1.2)) { drawMesh(s, al, evOf(ee, .5)); flows(s, curDt, al); } }
   calcDots(ee); drawDots();
   x.globalCompositeOperation = 'source-over'; x.textAlign = 'center';
   // anillo de agrado (encuestas) en los lugares acoplados; en la comparación, además A/B, nombre y agrado
@@ -273,31 +282,31 @@ function frame(ms) {
     x.lineWidth = mobq ? 1.2 : 1.5; x.lineCap = 'butt'; { const sw = 1 - Math.pow(1 - cl((q - .04) / .55, 0, 1), 3); let cum = 0; ags.forEach((c, i) => { if (!c) return; const f0 = cum / tot, f1 = (cum + c) / tot, e1 = Math.min(f1, sw); cum += c; if (e1 <= f0 + .002) return; x.globalAlpha = q * .8; x.strokeStyle = AGC[i]; x.beginPath(); x.arc(g.cx, g.cy, r0, a0 + TAU * f0 + .035, a0 + TAU * e1 - (e1 === f1 ? .035 : 0)); x.stroke(); }); } // el anillo de agrado se dibuja al acoplarse
     const pi = PAIR().indexOf(s), qc = pi >= 0 ? cm * kc[s] * cA : 0;
     if (qc > .25) { const c = rgbOf(COL[DOM[s]]); x.globalAlpha = qc; x.fillStyle = '#3b4234'; x.font = `700 ${mobq ? 13 : 18}px Helvetica,Arial`; x.fillText(SECT[s].toUpperCase(), g.cx, g.cy + r0 + (mobq ? 20 : 30));
-      x.font = `${mobq ? 11 : 14}px Helvetica,Arial`; x.fillStyle = '#5E6655'; x.fillText(hasAg(s) ? `agrado percibido ${agrSec(s).toFixed(2)} · ${tot} respuestas` : 'sin encuestas de agrado', g.cx, g.cy + r0 + (mobq ? 34 : 50));
+      x.font = `${mobq ? 11 : 14}px Helvetica,Arial`; x.fillStyle = '#5E6655'; x.fillText(hasAg(s) ? (mobq ? `${AGW(agrSec(s))} · ${tot} respuestas` : `agrado percibido ${agrSec(s).toFixed(2)} · ${tot} respuestas`) : 'sin encuestas de agrado', g.cx, g.cy + r0 + (mobq ? 34 : 50));
       x.font = `800 ${mobq ? 15 : 22}px Helvetica,Arial`; x.fillStyle = `rgb(${c})`; x.fillText('AB'[pi], g.cx, g.cy - r0 - (mobq ? 8 : 12)); }
     x.globalAlpha = 1; }); }
   const lab = cl((eS - .6) / .35, 0, 1) * (1 - amb) * (1 - cl(cA * 4, 0, 1));
   if (lab > .05 && want === null && W >= 760) { const mob = W < 760, ar = (document.getElementById('ans') || {getBoundingClientRect: () => ({bottom: 0})}).getBoundingClientRect(), ab = ar.bottom, yt = Math.min(Math.max(ab + 26, 0), Math.min(...G.map(g => g.cy - g.R)) - (mob ? 26 : 20)); x.globalAlpha = lab * .9; x.fillStyle = '#5E6655'; const cx0 = (ar.left + ar.right) / 2, lgO = document.getElementById('leg'), lr0 = lgO.offsetHeight > 150 && !window.ANS_EXTRA ? lgO.getBoundingClientRect().right + 28 : 0, long = 'Un anillo es un lugar · el color es qué suena · la barra es qué tan fuerte (dB) · las columnas, cómo cambia en el día'; x.font = `${mob ? 12 : 16}px Helvetica,Arial`; const sh = mob || x.measureText(long).width > 2 * Math.min(cx0 - lr0, W - 90 - cx0); x.fillText(sh ? 'Un anillo = un lugar · color = qué suena · barra = qué tan fuerte' : long, cx0, yt); x.globalAlpha = 1; }
   const rk = NSX.filter(s => dbAvg(s) != null && !apOnly(s)).sort((a, b) => dbAvg(b) - dbAvg(a)), loud = rk[0], quiet = rk.length > 1 ? rk[rk.length - 1] : -1;
   if (lab > .05) G.forEach((g, s) => {
-    if (g.al < .05) return; const c = rgbOf(COL[DOM[s]]), big = g.kk > .5, mob = W < 760, [p, v] = lvl(s), y = g.cy + g.R * 1.12 + (big ? (mob ? 24 : 32) : (mob ? 18 : 22));
+    if (g.al < .05) return; const c = rgbOf(COL[DOM[s]]), big = g.kk > .5, mob = W < 760, [p, v] = lvl(s), y = g.cy + g.R * 1.12 + (big ? (mob ? 24 : 32) : (mob ? 26 : 22));
     const sc = big || mob ? 1 : Math.min(1, (LW - 14) / 250); x.save(); if (sc < 1) { x.translate(g.cx, y); x.scale(sc, sc); x.translate(-g.cx, -y); }
-    x.globalAlpha = g.al * lab; x.fillStyle = '#3b4234'; x.font = `700 ${big ? (mob ? 20 : 28) : (mob ? 14 : 20)}px Helvetica,Arial`; x.fillText(SECT[s].toUpperCase(), g.cx, y);
-    x.font = `${big ? (mob ? 13 : 16) : (mob ? 11 : 14)}px Helvetica,Arial`; x.fillStyle = `rgb(${c})`;
+    x.globalAlpha = g.al * lab; x.fillStyle = '#3b4234'; x.font = `700 ${big ? (mob ? 20 : 28) : (mob ? 19 : 20)}px Helvetica,Arial`; x.fillText(SECT[s].toUpperCase(), g.cx, y);
+    x.font = `${big ? (mob ? 13 : 16) : 14}px Helvetica,Arial`; x.fillStyle = `rgb(${c})`;
     const dbl = dbAvg(s) == null ? dbL(s) : (dbAvg(s) * cl(lab * 1.15, 0, 1)).toFixed(1) + (apOnly(s) ? ' dB modelo' : ' dB promedio');
-    if (!big) { const nd = dbAvg(s) == null, dv = nd ? 0 : dbAvg(s) * cl(lab * 1.15, 0, 1), o1 = mob ? 24 : 36, bw = mob ? 96 : 150, by = y + o1 + 8; // intensidad legible: número grande + barra con la misma escala en todos los lugares
+    if (!big) { const nd = dbAvg(s) == null, dv = nd ? 0 : dbAvg(s) * cl(lab * 1.15, 0, 1), o1 = 36, bw = mob ? 190 : 150, by = y + o1 + 8; // intensidad legible: número grande + barra con la misma escala en todos los lugares
       const rr = (px, py, w, h, r) => { x.beginPath(); if (x.roundRect) x.roundRect(px, py, w, h, r); else x.rect(px, py, w, h); x.fill(); };
-      if (nd) { x.fillStyle = '#8F9984'; x.font = `${mob ? 12 : 15}px Inter,Helvetica,Arial`; x.fillText('sin dB medido', g.cx, y + o1); }
-      else { const nf = `300 ${mob ? 24 : 32}px Inter,Helvetica,Arial`, uf = `${mob ? 11 : 13}px Inter,Helvetica,Arial`, ns = dv.toFixed(1), un = apOnly(s) ? ' dB · modelo APrA' : ' dB promedio'; x.font = nf; const w1 = x.measureText(ns).width; x.font = uf; const w2 = x.measureText(un).width, x0 = g.cx - (w1 + w2) / 2; x.textAlign = 'left';
+      if (nd) { x.fillStyle = '#8F9984'; x.font = `15px Inter,Helvetica,Arial`; x.fillText('sin dB medido', g.cx, y + o1); }
+      else { const nf = `300 ${mob ? 34 : 32}px Inter,Helvetica,Arial`, uf = `13px Inter,Helvetica,Arial`, ns = dv.toFixed(1), un = apOnly(s) ? ' dB · modelo APrA' : ' dB promedio'; x.font = nf; const w1 = x.measureText(ns).width; x.font = uf; const w2 = x.measureText(un).width, x0 = g.cx - (w1 + w2) / 2; x.textAlign = 'left';
         x.font = nf; x.fillStyle = `rgb(${c})`; x.fillText(ns, x0, y + o1 + (mob ? 2 : 4)); x.font = uf; x.fillStyle = '#8F9984'; x.fillText(un, x0 + w1, y + o1 + (mob ? 2 : 4)); x.textAlign = 'center'; }
       const bh = 7, by2 = by + 3; x.globalAlpha = g.al * lab * .16; x.fillStyle = '#5E6655'; rr(g.cx - bw / 2, by2, bw, bh, bh / 2);
       if (!nd) { x.globalAlpha = g.al * lab; x.fillStyle = `rgb(${c})`; rr(g.cx - bw / 2, by2, Math.max(bh, bw * cl((dv - 40) / 55, 0, 1)), bh, bh / 2); } x.globalAlpha = g.al * lab;
-      if (s === loud || s === quiet) { x.save(); x.globalAlpha = g.al * lab; x.fillStyle = `rgb(${c})`; x.font = `700 ${mob ? 10 : 12}px Inter,Helvetica,Arial`; if ('letterSpacing' in x) x.letterSpacing = '1.5px'; x.textAlign = 'center'; x.fillText(s === loud ? 'MÁS RUIDOSO' : 'MÁS TRANQUILO', g.cx, mob ? by + 58 : y - 26); x.restore(); }
+      if (s === loud || s === quiet) { x.save(); x.globalAlpha = g.al * lab; x.fillStyle = `rgb(${c})`; x.font = `700 12px Inter,Helvetica,Arial`; if ('letterSpacing' in x) x.letterSpacing = '1.5px'; x.textAlign = 'center'; x.fillText(s === loud ? 'MÁS RUIDOSO' : 'MÁS TRANQUILO', g.cx, mob ? by + 76 : y - 26); x.restore(); }
       if (!mob) { const names = ['Mañana', 'Tarde', 'H. punta'], ks = ['am', 'pm', 'pk'], base = by + 46; FRDB[NSX.indexOf(s)].forEach((v, i) => { const cxp = g.cx + (i - 1) * 46, hh = v == null ? 3 : Math.max(3, cl((v - 55) / 25, 0, 1) * 24 + 3); x.globalAlpha = g.al * lab * (v == null ? .16 : (flt === 'all' || flt === ks[i] ? .9 : .35)); x.fillStyle = v == null ? '#5E6655' : `rgb(${c})`; rr(cxp - 9, base - hh, 18, hh, 3); x.globalAlpha = g.al * lab; x.fillStyle = '#8F9984'; x.font = '10px Inter,Helvetica,Arial'; x.fillText(names[i], cxp, base + 12); }); x.globalAlpha = g.al * lab; }
       const py = mob ? 0 : 40;
-      x.font = `${mob ? 11 : 14}px Helvetica,Arial`; x.fillStyle = `rgb(${c})`; x.fillText((mob ? '' : 'Predomina: ') + SH[DOM[s]], g.cx, by + (mob ? 28 : 34) + py); x.fillText(agL2(s), g.cx, by + (mob ? 42 : 50) + py); x.fillStyle = '#3b4234';
+      x.font = '15px Helvetica,Arial'; x.fillStyle = `rgb(${c})`; x.fillText((mob ? '' : 'Predomina: ') + SH[DOM[s]], g.cx, by + (mob ? 38 : 34) + py); x.fillText(mob ? (hasAg(s) ? AGW(agrSec(s)) : 'sin encuestas') : agL2(s), g.cx, by + (mob ? 58 : 50) + py); x.fillStyle = '#3b4234';
       if (mob) { /* personas y vehículos: en la tarjeta del sector */ } else x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, by + 68 + py); }
-    else { x.fillText('Predomina: ' + SH[DOM[s]] + ' · ' + agL(s), g.cx, y + (mob ? 18 : 24)); x.fillStyle = '#3b4234'; x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, y + (mob ? 35 : 46)); }
+    else { x.fillText('Predomina: ' + SH[DOM[s]] + ' · ' + (mob ? (hasAg(s) ? AGW(agrSec(s)) : 'sin encuestas') : agL(s)), g.cx, y + (mob ? 18 : 24)); x.fillStyle = '#3b4234'; x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, y + (mob ? 35 : 46)); }
     x.restore(); x.globalAlpha = 1;
   });
   const ht = want !== null ? '' : (tide ? 'Todas las mediciones · toca un punto' : 'Clic en un sector para expandirlo · teclas 1–' + NS); if (ht !== lastHt) { lastHt = ht; hint.textContent = ht; }
@@ -392,6 +401,8 @@ document.querySelectorAll('#cts button[data-c]').forEach(b => { b.insertAdjacent
 document.querySelectorAll('#cts button').forEach(b => b.onclick = () => { setSrc(b.dataset.c); b.blur(); });
 document.querySelector('#leg .lgb').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.target.click(); } });
 const leg = document.getElementById('leg'), lgin = leg.querySelector('.lgin'), lgt = document.getElementById('lgbtn');
+{ const sp = document.querySelector('#ans .a span'), Q = real(uniq(F.filter(f => !f.ap && !f.night))), fm = v => v.toFixed(1).replace('.', ','), rk2 = NSX.filter(s => !apOnly(s) && dbAvg(s) != null).sort((a, b) => dbAvg(b) - dbAvg(a)), am = Q.filter(f => f.m < 757), pk = Q.filter(f => f.m >= 1050);
+  if (sp && rk2.length > 1 && am.length && pk.length) { const a = rk2[0], z = rk2[rk2.length - 1]; sp.textContent = `Respuesta corta: ${SECT[a]} es el más ruidoso (${fm(dbAvg(a))} dB) y ${SECT[z]} el más tranquilo (${fm(dbAvg(z))} dB); el promedio sube de ${Math.round(mean(am, f => f.pr))} dB en la mañana a ${Math.round(mean(pk, f => f.pr))} dB en la hora punta.`; } }
 { const ans = document.getElementById('ans'), place = () => { const q = ans && ans.querySelector('.q'); if (!ans || !q) return; ans.style.maxWidth = ''; ans.style.top = ''; q.style.whiteSpace = ''; const ex = window.ANS_EXTRA || 0; window.ANS_EXTRA = 0; if (innerWidth <= 1100) { ans.style.left = ''; ans.style.transform = ''; if (ex) layout(); return; } const lr = leg.getBoundingClientRect().right, open = leg.offsetHeight > 150, avail = innerWidth - 90 - (lr + 28); let aw = ans.offsetWidth, c = innerWidth / 2; if (aw > avail && open && avail < 640) { ans.style.top = (leg.getBoundingClientRect().bottom + 12) + 'px'; window.ANS_EXTRA = ans.offsetHeight + 40; } else { if (aw > avail) { ans.style.maxWidth = avail + 'px'; q.style.whiteSpace = 'normal'; aw = ans.offsetWidth; } c = Math.min(Math.max(innerWidth / 2, lr + 28 + aw / 2), innerWidth - 90 - aw / 2); } ans.style.left = c + 'px'; ans.style.transform = 'translateX(-50%)'; if ((window.ANS_EXTRA || 0) !== ex) layout(); }; if (ans) { place(); addEventListener('resize', place); if (window.ResizeObserver) new ResizeObserver(place).observe(leg); } }
 function legMeasure() {
   const oh = Math.min(lgin.offsetHeight, innerHeight - 150);
