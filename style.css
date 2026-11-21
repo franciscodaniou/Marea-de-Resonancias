@@ -738,3 +738,9 @@ body.navopen #leg,body.navopen #ans,body.navopen #hint{opacity:0!important;point
 .peaks b>span{display:inline;font-size:inherit;font-weight:inherit;line-height:inherit}
 .peaks b small{font-size:14px;font-weight:500;margin-left:2px}
 @media(max-width:700px){#s4 .peaks b{font-size:28px}}
+/* v77 · móvil: «Fuente» arriba y «Hora del día» abajo, siempre en el mismo orden; al desplegar uno, el otro no se mueve */
+@media(max-width:760px){#bar{flex-direction:column-reverse;flex-wrap:nowrap;align-items:flex-start;gap:8px}
+#bar #ctl,#bar #cts{max-width:100%}}
+/* v77 · al desplegar, la etiqueta se pliega (regla antes invalidada por un comentario roto): las opciones caben en una fila */
+#ctl.open .lbl,#cts.open .lbl,#nav.open .lbl{max-width:0;padding-left:0;padding-right:0;border-width:0;opacity:0;margin:0}
+@media(max-width:760px){#ctl.open,#cts.open{gap:6px}#ctl.open .mb,#cts.open .mb,#ctl.open .mb:first-of-type,#cts.open .mb:first-of-type{margin-left:0}}
