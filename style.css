@@ -744,3 +744,9 @@ body.navopen #leg,body.navopen #ans,body.navopen #hint{opacity:0!important;point
 /* v77 · al desplegar, la etiqueta se pliega (regla antes invalidada por un comentario roto): las opciones caben en una fila */
 #ctl.open .lbl,#cts.open .lbl,#nav.open .lbl{max-width:0;padding-left:0;padding-right:0;border-width:0;opacity:0;margin:0}
 @media(max-width:760px){#ctl.open,#cts.open{gap:6px}#ctl.open .mb,#cts.open .mb,#ctl.open .mb:first-of-type,#cts.open .mb:first-of-type{margin-left:0}}
+/* v79 · la tarjeta de título/leyenda sube con el scroll nativo (sticky) en vez de fixed + JS: sin ghosting */
+.cmpw{position:sticky!important;top:68px;height:0}
+.cmp{position:absolute!important;top:0!important}
+@media(max-width:1100px){.cmpw{top:62px}}
+/* v80 · móvil: «Desplegar sectores» sobre la barra de filtros de dos filas, sin solaparse */
+@media(max-width:760px){#down{bottom:calc(122px + env(safe-area-inset-bottom,0px))}}
