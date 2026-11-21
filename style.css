@@ -733,3 +733,8 @@ header,body.deep header,body.about header{background:linear-gradient(rgba(220,22
 header{z-index:12}
 body.navopen #leg,body.navopen #ans,body.navopen #hint{opacity:0!important;pointer-events:none}
 #nav.open .mb{backdrop-filter:blur(3px) saturate(1.18);-webkit-backdrop-filter:blur(3px) saturate(1.18);background-color:rgba(226,228,218,.82)}}
+/* v76 · picos: la cifra de dB usa el mismo peso y tamaño que el resto de números de la página */
+.peaks b{font-size:34px;font-weight:700;line-height:1;letter-spacing:-.01em}
+.peaks b>span{display:inline;font-size:inherit;font-weight:inherit;line-height:inherit}
+.peaks b small{font-size:14px;font-weight:500;margin-left:2px}
+@media(max-width:700px){#s4 .peaks b{font-size:28px}}
