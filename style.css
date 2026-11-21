@@ -668,3 +668,6 @@ header b{text-shadow:0 0 10px var(--bg),0 0 4px var(--bg)}
 #panel .it .rg.ap i{background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.55) 0 3px,transparent 3px 6px);outline:1px dashed currentColor;opacity:.9}
 #panel .det .org{display:block;margin-top:8px;padding-top:8px;border-top:1px dashed rgba(94,102,85,.35);font-size:12.5px;line-height:1.45;color:var(--mut)}
 #panel .det .org b{font-weight:700;color:var(--fg)}
+
+/* v65 la tarjeta del paso entra con el mismo fundido que el título y la leyenda */
+.step .blk{opacity:var(--ei,1)}
