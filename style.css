@@ -245,7 +245,7 @@ body.navopen header b{opacity:0}
 .g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 40px}
 .g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 36px}
 .hl h3{font-size:19px;margin:14px 0 6px}
-.how{font-size:14px!important;color:var(--mut)!important}
+.hw{font-size:14px!important;color:var(--mut)!important}
 .card.wide h3{font-size:18px;margin:6px 0 8px}
 .card a{color:var(--N)}
 @media(max-width:900px){.g2,.g3{grid-template-columns:1fr}}
@@ -671,3 +671,11 @@ header b{text-shadow:0 0 10px var(--bg),0 0 4px var(--bg)}
 
 /* v65 la tarjeta del paso entra con el mismo fundido que el título y la leyenda */
 .step .blk{opacity:var(--ei,1)}
+/* v66 · about en pantallas grandes: mismo ancho útil que el recorrido, texto que escala y lecturas con medida cómoda */
+body.about .wrap{max-width:clamp(1320px,88vw,2100px)}
+body.about .top h1{font-size:clamp(40px,4.4vw,104px)}
+body.about .card.wide .lead2{max-width:46em}
+body.about .g2>.hl,body.about .g2>ul{max-width:44em}
+body.about .card.wide>p.hw{max-width:70em}
+@media(min-width:1500px){body.about .card p,body.about .card li{font-size:clamp(15.5px,.92vw,21px)}body.about .card h3{font-size:clamp(19px,1.1vw,26px)}body.about .card h2{font-size:clamp(14px,.8vw,18px)}body.about .hw{font-size:clamp(14px,.82vw,18px)!important}body.about .card.wide .lead2{font-size:clamp(18px,1.1vw,26px)}}
+.col>.card.wide{margin:0}

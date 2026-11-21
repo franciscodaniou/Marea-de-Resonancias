@@ -277,7 +277,7 @@ function frame(ms) {
       x.font = `800 ${mobq ? 15 : 22}px Helvetica,Arial`; x.fillStyle = `rgb(${c})`; x.fillText('AB'[pi], g.cx, g.cy - r0 - (mobq ? 8 : 12)); }
     x.globalAlpha = 1; }); }
   const lab = cl((eS - .6) / .35, 0, 1) * (1 - amb) * (1 - cl(cA * 4, 0, 1));
-  if (lab > .05 && want === null && W >= 760) { const mob = W < 760, ar = document.getElementById('ans').getBoundingClientRect(), ab = ar.bottom, yt = Math.min(Math.max(ab + 26, 0), Math.min(...G.map(g => g.cy - g.R)) - (mob ? 26 : 20)); x.globalAlpha = lab * .9; x.fillStyle = '#5E6655'; const cx0 = (ar.left + ar.right) / 2, lgO = document.getElementById('leg'), lr0 = lgO.offsetHeight > 150 && !window.ANS_EXTRA ? lgO.getBoundingClientRect().right + 28 : 0, long = 'Un anillo es un lugar · el color es qué suena · la barra es qué tan fuerte (dB) · las columnas, cómo cambia en el día'; x.font = `${mob ? 12 : 16}px Helvetica,Arial`; const sh = mob || x.measureText(long).width > 2 * Math.min(cx0 - lr0, W - 90 - cx0); x.fillText(sh ? 'Un anillo = un lugar · color = qué suena · barra = qué tan fuerte' : long, cx0, yt); x.globalAlpha = 1; }
+  if (lab > .05 && want === null && W >= 760) { const mob = W < 760, ar = (document.getElementById('ans') || {getBoundingClientRect: () => ({bottom: 0})}).getBoundingClientRect(), ab = ar.bottom, yt = Math.min(Math.max(ab + 26, 0), Math.min(...G.map(g => g.cy - g.R)) - (mob ? 26 : 20)); x.globalAlpha = lab * .9; x.fillStyle = '#5E6655'; const cx0 = (ar.left + ar.right) / 2, lgO = document.getElementById('leg'), lr0 = lgO.offsetHeight > 150 && !window.ANS_EXTRA ? lgO.getBoundingClientRect().right + 28 : 0, long = 'Un anillo es un lugar · el color es qué suena · la barra es qué tan fuerte (dB) · las columnas, cómo cambia en el día'; x.font = `${mob ? 12 : 16}px Helvetica,Arial`; const sh = mob || x.measureText(long).width > 2 * Math.min(cx0 - lr0, W - 90 - cx0); x.fillText(sh ? 'Un anillo = un lugar · color = qué suena · barra = qué tan fuerte' : long, cx0, yt); x.globalAlpha = 1; }
   const rk = NSX.filter(s => dbAvg(s) != null && !apOnly(s)).sort((a, b) => dbAvg(b) - dbAvg(a)), loud = rk[0], quiet = rk.length > 1 ? rk[rk.length - 1] : -1;
   if (lab > .05) G.forEach((g, s) => {
     if (g.al < .05) return; const c = rgbOf(COL[DOM[s]]), big = g.kk > .5, mob = W < 760, [p, v] = lvl(s), y = g.cy + g.R * 1.12 + (big ? (mob ? 24 : 32) : (mob ? 18 : 22));
@@ -305,7 +305,7 @@ function frame(ms) {
   requestAnimationFrame(frame);
 }
 
-const hint = document.getElementById('hint'), psub = document.getElementById('psub');
+const hint = document.getElementById('hint'), psub = document.getElementById('psub') || document.createElement('div');
 function hintPos() { if (innerWidth > 900) { const r = document.getElementById('cts').getBoundingClientRect(); if (r.width) hint.style.left = Math.round(r.right + 12) + 'px'; } else hint.style.left = ''; }
 addEventListener('resize', hintPos); setInterval(hintPos, 400);
 function render() {
