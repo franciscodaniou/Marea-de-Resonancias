@@ -22,9 +22,10 @@ let CX0 = 0, CY0 = 0, S0 = 100, eS = 0, amb = 0, ee = 0, Aglob = 1; // centro y 
 const FILTERS = { all: [0, 1e4], am: [0, 756], pm: [757, 1049], pk: [1050, 1e4] };
 let flt = 'all', want = null, foc = null, k = 0, pf = null, hov = null, hs = null, W, H, dpr, T = 0, Rb, Rf, FX, FY, ctr = [], G = [], pkey = '';
 const cv = document.getElementById('c'), x = cv.getContext('2d'), tip = document.getElementById('tip'), panel = document.getElementById('panel'), back = document.getElementById('back');
-let carPos = 0, carTgt = 0, lastCar = false, lastCi = -1; // móvil: carrusel horizontal de sectores (uno por pantalla)
-const car = document.createElement('div'), cdots = document.createElement('div'); car.id = 'car'; cdots.id = 'cdots'; car.innerHTML = '<div class="sl"></div>'.repeat(NS); cdots.innerHTML = '<i></i>'.repeat(NS); document.body.append(car, cdots);
-car.addEventListener('scroll', () => { carTgt = car.scrollLeft / W; }, { passive: true });
+let carPos = 0, carTgt = 0, lastCar = false, lastCi = -1, carInit = false, carTm = 0; // móvil: carrusel horizontal de sectores (uno por pantalla)
+const car = document.createElement('div'), cdots = document.createElement('div'); car.id = 'car'; cdots.id = 'cdots'; car.innerHTML = '<div class="sl"></div>'.repeat(NS + 2); /* [copia del último, sectores…, copia del primero] → carrusel infinito */ cdots.innerHTML = '<i></i>'.repeat(NS); document.body.append(car, cdots);
+const carWrap = () => { const sl = car.scrollLeft, d = sl < W * .5 ? NS : sl > (NS + .5) * W ? -NS : 0; if (!d) return; carPos += d; carTgt += d; car.style.scrollSnapType = 'none'; car.scrollLeft = sl + d * W; requestAnimationFrame(() => { car.style.scrollSnapType = ''; }); };
+car.addEventListener('scroll', () => { carTgt = car.scrollLeft / W - 1; clearTimeout(carTm); carTm = setTimeout(carWrap, 90); }, { passive: true });
 car.addEventListener('click', e => cv.dispatchEvent(new MouseEvent('click', { clientX: e.clientX, clientY: e.clientY, bubbles: true })));
 const lerp = (a, b, t) => a + (b - a) * t, cl = (v, a, b) => Math.max(a, Math.min(b, v));
 const mix = (a, b, t) => a.map((v, i) => Math.round(lerp(v, b[i], t)));
@@ -89,7 +90,7 @@ const PAIR = () => (window.MAREA && MAREA.pair) || [0, 1];
 const AGS = NSX.map(s => [-1, 0, 1, 2].map(v => E.filter(e => e[0] === s && e[1] === v).length)), AGC = ['#D20A2E', '#a39f8a', '#5E9C8F', '#00675B'];
 function geoms() {
   G = NSX.map(s => {
-    const kk = foc === s ? k : 0; let cx = lerp(ctr[s][0] - (W < 760 ? carPos * W : 0), FX, kk), cy = lerp(ctr[s][1], FY, kk), R = lerp(Rb, Rf, kk), al = foc === null || foc === s ? 1 : 1 - k;
+    const kk = foc === s ? k : 0; let cx = lerp(W < 760 ? W / 2 + (s - carPos - NS * Math.round((s - carPos) / NS)) * W : ctr[s][0], FX, kk), cy = lerp(ctr[s][1], FY, kk), R = lerp(Rb, Rf, kk), al = foc === null || foc === s ? 1 : 1 - k;
     if (cA > .001) { const q = kc[s], pi = PAIR().indexOf(s), tm = pi >= 0 ? cm : 0; cx = lerp(cx, lerp(CMX, CPX[pi] || CMX, tm), q); cy = lerp(cy, lerp(CMY - (W < 760 ? mo * H * .095 : 0), CPY, tm), q); R = lerp(R, lerp(CMR * (W < 760 ? 1 - mo * .5 : 1), CPR, tm), q); al *= lerp(1 - cA, 1, q); }
     return { cx, cy, R, al, kk };
   });
@@ -262,7 +263,7 @@ function frame(ms) {
   const tt0 = cl(sy0 / (.9 * vh), 0, 1), eT = want !== null ? 1 : hero ? 0 : tt0 * tt0 * (3 - 2 * tt0);
   eS += (eT - eS) * (1 - Math.exp(-dt * 5)); if (Math.abs(eT - eS) < .002) eS = eT;
   { const on = W < 760 && want === null && eS > .85 && cA < .05 && amb < .05 && !hero; if (on !== lastCar) { lastCar = on; car.classList.toggle('on', on); cdots.classList.toggle('on', on); }
-    carPos += (carTgt - carPos) * (1 - Math.exp(-dt * 14)); const ci = Math.round(carTgt); if (ci !== lastCi) { lastCi = ci; [...cdots.children].forEach((d, i) => d.classList.toggle('on', i === ci)); } }
+    carPos += (carTgt - carPos) * (1 - Math.exp(-dt * 14)); if (!carInit && car.scrollWidth > W * 1.5) { car.scrollLeft = W; carInit = true; } const ci = ((Math.round(carTgt) % NS) + NS) % NS; if (ci !== lastCi) { lastCi = ci; [...cdots.children].forEach((d, i) => d.classList.toggle('on', i === ci)); } }
   ee = eS * (1 - amb); Aglob = document.body.classList.contains('about') ? .6 : lerp(1, .27, amb);
   const fo = want !== null; if (fo !== lastFoc) { lastFoc = fo; document.body.classList.toggle('foc', fo); }
   const deep = amb > .06 || cA > .03, tide = eS < .5; if (deep !== lastDeep) { lastDeep = deep; document.body.classList.toggle('deep', deep); } if (tide !== lastTide) { lastTide = tide; document.body.classList.toggle('tide', tide); }
