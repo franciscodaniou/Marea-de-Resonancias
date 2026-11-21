@@ -707,3 +707,20 @@ header,body.deep header,body.about header{background:linear-gradient(rgba(220,22
 #leg .lgin{margin:0}
 #leg .lgt{height:36px;line-height:36px}
 #leg:not(.open) .lgt{text-align:center;padding:0;width:120px}
+/* v73 · menú «Inicio» en móvil: al abrirse apila las opciones en vez de salirse de la pantalla */
+@media(max-width:520px){#nav.open{flex-direction:column;align-items:flex-end;gap:6px}#nav.open .mb,#nav.open .mb:first-of-type{margin-left:0;font-size:14px;padding:9px 18px}}
+/* v74 · comparación: fila «Predomina» sin recortes y puntos separados del subtítulo */
+.bf.dm{grid-template-columns:auto 1fr auto 1fr auto!important;align-items:baseline}.bf.dm b:last-child{text-align:right}
+.cmp .cp{margin-top:12px}
+@media(max-width:1100px){.cmp .cp{margin-top:14px}.cmp h2{margin-bottom:6px}}
+/* v74 · el mismo vidrio en los contenedores menores (guía «cómo leer», lectura actual, chips y selectores): sombra proyectada incluida */
+.how li,.fnow,.fc,.pk button:not(.on){
+  background:linear-gradient(155deg,rgba(255,255,255,.2),rgba(255,255,255,.05) 40%,rgba(255,255,255,.04) 62%,rgba(255,255,255,.14));
+  -webkit-backdrop-filter:blur(2px) saturate(1.18);backdrop-filter:blur(2px) saturate(1.18);border:1px solid rgba(255,255,255,.34);
+  box-shadow:inset 1px 1.5px 1px -.5px rgba(255,255,255,.95),inset -1px -1.5px 1px -.5px rgba(255,255,255,.5),inset 0 0 0 1px rgba(255,255,255,.14),inset 6px 8px 14px -9px rgba(255,255,255,.55),inset -6px -8px 14px -9px rgba(94,102,85,.14),inset 2px 0 5px -3px rgba(210,10,46,.2),inset -2px 0 5px -3px rgba(26,94,137,.2),
+    0 10px 18px -8px rgba(59,66,52,.3),0 2px 4px rgba(59,66,52,.1)}
+.pk button.on{box-shadow:inset 1px 1.5px 1px -.5px #fff,inset -1px -1.5px 1px -.5px rgba(255,255,255,.6),0 10px 18px -8px rgba(59,66,52,.34),0 2px 4px rgba(59,66,52,.12)}
+/* fila «Predomina»: las dos fuentes alineadas a cada borde (antes se salía de la tarjeta) */
+.bf.dm{grid-template-columns:1fr auto 1fr!important}.bf.dm>span{display:none}.bf.dm>b:first-child{text-align:left}.bf.dm>b:last-child{text-align:right}
+/* respiro entre el título y los puntos de progreso de «Dos lugares frente a frente» */
+@media(max-width:1100px){.cmp .cp{margin-top:12px}}
