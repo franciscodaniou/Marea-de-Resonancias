@@ -90,17 +90,17 @@
     const WD = innerWidth >= 900 ? 1040 : 520, X = m => 98 + (m - 580) / 570 * (WD - 118), rr = (f, k) => (3 + cl01((f.pr - 50) / 35) * 5.5) * k, TK = [[600, '10:00'], [720, '12:00'], [840, '14:00'], [960, '16:00'], [1080, '18:00']];
     const common = (v, y0, y1, ya, hh) => { [756.5, 1049.5].forEach((m, i) => line(v, 'fd' + i, X(m), y0, X(m), y1, GR, 1, 1)); [['Mañana', 668], ['Tarde', 902], ['Hora punta', 1100]].forEach(([n, m], i) => text(v, 'fl' + i, X(m), 14, n, 'm', 'middle'));
       TK.forEach(([m, t]) => text(v, 'tk' + m, X(m), ya, t, 'm', 'middle')); CK.forEach((c, k) => { circ(v, 'lg' + k, 8 + k * 98, hh - 12, 5, COL[c]); text(v, 'lt' + k, 18 + k * 98, hh - 8, SH[c], 'm'); }); };
-    return { w: WD, h: 380, la: 'Todo el barrio', lb: 'Por lugar',
+    return { w: WD, h: 380, ha: 380, hb: 490, la: 'Todo el barrio', lb: 'Por lugar',
       ta: ['¿Qué suena y cuándo?', 'Línea = fuente · posición = hora · tamaño = dB'], tb: ['¿Qué suena y cuándo, por lugar?', 'Las mismas notas, ahora en el pentagrama de cada lugar'],
       a: () => { const v = V(), Y = k => 44 + k * 50; CK.forEach((c, k) => { line(v, 'La' + k, 98, Y(k), WD - 20, Y(k), GR, 1, 1); text(v, 'sl' + k, 90, Y(k) + 4, SH[c], 'm', 'end'); }); common(v, 26, 262, 282, 380);
         FM.forEach(f => circ(v, 'n' + f.id, X(f.m), Y(CK.indexOf(f.c)), rr(f, 1), COL[f.c], .88)); return v; },
-      b: () => { const v = V(), T0 = s => 40 + s * 50; S.forEach((d, i) => { text(v, 'sn' + i, 98, T0(i) - 8, SECT[i], 'b'); for (let k = 0; k < 5; k++) line(v, `Lb${i}${k}`, 98, T0(i) + k * 9, WD - 20, T0(i) + k * 9, GR, 1, 1); });
-        common(v, 26, 330, 348, 380); FM.forEach(f => circ(v, 'n' + f.id, X(f.m), T0(f.s) + CK.indexOf(f.c) * 9, rr(f, .55), COL[f.c], .9)); return v; } };
+      b: () => { const v = V(), T0 = s => 54 + s * 64; S.forEach((d, i) => { text(v, 'sn' + i, 98, T0(i) - 12, SECT[i], 'b'); for (let k = 0; k < 5; k++) line(v, `Lb${i}${k}`, 98, T0(i) + k * 9, WD - 20, T0(i) + k * 9, GR, 1, 1); });
+        common(v, 28, 420, 440, 490); FM.forEach(f => circ(v, 'n' + f.id, X(f.m), T0(f.s) + CK.indexOf(f.c) * 9, rr(f, .55), COL[f.c], .9)); return v; } };
   })();
   const mk = (t, at) => { const e = document.createElementNS(SVGNS, t); for (const k in at) e.setAttribute(k, at[k]); return e; };
   function Morph(root, G) {
     root.innerHTML = `<div class="bh"><h3></h3><p class="cs"></p></div><div class="tg" role="group"><button data-v="a" class="on">${G.la}</button><button data-v="b">${G.lb}</button></div><div class="card cc"></div>`;
-    const svg = mk('svg', { viewBox: `0 0 ${G.w || 520} ${G.h}`, width: '100%', role: 'img' }); root.querySelector('.cc').appendChild(svg);
+    const svg = mk('svg', { viewBox: `0 0 ${G.w || 520} ${G.ha || G.h}`, width: '100%', role: 'img' }); root.querySelector('.cc').appendChild(svg);
     const H3 = root.querySelector('h3'), CS = root.querySelector('.cs'), el = {}, cur = {}; let cv = 'a', raf = 0;
     const draw = (id, s) => { const e = el[id]; if (!e) return; const a = s.a;
       if (s.t === 'rect') { e.setAttribute('x', a.x); e.setAttribute('y', a.y); e.setAttribute('width', Math.max(a.w, 0)); e.setAttribute('height', Math.max(a.h, 0)); e.setAttribute('rx', Math.min(a.r, Math.max(a.h, 0) / 2)); e.setAttribute('fill', s.f); }
@@ -117,7 +117,9 @@
       H3.textContent = G['t' + to][0]; CS.textContent = G['t' + to][1]; cv = to; cancelAnimationFrame(raf);
       const T0 = performance.now(), D = instant || RM ? 0 : stag ? 900 : 750, ez = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, DL = {}, WW = G.w || 520; let mxd = 0;
       if (stag) ids.forEach(id => { const b = S1[id], q = b.a; DL[id] = b.t === 'rect' ? q.y / G.h * 420 : b.t === 'text' ? 0 : ((q.x != null ? q.x : q.x1) / WW) * 680; mxd = Math.max(mxd, DL[id]); });
+      const hA = parseFloat(svg.getAttribute('viewBox').split(' ')[3]), hB = G['h' + to] || G.h, WV = G.w || 520;
       const step = now => { const tt = D ? Math.min((now - T0) / (D + mxd), 1) : 1, t0 = D ? Math.min((now - T0) / (D + mxd), 1) : 1;
+        svg.setAttribute('viewBox', `0 0 ${WV} ${hA + (hB - hA) * ez(tt)}`);
         ids.forEach(id => { const t = D ? Math.max(0, Math.min(1, (now - T0 - (DL[id] || 0)) / D)) : 1, k = ez(t), a = S0[id], b = S1[id], o = { t: b.t, a: {}, f: b.f, k: b.k, an: b.an, txt: t < .5 ? a.txt : b.txt };
           for (const q in b.a) o.a[q] = a.a[q] + (b.a[q] - a.a[q]) * k;
           if (a.f && b.f && b.t !== 'text') o.f = mixc(a.f, b.f, k); cur[id] = o; draw(id, o); });
