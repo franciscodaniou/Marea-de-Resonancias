@@ -930,3 +930,13 @@ body:has(#ctl:hover) #hint,body:has(#cts:hover) #hint,body:has(#ctl:focus-within
 #ans.open:has(.qt:hover){scale:1.012}}
 #ans:has(.qt:active){box-shadow:var(--glow-p)!important;scale:.96!important;transition-duration:.12s!important}
 @media(min-width:1101px){#ans{transition:width .7s var(--spring-soft),height .7s var(--spring-soft),border-radius .6s var(--spring-soft),box-shadow .35s ease,background-color .3s,scale .45s var(--spring),opacity .35s ease,visibility 0s!important;transform-origin:right top}}
+
+/* v113 · atajos: misma expansión elástica que el botón de la pregunta (ancho/alto/radio con resorte, contenido con retardo) */
+#kbd{--kw:min(320px,calc(100vw - 70px));clip-path:none!important;animation:none!important;transform:none!important;top:auto!important;bottom:var(--kb,200px)!important;right:44px!important;padding:0!important;overflow:hidden;box-sizing:border-box;width:36px!important;height:36px!important;border-radius:50%!important;opacity:0;visibility:hidden;pointer-events:none;transition:width .7s var(--spring-soft),height .7s var(--spring-soft),border-radius .6s var(--spring-soft),opacity .3s ease,visibility 0s .7s!important}
+#kbd:not([hidden]){width:var(--kw)!important;height:var(--kh,300px)!important;border-radius:22px!important;opacity:1;visibility:visible;pointer-events:auto;transition:width .7s var(--spring-soft),height .7s var(--spring-soft),border-radius .6s var(--spring-soft),opacity .2s ease,visibility 0s!important}
+#kbd h4{margin:16px 18px 8px!important;width:calc(var(--kw) - 36px)}
+#kbd dl{margin:0 18px 16px!important;width:calc(var(--kw) - 36px)}
+#kbd h4,#kbd dl{opacity:0;transform:translateY(12px);transition:opacity .3s ease,transform .5s ease}
+#kbd:not([hidden]) h4,#kbd:not([hidden]) dl{opacity:1;transform:none;transition:opacity .35s ease .18s,transform .75s var(--spring) .18s}
+#kbd dt,#kbd dd{opacity:1!important;transform:none!important;transition:none!important}
+#kbd:not([hidden]),#kbd[hidden],#kbd[hidden]:not(x){transform:none!important}

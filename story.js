@@ -300,7 +300,8 @@
   nav.querySelector('.lk').addEventListener('click', e => { const b = e.currentTarget, sp = b.querySelector('span'), u = location.href.split('#')[0] + hashState(), done = () => { sp.textContent = 'Enlace copiado'; setTimeout(() => sp.textContent = 'Copiar enlace', 1600); };
     try { history.replaceState(null, '', hashState()); } catch (er) { }
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(u).then(done, () => prompt('Copia este enlace', u)); else prompt('Copia este enlace', u); });
-  const tkb = () => { kbd.hidden = !kbd.hidden; }; nav.querySelector('.kb').addEventListener('click', tkb);
+  const measK = () => { const bt = nav.querySelector('.kb'), r = bt.getBoundingClientRect(), st = kbd.style; st.transition = 'none'; st.setProperty('width', 'var(--kw)', 'important'); st.setProperty('height', 'auto', 'important'); const h = kbd.offsetHeight; st.removeProperty('width'); st.removeProperty('height'); void kbd.offsetWidth; st.transition = ''; kbd.style.setProperty('--kh', h + 'px'); kbd.style.setProperty('--kb', Math.max(12, innerHeight - r.bottom - 6) + 'px'); };
+  const tkb = () => { if (kbd.hidden) measK(); kbd.hidden = !kbd.hidden; }; nav.querySelector('.kb').addEventListener('click', tkb);
   const stopY = n => { const el = stp[Math.floor(n / 3)], p = (n % 3 + .5) / 3; return abs(el) + p * el.offsetHeight - vhh() / 2; };
   addEventListener('keydown', e => { if (e.ctrlKey || e.metaKey || e.altKey || document.body.classList.contains('heroing')) return; const t = e.target; if (t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return; const k = e.key;
     if (k === '?') { tkb(); e.preventDefault(); return; } if (k === 'Escape') { kbd.hidden = true; return; }
