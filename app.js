@@ -24,8 +24,10 @@ let flt = 'all', want = null, foc = null, k = 0, pf = null, hov = null, hs = nul
 const cv = document.getElementById('c'), x = cv.getContext('2d'), tip = document.getElementById('tip'), panel = document.getElementById('panel'), back = document.getElementById('back');
 let carPos = 0, carTgt = 0, lastCar = false, lastCi = -1, carInit = false, carTm = 0; // móvil: carrusel horizontal de sectores (uno por pantalla)
 const car = document.createElement('div'), cdots = document.createElement('div'); car.id = 'car'; cdots.id = 'cdots'; car.innerHTML = '<div class="sl"></div>'.repeat(NS + 2); /* [copia del último, sectores…, copia del primero] → carrusel infinito */ cdots.innerHTML = '<i></i>'.repeat(NS); document.body.append(car, cdots);
-const carWrap = () => { const sl = car.scrollLeft, d = sl < W * .5 ? NS : sl > (NS + .5) * W ? -NS : 0; if (!d) return; carPos += d; carTgt += d; car.style.scrollSnapType = 'none'; car.scrollLeft = sl + d * W; requestAnimationFrame(() => { car.style.scrollSnapType = ''; }); };
-car.addEventListener('scroll', () => { carTgt = car.scrollLeft / W - 1; clearTimeout(carTm); carTm = setTimeout(carWrap, 90); }, { passive: true });
+let carLast = -1, carWT = 0;
+const carWrap = () => { const sl = car.scrollLeft; if (Math.abs(sl - carLast) > .5) { carLast = sl; clearTimeout(carWT); carWT = setTimeout(carWrap, 120); return; } /* solo en reposo: evita saltar en plena inercia */
+  const d = sl < W * .5 ? NS : sl > (NS + .5) * W ? -NS : 0; if (!d) return; carPos += d; carTgt += d; car.style.scrollSnapType = 'none'; car.style.scrollBehavior = 'auto'; car.scrollLeft = sl + d * W; carLast = car.scrollLeft; setTimeout(() => { car.style.scrollSnapType = ''; car.style.scrollBehavior = ''; }, 60); };
+car.addEventListener('scroll', () => { carTgt = car.scrollLeft / W - 1; clearTimeout(carTm); carTm = setTimeout(carWrap, 140); }, { passive: true });
 car.addEventListener('click', e => cv.dispatchEvent(new MouseEvent('click', { clientX: e.clientX, clientY: e.clientY, bubbles: true })));
 const lerp = (a, b, t) => a + (b - a) * t, cl = (v, a, b) => Math.max(a, Math.min(b, v));
 const mix = (a, b, t) => a.map((v, i) => Math.round(lerp(v, b[i], t)));
@@ -72,7 +74,7 @@ function layout() { // las figuras se reacomodan en sincronía con el pill/leyen
   if (!best) { const nr = Math.ceil(NS / 2); best = { c: 2, nr, r: Math.min(gw / 2 / 2.05, (gh / nr - LB) / 2.2) }; }
   Rb = best.r; LW = gw / best.c; const bh = 2.2 * Rb + LB, off = (gh / best.nr - bh) / 2;
   ctr = NSX.map(i => { const rw = Math.floor(i / best.c), inRow = Math.min(best.c, NS - rw * best.c), cx = i % best.c + (best.c - inRow) / 2; return [x0 + gw * (cx + .5) / best.c, top0 + (gh / best.nr) * rw + off + 8 + Rb * 1.08]; });
-  if (mob) { const ghc = H - 150 - top0, LBc = 180; Rb = Math.max(70, Math.min(gw / 2.4, (ghc - LBc) / 2.2)); LW = gw; const cyc = top0 + 8 + Rb * 1.08 + Math.max(0, (ghc - LBc - 2.2 * Rb) / 2); ctr = NSX.map(i => [W / 2 + i * W, cyc]); car.style.top = top0 + 'px'; car.style.height = Math.max(0, ghc) + 'px'; cdots.style.top = (top0 + ghc + 4) + 'px'; }
+  if (mob) { const ghc = H - 150 - top0, LBc = 180; Rb = Math.max(70, Math.min(gw / 2.4, (ghc - LBc) / 2.2)); LW = gw; const cyc = top0 + 8 + Rb * 1.08 + Math.max(0, (ghc - LBc - 2.2 * Rb) / 2); ctr = NSX.map(i => [W / 2 + i * W, cyc]); car.style.top = top0 + 'px'; car.style.height = Math.max(0, ghc) + 'px'; cdots.style.top = Math.round(Math.max(top0 + 6, cyc - Rb * 1.15 - 22)) + 'px'; }
   CMX = mob ? W / 2 : W * .27; CMY = mob ? H * .37 : H * .70; CMR = mob ? Math.min(W * .26, H * .115) : Math.min(W * .15, H * .23);
   CPX = mob ? [W * .27, W * .73] : [W * .15, W * .4]; CPY = mob ? H * .385 : H * .72; CPR = mob ? Math.min(W * .27, H * .115) : Math.min(W * .13, H * .24);
   CX0 = x0 + gw / 2; CY0 = top0 + gh / 2 + (mob ? -8 : 0); S0 = Math.min(gw * (mob ? .24 : .15), gh * (mob ? .3 : .36));
@@ -421,3 +423,9 @@ legMeasure(); if (document.fonts && document.fonts.ready) document.fonts.ready.t
 cv.tabIndex = 0; cv.setAttribute('aria-label', 'Modelo visual de seis sectores. Teclas 1 a 6: expandir un sector. Escape: volver.');
 addEventListener('keydown', e => { if (/^[1-9]$/.test(e.key) && +e.key <= NS && !document.body.classList.contains('heroing')) focus(+e.key - 1); });
 addEventListener('resize', size); size(); render(); requestAnimationFrame(frame);
+
+/* escritorio: al desplegar Hora del día o Fuente, el vecino queda anclado y se atenúa (no es empujado por el rebote) */
+{ const bar = document.getElementById('bar'), A = document.getElementById('ctl'), B = document.getElementById('cts');
+  if (bar && A && B) { const tm = new Map(), pin = (me, ot) => { clearTimeout(tm.get(ot)); if (innerWidth < 760 || ot.dataset.pin) return; const r = ot.getBoundingClientRect(), br = bar.getBoundingClientRect(); ot.dataset.pin = '1'; ot.style.cssText += `;position:absolute;left:${r.left - br.left}px;bottom:0;width:${r.width}px;opacity:0;pointer-events:none;transition:opacity .25s`; };
+    const unpin = ot => { clearTimeout(tm.get(ot)); ot.style.opacity = ''; ot.style.pointerEvents = ''; tm.set(ot, setTimeout(() => { ot.style.position = ''; ot.style.left = ''; ot.style.bottom = ''; ot.style.width = ''; ot.style.transition = ''; ot.style.opacity = ''; ot.style.pointerEvents = ''; delete ot.dataset.pin; }, 750)); };
+    [[A, B], [B, A]].forEach(([me, ot]) => { me.addEventListener('mouseenter', () => { if (matchMedia('(hover:hover)').matches) pin(me, ot); }); me.addEventListener('mouseleave', () => unpin(ot)); me.addEventListener('focusin', () => pin(me, ot)); me.addEventListener('focusout', () => unpin(ot)); }); } }
