@@ -955,3 +955,5 @@ body #leg .lgt:hover,body #leg .lgt:active{box-shadow:none!important;background-
 body .lmore:active,body .cmin:active{scale:.93;box-shadow:var(--glow-p)!important;transition-duration:.12s}
 .lmore{margin:14px 0 0}
 .step .blk .cmin{align-self:flex-start!important;width:max-content!important;max-width:100%;margin:8px 0 12px!important;line-height:1.2}
+#kbd[hidden]{transition:width .55s var(--spring-soft),height .55s var(--spring-soft),border-radius .5s var(--spring-soft),opacity .3s ease .12s,visibility 0s .6s!important}
+#kbd[hidden] h4,#kbd[hidden] dl{transition:opacity .2s ease,transform .4s ease!important}
