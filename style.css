@@ -848,3 +848,5 @@ body #leg{transition:width .7s var(--spring-soft),height .7s var(--spring-soft),
 @media(hover:hover){body.about .btn:hover,body.about header nav .lbl:hover,body.about header nav .mb:hover,body.about #nav:hover .lbl{box-shadow:var(--glow)!important;background-color:rgba(255,255,255,.6)!important}}
 body.about .btn:active,body.about header nav .lbl:active,body.about header nav .mb:active{box-shadow:var(--glow-p)!important;background-color:rgba(255,255,255,.85)!important}
 body.about .btn,body.about header nav .lbl,body.about header nav .mb{transition:scale .45s var(--spring),transform .45s var(--spring),box-shadow .35s ease,background-color .3s!important}
+/* v100 · restaura el despliegue elástico de Inicio / Hora del día / Fuente junto con el halo */
+body #ctl .lbl,body #ctl .mb,body #cts .lbl,body #cts .mb,body #nav .lbl,body #nav .mb,body.about header nav .lbl,body.about header nav .mb{transition:max-width .6s var(--spring-soft),padding .6s var(--spring-soft),margin .6s var(--spring-soft),opacity .4s,border-width .4s,background-color .3s,box-shadow .35s ease,scale .45s var(--spring),transform .45s var(--spring)!important}
