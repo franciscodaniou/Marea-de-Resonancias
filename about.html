@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="theme-color" content="#DCDDD3"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Acerca de Marea de resonancias</title><link rel="stylesheet" href="style.css?v=123"></head>
+<title>Acerca de Marea de resonancias</title><link rel="stylesheet" href="style.css?v=125"></head>
 <body class="about">
 <header><b>Marea de resonancias</b><nav id="nav" class="morph"><span class="lbl" tabindex="0">Inicio</span><a class="mb" href="index.html">Visualización</a><a class="mb on" href="about.html">Acerca del estudio</a></nav></header>
 <canvas id="c" aria-hidden="true"></canvas>
@@ -133,7 +133,7 @@
 <li><b>Muestras pequeñas:</b> Echaurren tiene 3 mediciones y 2 encuestas; la hora punta, 6 mediciones.</li>
 <li><b>Interpretación del equipo:</b> el movimiento errático según el agrado y la deformación según el dB por hora son decisiones expresivas, no estándares de la disciplina.</li>
 </ul></div>
-<p class="hw">Datos abiertos: <a href="data.json">data.json</a> y <a href="data.js?v=123">data.js</a> (con la fuente y los criterios de preparación).</p></section>
+<p class="hw">Datos abiertos: <a href="data.json">data.json</a> y <a href="data.js?v=125">data.js</a> (con la fuente y los criterios de preparación).</p></section>
 <section class="card wide"><h2>Uso de IA</h2>
 <p class="lead2">La IA (Claude, de Anthropic) se usó como apoyo técnico para ampliar lo que se podía construir. Las decisiones de diseño, la selección de datos y el punto de vista son del autor.</p>
 <div class="g3">
@@ -157,12 +157,12 @@
 </div>
 <p class="foot">Proyecto grupal: <a href="https://wiki.ead.pucv.cl/Proyecto_de_Visualizaci%C3%B3n_-_Grupo_2">Proyecto de Visualización – Grupo 2</a> · Proyecto individual: <a href="https://wiki.ead.pucv.cl/Visualizaci%C3%B3n_de_Datos_Interactiva_TDS_2026_-_Francisco_Daniou">Visualización de Datos Interactiva TDS 2026 – Francisco Daniou</a> · Taller de Diseño de Servicios 2026</p>
 </div>
-<script src="data.js?v=123"></script><script src="app.js?v=123"></script><script src="glass.js?v=123"></script>
+<script src="data.js?v=125"></script><script src="app.js?v=125"></script><script src="glass.js?v=125"></script>
 <script>(function(){var S=[['hallazgos','Hallazgos']];var els=document.querySelectorAll('section.card');var nav=document.createElement('nav');nav.id='sec';nav.setAttribute('aria-label','Secciones de la página');
 var items=[];els.forEach(function(s,i){var h=s.querySelector('h2');if(!h)return;if(!s.id)s.id='s'+i;items.push([s,h.textContent.trim()]);});
 nav.innerHTML=items.map(function(it,i){return '<button data-i="'+i+'" aria-label="'+it[1]+'"><span>'+it[1]+'</span><i></i></button>'}).join('');document.body.appendChild(nav);
 var bs=[].slice.call(nav.querySelectorAll('button')),RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
-bs.forEach(function(b,i){b.addEventListener('click',function(){var y=items[i][0].getBoundingClientRect().top+scrollY-84;scrollTo({top:y,behavior:RM?'auto':'smooth'})})});
-var act=-1;function mark(){var y=scrollY+innerHeight*.35,a=0;items.forEach(function(it,i){if(it[0].getBoundingClientRect().top+scrollY<=y)a=i});if(scrollY+innerHeight>=document.documentElement.scrollHeight-4)a=items.length-1;if(a!==act){act=a;bs.forEach(function(b,i){b.classList.toggle('on',i===a)})}}
+var pin=null;['wheel','touchstart','keydown'].forEach(function(ev){addEventListener(ev,function(){pin=null},{passive:true})});bs.forEach(function(b,i){b.addEventListener('click',function(){var y=items[i][0].getBoundingClientRect().top+scrollY-84;pin={i:i,y:Math.max(0,y),l:false,ly:0};scrollTo({top:y,behavior:RM?'auto':'smooth'})})});
+var act=-1;function mark(){var y=scrollY+innerHeight*.35,a=0;items.forEach(function(it,i){if(it[0].getBoundingClientRect().top+scrollY<=y)a=i});if(scrollY+innerHeight>=document.documentElement.scrollHeight-4)a=items.length-1;if(pin){var mx=document.documentElement.scrollHeight-innerHeight;if(!pin.l&&(Math.abs(scrollY-pin.y)<6||scrollY>=mx-2)){pin.l=true;pin.ly=scrollY}if(pin.l&&Math.abs(scrollY-pin.ly)>30)pin=null;else a=pin.i}if(a!==act){act=a;bs.forEach(function(b,i){b.classList.toggle('on',i===a)})}}
 addEventListener('scroll',function(){requestAnimationFrame(mark)},{passive:true});addEventListener('resize',mark);mark();})();</script>
 </body></html>
