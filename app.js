@@ -24,7 +24,7 @@ let flt = 'all', want = null, foc = null, k = 0, pf = null, hov = null, hs = nul
 const cv = document.getElementById('c'), x = cv.getContext('2d'), tip = document.getElementById('tip'), panel = document.getElementById('panel'), back = document.getElementById('back');
 let carPos = 0, carTgt = 0, lastCar = false, lastCi = -1, carInit = false, carTm = 0; // móvil: carrusel horizontal de sectores (uno por pantalla)
 const car = document.createElement('div'), cdots = document.createElement('div'); car.id = 'car'; cdots.id = 'cdots'; car.innerHTML = '<div class="sl"></div>'.repeat(NS + 2); /* [copia del último, sectores…, copia del primero] → carrusel infinito */ cdots.innerHTML = '<i></i>'.repeat(NS); document.body.append(car, cdots);
-let carLast = -1, carWT = 0;
+let carLast = -1, carWT = 0, legWas = false;
 const carWrap = () => { const sl = car.scrollLeft; if (Math.abs(sl - carLast) > .5) { carLast = sl; clearTimeout(carWT); carWT = setTimeout(carWrap, 120); return; } /* solo en reposo: evita saltar en plena inercia */
   const d = sl < W * .5 ? NS : sl > (NS + .5) * W ? -NS : 0; if (!d) return; carPos += d; carTgt += d; car.style.scrollSnapType = 'none'; car.style.scrollBehavior = 'auto'; car.scrollLeft = sl + d * W; carLast = car.scrollLeft; setTimeout(() => { car.style.scrollSnapType = ''; car.style.scrollBehavior = ''; }, 60); };
 car.addEventListener('scroll', () => { carTgt = car.scrollLeft / W - 1; clearTimeout(carTm); carTm = setTimeout(carWrap, 140); }, { passive: true });
@@ -68,7 +68,7 @@ function size() {
 }
 function layout() { // las figuras se reacomodan en sincronía con el pill/leyenda «Cómo leer»
   const mob = W < 760;
-  const ansB0 = (document.getElementById('ans') || {getBoundingClientRect: () => ({bottom: 0})}).getBoundingClientRect().bottom, ansB = document.body.classList.contains('legopen') && window.ANS_B0 ? window.ANS_B0 : (window.ANS_B0 = ansB0), top0 = W < 760 ? Math.max(108, Math.round(ansB) + 8) : W < 1100 ? 64 : (leg.classList.contains('open') && H >= 820) ? 72 + leg.offsetHeight + 14 + (window.ANS_EXTRA || 0) : Math.max(72 + 38 + 14 + (window.ANS_EXTRA || 0), Math.round(ansB) + 22), LB = mob ? 106 : H < 760 ? 150 : 176, gh = H - (mob ? 124 : 100) - top0, gw = W - (mob ? 28 : 76), x0 = mob ? 14 : 22;
+  const ansB0 = (document.getElementById('ans') || {getBoundingClientRect: () => ({bottom: 0})}).getBoundingClientRect().bottom, ansB = document.body.classList.contains('legopen') && window.ANS_B0 ? window.ANS_B0 : (window.ANS_B0 = ansB0), top0 = W < 760 ? Math.max(108, Math.round(ansB) + 8) : W < 1100 ? 64 : want !== null ? 124 : (leg.classList.contains('open') && H >= 820) ? 72 + leg.offsetHeight + 14 + (window.ANS_EXTRA || 0) : Math.max(72 + 38 + 14 + (window.ANS_EXTRA || 0), Math.round(ansB) + 22), LB = mob ? 106 : H < 760 ? 150 : 176, gh = H - (mob ? 124 : 100) - top0, gw = W - (mob ? 28 : 76), x0 = mob ? 14 : 22;
   const minCw = mob ? 170 : 190; let best = null; // columnas: todas en fila, 3 o 2; el ancho de celda debe alojar la etiqueta
   (mob ? [2] : [NS, 3, 2]).forEach(c => { const nr = Math.ceil(NS / c); if (c > 2 && gw / c < minCw) return; const r = Math.min(gw / c / 2.05, (gh / nr - LB) / 2.2); if (!best || r > best.r) best = { c, nr, r }; });
   if (!best) { const nr = Math.ceil(NS / 2); best = { c: 2, nr, r: Math.min(gw / 2 / 2.05, (gh / nr - LB) / 2.2) }; }
@@ -83,8 +83,8 @@ function layout() { // las figuras se reacomodan en sincronía con el pill/leyen
     Rf = Math.max(60, Math.min(W * .36, (A - 90) / 2.2)); FX = W / 2; FY = t1 + (A - 90 - 2.2 * Rf) / 2 + 1.06 * Rf;
     document.documentElement.style.setProperty('--pt', pt + 'px');
   } else {
-    const fw = W < 900 ? W - 40 : W - 480; Rf = Math.max(80, Math.min((gh - 100) / 2.3, fw / 2.3));
-    FX = W < 900 ? W / 2 : 22 + fw / 2; FY = top0 + 8 + Rf * 1.08 + (gh - 84 - 2.2 * Rf) / 2;
+    const fl = W < 900 ? 20 : 300, fr = W < 900 ? W - 20 : W - 440 - 22 - 30, fw = fr - fl; Rf = Math.max(80, Math.min((gh - 84) / 2.2, fw / 2.3));
+    FX = fl + fw / 2; FY = top0 + 8 + Rf * 1.08 + (gh - 84 - 2.2 * Rf) / 2;
   }
 }
 
@@ -363,7 +363,7 @@ function pick(e) {
   if (hov !== lastBlip) { lastBlip = hov; if (hov && window.SND) SND.blip(hov.c, hov.pr); }
   cv.style.cursor = hs !== null || hov ? 'pointer' : (dragM ? 'grabbing' : 'grab'); render();
 }
-function focus(s) { if (s !== null && eS < .85) return; if (innerWidth >= 1100) legSet(s === null); /* escritorio: la leyenda se pliega al expandir un sector */ want = s; pf = null; back.style.display = s === null ? 'none' : 'block'; document.body.classList.toggle('lock', s !== null); pkey = ''; render(); }
+function focus(s) { if (s !== null && eS < .85) return; if (innerWidth >= 1100) { if (s !== null) { if (want === null) legWas = leg.classList.contains('open'); legSet(false); } else legSet(legWas); } /* escritorio: la leyenda se pliega al expandir y vuelve a su estado previo */ want = s; layout(); pf = null; back.style.display = s === null ? 'none' : 'block'; document.body.classList.toggle('lock', s !== null); pkey = ''; render(); }
 
 cv.addEventListener('mousemove', pick);
 cv.addEventListener('click', e => {
@@ -414,7 +414,7 @@ function legMeasure() {
   leg.style.setProperty('--oh', oh + 'px'); document.documentElement.style.setProperty('--lb', (72 + Math.min(lgin.offsetHeight, 260) + 14) + 'px');
 }
 let legMode = innerWidth >= 1100; leg.classList.toggle('open', false); lgt.setAttribute('aria-expanded', false);
-const legSet = v => { legMeasure(); leg.classList.toggle('open', v); document.body.classList.toggle('legopen', v); setTimeout(() => size(), 60); setTimeout(() => size(), 700); lgt.setAttribute('aria-expanded', v); };
+const legSet = v => { legMeasure(); leg.classList.toggle('open', v); document.documentElement.style.setProperty('--lb', (72 + (v ? Math.min(lgin.offsetHeight, 260) : 38) + 14) + 'px'); document.body.classList.toggle('legopen', v); setTimeout(() => size(), 60); setTimeout(() => size(), 700); lgt.setAttribute('aria-expanded', v); };
 lgt.onclick = () => legSet(!leg.classList.contains('open'));
 cv.addEventListener('click', () => { if (innerWidth < 1100) legSet(false); });
 addEventListener('keydown', e => { if (e.key === 'Escape' && innerWidth < 1100) legSet(false); });
