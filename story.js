@@ -314,6 +314,8 @@
     if (!wide) return;
     const grp = [[...document.querySelectorAll('.step .blk')], [...document.querySelectorAll('.cstage .blk')]];
     grp.forEach(g => { const mh = Math.max(0, ...g.map(b => b.offsetHeight)), sc = mh > av ? Math.max(.55, av / mh) : 1; g.forEach(b => { b.style.minHeight = mh + 'px'; if (sc < 1) b.style.transform = `scale(${sc.toFixed(3)})`; }); }); }; // todas las tarjetas: mismo alto y misma escala
+  const eqBh = () => { const hs = [...document.querySelectorAll('.charts2 .grid2 .bh')]; hs.forEach(h => h.style.minHeight = ''); if (innerWidth <= 700) return; const m = Math.max(0, ...hs.map(h => h.offsetHeight)); hs.forEach(h => h.style.minHeight = m + 'px'); }; // títulos de las dos gráficas con el mismo alto → contenedores alineados
+  eqBh(); addEventListener('resize', eqBh); setTimeout(eqBh, 500); setTimeout(eqBh, 2000); if (document.fonts && document.fonts.ready) document.fonts.ready.then(eqBh); document.querySelector('.charts2').addEventListener('click', () => setTimeout(eqBh, 60));
   fitBlk(); addEventListener('resize', fitBlk); if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitBlk); setTimeout(fitBlk, 600); setTimeout(fitBlk, 2000);
   // restaurar la vista desde la URL (si trae sec=…) y saltar la portada
   const restore = () => { const h = location.hash.slice(1); if (!h.includes('sec=')) { ready = true; mark(); return; } const q = new URLSearchParams(h), M = window.MAREA; if (document.body.classList.contains('heroing')) document.getElementById('go').click();
