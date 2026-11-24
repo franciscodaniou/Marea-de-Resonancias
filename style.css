@@ -757,3 +757,6 @@ body.navopen #leg,body.navopen #ans,body.navopen #hint{opacity:0!important;point
 @media(max-width:1100px){:root{--mx:22px}.cmp{left:22px!important;right:22px!important}}
 .cstage .stk{padding-left:var(--mx)!important;padding-right:var(--mx)!important}
 @media(max-width:1100px){.step .blk,.cstage .blk{width:min(560px,100%)}}
+
+/* v83 · about: botones en negrita */
+.btn,.brow .btn,.brow a{font-weight:700}

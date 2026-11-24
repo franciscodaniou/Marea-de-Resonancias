@@ -59,10 +59,10 @@
 
   /* Grupo B · agrado frente a dB <-> respuestas de agrado */
   const B = {
-    a: () => { const v = V(), X = q => 120 + (q - 60) / 14 * 380, Y = a => 206 - (a + 1) / 3 * 190, dy = [-14, 24, 24, -14, 24, -14];
+    a: () => { const v = V(), X = q => 120 + (q - 60) / 14 * 380, Y = a => 206 - (a + 1) / 3 * 190, dy = [-18, 28, 28, -18, 28, -18];
       [60, 64, 68, 72].forEach(t => { line(v, 'gx' + t, X(t), 14, X(t), 206, GR); text(v, 'tx' + t, X(t), 226, t, 'm', 'middle'); });
       [-1, 0, 1, 2].forEach(t => { line(v, 'gy' + t, 120, Y(t), 500, Y(t), GR); text(v, 'ty' + t, 112, Y(t) + 4, ['incómoda', 'da igual', 'gusta un poco', 'gusta'][t + 1], 'm', 'end'); });
-      text(v, 'ax', 500, 238, 'dB promedio →', 'm', 'end'); text(v, 'ay', 124, 11, 'agrado percibido ↑', 'm');
+      text(v, 'ax', 500, 11, 'dB promedio →', 'm', 'end'); text(v, 'ay', 124, 11, 'agrado percibido ↑', 'm');
       S.forEach((d, i) => { const nn = d.db == null || d.ag == null, x = nn ? 520 : X(d.db), y = nn ? 120 : Y(d.ag); circ(v, 'c' + i, x, y, nn ? 0 : 10, d.hex, nn ? 0 : .92); text(v, 'n' + i, x, y + dy[i], nm(i), 'b', 'middle', nn ? 0 : 1);
         for (let k = 0; k < 4; k++) rect(v, `r${i}${k}`, x, y, 0, 0, '#D20A2E', 0); }); return v; },
     b: () => { const v = V(), col = ['#D20A2E', '#a39f8a', '#5E9C8F', '#00675B'], nmz = ['Incomoda', 'Da igual', 'Gusta un poco', 'Gusta'];
