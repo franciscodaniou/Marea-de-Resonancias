@@ -43,7 +43,7 @@
   const A = {
     a: () => { const v = V(); [50, 60, 70, 80, 90].forEach(t => { const x = 150 + (t - 40) / 55 * 340; line(v, 'ag' + t, x, 12, x, 200, GR); text(v, 'at' + t, x, 216, t, 'm', 'middle'); });
       S.forEach((d, i) => { const y = 18 + i * 34, nd = d.db == null, w = nd ? 0 : (d.db - 40) / 55 * 340, wm = nd ? 150 : 150 + (d.mx - 40) / 55 * 340;
-        text(v, 'n' + i, 0, y + 11, SECT[i], 'b'); text(v, 's' + i, 0, y + 26, nd ? (d.ref ? `modelo APrA ${d.ref.mn}–${d.ref.mx} dB` : 'sin dB medido') : `prom ${d.db.toFixed(1)} · máx ${d.mx}`, 'm');
+        text(v, 'n' + i, 0, y + 11, SECT[i], 'b'); text(v, 's' + i, nd ? 156 : 150 + w + 9, y + 12, nd ? (d.ref ? `modelo APrA ${d.ref.mn}–${d.ref.mx} dB` : 'sin dB medido') : d.db.toFixed(1), nd ? 'm' : 'b', 'start'); text(v, 'mt' + i, wm + 8, y + 13, nd ? '' : 'máx ' + d.mx, 'm', 'start', nd ? 0 : 1);
         rect(v, 'b' + i, 150, y, w, 14, d.hex, nd ? 0 : .92, 7); line(v, 'mx' + i, wm, y - 4, wm, y + 18, INK, nd ? 0 : 1, 2.5);
         for (let j = 0; j < 3; j++) circ(v, `p${i}${j}`, 150 + w, y + 7, 0, d.hex, 0);
         for (let j = 0; j < 2; j++) line(v, `q${i}${j}`, 150 + w, y + 7, 150 + w, y + 7, d.hex, 0, 3); }); return v; },
@@ -51,7 +51,7 @@
       [60, 70, 80].forEach(t => { line(v, 'ag' + (t - 10), 40, Y(t), 500, Y(t), GR); text(v, 'at' + (t - 10), 32, Y(t) + 4, t, 'm', 'end'); });
       ['Mañana', 'Tarde', 'Hora punta'].forEach((n, j) => text(v, 'x' + j, xs[j], 228, n, 'm', 'middle'));
       S.forEach((d, i) => { const P = d.fr.map((q, j) => q == null ? null : [xs[j], Y(q)]), L = P[2] || P[1] || P[0];
-        text(v, 'n' + i, L ? L[0] + 12 : 420, L ? L[1] + 4 + ([8, 0, 0, -7, 0, 0][i] || 0) : 0, nm(i), 'b', 'start', L ? 1 : 0); text(v, 's' + i, 0, 0, '', 'm', 'start', 0);
+        text(v, 'n' + i, L ? L[0] + 12 : 420, L ? L[1] + 4 + ([8, 0, 0, -7, 0, 0][i] || 0) : 0, nm(i), 'b', 'start', L ? 1 : 0); text(v, 's' + i, 0, 0, '', 'm', 'start', 0); text(v, 'mt' + i, 0, 0, '', 'm', 'start', 0);
         rect(v, 'b' + i, 150, 0, 0, 0, d.hex, 0, 7); line(v, 'mx' + i, 150, 0, 150, 0, INK, 0);
         P.forEach((p, j) => p && circ(v, `p${i}${j}`, p[0], p[1], 5.5, d.hex, 1));
         for (let j = 0; j < 2; j++) if (P[j] && P[j + 1]) line(v, `q${i}${j}`, P[j][0], P[j][1], P[j + 1][0], P[j + 1][1], d.hex, 1, 3); }); return v; },

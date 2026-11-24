@@ -794,3 +794,7 @@ body #go,body #hero button,body #down{transition:scale .45s var(--spring),transf
 @media(min-width:1101px){.step .stk,.cstage .stk{align-items:flex-start!important;padding-top:70px!important}
 .step .blk>.card{display:flex;flex-direction:column;justify-content:space-between;gap:6px}
 .step .blk{width:auto}}
+
+/* v91 · picos: cifras grandes */
+#s4 .peaks li{grid-template-columns:150px 1fr}#s4 .peaks b{font-size:42px;line-height:1}#s4 .peaks b small{font-size:18px;font-weight:600}
+.cc svg .b{font-size:16px}
