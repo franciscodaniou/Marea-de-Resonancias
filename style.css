@@ -949,8 +949,8 @@ body:has(#ctl:hover) #hint,body:has(#cts:hover) #hint,body:has(#ctl:focus-within
 body #leg.open:has(.lgt:hover){scale:1.012}}
 body #leg:has(.lgt:active){box-shadow:var(--glow-p)!important;scale:.96!important;transition-duration:.12s!important}
 body #leg .lgt:hover,body #leg .lgt:active{box-shadow:none!important;background-color:transparent!important;scale:1}
-.lmore,.cmin,.step .blk .cmin{display:inline-block;padding:7px 20px!important;border-radius:99px;text-decoration:none!important;color:var(--fg)!important;font-weight:700;font-size:13px;white-space:nowrap;background:linear-gradient(135deg,rgba(255,255,255,.55),rgba(255,255,255,.18));border:1px solid rgba(255,255,255,.85)!important;box-shadow:0 4px 14px rgba(59,66,52,.18),inset 0 2px 3px rgba(255,255,255,.9),inset 0 -2px 6px rgba(94,102,85,.14);-webkit-backdrop-filter:blur(3px) saturate(1.5);backdrop-filter:blur(3px) saturate(1.5);cursor:pointer;transition:scale .45s var(--spring),box-shadow .35s ease,background-color .3s}
-.cmin{display:none}.step .blk .cmin{display:inline-block}
+.lmore,.cmin,.step .blk .cmin{padding:7px 20px!important;border-radius:99px;text-decoration:none!important;color:var(--fg)!important;font-weight:700;font-size:13px;white-space:nowrap;background:linear-gradient(135deg,rgba(255,255,255,.55),rgba(255,255,255,.18));border:1px solid rgba(255,255,255,.85)!important;box-shadow:0 4px 14px rgba(59,66,52,.18),inset 0 2px 3px rgba(255,255,255,.9),inset 0 -2px 6px rgba(94,102,85,.14);-webkit-backdrop-filter:blur(3px) saturate(1.5);backdrop-filter:blur(3px) saturate(1.5);cursor:pointer;transition:scale .45s var(--spring),box-shadow .35s ease,background-color .3s}
+.cmin,.step .blk .cmin{display:none!important}@media(max-width:1100px){.step .blk .cmin{display:inline-block!important}}
 @media(hover:hover){body .lmore:hover,body .cmin:hover{scale:1.045;box-shadow:var(--glow)!important;background-color:rgba(255,255,255,.55)}}
 body .lmore:active,body .cmin:active{scale:.93;box-shadow:var(--glow-p)!important;transition-duration:.12s}
 .lmore{margin:14px 0 0}
