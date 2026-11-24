@@ -854,3 +854,6 @@ body #ctl .lbl,body #ctl .mb,body #cts .lbl,body #cts .mb,body #nav .lbl,body #n
 /* v102 · hint y ↓ se atenúan de inmediato al desplegar Hora/Fuente y regresan cuando el rebote terminó */
 body #hint,body #down{transition:opacity .3s ease .45s,visibility 0s}
 body:has(#ctl:hover) #hint,body:has(#cts:hover) #hint,body:has(#ctl:focus-within) #hint,body:has(#cts:focus-within) #hint,body:has(#ctl:hover) #down,body:has(#cts:hover) #down,body:has(#ctl:focus-within) #down,body:has(#cts:focus-within) #down,#bar:has(.morph.open)~#down{transition:opacity .12s ease 0s!important}
+
+@media(hover:hover) and (min-width:761px){#bar:has(#ctl:hover) #cts,#bar:has(#ctl:focus-within) #cts,#bar:has(#cts:hover) #ctl,#bar:has(#cts:focus-within) #ctl{opacity:0!important;pointer-events:none!important;transition:opacity .15s!important}
+#bar #ctl,#bar #cts{transition:opacity .35s .1s}}

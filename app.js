@@ -424,8 +424,14 @@ cv.tabIndex = 0; cv.setAttribute('aria-label', 'Modelo visual de seis sectores. 
 addEventListener('keydown', e => { if (/^[1-9]$/.test(e.key) && +e.key <= NS && !document.body.classList.contains('heroing')) focus(+e.key - 1); });
 addEventListener('resize', size); size(); render(); requestAnimationFrame(frame);
 
-/* escritorio: al desplegar Hora del día o Fuente, el vecino queda anclado y se atenúa (no es empujado por el rebote) */
-{ const bar = document.getElementById('bar'), A = document.getElementById('ctl'), B = document.getElementById('cts');
-  if (bar && A && B) { const tm = new Map(), pin = (me, ot) => { clearTimeout(tm.get(ot)); if (innerWidth < 760 || ot.dataset.pin) return; const r = ot.getBoundingClientRect(), br = bar.getBoundingClientRect(); ot.dataset.pin = '1'; ot.style.cssText += `;position:absolute;left:${r.left - br.left}px;bottom:0;width:${r.width}px;opacity:0;pointer-events:none;transition:opacity .25s`; };
-    const unpin = ot => { clearTimeout(tm.get(ot)); ot.style.opacity = ''; ot.style.pointerEvents = ''; tm.set(ot, setTimeout(() => { ot.style.position = ''; ot.style.left = ''; ot.style.bottom = ''; ot.style.width = ''; ot.style.transition = ''; ot.style.opacity = ''; ot.style.pointerEvents = ''; delete ot.dataset.pin; }, 750)); };
-    [[A, B], [B, A]].forEach(([me, ot]) => { me.addEventListener('mouseenter', () => { if (matchMedia('(hover:hover)').matches) pin(me, ot); }); me.addEventListener('mouseleave', () => unpin(ot)); me.addEventListener('focusin', () => pin(me, ot)); me.addEventListener('focusout', () => unpin(ot)); }); } }
+/* escritorio: Hora del día y Fuente van anclados en posición absoluta (medida en reposo); al desplegarse, el vecino solo se atenúa y nunca es empujado */
+{ const bar = document.getElementById('bar'), A = document.getElementById('ctl'), B = document.getElementById('cts'); let lt = 0;
+  const hov = () => A.matches(':hover,:focus-within') || B.matches(':hover,:focus-within');
+  const place = () => { if (!bar || !A || !B) return; [A, B].forEach(e => { e.style.position = ''; e.style.left = ''; e.style.bottom = ''; e.style.width = ''; }); bar.style.height = ''; bar.style.width = '';
+    if (innerWidth < 760 || !matchMedia('(hover:hover)').matches) return;
+    const br = bar.getBoundingClientRect(), ra = A.getBoundingClientRect(), rb = B.getBoundingClientRect(); if (!ra.width) return;
+    const la = ra.left - br.left, lb = rb.left - br.left, h = Math.max(ra.height, rb.height); bar.style.height = h + 'px'; bar.style.width = Math.max(la + ra.width, lb + rb.width) + 'px';
+    A.style.cssText += `;position:absolute;left:${la}px;bottom:0;width:max-content`; B.style.cssText += `;position:absolute;left:${lb}px;bottom:0;width:max-content`; };
+  const later = d => { clearTimeout(lt); lt = setTimeout(() => { if (hov()) later(300); else place(); }, d); };
+  [A, B].forEach(e => { e.addEventListener('mouseleave', () => later(900)); e.addEventListener('focusout', () => later(900)); e.addEventListener('click', () => later(900)); });
+  addEventListener('resize', () => later(120)); if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => later(50)); later(400); setTimeout(() => later(0), 1800); }
