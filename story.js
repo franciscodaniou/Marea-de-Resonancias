@@ -309,6 +309,9 @@
       if (mode === 'c') { const o = ['all', 'am', 'pm', 'pk'], j = Math.max(0, Math.min(3, o.indexOf(cf) + d)); document.querySelector(`#cfg button[data-f="${o[j]}"]`).click(); e.preventDefault(); }
       else if (act === 2) { const n = cur * 3 + curF + d; go(n < 0 ? SEC[1][2]() : n > 11 ? SEC[3][2]() : stopY(n)); e.preventDefault(); } return; }
     if (mode === 'c' && /^[ab]$/i.test(k)) { const i = /a/i.test(k) ? 0 : 1; let n = (pair[i] + 1) % NS; if (n === pair[1 - i]) n = (n + 1) % NS; pair[i] = n; renderCmp(); sync(); e.preventDefault(); } });
+  // pantallas de poca altura: la tarjeta derecha se escala para caber en el alto visible (sin solapar la anterior)
+  const fitBlk = () => document.querySelectorAll('.step .blk,.cstage .blk').forEach(b => { if (innerWidth <= 1100) { b.style.transform = ''; return; } const h = b.offsetHeight, av = innerHeight - 96; b.style.transform = h > av ? `scale(${Math.max(.55, av / h).toFixed(3)})` : ''; });
+  fitBlk(); addEventListener('resize', fitBlk); if (window.ResizeObserver) { const ro = new ResizeObserver(fitBlk); document.querySelectorAll('.step .blk,.cstage .blk').forEach(b => ro.observe(b)); }
   // restaurar la vista desde la URL (si trae sec=…) y saltar la portada
   const restore = () => { const h = location.hash.slice(1); if (!h.includes('sec=')) { ready = true; mark(); return; } const q = new URLSearchParams(h), M = window.MAREA; if (document.body.classList.contains('heroing')) document.getElementById('go').click();
     if (q.get('f')) M.setFlt(q.get('f')); if (q.get('c')) M.setSrc(q.get('c'));
