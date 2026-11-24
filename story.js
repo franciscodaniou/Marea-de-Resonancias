@@ -278,7 +278,7 @@
 
   /* ---- navegación por secciones, estado en la URL y teclado ---- */
   const abs = el => el.getBoundingClientRect().top + scrollY, vhh = () => innerHeight, q1 = sel => document.querySelector(sel);
-  const SEC = [['barrio', 'Barrio', () => 0], ['sectores', 'Sectores', () => vhh() * 1.02], ['hallazgos', 'Hallazgos', () => abs(q1('.finds')) - 40], ['contraste', 'Lugares', () => abs(stepsEl)], ['comparar', 'Comparar', () => abs(stg) - vhh() * .3],
+  const SEC = [['barrio', 'Barrio', () => 0], ['sectores', 'Sectores', () => vhh() * 1.02], ['hallazgos', 'Hallazgos', () => abs(q1('.finds')) - 40], ['contraste', 'Lugares', () => abs(stepsEl), () => stopY(0)], ['comparar', 'Comparar', () => abs(stg) - vhh() * .3],
      ['graficas', 'Gráficas', () => abs(q1('.charts2')) - 70], ['partitura', 'Qué y cuándo', () => abs(q1('#gD')) - 80], ['estadisticas', 'Estadísticas', () => abs(q1('#s4')) - 70], ['como', 'Cómo funciona', () => abs(q1('#s5')) - 70]];
   const nav = document.createElement('nav'); nav.id = 'sec'; nav.setAttribute('aria-label', 'Secciones del atlas');
   nav.innerHTML = SEC.map(([k, n]) => `<button data-k="${k}" aria-label="${n}"><span>${n}</span><i></i></button>`).join('')
@@ -289,7 +289,7 @@
   document.body.appendChild(kbd);
   const sbtn = [...nav.querySelectorAll('button[data-k]')]; let act = 0, ready = false, ut = 0;
   const go = y => scrollTo({ top: Math.max(0, y), behavior: RM ? 'auto' : 'smooth' });
-  sbtn.forEach((b, i) => b.addEventListener('click', () => go(SEC[i][2]())));
+  sbtn.forEach((b, i) => b.addEventListener('click', () => go((SEC[i][3] || SEC[i][2])())));
   const hashState = () => { const q = new URLSearchParams(); q.set('sec', SEC[act][0]); const M = window.MAREA; if (M.want !== null) q.set('s', M.want + 1);
     if (act <= 1 || M.want !== null) { if (M.flt !== 'all') q.set('f', M.flt); } if (M.srcF) q.set('c', M.srcF);
     if (act === 3) { q.set('A', pair[0] + 1); q.set('B', pair[1] + 1); if (cf !== 'all') q.set('cf', cf); } return '#' + q.toString(); };

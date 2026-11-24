@@ -972,3 +972,4 @@ body .lmore:active,body .cmin:active{scale:.93;box-shadow:var(--glow-p)!importan
 #ans a{margin-top:2px;padding:10px 20px}
 body.legopen #ans,body.lock #ans,body.deep #ans{opacity:0;visibility:hidden;pointer-events:none}
 #ans:has(.qt:active){box-shadow:var(--glow-p)!important;scale:.96!important;transition-duration:.12s!important}}
+@media(max-width:760px){body #down{left:14px!important;right:auto!important;margin:0!important}}
