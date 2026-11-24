@@ -828,3 +828,19 @@ body.about .wrap{max-width:1060px!important}
 @media(min-width:1100px){body.about .stack>.card{column-count:auto!important}}
 body.about .card.wide .lead2,body.about .card.wide>p.hw{max-width:none}
 body.about .stack>.card>ul,body.about .stack>.card>p{max-width:none}
+/* v97 · iluminación unificada en hover/click para todos los controles */
+:root{--glow:0 0 0 1px rgba(255,255,255,.95),0 0 26px 2px rgba(255,255,255,.9),0 8px 22px rgba(59,66,52,.2),inset 0 0 20px rgba(255,255,255,.75),inset 0 2px 3px rgba(255,255,255,1);--glow-p:0 0 0 1px rgba(255,255,255,1),0 0 34px 5px rgba(255,255,255,1),0 3px 10px rgba(59,66,52,.18),inset 0 0 26px rgba(255,255,255,.95)}
+.btn,button,.lgt,.lmore,.cmin,.fc,#down,#back,#ctl .mb,#ctl .lbl,#cts .mb,#cts .lbl,#nav .mb,#nav .lbl,.pk button,.tg button,.snd,#sec button i{transition:scale .45s var(--spring),transform .45s var(--spring),background .3s,color .3s,box-shadow .35s ease,opacity .35s,border-color .3s}
+@media(hover:hover){
+ .btn:hover,#hero button:hover,#down:hover,#back:hover,#ctl .mb:hover,#ctl .lbl:hover,#cts .mb:hover,#cts .lbl:hover,#nav .mb:hover,#nav .lbl:hover,.pk button:hover,.fc:hover,.lgt:hover,.lmore:hover,header nav .mb:hover{box-shadow:var(--glow)!important;background-color:rgba(255,255,255,.55)}
+ .tg button:not(.on):hover{background:rgba(255,255,255,.6);box-shadow:var(--glow)}
+ #ctl button:not(.mb):hover,#cts button:not(.mb):hover{box-shadow:var(--glow)!important}
+ #sec button:hover i{box-shadow:0 0 0 3px rgba(255,255,255,.9),0 0 12px 3px rgba(255,255,255,.95);transform:scale(1.4)}
+}
+.btn:active,#hero button:active,#down:active,#back:active,#ctl .mb:active,#ctl .lbl:active,#cts .mb:active,#cts .lbl:active,#nav .mb:active,#nav .lbl:active,.pk button:active,.fc:active,.lgt:active,.lmore:active,.tg button:active,.snd:active{box-shadow:var(--glow-p)!important;background-color:rgba(255,255,255,.8)}
+.btn:focus-visible,button:focus-visible,.fc:focus-visible{outline:0;box-shadow:var(--glow)!important}
+/* v97 · franja horaria: alto rígido */
+.step .fnow{height:54px!important;min-height:54px!important;max-height:54px!important;box-sizing:border-box;overflow:hidden}
+@media(hover:hover){#leg:not(.open):hover{box-shadow:var(--glow)!important;background-color:rgba(255,255,255,.55)}}
+#leg:not(.open):active{box-shadow:var(--glow-p)!important;background-color:rgba(255,255,255,.8)}
+body #leg{transition:width .7s var(--spring-soft),height .7s var(--spring-soft),border-radius .6s var(--spring-soft),scale .45s var(--spring),box-shadow .35s ease,background-color .3s,opacity .35s ease .1s,visibility 0s}
