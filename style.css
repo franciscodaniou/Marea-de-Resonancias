@@ -857,3 +857,6 @@ body:has(#ctl:hover) #hint,body:has(#cts:hover) #hint,body:has(#ctl:focus-within
 
 @media(hover:hover) and (min-width:761px){#bar:has(#ctl:hover) #cts,#bar:has(#ctl:focus-within) #cts,#bar:has(#cts:hover) #ctl,#bar:has(#cts:focus-within) #ctl{opacity:0!important;pointer-events:none!important;transition:opacity .15s!important}
 #bar #ctl,#bar #cts{transition:opacity .35s .1s}}
+/* v104 · retorno orgánico de «Clic en un sector…» y «Ver lugar por lugar»: fundido + subida con resorte, tras terminar el repliegue */
+body:not(.deep) #hint,body:not(.deep) #down,body #hint,body #down{transition:opacity .5s ease .38s,translate .85s var(--spring) .38s,scale .85s var(--spring) .38s,box-shadow .35s ease,background-color .3s,visibility 0s}
+body:has(#ctl:hover) #hint,body:has(#cts:hover) #hint,body:has(#ctl:focus-within) #hint,body:has(#cts:focus-within) #hint,body:has(#ctl:hover) #down,body:has(#cts:hover) #down,body:has(#ctl:focus-within) #down,body:has(#cts:focus-within) #down,#bar:has(.morph.open)~#down{translate:0 12px;scale:.94;transition:opacity .14s ease 0s,translate .25s ease 0s,scale .25s ease 0s!important}
