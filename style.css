@@ -922,3 +922,11 @@ body:has(#ctl:hover) #hint,body:has(#cts:hover) #hint,body:has(#ctl:focus-within
 #kbd h4,#kbd dt,#kbd dd{transition:opacity .3s ease .0s,transform .6s cubic-bezier(.2,1.6,.4,1)}
 #kbd:not([hidden]) h4{transition-delay:.22s}
 #kbd:not([hidden]) dt:nth-of-type(n),#kbd:not([hidden]) dd:nth-of-type(n){transition-delay:.3s}
+
+/* v112 · botón de la pregunta con halo; píldora al ancho del texto; «Respuesta corta:» en negrita */
+#ans a{align-self:stretch;text-align:center;box-sizing:border-box}
+#ans span b{font-weight:700;color:#3b4234}
+@media(hover:hover) and (min-width:1101px){#ans:has(.qt:hover){box-shadow:var(--glow)!important;background-color:rgba(255,255,255,.55)!important;scale:1.03}
+#ans.open:has(.qt:hover){scale:1.012}}
+#ans:has(.qt:active){box-shadow:var(--glow-p)!important;scale:.96!important;transition-duration:.12s!important}
+@media(min-width:1101px){#ans{transition:width .7s var(--spring-soft),height .7s var(--spring-soft),border-radius .6s var(--spring-soft),box-shadow .35s ease,background-color .3s,scale .45s var(--spring),opacity .35s ease,visibility 0s!important;transform-origin:right top}}
