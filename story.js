@@ -310,8 +310,11 @@
       else if (act === 2) { const n = cur * 3 + curF + d; go(n < 0 ? SEC[1][2]() : n > 11 ? SEC[3][2]() : stopY(n)); e.preventDefault(); } return; }
     if (mode === 'c' && /^[ab]$/i.test(k)) { const i = /a/i.test(k) ? 0 : 1; let n = (pair[i] + 1) % NS; if (n === pair[1 - i]) n = (n + 1) % NS; pair[i] = n; renderCmp(); sync(); e.preventDefault(); } });
   // pantallas de poca altura: la tarjeta derecha se escala para caber en el alto visible (sin solapar la anterior)
-  const fitBlk = () => document.querySelectorAll('.step .blk,.cstage .blk').forEach(b => { if (innerWidth <= 1100) { b.style.transform = ''; return; } const h = b.offsetHeight, av = innerHeight - 96; b.style.transform = h > av ? `scale(${Math.max(.55, av / h).toFixed(3)})` : ''; });
-  fitBlk(); addEventListener('resize', fitBlk); if (window.ResizeObserver) { const ro = new ResizeObserver(fitBlk); document.querySelectorAll('.step .blk,.cstage .blk').forEach(b => ro.observe(b)); }
+  const fitBlk = () => { const av = innerHeight - 96, wide = innerWidth > 1100; [...document.querySelectorAll('.step .blk')].concat([...document.querySelectorAll('.cstage .blk')]).forEach(b => { b.style.minHeight = ''; b.style.transform = ''; });
+    if (!wide) return;
+    const grp = [[...document.querySelectorAll('.step .blk')], [...document.querySelectorAll('.cstage .blk')]];
+    grp.forEach(g => { const mh = Math.max(0, ...g.map(b => b.offsetHeight)), sc = mh > av ? Math.max(.55, av / mh) : 1; g.forEach(b => { b.style.minHeight = mh + 'px'; if (sc < 1) b.style.transform = `scale(${sc.toFixed(3)})`; }); }); }; // todas las tarjetas: mismo alto y misma escala
+  fitBlk(); addEventListener('resize', fitBlk); if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitBlk); setTimeout(fitBlk, 600); setTimeout(fitBlk, 2000);
   // restaurar la vista desde la URL (si trae sec=…) y saltar la portada
   const restore = () => { const h = location.hash.slice(1); if (!h.includes('sec=')) { ready = true; mark(); return; } const q = new URLSearchParams(h), M = window.MAREA; if (document.body.classList.contains('heroing')) document.getElementById('go').click();
     if (q.get('f')) M.setFlt(q.get('f')); if (q.get('c')) M.setSrc(q.get('c'));
