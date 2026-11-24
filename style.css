@@ -790,3 +790,7 @@ body:not(.deep) #leg,body #leg{transition:width .7s var(--spring-soft),height .7
 body.deep #leg{transition:opacity .35s ease,visibility 0s}
 body #ctl button,body #cts button{transition:max-width .6s var(--spring-soft),padding .6s var(--spring-soft),margin .6s var(--spring-soft),scale .45s var(--spring),opacity .4s,border-width .4s,background .3s}
 body #go,body #hero button,body #down{transition:scale .45s var(--spring),transform .45s var(--spring),box-shadow .3s,opacity .35s}
+/* v88 · tarjetas laterales alineadas con el título de la izquierda, contenido repartido sin hueco abajo */
+@media(min-width:1101px){.step .stk,.cstage .stk{align-items:flex-start!important;padding-top:70px!important}
+.step .blk>.card{display:flex;flex-direction:column;justify-content:space-between;gap:6px}
+.step .blk{width:auto}}
