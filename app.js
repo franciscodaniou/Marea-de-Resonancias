@@ -68,7 +68,7 @@ function size() {
 }
 function layout() { // las figuras se reacomodan en sincronía con el pill/leyenda «Cómo leer»
   const mob = W < 760;
-  const ansB0 = (document.getElementById('ans') || {getBoundingClientRect: () => ({bottom: 0})}).getBoundingClientRect().bottom, ansB = document.body.classList.contains('legopen') && window.ANS_B0 ? window.ANS_B0 : (window.ANS_B0 = ansB0), top0 = W < 760 ? Math.max(108, Math.round(ansB) + 8) : W < 1100 ? 64 : want !== null ? 124 : (leg.classList.contains('open') && H >= 820) ? 72 + leg.offsetHeight + 14 + (window.ANS_EXTRA || 0) : Math.max(72 + 38 + 14 + (window.ANS_EXTRA || 0), (innerWidth >= 1100 ? 0 : Math.round(ansB) + 22)), LB = mob ? 106 : H < 760 ? 150 : 176, gh = H - (mob ? 124 : 100) - top0, gw = W - (mob ? 28 : 76), x0 = mob ? 14 : 22;
+  const ansB0 = (document.getElementById('ans') || {getBoundingClientRect: () => ({bottom: 0})}).getBoundingClientRect().bottom, ansB = document.body.classList.contains('legopen') && window.ANS_B0 ? window.ANS_B0 : (window.ANS_B0 = ansB0), top0 = W < 760 ? 160 : W < 1100 ? 64 : want !== null ? 124 : (leg.classList.contains('open') && H >= 820) ? 72 + leg.offsetHeight + 14 + (window.ANS_EXTRA || 0) : Math.max(72 + 38 + 14 + (window.ANS_EXTRA || 0), (innerWidth >= 1100 ? 0 : Math.round(ansB) + 22)), LB = mob ? 106 : H < 760 ? 150 : 176, gh = H - (mob ? 124 : 100) - top0, gw = W - (mob ? 28 : 76), x0 = mob ? 14 : 22;
   const minCw = mob ? 170 : 190; let best = null; // columnas: todas en fila, 3 o 2; el ancho de celda debe alojar la etiqueta
   (mob ? [2] : [NS, 3, 2]).forEach(c => { const nr = Math.ceil(NS / c); if (c > 2 && gw / c < minCw) return; const r = Math.min(gw / c / 2.05, (gh / nr - LB) / 2.2); if (!best || r > best.r) best = { c, nr, r }; });
   if (!best) { const nr = Math.ceil(NS / 2); best = { c: 2, nr, r: Math.min(gw / 2 / 2.05, (gh / nr - LB) / 2.2) }; }
@@ -441,7 +441,7 @@ addEventListener('resize', size); size(); render(); requestAnimationFrame(frame)
 { const ans = document.getElementById('ans'), qt = document.getElementById('qt'), ain = ans && ans.querySelector('.ain'); let manual = false;
   const meas = () => { if (!ans) return; ans.style.setProperty('--ah', (38 + Math.ceil(ain.offsetHeight)) + 'px'); window.ANS_H = ans.classList.contains('open') ? 38 + ain.offsetHeight : 38; };
   const setQ = (v, byUser) => { if (!ans || ans.classList.contains('open') === v) return; if (byUser) manual = true; meas(); ans.classList.toggle('open', v); qt.setAttribute('aria-expanded', v); window.ANS_H = v ? 38 + ain.offsetHeight : 38; setTimeout(() => size(), 60); setTimeout(() => size(), 700); };
-  if (ans) { ans.classList.add('open'); meas(); qt.onclick = () => setQ(!ans.classList.contains('open'), true);
+  if (ans) { if (innerWidth >= 1100) ans.classList.add('open'); meas(); qt.onclick = () => setQ(!ans.classList.contains('open'), true);
     addEventListener('scroll', () => { if (manual || innerWidth < 1100) return; setQ(scrollY < innerHeight * .8, false); }, { passive: true });
     addEventListener('resize', () => { meas(); size(); }); if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { meas(); size(); }); setTimeout(meas, 300); }
 }
