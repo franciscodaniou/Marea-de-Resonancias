@@ -41,27 +41,27 @@
 
   /* Grupo A · intensidad por lugar <-> evolución por franja */
   const A = {
-    a: () => { const v = V(); [50, 60, 70, 80, 90].forEach(t => { const x = 150 + (t - 40) / 55 * 340; line(v, 'ag' + t, x, 12, x, 200, GR); text(v, 'at' + t, x, 216, t, 'm', 'middle'); });
+    a: () => { const v = V(); [50, 60, 70, 80, 90].forEach(t => { const x = 150 + (t - 40) / 55 * 340; line(v, 'ag' + t, x, 12, x, 200, GR); text(v, 'at' + t, x, 226, t, 'm', 'middle'); });
       S.forEach((d, i) => { const y = 18 + i * 34, ap = d.db == null && d.ref, nd = d.db == null && !ap, pr = ap ? d.ref.pr : d.db, mxv = ap ? d.ref.mx : d.mx, w = nd ? 0 : (pr - 40) / 55 * 340, wm = nd ? 150 : 150 + (mxv - 40) / 55 * 340, st = ap ? '*' : '';
         text(v, 'n' + i, 0, y + 11, SECT[i] + st, 'b'); text(v, 's' + i, nd ? 156 : 150 + w + 9, y + 12, nd ? 'sin dB medido' : pr.toFixed(1) + st, nd ? 'm' : 'b', 'start'); text(v, 'mt' + i, ap ? 150 + w + 62 : wm + 8, y + 13, nd ? '' : ap ? `rango ${d.ref.mn}–${d.ref.mx}` : 'máx ' + mxv, 'm', 'start', nd ? 0 : 1);
         rect(v, 'b' + i, 150, y, w, 14, d.hex, nd ? 0 : ap ? .5 : .92, 7); line(v, 'mx' + i, wm, y - 4, wm, y + 18, INK, nd || ap ? 0 : 1, 2.5);
         for (let j = 0; j < 3; j++) circ(v, `p${i}${j}`, 150 + w, y + 7, 0, d.hex, 0);
-        for (let j = 0; j < 2; j++) line(v, `q${i}${j}`, 150 + w, y + 7, 150 + w, y + 7, d.hex, 0, 3); }); text(v, 'fn', 0, 252, '* Modelo APrA 2018 (Buenos Aires): referencia, no es una medición del estudio', 'm', 'start'); return v; },
+        for (let j = 0; j < 2; j++) line(v, `q${i}${j}`, 150 + w, y + 7, 150 + w, y + 7, d.hex, 0, 3); }); text(v, 'fn', 0, 262, '* Modelo APrA 2018 (Buenos Aires): referencia, no es una medición del estudio', 'm', 'start'); return v; },
     b: () => { const v = V(), xs = [90, 250, 410], Y = x => 206 - (x - 55) / 25 * 190;
       [60, 70, 80].forEach(t => { line(v, 'ag' + (t - 10), 40, Y(t), 500, Y(t), GR); text(v, 'at' + (t - 10), 32, Y(t) + 4, t, 'm', 'end'); });
       ['Mañana', 'Tarde', 'Hora punta'].forEach((n, j) => text(v, 'x' + j, xs[j], 228, n, 'm', 'middle'));
       S.forEach((d, i) => { const P = d.fr.map((q, j) => q == null ? null : [xs[j], Y(q)]), L = P[2] || P[1] || P[0];
-        text(v, 'n' + i, L ? L[0] + 12 : 420, L ? L[1] + 4 + ([8, 0, 0, -7, 0, 0][i] || 0) : 0, nm(i), 'b', 'start', L ? 1 : 0); text(v, 's' + i, 0, 0, '', 'm', 'start', 0); text(v, 'mt' + i, 0, 0, '', 'm', 'start', 0); if (!i) text(v, 'fn', 0, 252, '* Modelo APrA 2018 (Buenos Aires): referencia, no es una medición del estudio', 'm', 'start', 0);
+        text(v, 'n' + i, L ? L[0] + 12 : 420, L ? L[1] + 4 + ([8, 0, 0, -7, 0, 0][i] || 0) : 0, nm(i), 'b', 'start', L ? 1 : 0); text(v, 's' + i, 0, 0, '', 'm', 'start', 0); text(v, 'mt' + i, 0, 0, '', 'm', 'start', 0); if (!i) text(v, 'fn', 0, 262, '* Modelo APrA 2018 (Buenos Aires): referencia, no es una medición del estudio', 'm', 'start', 0);
         rect(v, 'b' + i, 150, 0, 0, 0, d.hex, 0, 7); line(v, 'mx' + i, 150, 0, 150, 0, INK, 0);
         P.forEach((p, j) => p && circ(v, `p${i}${j}`, p[0], p[1], 5.5, d.hex, 1));
         for (let j = 0; j < 2; j++) if (P[j] && P[j + 1]) line(v, `q${i}${j}`, P[j][0], P[j][1], P[j + 1][0], P[j + 1][1], d.hex, 1, 3); }); return v; },
-    ta: ['Intensidad', 'dB promedio (barra) y máximo (marca oscura)'], tb: ['La hora punta es el techo', 'dB promedio según la hora del día: mañana, tarde, hora punta'], la: 'Por lugar', lb: 'Por hora', h: 258 };
+    ta: ['Intensidad', 'dB promedio (barra) y máximo (marca oscura)'], tb: ['La hora punta es el techo', 'dB promedio según la hora del día: mañana, tarde, hora punta'], la: 'Por lugar', lb: 'Por hora', h: 270 };
 
   /* Grupo B · agrado frente a dB <-> respuestas de agrado */
   const B = {
     a: () => { const v = V(), X = q => 120 + (q - 60) / 14 * 380, Y = a => 206 - (a + 1) / 3 * 190, dy = [-18, 28, 28, -18, 28, -18];
-      [60, 64, 68, 72].forEach(t => { line(v, 'gx' + t, X(t), 14, X(t), 206, GR); text(v, 'tx' + t, X(t), 226, t, 'm', 'middle'); });
-      [-1, 0, 1, 2].forEach(t => { line(v, 'gy' + t, 120, Y(t), 500, Y(t), GR); text(v, 'ty' + t, 112, Y(t) + 4, ['incómoda', 'da igual', 'gusta un poco', 'gusta'][t + 1], 'm', 'end'); });
+      [60, 64, 68, 72].forEach(t => { line(v, 'gx' + t, X(t), 14, X(t), 206, GR); text(v, 'tx' + t, X(t), 236, t, 'm', 'middle'); });
+      [-1, 0, 1, 2].forEach(t => { line(v, 'gy' + t, 120, Y(t), 500, Y(t), GR); text(v, 'ty' + t, 104, Y(t) + 4, ['incómoda', 'da igual', 'gusta un poco', 'gusta'][t + 1], 'm', 'end'); });
       text(v, 'ax', 500, 11, 'dB promedio →', 'm', 'end'); text(v, 'ay', 124, 11, 'agrado percibido ↑', 'm');
       S.forEach((d, i) => { const nn = d.db == null || d.ag == null, x = nn ? 520 : X(d.db), y = nn ? 120 : Y(d.ag); circ(v, 'c' + i, x, y, nn ? 0 : 10, d.hex, nn ? 0 : .92); text(v, 'n' + i, x, y + dy[i], nm(i), 'b', 'middle', nn ? 0 : 1);
         for (let k = 0; k < 4; k++) rect(v, `r${i}${k}`, x, y, 0, 0, '#D20A2E', 0); }); return v; },

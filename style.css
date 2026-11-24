@@ -799,3 +799,10 @@ body #go,body #hero button,body #down{transition:scale .45s var(--spring),transf
 #s4 .peaks li{grid-template-columns:150px 1fr}#s4 .peaks b{font-size:42px;line-height:1}#s4 .peaks b small{font-size:18px;font-weight:600}
 .cc svg .b{font-size:16px}
 #s4 .peaks b>span,#s4 .peaks li>b span{font-size:42px!important;font-weight:700!important;color:inherit!important;line-height:1}
+
+/* v94 · about: tarjetas con alto propio (sin estirar) */
+.cols{align-items:start!important}.col>.card:last-child{flex:none!important}
+/* v94 · franja horaria: la tarjeta no cambia de tamaño */
+.step .ag.na .agb,.step .ag.na small{display:block!important;visibility:hidden}
+.step .blk>.card{flex:1}
+.fnow{min-height:46px;box-sizing:border-box}
