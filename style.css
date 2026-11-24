@@ -806,3 +806,25 @@ body #go,body #hero button,body #down{transition:scale .45s var(--spring),transf
 .step .ag.na .agb,.step .ag.na small{display:block!important;visibility:hidden}
 .step .blk>.card{flex:1}
 .fnow{min-height:46px;box-sizing:border-box}
+
+/* v95 · about: columna única de tarjetas, texto en 2 columnas balanceadas (sin vacíos), navegación por puntos */
+body.about #sec{display:flex!important}
+body.about .stack{display:flex;flex-direction:column;gap:22px;margin-top:22px}
+body.about .stack>.card{margin:0}
+@media(min-width:1100px){
+ body.about .stack>.card{column-count:2;column-gap:56px;column-fill:balance}
+ body.about .stack>.card>h2{column-span:all}
+ body.about .stack>.card h3,body.about .stack>.card h4{break-after:avoid}
+ body.about .stack>.card p,body.about .stack>.card li,body.about .stack>.card .hl{break-inside:avoid}
+ body.about .stack>.card>.hw,body.about .stack>.card>.foot{column-span:all}
+}
+body.about .stack>.card ul{margin-top:0}
+body.about .card.wide .g2{column-span:all}
+@media(max-width:1099px){body.about #sec{display:none!important}}
+/* v95 · franja horaria: alto fijo */
+.fnow{height:54px;align-items:center!important;flex-wrap:nowrap!important;overflow:hidden}
+/* v95b · about: una sola columna legible, sin columnas CSS (evita vacíos) */
+body.about .wrap{max-width:1060px!important}
+@media(min-width:1100px){body.about .stack>.card{column-count:auto!important}}
+body.about .card.wide .lead2,body.about .card.wide>p.hw{max-width:none}
+body.about .stack>.card>ul,body.about .stack>.card>p{max-width:none}

@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="theme-color" content="#DCDDD3"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Acerca de Marea de resonancias</title><link rel="stylesheet" href="style.css?v=94"></head>
+<title>Acerca de Marea de resonancias</title><link rel="stylesheet" href="style.css?v=96"></head>
 <body class="about">
 <header><b>Marea de resonancias</b><nav id="nav" class="morph"><span class="lbl" tabindex="0">Inicio</span><a class="mb" href="index.html">Visualización</a><a class="mb on" href="about.html">Acerca del estudio</a></nav></header>
 <canvas id="c" aria-hidden="true"></canvas>
 <div hidden><div id="leg"><div class="lgin"><button id="lgbtn" class="lgt" aria-expanded="false">Cómo leer</button><div class="lgb"></div></div></div><div id="bar"><div id="ctl" class="morph"><span class="lbl" tabindex="0"><b>Hora del día</b> · Todo el día</span><button class="mb on" data-f="all">Todo el día</button><button class="mb" data-f="am">Mañana</button><button class="mb" data-f="pm">Tarde</button><button class="mb" data-f="pk">Hora punta</button></div><div id="cts" class="morph"><span class="lbl" tabindex="0"><b>Fuente</b> · Todas</span><button class="mb on" data-c="">Todas</button><button class="mb" data-c="V">Vehicular</button><button class="mb" data-c="H">Humana</button><button class="mb" data-c="C">Comercial</button><button class="mb" data-c="M">Portuaria</button><button class="mb" data-c="N">Natural</button></div></div><div id="panel"></div><button id="back"></button><div id="hint"></div><div id="tip"></div><button id="down"></button><section id="hero" class="off"><button id="next"></button><button id="prev"></button><button id="go"></button></section></div>
 <div class="wrap">
 <section class="top"><h1>Marea de resonancias</h1><p class="sub">Atlas sonoro del Barrio Puerto</p><div class="brow"><a class="btn" href="index.html">Ver la visualización →</a><a class="btn" href="https://wiki.ead.pucv.cl/Proyecto_de_Visualizaci%C3%B3n_-_Grupo_2">Proyecto grupal en la wiki ↗</a><a class="btn" href="https://wiki.ead.pucv.cl/Visualizaci%C3%B3n_de_Datos_Interactiva_TDS_2026_-_Francisco_Daniou">Proyecto individual en la wiki ↗</a></div></section>
-<section class="card wide"><h2>Hallazgos</h2>
+<section class="card wide" id="hallazgos"><h2>Hallazgos</h2>
 <p class="lead2">El ruido del Barrio Puerto no se juzga solo por cuántos decibeles tiene, sino por qué lo produce y dónde ocurre. Cada hallazgo se puede comprobar en la visualización.</p>
 <div class="g2">
 <div class="hl"><h3>1 · El día sube de volumen y la hora punta es el techo</h3>
@@ -24,7 +24,7 @@
 <p class="hw">Cómo verlo: color y relieve de cada malla; filtro «Fuente».</p></div>
 </div>
 <p class="hw">Alcance: estas cifras usan las 38 mediciones con dB de los cuatro lugares del Barrio Puerto. En Plaza de Mayo y Puente de la Mujer (Buenos Aires) el equipo no registró dB: su cifra es una referencia oficial modelada (ver «Referencia de Buenos Aires: APrA 2018»), que se muestra en el modelo pero no entra en promedios, máximos, picos ni gráficos por hora.</p></section>
-<div class="cols"><div class="col">
+<div class="stack">
 
 <section class="card"><h2>Planteamiento general</h2>
 <p>Marea de resonancias responde a la pregunta central del estudio grupal, abordando el paisaje sonoro desde sus variaciones temporales y espaciales. Sobre esta base, se tomó una decisión estructural: el sonido se muestra como un conjunto de figuras vivas, una por lugar, cuyo aspecto y movimiento cambian con los datos. Los sectores de estudio se presentan lado a lado con el mismo formato. Así, la diferencia entre ellos se percibe de un vistazo.</p>
@@ -46,7 +46,7 @@
 <h3>Tipos de fuentes de sonido</h3>
 <p>Se determinó que el confort acústico depende del sentido de la fuente y no solo del nivel de decibeles. Por ello, los sonidos predominantes se clasificaron en cinco categorías base: <b>vehicular, humana, comercial, portuaria y natural</b>. Esta categorización es la que permite dar un tratamiento cualitativo al ruido medido en terreno.</p></section>
 
-</div><div class="col">
+
 <section class="card"><h2>Estructura del modelo de visualización</h2>
 <p>El modelo conceptual y técnico de la visualización mapea los datos del paisaje sonoro en representaciones gráficas y de comportamiento, estructurado de la siguiente manera:</p>
 <ul>
@@ -78,7 +78,7 @@
 <li><b>Cita textual:</b> selección de una frase representativa por sector para el panel de detalle, logrando que la voz habitante acompañe a las cifras.</li></ul>
 </section>
 
-</div><div class="col">
+
 <section class="card wide" id="apra"><h2>Referencia de Buenos Aires: APrA 2018</h2>
 <p><b>Aviso.</b> Las mediciones propias de Plaza de Mayo y Puente de la Mujer no tienen decibeles. Para que esos lugares puedan leerse con el mismo modelo, se incorporó un dB de referencia oficial. <b>No es una medición del equipo.</b></p>
 <ul>
@@ -134,7 +134,7 @@
 <li><b>Muestras pequeñas:</b> Echaurren tiene 3 mediciones y 2 encuestas; la hora punta, 6 mediciones.</li>
 <li><b>Interpretación del equipo:</b> el movimiento errático según el agrado y la deformación según el dB por hora son decisiones expresivas, no estándares de la disciplina.</li>
 </ul></div>
-<p class="hw">Datos abiertos: <a href="data.json">data.json</a> y <a href="data.js?v=94">data.js</a> (con la fuente y los criterios de preparación).</p></section>
+<p class="hw">Datos abiertos: <a href="data.json">data.json</a> y <a href="data.js?v=96">data.js</a> (con la fuente y los criterios de preparación).</p></section>
 <section class="card wide"><h2>Uso de IA</h2>
 <p class="lead2">La IA (Claude, de Anthropic) se usó como apoyo técnico para ampliar lo que se podía construir. Las decisiones de diseño, la selección de datos y el punto de vista son del autor.</p>
 <div class="g3">
@@ -155,7 +155,15 @@
 <li>Versión móvil y accesibilidad básica.</li>
 <li>Pruebas en navegador y corrección de errores, con verificación del autor en su teléfono.</li></ul></div>
 </div></section>
+</div>
 <p class="foot">Proyecto grupal: <a href="https://wiki.ead.pucv.cl/Proyecto_de_Visualizaci%C3%B3n_-_Grupo_2">Proyecto de Visualización – Grupo 2</a> · Proyecto individual: <a href="https://wiki.ead.pucv.cl/Visualizaci%C3%B3n_de_Datos_Interactiva_TDS_2026_-_Francisco_Daniou">Visualización de Datos Interactiva TDS 2026 – Francisco Daniou</a> · Taller de Diseño de Servicios 2026</p>
 </div>
-<script src="data.js?v=94"></script><script src="app.js?v=94"></script><script src="glass.js?v=94"></script>
+<script src="data.js?v=96"></script><script src="app.js?v=96"></script><script src="glass.js?v=96"></script>
+<script>(function(){var S=[['hallazgos','Hallazgos']];var els=document.querySelectorAll('section.card');var nav=document.createElement('nav');nav.id='sec';nav.setAttribute('aria-label','Secciones de la página');
+var items=[];els.forEach(function(s,i){var h=s.querySelector('h2');if(!h)return;if(!s.id)s.id='s'+i;items.push([s,h.textContent.trim()]);});
+nav.innerHTML=items.map(function(it,i){return '<button data-i="'+i+'" aria-label="'+it[1]+'"><span>'+it[1]+'</span><i></i></button>'}).join('');document.body.appendChild(nav);
+var bs=[].slice.call(nav.querySelectorAll('button')),RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+bs.forEach(function(b,i){b.addEventListener('click',function(){var y=items[i][0].getBoundingClientRect().top+scrollY-84;scrollTo({top:y,behavior:RM?'auto':'smooth'})})});
+var act=-1;function mark(){var y=scrollY+innerHeight*.35,a=0;items.forEach(function(it,i){if(it[0].getBoundingClientRect().top+scrollY<=y)a=i});if(scrollY+innerHeight>=document.documentElement.scrollHeight-4)a=items.length-1;if(a!==act){act=a;bs.forEach(function(b,i){b.classList.toggle('on',i===a)})}}
+addEventListener('scroll',function(){requestAnimationFrame(mark)},{passive:true});addEventListener('resize',mark);mark();})();</script>
 </body></html>
