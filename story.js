@@ -116,6 +116,7 @@
       const A_ = G[to](), from = {}; for (const id in cur) from[id] = cur[id];
       const ids = new Set([...Object.keys(from), ...Object.keys(A_)].filter(k => k !== 'add'));
       const S0 = {}, S1 = {}; ids.forEach(id => { S0[id] = from[id] || ghost(A_[id]); S1[id] = A_[id] || ghost(from[id]); if (!from[id]) S0[id].txt = S1[id].txt; if (!A_[id]) S1[id].txt = S0[id].txt; ensure(id, S1[id]); });
+      { const rk = e => e.tagName === 'text' ? 2 : e.tagName === 'circle' ? 1 : 0; [...svg.children].map((e, i) => [rk(e), i, e]).sort((p, q) => p[0] - q[0] || p[1] - q[1]).forEach(p => svg.appendChild(p[2])); } /* capas: barras y líneas, luego puntos, luego textos (también tras cambiar de vista) */
       H3.textContent = G['t' + to][0]; CS.textContent = G['t' + to][1]; cv = to; cancelAnimationFrame(raf);
       const T0 = performance.now(), D = instant || RM ? 0 : stag ? 900 : 750, ez = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, DL = {}, WW = G.w || 520; let mxd = 0;
       if (stag) ids.forEach(id => { const b = S1[id], q = b.a; DL[id] = b.t === 'rect' ? q.y / G.h * 420 : b.t === 'text' ? 0 : ((q.x != null ? q.x : q.x1) / WW) * 680; mxd = Math.max(mxd, DL[id]); });
