@@ -75,9 +75,9 @@ function layout() { // las figuras se reacomodan en sincronía con el pill/leyen
   Rb = best.r; LW = gw / best.c; const bh = 2.2 * Rb + LB, off = (gh / best.nr - bh) / 2;
   ctr = NSX.map(i => { const rw = Math.floor(i / best.c), inRow = Math.min(best.c, NS - rw * best.c), cx = i % best.c + (best.c - inRow) / 2; return [x0 + gw * (cx + .5) / best.c, top0 + (gh / best.nr) * rw + off + 8 + Rb * 1.08]; });
   if (mob) { const ghc = H - 150 - top0, LBc = 180; Rb = Math.max(70, Math.min(gw / 2.4, (ghc - LBc) / 2.2)); LW = gw; const cyc = top0 + 8 + Rb * 1.08 + Math.max(0, (ghc - LBc - 2.2 * Rb) / 2); ctr = NSX.map(i => [W / 2 + i * W, cyc]); car.style.top = top0 + 'px'; car.style.height = Math.max(0, ghc) + 'px'; cdots.style.top = Math.round(Math.max(top0 + 6, cyc - Rb * 1.15 - 22)) + 'px'; }
-  CMX = mob ? W / 2 : W * .27; CMY = mob ? H * .37 : H * .70; CMR = mob ? Math.min(W * .26, H * .115) : Math.min(W * .15, H * .23); CMY0 = CMY; CMR0 = CMR;
-  CPX = mob ? [W * .27, W * .73] : [W * .15, W * .4]; CPY = mob ? H * .385 : H * .72; CPR = mob ? Math.min(W * .27, H * .115) : Math.min(W * .13, H * .24);
-  CX0 = x0 + gw / 2; CY0 = top0 + gh / 2 + (mob ? -8 : 0); S0 = Math.min(gw * (mob ? .24 : .15), gh * (mob ? .3 : .36));
+  const tab = W < 1100; CMX = tab ? W / 2 : W * .27; CMY = tab ? H * .37 : H * .70; CMR = tab ? Math.min(W * .26, H * .115) : Math.min(W * .15, H * .23); CMY0 = CMY; CMR0 = CMR;
+  CPX = mob ? [W * .27, W * .73] : tab ? [W * .3, W * .7] : [W * .15, W * .4]; CPY = tab ? H * .385 : H * .72; CPR = tab ? Math.min(W * .27, H * .115) : Math.min(W * .13, H * .24);
+  CX0 = x0 + gw / 2; CY0 = top0 + gh / 2 + (mob ? -8 : 0); S0 = W < 1100 && H > W ? Math.min(gw * .18, gh * .3) : Math.min(gw * (mob ? .24 : .15), gh * (mob ? .3 : .36));
   if (mob) { // móvil: figura arriba, panel como hoja inferior (la mitad inferior de la pantalla)
     const pt = Math.round(H * .5), t1 = 100, A = pt - t1 - 6;
     Rf = Math.max(60, Math.min(W * .36, (A - 90) / 2.2)); FX = W / 2; FY = t1 + (A - 90 - 2.2 * Rf) / 2 + 1.06 * Rf;
@@ -271,6 +271,7 @@ function frame(ms) {
   const deep = amb > .06 || cA > .03, tide = eS < .5; if (deep !== lastDeep) { lastDeep = deep; document.body.classList.toggle('deep', deep); } if (tide !== lastTide) { lastTide = tide; document.body.classList.toggle('tide', tide); }
   const rm = RM ? .2 : 1, ry = Math.sin(T * rm * .17) * .62 + oy, rx = -.28 + Math.sin(T * rm * .11 + 1) * .14 + ox; // se favorecen las vistas de las bases del tubo cY = Math.cos(ry); sY = Math.sin(ry); cX = Math.cos(rx); sX = Math.sin(rx);
   CMY = CMY0; CMR = CMR0; // la posición/tamaño base se restablece cada cuadro: la comparación ya no deja el modelo desplazado al volver a Lugares
+  if (W >= 760 && W < 1100 && cA > .01 && cm <= .01 && cS >= 0) { const bk = stEl[cS] && stEl[cS].querySelector('.blk'); if (bk) { const t0 = 150, b0 = bk.getBoundingClientRect().top - 8, h0 = b0 - t0; if (h0 > 80) { CMR = cl(h0 / 2.5, 40, Math.min(W * .26, 230)); CMY = (t0 + b0) / 2; } } } // tableta: el modelo se centra en el hueco entre la cabecera y la tarjeta
   if (W >= 1100 && cm > .01) { const cp = document.querySelector('.cmp'); if (cp) { const t0 = cp.getBoundingClientRect().bottom + 14, b0 = H - 24, h0 = b0 - t0; if (h0 > 200) { CPY = (t0 + b0) / 2 - 8; CMY = CPY; } } } // comparación: mallas centradas verticalmente en el espacio libre
   if (W >= 1100 && cA > .01) { const cp = document.querySelector('.cmp'); if (cp) { const t0 = cp.getBoundingClientRect().bottom + 14, b0 = H - 24, h0 = b0 - t0; if (h0 > 60) { const r = Math.max(34, Math.min(Math.min(W * .15, H * .23), h0 / 2.25)); CMR = r; CMY = (t0 + b0) / 2; } } } // escritorio de poca altura: la figura baja de la leyenda
   if (W < 1100 && cm > .01) { const bk = document.querySelector('.cstage .blk'), cp = document.querySelector('.cmp'); // comparación en pantallas chicas: los dos modelos ocupan el hueco entre el título y la tarjeta
