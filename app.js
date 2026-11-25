@@ -86,6 +86,8 @@ function layout() { // las figuras se reacomodan en sincronía con el pill/leyen
     const fl = W < 900 ? 20 : 300, fr = W < 900 ? W - 20 : W - 440 - 22 - 30, fw = fr - fl; Rf = Math.max(80, Math.min((gh - 84) / 2.2, fw / 2.3));
     FX = fl + fw / 2; FY = top0 + 8 + Rf * 1.08 + (gh - 84 - 2.2 * Rf) / 2;
   }
+  if (W >= 1100) S0 = Math.min(S0, H * .245); // proporción figura/alto como en escritorio estándar
+  FP = Math.max(560, Math.max(S0, Rb * .48, Rf * .48) * 3.3); // la focal crece con la escala: en pantallas grandes la malla ya no se sale de cuadro
 }
 
 const PAIR = () => (window.MAREA && MAREA.pair) || [0, 1];
@@ -100,7 +102,7 @@ function geoms() {
 
 // ===== Marea de resonancias: malla orgánica (tubo deformado por ruido Perlin) =====
 // Malla: largo = hora (09:40 → 18:50) · alrededor = fuente de sonido · relieve = dB · color = lugar · puntos = fichas
-const TAU = Math.PI * 2, NZ = 30, NA = 28, NV = (NZ + 1) * (NA + 1), LZ = 3.2, FP = 560;
+const TAU = Math.PI * 2, NZ = 30, NA = 28, NV = (NZ + 1) * (NA + 1), LZ = 3.2; let FP = 560;
 const mulberry = a => () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
 const PERM = (() => { const p = [], r = mulberry(7); for (let i = 0; i < 256; i++) p[i] = i; for (let i = 255; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [p[i], p[j]] = [p[j], p[i]]; } return p.concat(p); })();
 const fade = t => t * t * t * (t * (t * 6 - 15) + 10);
