@@ -449,3 +449,6 @@ addEventListener('resize', size); size(); render(); requestAnimationFrame(frame)
     addEventListener('scroll', () => { if (manual || innerWidth < 1100) return; setQ(scrollY < innerHeight * .8, false); }, { passive: true });
     addEventListener('resize', () => { meas(); size(); }); if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { meas(); size(); }); setTimeout(meas, 300); }
 }
+
+// altura de la barra inferior → variable CSS (móvil: el botón de sectores sube sobre Fuente/Hora cuando se despliegan)
+{ const bar = document.getElementById('bar'); if (bar) { const set = () => document.documentElement.style.setProperty('--barh', Math.round(bar.getBoundingClientRect().height) + 'px'); set(); if (window.ResizeObserver) new ResizeObserver(set).observe(bar); addEventListener('resize', set); } }

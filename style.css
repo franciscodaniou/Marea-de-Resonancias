@@ -987,3 +987,9 @@ body:has(#ans.open) #leg:not(.open){opacity:0;pointer-events:none}}
 #hint,#down{box-sizing:border-box;height:46px;line-height:44px;padding:0 24px;font-size:16px;white-space:nowrap;text-align:center;bottom:calc(22px + env(safe-area-inset-bottom,0px))}
 #down{left:auto;right:22px;margin:0;width:auto}
 }
+
+/* v136b · móvil: "Desplegar sectores / Ver lugar por lugar" siempre visible; sube sobre la barra cuando Fuente u Hora se despliegan */
+@media(max-width:760px){
+body #down,body:has(#ctl:hover) #down,body:has(#cts:hover) #down,body:has(#ctl:focus-within) #down,body:has(#cts:focus-within) #down,#bar:has(.morph.open)~#down{bottom:calc(var(--barh,90px) + 32px + env(safe-area-inset-bottom,0px))!important;transition:bottom .45s var(--spring),opacity .35s,scale .45s var(--spring)!important}
+body:not(.deep):not(.lock):not(.heroing) #down,body:not(.deep):not(.lock):not(.heroing):has(#ctl:hover) #down,body:not(.deep):not(.lock):not(.heroing):has(#cts:hover) #down,body:not(.deep):not(.lock):not(.heroing):has(#ctl:focus-within) #down,body:not(.deep):not(.lock):not(.heroing):has(#cts:focus-within) #down,body:not(.deep):not(.lock):not(.heroing) #bar:has(.morph.open)~#down{opacity:1!important;translate:0 0!important;scale:1!important;pointer-events:auto!important}
+}
