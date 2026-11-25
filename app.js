@@ -77,7 +77,7 @@ function layout() { // las figuras se reacomodan en sincronía con el pill/leyen
   if (mob) { const ghc = H - 150 - top0, LBc = 180; Rb = Math.max(70, Math.min(gw / 2.4, (ghc - LBc) / 2.2)); LW = gw; const cyc = top0 + 8 + Rb * 1.08 + Math.max(0, (ghc - LBc - 2.2 * Rb) / 2); ctr = NSX.map(i => [W / 2 + i * W, cyc]); car.style.top = top0 + 'px'; car.style.height = Math.max(0, ghc) + 'px'; cdots.style.top = Math.round(Math.max(top0 + 6, cyc - Rb * 1.15 - 22)) + 'px'; }
   const tab = W < 1100; CMX = tab ? W / 2 : W * .27; CMY = tab ? H * .37 : H * .70; CMR = tab ? Math.min(W * .26, H * .115) : Math.min(W * .15, H * .23); CMY0 = CMY; CMR0 = CMR;
   CPX = mob ? [W * .27, W * .73] : tab ? [W * .27, W * .73] : [W * .15, W * .4]; CPY = tab ? H * .385 : H * .72; CPR = tab ? Math.min(W * .27, H * .115) : Math.min(W * .13, H * .24);
-  CX0 = x0 + gw / 2; CY0 = top0 + gh / 2 + (mob ? -8 : 0); S0 = W < 1100 && H > W ? Math.min(gw * .18, gh * .3) : Math.min(gw * (mob ? .24 : .15), gh * (mob ? .3 : .36));
+  CX0 = x0 + gw / 2; CY0 = top0 + gh / 2 + (mob ? -8 : 0); S0 = W >= 760 && W < 1100 && H > W ? Math.min(gw * .18, gh * .3) : Math.min(gw * (mob ? (H < 700 ? .245 : .27) : .15), gh * (mob ? (H < 720 ? .28 : .34) : .36));
   if (mob) { // móvil: figura arriba, panel como hoja inferior (la mitad inferior de la pantalla)
     const pt = Math.round(H * .5), t1 = 100, A = pt - t1 - 6;
     Rf = Math.max(60, Math.min(W * .36, (A - 90) / 2.2)); FX = W / 2; FY = t1 + (A - 90 - 2.2 * Rf) / 2 + 1.06 * Rf;
