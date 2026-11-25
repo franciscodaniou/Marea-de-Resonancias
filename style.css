@@ -980,3 +980,10 @@ body.legopen #ans,body.lock #ans,body.deep #ans{opacity:0;visibility:hidden;poin
 #leg{top:112px!important}
 .lgb{max-height:calc(100vh - 262px)!important}
 body:has(#ans.open) #leg:not(.open){opacity:0;pointer-events:none}}
+
+/* v134b · barra inferior: todos los contenedores comparten la misma línea base (con área segura del iPad) */
+@media(min-width:761px){
+#ctl,#cts{bottom:calc(22px + env(safe-area-inset-bottom,0px))}
+#hint,#down{box-sizing:border-box;height:46px;line-height:44px;padding:0 24px;font-size:16px;white-space:nowrap;text-align:center;bottom:calc(22px + env(safe-area-inset-bottom,0px))}
+#down{left:auto;right:22px;margin:0;width:auto}
+}
