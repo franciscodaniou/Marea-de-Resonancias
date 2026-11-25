@@ -16,6 +16,7 @@
   const cl01 = v => Math.max(0, Math.min(1, v));
   const RM = matchMedia('(prefers-reduced-motion:reduce)').matches;
   const SVGNS = 'http://www.w3.org/2000/svg';
+  const deLap = (ys, gap) => { const o = ys.map((y, i) => [y, i]).filter(a => a[0] != null).sort((a, b) => a[0] - b[0]), r = ys.slice(); for (let k = 1; k < o.length; k++) if (r[o[k][1]] - r[o[k - 1][1]] < gap) r[o[k][1]] = r[o[k - 1][1]] + gap; /* centra el bloque desplazado */ if (o.length) { const sh = (o.reduce((s, a) => s + r[a[1]] - a[0], 0)) / o.length; o.forEach(a => r[a[1]] -= sh); } return r; };
   const AGN = ['Incomoda', 'Da igual', 'Gusta un poco', 'Gusta'];
   const FN = [['Mañana', '09:40–12:36', 'am'], ['Tarde', '12:37–17:29', 'pm'], ['Hora punta', '17:30–18:50', 'pk']];
   S.forEach(d => { const q = uniq(F.filter(f => f.s === d.s)); d.fn = FN.map(([, , k]) => q.filter(f => !f.ap).filter(f => f.m >= FILTERS[k][0] && f.m <= FILTERS[k][1]).length); });
@@ -50,8 +51,9 @@
     b: () => { const v = V(), xs = [90, 250, 410], Y = x => 206 - (x - 55) / 25 * 190;
       [60, 70, 80].forEach(t => { line(v, 'ag' + (t - 10), 40, Y(t), 500, Y(t), GR); text(v, 'at' + (t - 10), 32, Y(t) + 4, t, 'm', 'end'); });
       ['Mañana', 'Tarde', 'Hora punta'].forEach((n, j) => text(v, 'x' + j, xs[j], 228, n, 'm', 'middle'));
+      const LY = deLap(S.map(d => { const P = d.fr.map((q, j) => q == null ? null : [xs[j], Y(q)]), L = P[2] || P[1] || P[0]; return L ? L[1] + 4 : null; }), 16);
       S.forEach((d, i) => { const P = d.fr.map((q, j) => q == null ? null : [xs[j], Y(q)]), L = P[2] || P[1] || P[0];
-        text(v, 'n' + i, L ? L[0] + 12 : 420, L ? L[1] + 4 + ([8, 0, 0, -7, 0, 0][i] || 0) : 0, nm(i), 'b', 'start', L ? 1 : 0); text(v, 's' + i, 0, 0, '', 'm', 'start', 0); text(v, 'mt' + i, 0, 0, '', 'm', 'start', 0); if (!i) text(v, 'fn', 0, 262, '* Modelo APrA 2018 (Buenos Aires): referencia, no es una medición del estudio', 'm', 'start', 0);
+        text(v, 'n' + i, L ? L[0] + 12 : 420, L ? LY[i] : 0, nm(i), 'b', 'start', L ? 1 : 0); text(v, 's' + i, 0, 0, '', 'm', 'start', 0); text(v, 'mt' + i, 0, 0, '', 'm', 'start', 0); if (!i) text(v, 'fn', 0, 262, '', 'm', 'start', 0);
         rect(v, 'b' + i, 150, 0, 0, 0, d.hex, 0, 7); line(v, 'mx' + i, 150, 0, 150, 0, INK, 0);
         P.forEach((p, j) => p && circ(v, `p${i}${j}`, p[0], p[1], 5.5, d.hex, 1));
         for (let j = 0; j < 2; j++) if (P[j] && P[j + 1]) line(v, `q${i}${j}`, P[j][0], P[j][1], P[j + 1][0], P[j + 1][1], d.hex, 1, 3); }); return v; },
@@ -87,7 +89,7 @@
 
   /* Grupo D · partitura: cada ficha es una nota (línea = fuente, posición = hora, tamaño = dB) */
   const D = (() => {
-    const WD = innerWidth >= 900 ? 1040 : 520, X = m => 98 + (m - 580) / 570 * (WD - 118), rr = (f, k) => (3 + cl01((f.pr - 50) / 35) * 5.5) * k, TK = [[600, '10:00'], [720, '12:00'], [840, '14:00'], [960, '16:00'], [1080, '18:00']];
+    const WD = innerWidth >= 900 ? 1040 : 520, X = m => 98 + (Math.min(m, 1140) - 580) / 570 * (WD - 118), rr = (f, k) => (3 + cl01((f.pr - 50) / 35) * 5.5) * k, TK = [[600, '10:00'], [720, '12:00'], [840, '14:00'], [960, '16:00'], [1080, '18:00']];
     const common = (v, y0, y1, ya, hh) => { [756.5, 1049.5].forEach((m, i) => line(v, 'fd' + i, X(m), y0, X(m), y1, GR, 1, 1)); [['Mañana', 668], ['Tarde', 902], ['Hora punta', 1100]].forEach(([n, m], i) => text(v, 'fl' + i, X(m), 14, n, 'm', 'middle'));
       TK.forEach(([m, t]) => text(v, 'tk' + m, X(m), ya, t, 'm', 'middle')); CK.forEach((c, k) => { circ(v, 'lg' + k, 8 + k * 98, hh - 12, 5, COL[c]); text(v, 'lt' + k, 18 + k * 98, hh - 8, SH[c], 'm'); }); };
     return { w: WD, h: 380, ha: 380, hb: 490, la: 'Todo el barrio', lb: 'Por lugar',
@@ -141,9 +143,10 @@
     const names = [['Mañana', '09:40–12:36'], ['Tarde', '12:37–17:29'], ['Hora punta', '17:30–18:50']];
     let g = [60, 70, 80].map(v => `<line x1="${pl}" x2="${Wd - 8}" y1="${Y(v)}" y2="${Y(v)}" stroke="#C4C7B9" stroke-dasharray="2 5"/><text x="${pl - 6}" y="${Y(v) + 4}" text-anchor="end" font-size="12" fill="#8F9984">${v}</text>`).join('');
     g += names.map((n, j) => `<text x="${xs[j]}" y="${Ht - 30}" text-anchor="middle" font-size="${mob ? 12 : 14}" font-weight="700" fill="#3b4234">${n[0]}</text>${mob ? '' : `<text x="${xs[j]}" y="${Ht - 12}" text-anchor="middle" font-size="12" fill="#8F9984">${n[1]}</text>`}`).join('');
-    const ls = S.map(d => { const P = d.fr.map((q, j) => q == null ? null : [xs[j], Y(q), q]); const pts = P.filter(Boolean); if (pts.length < 1) return '';
+    const LYS = deLap(S.map(d => { const pts = d.fr.map((q, j) => q == null ? null : [xs[j], Y(q)]).filter(Boolean); if (!pts.length) return null; const L = pts[pts.length - 1]; return L[1] + (L[0] < xs[2] ? -14 : 4); }), mob ? 14 : 17);
+    const ls = S.map((d, di) => { const P = d.fr.map((q, j) => q == null ? null : [xs[j], Y(q), q]); const pts = P.filter(Boolean); if (pts.length < 1) return '';
       const L = pts[pts.length - 1];
-      return `<g><polyline fill="none" stroke="${d.hex}" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round" points="${pts.map(p => p[0] + ',' + p[1]).join(' ')}"/>${pts.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="6" fill="${d.hex}"/>`).join('')}<text x="${L[0] + (L[0] < xs[2] ? 0 : 12)}" y="${L[1] + (L[0] < xs[2] ? -14 : 4)}" text-anchor="${L[0] < xs[2] ? 'middle' : 'start'}" font-size="${mob ? 12 : 14}" font-weight="700" fill="${d.hex}">${mob ? SHORT[d.s] : SECT[d.s]} <tspan font-weight="400" fill="#5E6655">${L[2].toFixed(1)}</tspan></text></g>`; }).join('');
+      return `<g><polyline fill="none" stroke="${d.hex}" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round" points="${pts.map(p => p[0] + ',' + p[1]).join(' ')}"/>${pts.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="6" fill="${d.hex}"/>`).join('')}<text x="${L[0] + (L[0] < xs[2] ? 0 : 12)}" y="${LYS[di]}" text-anchor="${L[0] < xs[2] ? 'middle' : 'start'}" font-size="${mob ? 12 : 14}" font-weight="700" fill="${d.hex}">${mob ? SHORT[d.s] : SECT[d.s]} <tspan font-weight="400" fill="#5E6655">${L[2].toFixed(1)}</tspan></text></g>`; }).join('');
     return `<article class="card fd fday"><span class="k">Así cambia durante el día</span><h3>dB promedio según la hora del día, un lugar por línea</h3>
       <svg data-reveal viewBox="0 0 ${Wd} ${Ht}" role="img" aria-label="Línea de dB promedio por franja horaria para cada lugar con datos">${g}${ls}</svg>
       <p>Cada punto es el promedio de las mediciones de ese tramo del día (a veces solo 1 o 2). Los puntos de Plaza de Mayo y Puente de la Mujer (Buenos Aires) usan sus mediciones propias; la de las 00:20 queda fuera de las franjas.</p></article>`;
@@ -203,7 +206,7 @@
     const lg = document.createElement('div'); lg.className = 'rd2 lg'; lg.id = 'rd2'; document.querySelector('#gD .tg').before(lg);
     const gl = { dot: '<svg viewBox="0 0 40 28"><circle cx="20" cy="14" r="7" fill="currentColor"/></svg>', time: '<svg viewBox="0 0 40 28"><path d="M4 14h30M28 8l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
       rows: '<svg viewBox="0 0 40 28"><path d="M5 6h30M5 14h30M5 22h30" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>', size: '<svg viewBox="0 0 40 28"><circle cx="10" cy="15" r="3.5" fill="currentColor"/><circle cx="27" cy="14" r="8" fill="currentColor"/></svg>' };
-    lg.innerHTML = `<h5>Cómo leer este gráfico</h5><ul class="how"><li>${gl.dot}<p><b>Cada punto</b> es una medición hecha en terreno.</p></li><li>${gl.time}<p><b>De izquierda a derecha</b> pasa el día, de las 09:40 a las 18:50.</p></li><li>${gl.rows}<p><b>Cada fila</b> es un tipo de sonido: vehículos, voces, comercio, puerto o naturaleza.</p></li><li>${gl.size}<p><b>Más grande</b> significa más fuerte, medido en decibeles (dB).</p></li></ul>
+    lg.innerHTML = `<h5>Cómo leer este gráfico</h5><ul class="how"><li>${gl.dot}<p><b>Cada punto</b> es una medición hecha en terreno.</p></li><li>${gl.time}<p><b>De izquierda a derecha</b> pasa el día, de las 09:40 a las 18:50. La medición de las 00:20 queda al final.</p></li><li>${gl.rows}<p><b>Cada fila</b> es un tipo de sonido: vehículos, voces, comercio, puerto o naturaleza.</p></li><li>${gl.size}<p><b>Más grande</b> significa más fuerte, medido en decibeles (dB).</p></li></ul>
       <div class="see"><h5>Lo que se ve</h5><ul>${fr}</ul><p class="rn">Puntos casi juntos en la misma hora son sonidos que se oyeron a la vez. Son pocas mediciones (${uniq(FM).length}), así que los patrones son pistas, no conclusiones.</p></div>`; }
 
   document.getElementById('s5').innerHTML = `<div class="wrap2"><h2 class="sech">Cómo funciona</h2>
