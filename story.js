@@ -11,8 +11,8 @@
     'El techo del barrio: micros y bocinas dominan (10 de 11 mediciones) y los flujos son los más altos. 4 de 6 personas lo sienten incómodo.',
     'Un tubo comercial: captadores, música de locales y cortinas. Es tranquilo en la mañana y salta a 72 dB en la hora punta.',
     'Voces y canto en torno a la pileta seca: el sonido más parejo. Con 3 mediciones y 2 encuestas es una lectura preliminar.',
-    'Buenos Aires, primer registro: tránsito intenso de la avenida y mucha gente a pie. Con el semáforo en rojo aparece un lapso de silencio. Una sola medición propia, sin dB ni encuestas; el dB es una referencia oficial modelada (APrA 2018): lectura preliminar.',
-    'Buenos Aires, borde del río: el zumbido de la ciudad como aura de fondo, con viento, maquinaria del puente y aves. La gente pasa de largo. Dos mediciones propias, sin dB ni encuestas; el dB es una referencia oficial modelada (APrA 2018): lectura preliminar.'];
+    'Buenos Aires, plaza junto a avenida: dominan los colectivos y autos, con mucha gente a pie. Tres mediciones propias con dB, sin encuestas; el promedio sube de 70 a 74 dB entre la mañana y la hora punta.',
+    'Buenos Aires, borde del río: el zumbido de la ciudad como aura de fondo, turistas y terrazas; de noche la música de los bares lleva el máximo a 96 dB. Cinco mediciones propias con dB, sin encuestas.'];
   const cl01 = v => Math.max(0, Math.min(1, v));
   const RM = matchMedia('(prefers-reduced-motion:reduce)').matches;
   const SVGNS = 'http://www.w3.org/2000/svg';
@@ -41,12 +41,12 @@
 
   /* Grupo A · intensidad por lugar <-> evolución por franja */
   const A = {
-    a: () => { const v = V(); [50, 60, 70, 80, 90].forEach(t => { const x = 150 + (t - 40) / 55 * 340; line(v, 'ag' + t, x, 12, x, 200, GR); text(v, 'at' + t, x, 226, t, 'm', 'middle'); });
-      S.forEach((d, i) => { const y = 18 + i * 34, ap = d.db == null && d.ref, nd = d.db == null && !ap, pr = ap ? d.ref.pr : d.db, mxv = ap ? d.ref.mx : d.mx, w = nd ? 0 : (pr - 40) / 55 * 340, wm = nd ? 150 : 150 + (mxv - 40) / 55 * 340, st = ap ? '*' : '';
+    a: () => { const v = V(); [50, 60, 70, 80, 90].forEach(t => { const x = 150 + (t - 40) / 62 * 340; line(v, 'ag' + t, x, 12, x, 200, GR); text(v, 'at' + t, x, 226, t, 'm', 'middle'); });
+      S.forEach((d, i) => { const y = 18 + i * 34, ap = d.db == null && d.ref, nd = d.db == null && !ap, pr = ap ? d.ref.pr : d.db, mxv = ap ? d.ref.mx : d.mx, w = nd ? 0 : (pr - 40) / 62 * 340, wm = nd ? 150 : 150 + (mxv - 40) / 62 * 340, st = ap ? '*' : '';
         text(v, 'n' + i, 0, y + 11, SECT[i] + st, 'b'); text(v, 's' + i, nd ? 156 : 150 + w + 9, y + 12, nd ? 'sin dB medido' : pr.toFixed(1) + st, nd ? 'm' : 'b', 'start'); text(v, 'mt' + i, ap ? 150 + w + 62 : wm + 8, y + 13, nd ? '' : ap ? `rango ${d.ref.mn}–${d.ref.mx}` : 'máx ' + mxv, 'm', 'start', nd ? 0 : 1);
         rect(v, 'b' + i, 150, y, w, 14, d.hex, nd ? 0 : ap ? .5 : .92, 7); line(v, 'mx' + i, wm, y - 4, wm, y + 18, INK, nd || ap ? 0 : 1, 2.5);
         for (let j = 0; j < 3; j++) circ(v, `p${i}${j}`, 150 + w, y + 7, 0, d.hex, 0);
-        for (let j = 0; j < 2; j++) line(v, `q${i}${j}`, 150 + w, y + 7, 150 + w, y + 7, d.hex, 0, 3); }); text(v, 'fn', 0, 262, '* Modelo APrA 2018 (Buenos Aires): referencia, no es una medición del estudio', 'm', 'start'); return v; },
+        for (let j = 0; j < 2; j++) line(v, `q${i}${j}`, 150 + w, y + 7, 150 + w, y + 7, d.hex, 0, 3); }); text(v, 'fn', 0, 262, '', 'm', 'start'); return v; },
     b: () => { const v = V(), xs = [90, 250, 410], Y = x => 206 - (x - 55) / 25 * 190;
       [60, 70, 80].forEach(t => { line(v, 'ag' + (t - 10), 40, Y(t), 500, Y(t), GR); text(v, 'at' + (t - 10), 32, Y(t) + 4, t, 'm', 'end'); });
       ['Mañana', 'Tarde', 'Hora punta'].forEach((n, j) => text(v, 'x' + j, xs[j], 228, n, 'm', 'middle'));
@@ -134,7 +134,7 @@
         if (s.t === 'rect') s.a.w = 0; else if (s.t === 'circle') s.a.r = 0; else if (s.t === 'line' && s.f !== GR) s.a.o = 0; ensure(id, s); draw(id, s); cur[id] = s; } };
     if (!RM && 'IntersectionObserver' in window) { let on = false; zero(); new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting && e.intersectionRatio >= .3) { if (!on) { on = true; cancelAnimationFrame(raf); zero(); go(cv, false, true); } } else if (!e.isIntersecting && on) { on = false; cancelAnimationFrame(raf); zero(); } }), { threshold: [0, .3, .6] }).observe(root.querySelector('.cc')); } }
 
-  const peaks = () => real(uniq(FM)).filter(f => f.mx < 100).sort((a, b) => b.mx - a.mx).slice(0, 6).map(f => `<li><b style="color:${COL[f.c]}"><span data-n="${f.mx}">${f.mx}</span><small> dB</small></b><span>${f.src}<em>${SECT[f.s]} · ${f.t} h</em><i class="pb"><u style="width:${cl01((f.mx - 60) / 35) * 100}%;background:${COL[f.c]}" data-w="${(cl01((f.mx - 60) / 35) * 100).toFixed(1)}"></u></i></span></li>`).join('');
+  const peaks = () => real(uniq(FB)).filter(f => f.mx < 100).sort((a, b) => b.mx - a.mx).slice(0, 6).map(f => `<li><b style="color:${COL[f.c]}"><span data-n="${f.mx}">${f.mx}</span><small> dB</small></b><span>${f.src}<em>${SECT[f.s]} · ${f.t} h</em><i class="pb"><u style="width:${cl01((f.mx - 60) / 35) * 100}%;background:${COL[f.c]}" data-w="${(cl01((f.mx - 60) / 35) * 100).toFixed(1)}"></u></i></span></li>`).join('');
 
   const hourChart = () => {
     const mob = innerWidth < 700, Wd = mob ? 360 : 940, Ht = mob ? 270 : 300, pl = mob ? 34 : 44, pr = mob ? 112 : 205, x0 = pl + 26, x1 = Wd - pr, xs = [0, 1, 2].map(j => x0 + (x1 - x0) * j / 2), Y = v => 24 + (81 - v) / 24 * (Ht - 80);
@@ -146,7 +146,7 @@
       return `<g><polyline fill="none" stroke="${d.hex}" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round" points="${pts.map(p => p[0] + ',' + p[1]).join(' ')}"/>${pts.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="6" fill="${d.hex}"/>`).join('')}<text x="${L[0] + (L[0] < xs[2] ? 0 : 12)}" y="${L[1] + (L[0] < xs[2] ? -14 : 4)}" text-anchor="${L[0] < xs[2] ? 'middle' : 'start'}" font-size="${mob ? 12 : 14}" font-weight="700" fill="${d.hex}">${mob ? SHORT[d.s] : SECT[d.s]} <tspan font-weight="400" fill="#5E6655">${L[2].toFixed(1)}</tspan></text></g>`; }).join('');
     return `<article class="card fd fday"><span class="k">Así cambia durante el día</span><h3>dB promedio según la hora del día, un lugar por línea</h3>
       <svg data-reveal viewBox="0 0 ${Wd} ${Ht}" role="img" aria-label="Línea de dB promedio por franja horaria para cada lugar con datos">${g}${ls}</svg>
-      <p>Cada punto es el promedio de las mediciones de ese tramo del día (a veces solo 1 o 2). En Plaza de Mayo y Puente de la Mujer solo hay un dB de referencia oficial (modelo), que no entra aquí.</p></article>`;
+      <p>Cada punto es el promedio de las mediciones de ese tramo del día (a veces solo 1 o 2). Los puntos de Plaza de Mayo y Puente de la Mujer (Buenos Aires) usan sus mediciones propias; la de las 00:20 queda fuera de las franjas.</p></article>`;
   };
   const thesis = () => {
     const w = S.filter(d => d.db != null && d.ag != null), top = w.slice().sort((a, b) => b.ag - a.ag)[0], low = w.slice().sort((a, b) => a.ag - b.ag)[0], pk = S.filter(d => d.mx != null).sort((a, b) => b.mx - a.mx)[0];
@@ -163,7 +163,7 @@
         <p class="tn">Pocas encuestas por lugar: es una lectura, no una causa demostrada.</p></article>`;
   };
   const finds = () => {
-    const nr = real(uniq(FM)).length, w = S.filter(d => d.db != null).sort((a, b) => b.db - a.db), hi = w[0], lo = w[w.length - 1];
+    const nr = real(uniq(FB)).length, w = S.filter(d => d.s < 4 && d.db != null).sort((a, b) => b.db - a.db), hi = w[0], lo = w[w.length - 1];
     const rise = S.map(d => { const p = d.fr.filter(x => x != null); return p.length > 1 ? [d, p[p.length - 1] - p[0]] : null; }).filter(Boolean), up = rise.filter(r => r[1] > 0).length, av = rise.reduce((a, r) => a + r[1], 0) / rise.length;
     const chip = (d, t) => `<a class="fc" href="#" data-s="${d.s}" style="--c:${d.hex}"><i></i>${SHORT[d.s]}${t ? ' <em>' + t + '</em>' : ''}</a>`;
     return `<section class="finds wrap2" id="finds"><h2 class="sech">Lo que dice el Barrio Puerto</h2>
@@ -181,7 +181,7 @@
       </div>
       ${hourChart()}
       ${thesis()}
-      <p class="foot2">En Plaza de Mayo y Puente de la Mujer (Buenos Aires) el dB es una referencia oficial modelada (APrA 2018), no una medición del equipo: no entra en estas cifras. Las equivalencias en palabras son aproximadas.</p></section>`;
+      <p class="foot2">Plaza de Mayo y Puente de la Mujer (Buenos Aires) son lugares de comparación: tienen dB propios, pero no entran en las cifras del Barrio Puerto. Las equivalencias en palabras son aproximadas.</p></section>`;
   };
   document.getElementById('s3').innerHTML = `${finds()}<div class="steps"><div class="cmpw"><div class="cmp"><h2 id="cmph">Cada lugar, a cada hora</h2><p class="cq"></p>
       <div class="ft">${FN.map(f => `<span>${f[0]}<em> ${f[1]}</em></span>`).join('')}</div>
@@ -262,13 +262,13 @@
   let vk = -1, ftBA = false;
   const upd = () => { tk = 0; const vh = innerHeight; let b = 1e9, k = 0;
     stp.forEach((el, q) => { const r = el.getBoundingClientRect(), d = Math.abs((r.top + r.bottom) / 2 - vh / 2); if (d < b) { b = d; k = q; } });
-    const r = stp[k].getBoundingClientRect(), sr = stepsEl.getBoundingClientRect(), gr = stg.getBoundingClientRect(), p = cl01((vh * .25 - r.top) / (r.height - vh * 1.15)), nph = k >= 4 ? 2 : 3, f = Math.min(nph - 1, Math.floor(p * nph)), w = p * nph - f,
+    const r = stp[k].getBoundingClientRect(), sr = stepsEl.getBoundingClientRect(), gr = stg.getBoundingClientRect(), p = cl01((vh * .25 - r.top) / (r.height - vh * 1.15)), nph = 3, f = Math.min(nph - 1, Math.floor(p * nph)), w = p * nph - f,
       inside = sr.top < vh * .5 && sr.bottom > vh * .5, cmp = inside && gr.top < vh * .5;
     setMode(cmp ? 'c' : 'r');
     { const act = inside && !cmp ? k : -1; if (act !== vk) { if (window.VITA) { if (vk >= 0) VITA.reset(stp[vk]); if (act >= 0) VITA.play(stp[act]); } vk = act; } }
     if (k !== cur) { cur = k; cn.textContent = k + 1; ct.textContent = SECT[k]; if (!cmp) dots.forEach((d, q) => d.classList.toggle('on', q === k)); }
     if (f !== curF) { curF = f; paint(f); }
-    { const baM = k >= 4 && !cmp; if (baM !== ftBA) { ftBA = baM; ft.forEach((e, j) => { e.style.display = baM && j > 1 ? 'none' : ''; e.innerHTML = baM ? (j < 2 ? `${['Día', 'Noche'][j]}<em> ${['07:01–22:00', '22:01–07:00'][j]} · modelo</em>` : '') : `${FN[j][0]}<em> ${FN[j][1]}</em>`; }); } }
+    { const baM = false; if (baM !== ftBA) { ftBA = baM; ft.forEach((e, j) => { e.style.display = baM && j > 1 ? 'none' : ''; e.innerHTML = baM ? (j < 2 ? `${['Día', 'Noche'][j]}<em> ${['07:01–22:00', '22:01–07:00'][j]} · modelo</em>` : '') : `${FN[j][0]}<em> ${FN[j][1]}</em>`; }); } }
     const fi = cmp ? ['am', 'pm', 'pk'].indexOf(cf) : f; ft.forEach((e, j) => { e.classList.toggle('on', j === fi); e.style.setProperty('--p', cmp ? (j === fi ? 1 : 0) : j < f ? 1 : j === f ? w : 0); });
     if (window.MAREA) { if (inside) { if (saved === null) saved = MAREA.flt; const ba = k >= 4 && !cmp; MAREA.setFlt(cmp ? cf : ba ? 'all' : FN[f][2]); MAREA.setNight(ba && f === 1); } else { MAREA.setNight(false); if (saved !== null) { MAREA.setFlt(saved); saved = null; } } }
     const lim = 68 + cmpEl.offsetHeight + 40, o = cl01((vh * .92 - sr.top) / (vh * .2)) * cl01((sr.bottom - lim) / 90);

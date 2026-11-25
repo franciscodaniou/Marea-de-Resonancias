@@ -11,7 +11,7 @@ const CAT = { V: 'Vehicular', H: 'Humana (voces, música)', C: 'Comercial (local
 const rgbOf = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, n >> 8 & 255, n & 255]; };
 const SH = { V: 'Vehicular', H: 'Humana', C: 'Comercial', M: 'Portuaria', N: 'Natural' };
 const F = FICHAS.map((r, i) => { const nd = r[2] == null, gp = nd ? 48 + ((r[10] || 3) - 1) / 4 * 35 : r[3]; // nd = sin dB medido: el relieve usa la intensidad percibida (1–5), nunca se muestra como dB
-  return { id: /^apra/.test(r[12] || '') ? 'APrA 2018' : r[11] ? r[11] + '·' + (i - FICHAS.findIndex(q => q[11] === r[11]) + 1) : 'BP-' + String(i + 1).padStart(2, '0'), t: r[0], m: +r[0].slice(0, 2) * 60 + +r[0].slice(3), s: r[1], nd, ap: /^apra/.test(r[12] || ''), night: r[12] === 'apra_n',
+  return { id: /^apra/.test(r[12] || '') ? 'APrA 2018' : r[11] ? r[11] + '·' + (i - FICHAS.findIndex(q => q[11] === r[11]) + 1) : 'BP-' + String(i + 1).padStart(2, '0'), t: r[0], m: (+r[0].slice(0, 2) < 5 ? 24 : 0) * 60 + +r[0].slice(0, 2) * 60 + +r[0].slice(3), s: r[1], nd, ap: /^apra/.test(r[12] || ''), night: r[12] === 'apra_n',
   mn: nd ? gp - 5 : r[2], pr: gp, mx: nd ? gp + 5 : r[4], fp: r[5], fv: r[6], c: r[7], src: r[8], ph: r[9] }; });
 const NSX = Array.from({ length: NS }, (_, i) => i), real = fs => fs.filter(f => !f.nd), hasAg = s => E.some(e => e[0] === s);
 const DOM = NSX.map(s => { if (PRED[s]) return PRED[s]; const n = {}; F.filter(f => f.s === s && !f.ap).forEach(f => n[f.c] = (n[f.c] || 0) + 1); let b = 'M', v = 0; ['M', 'V', 'C', 'H', 'N'].forEach(c => { if ((n[c] || 0) > v) { v = n[c]; b = c; } }); return b; });
@@ -19,7 +19,7 @@ const E = ENCUESTAS;
 
 let mo = 0, LW = 200, CMX = 0, CMY = 0, CMR = 100, cA = 0, cm = 0, CPX = [0, 0], CPY = 0, CPR = 80; const kc = Array(NS).fill(0); // comparativa: la malla acompaña al texto
 let CX0 = 0, CY0 = 0, S0 = 100, eS = 0, amb = 0, ee = 0, Aglob = 1; // centro y escala de la marea total; progreso de escena
-const FILTERS = { all: [0, 1e4], am: [0, 756], pm: [757, 1049], pk: [1050, 1e4] };
+const FILTERS = { all: [0, 1e4], am: [0, 756], pm: [757, 1049], pk: [1050, 1439] };
 let flt = 'all', want = null, foc = null, k = 0, pf = null, hov = null, hs = null, W, H, dpr, T = 0, Rb, Rf, FX, FY, ctr = [], G = [], pkey = '';
 const cv = document.getElementById('c'), x = cv.getContext('2d'), tip = document.getElementById('tip'), panel = document.getElementById('panel'), back = document.getElementById('back');
 let carPos = 0, carTgt = 0, lastCar = false, lastCi = -1, carInit = false, carTm = 0; // móvil: carrusel horizontal de sectores (uno por pantalla)
@@ -37,7 +37,7 @@ const mean = (a, f) => a.length ? a.reduce((s, v) => s + f(v), 0) / a.length : 0
 const agrSec = s => mean(E.filter(e => e[0] === s), e => e[1]);
 const AGW = v => v < -.5 ? 'incomoda' : v < .5 ? 'da igual' : v < 1.5 ? 'gusta un poco' : 'gusta', agL2 = s => hasAg(s) ? 'agrado ' + agrSec(s).toFixed(2) + ' · ' + AGW(agrSec(s)) : 'sin encuestas', agL = s => hasAg(s) ? 'agrado ' + agrSec(s).toFixed(2) : 'sin encuestas', dbL = s => dbAvg(s) == null ? 'sin dB medido' : dbAvg(s).toFixed(1) + ' dB promedio';
 let srcF = null; // filtro por fuente (se activa tocando un color de la leyenda)
-let nightOn = false; const on = f => (f.night ? nightOn && f.s >= 4 : nightOn && f.s >= 4 ? false : f.ap || f.m >= FILTERS[flt][0] && f.m <= FILTERS[flt][1]) && (!srcF || f.c === srcF), FM = F.filter(f => !f.ap), tmx = f => f.ap ? (f.night ? 'noche · modelo' : 'día · modelo') : f.t, apOnly = s => { const q = real(F.filter(f => f.s === s)); return q.length > 0 && q.every(f => f.ap); };
+let nightOn = false; const on = f => (f.night ? nightOn && f.s >= 4 : nightOn && f.s >= 4 ? false : f.ap || f.m >= FILTERS[flt][0] && f.m <= FILTERS[flt][1]) && (!srcF || f.c === srcF), FM = F.filter(f => !f.ap), FB = FM.filter(f => f.s < 4), tmx = f => f.ap ? (f.night ? 'noche · modelo' : 'día · modelo') : f.t, apOnly = s => { const q = real(F.filter(f => f.s === s)); return q.length > 0 && q.every(f => f.ap); };
 const RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; // movimiento reducido
 // una misma medición puede tener varias fuentes (BP-17 a 19): sus dB y flujos se cuentan una sola vez
 const uniq = fs => { const seen = new Set(); return fs.filter(f => { const k = f.nd ? [f.s, f.t, 'nd'].join('|') : [f.s, f.t, f.mn, f.pr, f.mx].join('|'); if (seen.has(k)) return false; seen.add(k); return true; }); };
@@ -407,7 +407,7 @@ document.querySelectorAll('#cts button[data-c]').forEach(b => { b.insertAdjacent
 document.querySelectorAll('#cts button').forEach(b => b.onclick = () => { setSrc(b.dataset.c); b.blur(); });
 document.querySelector('#leg .lgb').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.target.click(); } });
 const leg = document.getElementById('leg'), lgin = leg.querySelector('.lgin'), lgt = document.getElementById('lgbtn');
-{ const sp = document.querySelector('#ans .a span'), Q = real(uniq(F.filter(f => !f.ap && !f.night))), fm = v => v.toFixed(1).replace('.', ','), rk2 = NSX.filter(s => !apOnly(s) && dbAvg(s) != null).sort((a, b) => dbAvg(b) - dbAvg(a)), am = Q.filter(f => f.m < 757), pk = Q.filter(f => f.m >= 1050);
+{ const sp = document.querySelector('#ans .a span'), Q = real(uniq(F.filter(f => !f.ap && !f.night && f.s < 4))), fm = v => v.toFixed(1).replace('.', ','), rk2 = NSX.filter(s => s < 4 && dbAvg(s) != null).sort((a, b) => dbAvg(b) - dbAvg(a)), am = Q.filter(f => f.m < 757), pk = Q.filter(f => f.m >= 1050);
   if (sp && rk2.length > 1 && am.length && pk.length) { const a = rk2[0], z = rk2[rk2.length - 1]; sp.innerHTML = `<b>Respuesta corta:</b> ${SECT[a]} es el más ruidoso (${fm(dbAvg(a))} dB) y ${SECT[z]} el más tranquilo (${fm(dbAvg(z))} dB); el promedio sube de ${Math.round(mean(am, f => f.pr))} dB en la mañana a ${Math.round(mean(pk, f => f.pr))} dB en la hora punta.`; } }
 { const ans = document.getElementById('ans'), place = () => { const q = ans && ans.querySelector('.q'); if (!ans || !q) return; ans.style.maxWidth = ''; ans.style.top = ''; q.style.whiteSpace = ''; const ex = window.ANS_EXTRA || 0; window.ANS_EXTRA = 0; if (innerWidth <= 1100) { ans.style.left = ''; ans.style.transform = ''; if (ex) layout(); return; } const lr = leg.getBoundingClientRect().right, open = leg.offsetHeight > 150, avail = innerWidth - 90 - (lr + 28); let aw = ans.offsetWidth, c = innerWidth / 2; if (false && aw > avail && open && avail < 640) { ans.style.top = (leg.getBoundingClientRect().bottom + 12) + 'px'; window.ANS_EXTRA = ans.offsetHeight + 40; } else { if (aw > avail) { ans.style.maxWidth = avail + 'px'; q.style.whiteSpace = 'normal'; aw = ans.offsetWidth; } c = Math.min(Math.max(innerWidth / 2, lr + 28 + aw / 2), innerWidth - 90 - aw / 2); } ans.style.left = c + 'px'; ans.style.transform = 'translateX(-50%)'; if ((window.ANS_EXTRA || 0) !== ex) layout(); }; if (ans) { place(); addEventListener('resize', place); if (window.ResizeObserver) new ResizeObserver(place).observe(leg); } }
 function legMeasure() {

@@ -22,7 +22,7 @@ Es un sitio estático, sin dependencias ni compilación.
 | `audio.js` | Sonido por fuentes (prototipo opcional, síntesis Web Audio; se quita borrando el archivo y su `<script>`) |
 | `glass.js` | Capa WebGL del glassmorfismo (con respaldo en CSS) |
 | `style.css` | Estilos y diseño responsivo |
-| `data.js` / `data.json` | Datos de 50 mediciones de terreno (41 únicas, 38 con dB) y 2 referencias APrA y 20 encuestas, con fuente y criterios; incluye Plaza de Mayo (BA-PI-01) y Puente de la Mujer (BA-M-02), Buenos Aires, con dB solo como referencia oficial (APrA 2018, modelo) |
+| `data.js` / `data.json` | Datos de fichas de terreno (Barrio Puerto y 8 mediciones de Buenos Aires con dB propios) y 20 encuestas, con fuente y criterios |
 
 ## Codificación visual
 Malla orgánica (tubo deformado por ruido Perlin) = el lugar: color = fuente predominante, largo = hora (09:40 → 18:50), relieve = dB.
@@ -46,7 +46,7 @@ Navegación: indicador lateral de secciones, enlace que restaura la vista (`#sec
 2. Primero un solo conjunto («marea total») y luego seis figuras lado a lado, para que la diferencia entre lugares se vea de un vistazo.
 3. Se probó con personas ajenas al tema: la pregunta pasó a ser el título, se agregó una respuesta corta y los hallazgos quedaron antes del detalle.
 4. Se unificó el estilo de las tarjetas (sector y comparación) y se cuidó que el vidrio no tape el modelo de fondo.
-5. Buenos Aires se integró sin dB propio: aparece por fuente y flujos, y su dB es una referencia oficial modelada (APrA 2018) con ficha de procedencia, fuera de promedios y rankings.
+5. Buenos Aires se integró con 8 mediciones propias con dB (Plaza de Mayo y Puente de la Mujer), fuera de los rankings del Barrio Puerto.
 
 Wireframes: `wireframe.svg/png` (escritorio) y `wireframe-movil.svg/png`, con los seis sectores.
 
@@ -59,8 +59,6 @@ La IA (Claude, de Anthropic) apoyó la implementación técnica (canvas, shader 
 ## Autor
 Francisco Daniou · Taller de Diseño de Servicios 2026.
 
-## Referencia de Buenos Aires: APrA 2018 (aviso)
-- Plaza de Mayo y Puente de la Mujer no tienen dB propios. Su cifra en el modelo viene del Mapa Estratégico de Ruido 2018 (APrA, GCBA): modelo de simulación, solo tránsito vehicular y ferroviario, bandas de 5 dB.
-- Plaza de Mayo: 70–75 dB de día. Puente de la Mujer: 65–70 dB de día. Cruce propio con los polígonos del CSV en ~150 m alrededor del lugar.
-- Se muestra como dos fichas aparte («APrA 2018 · día · modelo» y «· noche · modelo»), con rango de banda y procedencia; no entra en promedios, rankings, hallazgos ni gráficos por hora. En «Cada lugar, a cada hora», Plaza de Mayo y Puente de la Mujer recorren Día → Noche en vez de mañana/tarde/hora punta.
-- Detalle completo en `about.html#apra` y en `wiki-referencia-apra.md`.
+## Buenos Aires
+- 8 mediciones de terreno (19 y 21/11/2026) con dB mín/prom/máx, tratadas como mediciones normales; la de las 00:20 (BA-M-14) se ubica al final del recorrido y queda fuera de las franjas.
+- No entran en «más ruidoso/más tranquilo», hallazgos ni picos del Barrio Puerto. Detalle en `about.html#buenos-aires`. La referencia APrA 2018 ya no se usa (`wiki-referencia-apra.md` es histórico).

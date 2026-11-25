@@ -1,6 +1,6 @@
 /* Datos · Marea de resonancias (Barrio Puerto)
    Fuente: «Base de Datos – Variación Sonora Barrio Puerto» (Grupo 2 · Taller de Diseño de Servicios 2026).
-   · FICHAS  = 40 fichas del Barrio Puerto + las de Buenos Aires de terreno (segunda página del PDF)
+   · FICHAS  = fichas del Barrio Puerto + las de Buenos Aires (tabla general BA)
    · ENCUESTAS = 20 encuestas de percepción (tercera página del PDF)
    Criterios de preparación (documentados también en about.html):
    · Tipo de fuente: V vehicular · H humana · C comercial · M portuaria/mecánica · N natural. La categoría «comercial»
@@ -9,9 +9,12 @@
      simultáneas: cuentan en las tres categorías de fuente, pero sus decibeles y flujos se cuentan una sola vez.
    · Agrado de encuestas: «me gusta» = 2 · «me gusta un poco» = 1 · «me da igual» = 0 · «me incomoda un poco» = −1.
    · Flujos: bajo/medio/alto → 1/2/3.
-   · Puente de la Mujer (Buenos Aires, BA-M-02, 12:29): 2 mediciones sin dB (BA-M-02, 4 fuentes; BA-PI-02, 21/11 11:09, 3 fuentes: música, autos y personas). Su fuente predominante sale del conteo de fichas (Humana).
-   · Plaza de Mayo (Buenos Aires): 1 medición (BA-PI-01, 12:50) con 3 fuentes simultáneas. Sin dB válido (dbMin = 5; dbProm y dbMax vacíos):
-     no entra en promedios ni máximos; su relieve usa la intensidad percibida (1–5). Sin encuestas de agrado todavía. */
+   · Buenos Aires (lugares homólogos): 8 mediciones de terreno con dB propios, tomadas de «tabla-general_BA_registros-grupo2» (19 y 21/11/2026):
+     Plaza de Mayo (BA-PI-11, BA-PI-01, BA-PI-12) y Puente de la Mujer (BA-M-11, BA-M-02, BA-M-12, BA-M-13, BA-M-14).
+     Se tratan como mediciones normales. Cada tipo de fuente de la ficha es una fila; la primera es la predominante.
+     La medición BA-M-14 (00:20, noche) se ubica al final del recorrido horario (hora 24:20) y queda fuera de las franjas mañana/tarde/hora punta.
+     Los rankings y hallazgos del «Barrio Puerto» usan solo los cuatro lugares de Valparaíso; Buenos Aires se compara lugar por lugar.
+     Sin encuestas de agrado en Buenos Aires. */
 const SECT = ['Muelle Prat', 'Plaza Sotomayor', 'Calle Serrano', 'Plaza Echaurren', 'Plaza de Mayo', 'Puente de la Mujer'];
 const SHORT = ['Prat', 'Sotomayor', 'Serrano', 'Echaurren', 'Mayo', 'Puente'];
 const APRA = 'Mapa Estratégico de Ruido 2018 · Agencia de Protección Ambiental (APrA), Gobierno de la Ciudad de Buenos Aires';
@@ -27,7 +30,6 @@ const QUOTE = [
   'La gente pasa muy a la rápida, todos están al paso; es una zona agradable para pasar el rato en la sombra, pero es muy al paso.'
 ];
 // FICHAS: [hora, sector (0-4), dB mín, dB prom, dB máx, flujo peatonal 1-3, flujo vehicular 1-3, tipo de fuente, fuente, fenómeno observado, intensidad percibida 1-5 (solo si no hay dB), código]
-// null en dB = sin medir (ficha BA-PI-01 de Plaza de Mayo, Buenos Aires)
 const FICHAS = [
   ['14:40', 0, 53, 64, 79, 2, 1, 'M', 'Ruido portuario / camiones', 'Competencia entre fondo difuso portuario y picos mecánicos'],
   ['10:08', 0, 50, 54, 70, 1, 2, 'M', 'Camiones portuarios', 'Ampliación sonora al salir de barreras TPV'],
@@ -69,25 +71,41 @@ const FICHAS = [
   ['09:40', 0, 54, 62, 70, 1, 1, 'M', 'Camiones y persona cantando', 'Alternan con la actividad de borde costero'],
   ['10:00', 1, 60, 69, 82, 1, 1, 'V', 'Frenos, micros y bocinazos', 'Dominan la esquina con Cochrane'],
   ['10:18', 2, 54, 62, 68, 1, 1, 'C', 'Música de locales', 'Música y paso peatonal a la altura de pasaje Goñi'],
-  // Buenos Aires · BA-PI-01 · 19/11/2026 12:50–13:00 · una medición con tres fuentes simultáneas, sin dB (el medidor no quedó registrado)
-  ['12:50', 4, null, null, null, 3, 3, 'V', 'Bocinazo', 'Un auto tocó la bocina y dos personas se dieron vuelta a mirar', 2, 'BA-PI-01'],
-  ['12:50', 4, null, null, null, 3, 3, 'V', 'Autos pasando', 'Con el semáforo en rojo los autos se detienen y se oye un lapso de silencio', 4, 'BA-PI-01'],
-  ['12:50', 4, null, null, null, 3, 3, 'H', 'Personas hablando', 'Flujo peatonal alto; sin reacciones visibles ante el tránsito de la calle de atrás', 2, 'BA-PI-01'],
-  // Buenos Aires · BA-M-02 · Puente de la Mujer · 19/11/2026 12:29–12:40 · cuatro fuentes simultáneas, sin dB
-  ['12:29', 5, null, null, null, 2, 1, 'V', 'Vehículos en la ciudad', 'Zumbido constante de autos que llega desde la ciudad, como un aura de fondo', 4, 'BA-M-02'],
-  ['12:29', 5, null, null, null, 2, 1, 'M', 'Trabajos en el puente', 'Maquinaria que se siente de a momentos', null, 'BA-M-02'],
-  ['12:29', 5, null, null, null, 2, 1, 'H', 'Gente caminando y conversando', 'La gente pasa muy a la rápida, todos van de paso', 2, 'BA-M-02'],
-  ['12:29', 5, null, null, null, 2, 1, 'N', 'Aves', 'Los árboles cercanos atraen aves que a ratos llenan el ambiente con su canto', 2, 'BA-M-02'],
-  // Buenos Aires · BA-PI-02 · Puente de la Mujer · 21/11/2026 11:09–11:19 · tres fuentes simultáneas, sin dB (el medidor no quedó registrado)
-  ['11:09', 5, null, null, null, 3, 3, 'H', 'Música', 'Música en la entrada del puente, con flujo peatonal y vehicular altos', 5, 'BA-PI-02'],
-  ['11:09', 5, null, null, null, 3, 3, 'V', 'Autos pasando', 'Paso recurrente de autos (5 eventos) con ritmo irregular; sin intensidad registrada', null, 'BA-PI-02'],
-  ['11:09', 5, null, null, null, 3, 3, 'H', 'Personas', 'Conversación continua del flujo peatonal', 3, 'BA-PI-02'],
-  // Buenos Aires · referencia oficial (no es medición propia): Mapa Estratégico de Ruido 2018, APrA · GCBA. Banda modelada de día (07:01–22:00) donde más se repite en ~150 m del lugar.
-  ['14:30', 4, 70, 72.5, 75, 3, 3, 'V', 'Tránsito vehicular y ferroviario (modelo)', 'Banda modelada de día (07:01–22:00): 70–75 dB; de noche, 65–70 dB. El modelo solo incluye vehículos y trenes: no personas ni música.', null, 'APrA-2018-PM', 'apra'],
-  ['14:30', 5, 65, 67.5, 70, 3, 2, 'V', 'Tránsito vehicular y ferroviario (modelo)', 'Banda modelada de día (07:01–22:00): 65–70 dB; de noche, 55–60 dB. Hacia el agua y el interior de Puerto Madero baja a 40–55 dB. Solo vehículos y trenes.', null, 'APrA-2018-PU', 'apra'],
-  // misma referencia, banda nocturna (22:01–07:00): solo se enciende en el paso «Noche» del recorrido; en el registro aparece como ficha aparte
-  ['23:00', 4, 65, 67.5, 70, 3, 3, 'V', 'Tránsito vehicular y ferroviario (modelo)', 'Banda modelada de noche (22:01–07:00): 65–70 dB; de día, 70–75 dB. Solo vehículos y trenes.', null, 'APrA-2018-PM-N', 'apra_n'],
-  ['23:00', 5, 55, 57.5, 60, 3, 2, 'V', 'Tránsito vehicular y ferroviario (modelo)', 'Banda modelada de noche (22:01–07:00): 55–60 dB; de día, 65–70 dB. Hacia el agua baja a 30–50 dB. Solo vehículos y trenes.', null, 'APrA-2018-PU-N', 'apra_n']
+  // Buenos Aires · BA-PI-11 · Plaza de Mayo · 19/11/2026 10:30–10:40 · 5 fuentes simultáneas · dB medidos (59 / 70 / 84)
+  ['10:30', 4, 59, 70, 84, 2, 3, 'V', 'Colectivos frenando y arrancando', 'Soleado, viento bajo. Actividades: tránsito peatonal, trabajo en vía pública, turismo / fotografía.', 4, 'BA-PI-11'],
+  ['10:30', 4, 59, 70, 84, 2, 3, 'H', 'Personas', 'Fuente secundaria registrada en la ficha (humana); sin descripción detallada.', 4, 'BA-PI-11'],
+  ['10:30', 4, 59, 70, 84, 2, 3, 'N', 'Naturaleza', 'Fuente secundaria registrada en la ficha (natural); sin descripción detallada.', 4, 'BA-PI-11'],
+  // Buenos Aires · BA-M-11 · Puente de la Mujer · 19/11/2026 11:30–11:40 · 4 fuentes simultáneas · dB medidos (57 / 66 / 78)
+  ['11:30', 5, 57, 66, 78, 2, 1, 'V', 'Vehículos en la ciudad', 'Soleado, viento medio. Actividades: tránsito peatonal, trabajo en vía pública.', 2, 'BA-M-11'],
+  ['11:30', 5, 57, 66, 78, 2, 1, 'H', 'Personas', 'Fuente secundaria registrada en la ficha (humana); sin descripción detallada.', 2, 'BA-M-11'],
+  ['11:30', 5, 57, 66, 78, 2, 1, 'N', 'Naturaleza', 'Fuente secundaria registrada en la ficha (natural); sin descripción detallada.', 2, 'BA-M-11'],
+  ['11:30', 5, 57, 66, 78, 2, 1, 'M', 'Maquinaria', 'Fuente secundaria registrada en la ficha (portuaria / mecánica); sin descripción detallada.', 2, 'BA-M-11'],
+  // Buenos Aires · BA-M-02 · Puente de la Mujer · 19/11/2026 12:29–12:40 · 4 fuentes simultáneas · dB medidos (62 / 73 / 84)
+  ['12:29', 5, 62, 73, 84, 2, 1, 'V', 'Vehículos en la ciudad', 'Zumbido constante de autos que llega desde la ciudad, como un aura de fondo', 4, 'BA-M-02'],
+  ['12:29', 5, 62, 73, 84, 2, 1, 'M', 'Trabajos en el puente', 'Maquinaria que se siente de a momentos', null, 'BA-M-02'],
+  ['12:29', 5, 62, 73, 84, 2, 1, 'H', 'Gente caminando y conversando', 'La gente pasa muy a la rápida, todos van de paso', 2, 'BA-M-02'],
+  ['12:29', 5, 62, 73, 84, 2, 1, 'N', 'Aves', 'Los árboles cercanos atraen aves que a ratos llenan el ambiente con su canto', 2, 'BA-M-02'],
+  // Buenos Aires · BA-PI-01 · Plaza de Mayo · 19/11/2026 12:50–13:00 · 3 fuentes simultáneas · dB medidos (61 / 72 / 85)
+  ['12:50', 4, 61, 72, 85, 3, 3, 'V', 'Bocinazo', 'Un auto tocó la bocina y dos personas se dieron vuelta a mirar', 2, 'BA-PI-01'],
+  ['12:50', 4, 61, 72, 85, 3, 3, 'V', 'Autos pasando', 'Con el semáforo en rojo los autos se detienen y se oye un lapso de silencio', 4, 'BA-PI-01'],
+  ['12:50', 4, 61, 72, 85, 3, 3, 'H', 'Personas hablando', 'Flujo peatonal alto; sin reacciones visibles ante el tránsito de la calle de atrás', 2, 'BA-PI-01'],
+  // Buenos Aires · BA-M-12 · Puente de la Mujer · 19/11/2026 16:10–16:20 · 5 fuentes simultáneas · dB medidos (60 / 70 / 82)
+  ['16:10', 5, 60, 70, 82, 3, 1, 'H', 'Conversaciones de turistas', 'Soleado, viento alto. Actividades: turismo / fotografía, conversaciones, tránsito peatonal, atención en locales.', 3, 'BA-M-12'],
+  ['16:10', 5, 60, 70, 82, 3, 1, 'V', 'Vehículos', 'Fuente secundaria registrada en la ficha (vehicular); sin descripción detallada.', 3, 'BA-M-12'],
+  ['16:10', 5, 60, 70, 82, 3, 1, 'M', 'Maquinaria', 'Fuente secundaria registrada en la ficha (portuaria / mecánica); sin descripción detallada.', 3, 'BA-M-12'],
+  ['16:10', 5, 60, 70, 82, 3, 1, 'N', 'Naturaleza', 'Fuente secundaria registrada en la ficha (natural); sin descripción detallada.', 3, 'BA-M-12'],
+  // Buenos Aires · BA-M-13 · Puente de la Mujer · 19/11/2026 17:16–17:26 · 5 fuentes simultáneas · dB medidos (61 / 71 / 85)
+  ['17:16', 5, 61, 71, 85, 3, 2, 'C', 'Gente conversando en terrazas', 'Nublado, viento medio. Actividades: atención en locales, conversaciones, descanso / espera, turismo / fotografía.', 3, 'BA-M-13'],
+  ['17:16', 5, 61, 71, 85, 3, 2, 'H', 'Personas', 'Fuente secundaria registrada en la ficha (humana); sin descripción detallada.', 3, 'BA-M-13'],
+  ['17:16', 5, 61, 71, 85, 3, 2, 'V', 'Vehículos', 'Fuente secundaria registrada en la ficha (vehicular); sin descripción detallada.', 3, 'BA-M-13'],
+  ['17:16', 5, 61, 71, 85, 3, 2, 'N', 'Naturaleza', 'Fuente secundaria registrada en la ficha (natural); sin descripción detallada.', 3, 'BA-M-13'],
+  // Buenos Aires · BA-PI-12 · Plaza de Mayo · 19/11/2026 17:45–17:55 · 5 fuentes simultáneas · dB medidos (63 / 74 / 87)
+  ['17:45', 4, 63, 74, 87, 3, 3, 'V', 'Autos pasando', 'Soleado, viento medio. Actividades: tránsito peatonal, comercio ambulante, turismo / fotografía, conversaciones.', 4, 'BA-PI-12'],
+  ['17:45', 4, 63, 74, 87, 3, 3, 'C', 'Comercio y música', 'Fuente secundaria registrada en la ficha (comercial); sin descripción detallada.', 4, 'BA-PI-12'],
+  ['17:45', 4, 63, 74, 87, 3, 3, 'H', 'Personas', 'Fuente secundaria registrada en la ficha (humana); sin descripción detallada.', 4, 'BA-PI-12'],
+  // Buenos Aires · BA-M-14 · Puente de la Mujer · 21/11/2026 00:20–00:30 · 4 fuentes simultáneas · dB medidos (70 / 82 / 96)
+  ['00:20', 5, 70, 82, 96, 3, 1, 'C', 'Música de bares', 'Nublado, viento bajo. Actividades: atención en locales, conversaciones, interacción / juego, música / espectáculo callejero.', 5, 'BA-M-14'],
+  ['00:20', 5, 70, 82, 96, 3, 1, 'H', 'Personas', 'Fuente secundaria registrada en la ficha (humana); sin descripción detallada.', 5, 'BA-M-14'],
 ];
 // ENCUESTAS: [sector (0-3; Plaza de Mayo aún sin encuestas), agrado (−1…2), dB medido durante la encuesta (si se registró)]
 const ENCUESTAS = [[0,1,71.4],[0,1,75],[3,1,54],[3,-1,75.4],[2,0,74.3],[0,1],[0,2],[0,1],[0,1],[1,-1],[1,-1],[1,0],[1,-1],[1,-1],[2,0],[2,2],[2,2],[2,2],[0,2],[1,2]];

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="theme-color" content="#DCDDD3"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Acerca de Marea de resonancias</title><link rel="stylesheet" href="style.css?v=125"></head>
+<title>Acerca de Marea de resonancias</title><link rel="stylesheet" href="style.css?v=127"></head>
 <body class="about">
 <header><b>Marea de resonancias</b><nav id="nav" class="morph"><span class="lbl" tabindex="0">Inicio</span><a class="mb" href="index.html">Visualización</a><a class="mb on" href="about.html">Acerca del estudio</a></nav></header>
 <canvas id="c" aria-hidden="true"></canvas>
@@ -23,7 +23,7 @@
 <p>Muelle Prat es el más diverso (portuaria, humana, vehicular y comercial) y el de mayor rango entre mínimo y máximo (31 dB en promedio). Calle Serrano es comercial y más parejo (17 dB). Plaza Echaurren es humana y estable (14 dB), pero con solo 3 mediciones y 2 encuestas no permite concluir.</p>
 <p class="hw">Cómo verlo: color y relieve de cada malla; filtro «Fuente».</p></div>
 </div>
-<p class="hw">Alcance: estas cifras usan las 38 mediciones con dB de los cuatro lugares del Barrio Puerto. En Plaza de Mayo y Puente de la Mujer (Buenos Aires) el equipo no registró dB: su cifra es una referencia oficial modelada (ver «Referencia de Buenos Aires: APrA 2018»), que se muestra en el modelo pero no entra en promedios, máximos, picos ni gráficos por hora.</p></section>
+<p class="hw">Alcance: las cifras del Barrio Puerto (más ruidoso, más tranquilo, picos, respuesta corta) usan las 38 mediciones con dB de los cuatro lugares de Valparaíso. Plaza de Mayo y Puente de la Mujer (Buenos Aires) tienen 8 mediciones propias con dB, que se leen lugar por lugar y en la comparación, pero no entran en esos rankings.</p></section>
 <div class="stack">
 
 <section class="card"><h2>Planteamiento general</h2>
@@ -79,15 +79,13 @@
 </section>
 
 
-<section class="card wide" id="apra"><h2>Referencia de Buenos Aires: APrA 2018</h2>
-<p><b>Aviso.</b> Las mediciones propias de Plaza de Mayo y Puente de la Mujer no tienen decibeles. Para que esos lugares puedan leerse con el mismo modelo, se incorporó un dB de referencia oficial. <b>No es una medición del equipo.</b></p>
+<section class="card wide" id="buenos-aires"><h2>Buenos Aires: mediciones propias</h2>
+<p><b>Qué hay.</b> Plaza de Mayo (3 mediciones) y Puente de la Mujer (5) tienen dB mínimo, promedio y máximo registrados por el equipo en terreno (19 y 21/11/2026), con el mismo formato que el Barrio Puerto. Fuente: tabla general de registros de Buenos Aires del Grupo 2.</p>
 <ul>
-<li><b>Origen:</b> Mapa Estratégico de Ruido 2018 de la Agencia de Protección Ambiental (APrA), Gobierno de la Ciudad de Buenos Aires. Archivos usados: <i>medicion_de_ruido_diurno_2018.csv</i> y <i>medicion_de_ruido_nocturno_2018.csv</i> (polígonos con bandas de 5 dB).</li>
-<li><b>Qué es:</b> un modelo de simulación acústica validado con mediciones de largo plazo (5 estaciones en 162 puntos). Solo modela fuentes móviles: vehículos y trenes. No incluye personas, música ni obras.</li>
-<li><b>Cómo se obtuvo la cifra:</b> se cruzaron los polígonos con una rejilla de unos ±150 m alrededor de cada lugar (coordenadas aproximadas fijadas por el equipo) y se tomó la banda diurna (07:01–22:00) que más se repite. Plaza de Mayo: 70–75 dB de día (65–70 de noche). Puente de la Mujer: 65–70 dB de día (55–60 de noche; hacia el agua y el interior de Puerto Madero baja a 40–55).</li>
-<li><b>Cómo se muestra:</b> como dos fichas aparte en el registro de cada lugar («APrA 2018 · día · modelo» y «APrA 2018 · noche · modelo»), con rango de banda en lugar de mínimo y máximo, y su procedencia al abrirlas. El dB de la vista general (banda diurna) lleva la etiqueta «modelo APrA». En «Cada lugar, a cada hora», estos dos lugares no recorren mañana, tarde y hora punta sino <b>Día → Noche</b>: al hacer scroll cambian el número, la barra, el relieve y la luz de la malla.</li>
-<li><b>Qué no hace:</b> no entra en «más ruidoso» ni «más tranquilo», en los hallazgos del Barrio Puerto, en los promedios por hora ni en los gráficos. La banda nocturna solo se enciende en el paso «Noche» del recorrido y en su ficha de registro; nuestras mediciones propias son todas diurnas.</li>
-<li><b>Límites:</b> cerca del 70 % de los puntos de la rejilla no cae en ningún polígono (el mapa no cubre ahí), la banda depende del punto elegido, los datos son de 2018 y la cifra no es comparable en rigor con un sonómetro en terreno. Es una referencia, no una medición.</li>
+<li><b>Cómo se muestran:</b> como cualquier otro lugar: relieve por dB promedio, color por fuente predominante, flujos y registro de mediciones. Cada tipo de fuente de la ficha es un punto; el primero es el predominante.</li>
+<li><b>Qué no hace:</b> no entran en «más ruidoso» ni «más tranquilo» del Barrio Puerto, en sus hallazgos ni en los picos del barrio. No tienen encuestas de agrado.</li>
+<li><b>Medición nocturna:</b> BA-M-14 (00:20 del 21/11, Puente de la Mujer, 82 dB promedio, máximo 96) cae fuera del rango 09:40–18:50: se ubica al final del recorrido y no pertenece a mañana, tarde ni hora punta; sí cuenta en el promedio y el máximo del lugar.</li>
+<li><b>Límites:</b> pocas mediciones por franja. Algunas fichas solo detallan la fuente predominante; las demás fuentes se registran por tipo, sin descripción.</li>
 </ul></section>
 <section class="card"><h2>Datos que no se incluyeron</h2>
 <p>Se excluyeron el observador y el instrumento de medición por ser datos estrictamente metodológicos. No se integraron la relación con el barrio ni horarios habituales (la mayoría son visitantes y la variable no discrimina). Los datos de lugar más ruidoso/tranquilo y razón de la percepción se descartaron para evitar solapamientos con el nivel de agrado y las citas textuales.</p></section>
@@ -133,7 +131,7 @@
 <li><b>Muestras pequeñas:</b> Echaurren tiene 3 mediciones y 2 encuestas; la hora punta, 6 mediciones.</li>
 <li><b>Interpretación del equipo:</b> el movimiento errático según el agrado y la deformación según el dB por hora son decisiones expresivas, no estándares de la disciplina.</li>
 </ul></div>
-<p class="hw">Datos abiertos: <a href="data.json">data.json</a> y <a href="data.js?v=125">data.js</a> (con la fuente y los criterios de preparación).</p></section>
+<p class="hw">Datos abiertos: <a href="data.json">data.json</a> y <a href="data.js?v=127">data.js</a> (con la fuente y los criterios de preparación).</p></section>
 <section class="card wide"><h2>Uso de IA</h2>
 <p class="lead2">La IA (Claude, de Anthropic) se usó como apoyo técnico para ampliar lo que se podía construir. Las decisiones de diseño, la selección de datos y el punto de vista son del autor.</p>
 <div class="g3">
@@ -157,7 +155,7 @@
 </div>
 <p class="foot">Proyecto grupal: <a href="https://wiki.ead.pucv.cl/Proyecto_de_Visualizaci%C3%B3n_-_Grupo_2">Proyecto de Visualización – Grupo 2</a> · Proyecto individual: <a href="https://wiki.ead.pucv.cl/Visualizaci%C3%B3n_de_Datos_Interactiva_TDS_2026_-_Francisco_Daniou">Visualización de Datos Interactiva TDS 2026 – Francisco Daniou</a> · Taller de Diseño de Servicios 2026</p>
 </div>
-<script src="data.js?v=125"></script><script src="app.js?v=125"></script><script src="glass.js?v=125"></script>
+<script src="data.js?v=127"></script><script src="app.js?v=127"></script><script src="glass.js?v=127"></script>
 <script>(function(){var S=[['hallazgos','Hallazgos']];var els=document.querySelectorAll('section.card');var nav=document.createElement('nav');nav.id='sec';nav.setAttribute('aria-label','Secciones de la página');
 var items=[];els.forEach(function(s,i){var h=s.querySelector('h2');if(!h)return;if(!s.id)s.id='s'+i;items.push([s,h.textContent.trim()]);});
 nav.innerHTML=items.map(function(it,i){return '<button data-i="'+i+'" aria-label="'+it[1]+'"><span>'+it[1]+'</span><i></i></button>'}).join('');document.body.appendChild(nav);
