@@ -51,7 +51,7 @@ Navegación: indicador lateral de secciones, enlace que restaura la vista (`#sec
 Wireframes: `wireframe.svg/png` (escritorio) y `wireframe-movil.svg/png`, con los seis sectores.
 
 ## Datos
-Fuente: «Base de Datos – Variación Sonora Barrio Puerto» (Grupo 2). Criterios de preparación (mediciones repetidas BP-17 a 19, valor atípico de 121,4 dB, recategorización «comercial», escala de agrado, instrumentos distintos) en `data.js` y en `about.html`. Plaza de Mayo y Puente de la Mujer (Buenos Aires) se integraron sin dB.
+Fuente: «Base de Datos – Variación Sonora Barrio Puerto» (Grupo 2). Criterios de preparación (mediciones repetidas BP-17 a 19, valor atípico de 121,4 dB, recategorización «comercial», escala de agrado, instrumentos distintos) en `data.js` y en `about.html`. Plaza de Mayo y Puente de la Mujer (Buenos Aires) se integraron con sus 8 mediciones propias, con dB.
 
 ## Uso de IA
 La IA (Claude, de Anthropic) apoyó la implementación técnica (canvas, shader WebGL, interfaz, pruebas). La pregunta, la selección de datos, la codificación de base y el punto de vista son del autor; el detalle está en `about.html`.
