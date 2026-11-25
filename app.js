@@ -17,7 +17,7 @@ const NSX = Array.from({ length: NS }, (_, i) => i), real = fs => fs.filter(f =>
 const DOM = NSX.map(s => { if (PRED[s]) return PRED[s]; const n = {}; F.filter(f => f.s === s && !f.ap).forEach(f => n[f.c] = (n[f.c] || 0) + 1); let b = 'M', v = 0; ['M', 'V', 'C', 'H', 'N'].forEach(c => { if ((n[c] || 0) > v) { v = n[c]; b = c; } }); return b; });
 const E = ENCUESTAS;
 
-let mo = 0, LW = 200, CMX = 0, CMY = 0, CMR = 100, cA = 0, cm = 0, CPX = [0, 0], CPY = 0, CPR = 80; const kc = Array(NS).fill(0); // comparativa: la malla acompaña al texto
+let CMY0 = 0, CMR0 = 100, mo = 0, LW = 200, CMX = 0, CMY = 0, CMR = 100, cA = 0, cm = 0, CPX = [0, 0], CPY = 0, CPR = 80; const kc = Array(NS).fill(0); // comparativa: la malla acompaña al texto
 let CX0 = 0, CY0 = 0, S0 = 100, eS = 0, amb = 0, ee = 0, Aglob = 1; // centro y escala de la marea total; progreso de escena
 const FILTERS = { all: [0, 1e4], am: [0, 756], pm: [757, 1049], pk: [1050, 1439] };
 let flt = 'all', want = null, foc = null, k = 0, pf = null, hov = null, hs = null, W, H, dpr, T = 0, Rb, Rf, FX, FY, ctr = [], G = [], pkey = '';
@@ -75,7 +75,7 @@ function layout() { // las figuras se reacomodan en sincronía con el pill/leyen
   Rb = best.r; LW = gw / best.c; const bh = 2.2 * Rb + LB, off = (gh / best.nr - bh) / 2;
   ctr = NSX.map(i => { const rw = Math.floor(i / best.c), inRow = Math.min(best.c, NS - rw * best.c), cx = i % best.c + (best.c - inRow) / 2; return [x0 + gw * (cx + .5) / best.c, top0 + (gh / best.nr) * rw + off + 8 + Rb * 1.08]; });
   if (mob) { const ghc = H - 150 - top0, LBc = 180; Rb = Math.max(70, Math.min(gw / 2.4, (ghc - LBc) / 2.2)); LW = gw; const cyc = top0 + 8 + Rb * 1.08 + Math.max(0, (ghc - LBc - 2.2 * Rb) / 2); ctr = NSX.map(i => [W / 2 + i * W, cyc]); car.style.top = top0 + 'px'; car.style.height = Math.max(0, ghc) + 'px'; cdots.style.top = Math.round(Math.max(top0 + 6, cyc - Rb * 1.15 - 22)) + 'px'; }
-  CMX = mob ? W / 2 : W * .27; CMY = mob ? H * .37 : H * .70; CMR = mob ? Math.min(W * .26, H * .115) : Math.min(W * .15, H * .23);
+  CMX = mob ? W / 2 : W * .27; CMY = mob ? H * .37 : H * .70; CMR = mob ? Math.min(W * .26, H * .115) : Math.min(W * .15, H * .23); CMY0 = CMY; CMR0 = CMR;
   CPX = mob ? [W * .27, W * .73] : [W * .15, W * .4]; CPY = mob ? H * .385 : H * .72; CPR = mob ? Math.min(W * .27, H * .115) : Math.min(W * .13, H * .24);
   CX0 = x0 + gw / 2; CY0 = top0 + gh / 2 + (mob ? -8 : 0); S0 = Math.min(gw * (mob ? .24 : .15), gh * (mob ? .3 : .36));
   if (mob) { // móvil: figura arriba, panel como hoja inferior (la mitad inferior de la pantalla)
@@ -270,8 +270,9 @@ function frame(ms) {
   const fo = want !== null; if (fo !== lastFoc) { lastFoc = fo; document.body.classList.toggle('foc', fo); }
   const deep = amb > .06 || cA > .03, tide = eS < .5; if (deep !== lastDeep) { lastDeep = deep; document.body.classList.toggle('deep', deep); } if (tide !== lastTide) { lastTide = tide; document.body.classList.toggle('tide', tide); }
   const rm = RM ? .2 : 1, ry = Math.sin(T * rm * .17) * .62 + oy, rx = -.28 + Math.sin(T * rm * .11 + 1) * .14 + ox; // se favorecen las vistas de las bases del tubo cY = Math.cos(ry); sY = Math.sin(ry); cX = Math.cos(rx); sX = Math.sin(rx);
+  CMY = CMY0; CMR = CMR0; // la posición/tamaño base se restablece cada cuadro: la comparación ya no deja el modelo desplazado al volver a Lugares
   if (W >= 1100 && cm > .01) { const cp = document.querySelector('.cmp'); if (cp) { const t0 = cp.getBoundingClientRect().bottom + 14, b0 = H - 24, h0 = b0 - t0; if (h0 > 200) { CPY = (t0 + b0) / 2 - 8; CMY = CPY; } } } // comparación: mallas centradas verticalmente en el espacio libre
-  if (W >= 1100 && cA > .01 && cm <= .01) { const cp = document.querySelector('.cmp'); if (cp) { const t0 = cp.getBoundingClientRect().bottom + 14, b0 = H - 24, h0 = b0 - t0; if (h0 > 60) { const r = Math.max(34, Math.min(Math.min(W * .15, H * .23), h0 / 2.25)); CMR = r; CMY = (t0 + b0) / 2; } } } // escritorio de poca altura: la figura baja de la leyenda
+  if (W >= 1100 && cA > .01) { const cp = document.querySelector('.cmp'); if (cp) { const t0 = cp.getBoundingClientRect().bottom + 14, b0 = H - 24, h0 = b0 - t0; if (h0 > 60) { const r = Math.max(34, Math.min(Math.min(W * .15, H * .23), h0 / 2.25)); CMR = r; CMY = (t0 + b0) / 2; } } } // escritorio de poca altura: la figura baja de la leyenda
   if (W < 1100 && cm > .01) { const bk = document.querySelector('.cstage .blk'), cp = document.querySelector('.cmp'); // comparación en pantallas chicas: los dos modelos ocupan el hueco entre el título y la tarjeta
     if (bk && cp) { const t0 = Math.max(cp.getBoundingClientRect().bottom + 6, 96), b0 = bk.getBoundingClientRect().top - 8, h0 = b0 - t0; if (h0 > 80) { CPR = cl(h0 / 2.6, 36, Math.min(W * .27, 130)); CPY = (t0 + b0) / 2 - 4; CMR = CPR; CMY = CPY; } } }
   geoms(); x.globalCompositeOperation = 'source-over'; x.fillStyle = '#DCDDD3'; x.fillRect(0, 0, W, H);
