@@ -993,3 +993,8 @@ body:has(#ans.open) #leg:not(.open){opacity:0;pointer-events:none}}
 body #down,body:has(#ctl:hover) #down,body:has(#cts:hover) #down,body:has(#ctl:focus-within) #down,body:has(#cts:focus-within) #down,#bar:has(.morph.open)~#down{bottom:calc(var(--barh,90px) + 32px + env(safe-area-inset-bottom,0px))!important;transition:bottom .45s var(--spring),opacity .35s,scale .45s var(--spring)!important}
 body:not(.deep):not(.lock):not(.heroing) #down,body:not(.deep):not(.lock):not(.heroing):has(#ctl:hover) #down,body:not(.deep):not(.lock):not(.heroing):has(#cts:hover) #down,body:not(.deep):not(.lock):not(.heroing):has(#ctl:focus-within) #down,body:not(.deep):not(.lock):not(.heroing):has(#cts:focus-within) #down,body:not(.deep):not(.lock):not(.heroing) #bar:has(.morph.open)~#down{opacity:1!important;translate:0 0!important;scale:1!important;pointer-events:auto!important}
 }
+
+/* v137b · Los picos del barrio: número y dB con el mismo formato que "dB promedio" (ligero, unidad atenuada) */
+.peaks b,#s4 .peaks b,.peaks b>span{font-weight:300;letter-spacing:-.02em}
+.peaks b small,#s4 .peaks b small{font-weight:400;color:var(--mut);margin-left:6px;letter-spacing:0}
+#s4 .peaks b>span,#s4 .peaks li>b span{font-weight:300!important;letter-spacing:-.02em}
