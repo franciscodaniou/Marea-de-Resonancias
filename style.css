@@ -1243,3 +1243,16 @@ body.cmpv .lgb{transition:opacity .4s,transform .75s var(--spring)!important}
  .bf{margin:1px 0!important;font-size:14px!important}.bf em{font-size:10.5px!important}
  .cmpc .tg{margin:0 0 4px;transform-origin:left top}
 }
+
+/* v183 · comparación móvil: datos clave visibles, el resto tras «Ver más datos» */
+.bmore{display:none}
+@media(max-width:759px){
+ .bfs{display:flex;flex-direction:column}
+ .bfs .bf.x{order:5;max-height:0;opacity:0;margin-top:0!important;margin-bottom:0!important;overflow:hidden;transition:max-height .7s var(--spring-soft,cubic-bezier(.22,.9,.3,1)),opacity .45s,margin .5s}
+ .bfs.open .bf.x{max-height:40px;opacity:1;margin-top:3px!important;margin-bottom:3px!important}
+ .bfs .bfn{order:6}
+ .bmore{order:7;display:inline-flex;align-items:center;gap:8px;align-self:flex-start;margin:8px 0 0;padding:8px 16px;border:0;border-radius:99px;background:rgba(255,255,255,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 4px 10px -4px rgba(59,66,52,.3);font:700 14px/1 "SF Pro",-apple-system,sans-serif;color:#2b3227}
+ .bmore .m2{display:none}.bfs.open .bmore .m1{display:none}.bfs.open .bmore .m2{display:inline}
+ .bmore i{width:7px;height:7px;border-right:2px solid #5E6655;border-bottom:2px solid #5E6655;transform:rotate(45deg) translate(-2px,-2px);transition:transform .5s var(--spring-el,ease)}
+ .bfs.open .bmore i{transform:rotate(-135deg) translate(-2px,-2px)}
+}
