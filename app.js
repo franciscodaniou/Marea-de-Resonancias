@@ -587,3 +587,11 @@ addEventListener('resize', size); size(); render(); requestAnimationFrame(frame)
 
 // altura de la barra inferior → variable CSS (móvil: el botón de sectores sube sobre Fuente/Hora cuando se despliegan)
 { const bar = document.getElementById('bar'); if (bar) { const set = () => document.documentElement.style.setProperty('--barh', Math.round(bar.getBoundingClientRect().height) + 'px'); set(); if (window.ResizeObserver) new ResizeObserver(set).observe(bar); addEventListener('resize', set); } }
+
+// selectores «Hora del día» y «Fuente»: todas las opciones miden lo mismo (la de la opción más ancha), para que la gota tenga un ancho único
+(() => { const set = () => ['ctl', 'cts'].forEach(id => { const c = document.getElementById(id); if (!c) return; let m = 0; c.querySelectorAll('.mb').forEach(b => { const o = b.style.fontWeight; b.style.fontWeight = '600'; m = Math.max(m, b.scrollWidth); b.style.fontWeight = o; }); if (m) c.style.setProperty('--mbw', Math.ceil(m + 2) + 'px'); });
+  set(); addEventListener('load', set); addEventListener('resize', set); if (document.fonts && document.fonts.ready) document.fonts.ready.then(set); })();
+// selectores con gota (.tg): todas las opciones del mismo ancho = el de la opción más ancha de ese selector
+(() => { let busy = 0; const eq = () => { if (busy) return; document.querySelectorAll('.tg:not(.st)').forEach(t => { t.style.setProperty('grid-auto-columns', 'max-content'); let m = 0; t.querySelectorAll('button').forEach(b => { m = Math.max(m, b.getBoundingClientRect().width); }); t.style.removeProperty('grid-auto-columns'); if (m) t.style.setProperty('--tgw', Math.ceil(m) + 'px'); });
+    busy = 1; dispatchEvent(new Event('resize')); busy = 0; };
+  addEventListener('load', () => setTimeout(eq, 0)); addEventListener('resize', () => { if (!busy) eq(); }); if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => setTimeout(eq, 0)); })();

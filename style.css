@@ -1352,3 +1352,25 @@ body.about .tg .th{
  #cts .mb i{margin-right:5px}
 }
 #bar #ctl,#bar #cts{position:relative}
+
+/* v196 · todas las opciones de un selector miden lo mismo (la más ancha del selector): la gota tiene un ancho único */
+.tg{display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr}
+.tg button{display:flex;align-items:center;justify-content:center;text-align:center;white-space:nowrap}
+.tg.st{display:inline-flex}
+.cmpc #cfg{display:grid!important;width:100%;box-sizing:border-box}
+@media(max-width:759px){.cfrow #cfg,.cmpc #cfg{width:auto}}
+#ctl.open .mb,#cts.open .mb{width:calc(var(--mbw,90px) + 32px);max-width:calc(var(--mbw,90px) + 32px);flex:0 0 auto;justify-content:center;text-align:center}
+@media(hover:hover) and (min-width:761px){#ctl:hover .mb,#cts:hover .mb,#ctl:focus-within .mb,#cts:focus-within .mb{width:calc(var(--mbw,90px) + 32px);max-width:calc(var(--mbw,90px) + 32px);flex:0 0 auto;justify-content:center;text-align:center}}
+@media(max-width:760px){#ctl.open .mb{width:calc(var(--mbw,70px) + 16px);max-width:calc(var(--mbw,70px) + 16px)}#cts.open .mb{width:auto;max-width:none}}
+.tg:not(.st){grid-auto-columns:var(--tgw,1fr)}
+.cmpc #cfg{grid-auto-columns:1fr}
+@media(max-width:759px){.cmpc #cfg{grid-auto-columns:var(--tgw,1fr)}}
+/* móvil: con opciones de igual ancho la franja ocupa más; «Más» pasa a ser solo el chevron para que ambos quepan en una línea */
+@media(max-width:759px){
+ .cfrow .tg button{font-size:12px!important;padding:8px 6px!important}
+ .cfrow .bmore{min-width:0!important;width:40px;padding:0!important;justify-content:center;gap:0!important}
+ .cfrow .bmore .m1,.cfrow .bmore .m2,.cfrow .bmore.on .m2{display:none!important}
+}
+@media(max-width:380px){.cfrow .tg button{font-size:11.5px!important;padding:8px 5px!important}.cfrow .bmore{width:36px}}
+@media(max-width:759px){.cfrow #cfg,.cmpc #cfg{flex:1 1 0!important;min-width:0!important;width:auto!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-auto-columns:minmax(0,1fr)!important}
+ .cfrow .tg button{font-size:11.5px!important;padding:8px 2px!important;min-width:0}}
