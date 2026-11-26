@@ -158,13 +158,14 @@
     const w = S.filter(d => d.db != null && d.ag != null), top = w.slice().sort((a, b) => b.ag - a.ag)[0], low = w.slice().sort((a, b) => a.ag - b.ag)[0], pk = S.filter(d => d.mx != null).sort((a, b) => b.mx - a.mx)[0];
     if (!top || !low || top === low) return '';
     const f = v => v.toFixed(1).replace('.', ',');
+    const WHY = ['El mar y las voces pesan más que los decibeles.', 'Dominan micros y bocinas, con el flujo vehicular más alto.', 'Captadores y música de locales en un tubo comercial.', 'Voces y canto en torno a la pileta.'];
     const row = (d, v, nm, t) => `<li style="--c:${d.hex}"><b><span data-n="${v}" data-dec="${Number.isInteger(+v) ? 0 : 1}">${Number.isInteger(+v) ? v : f(+v)}</span><small> dB</small></b><div><strong>${nm}</strong><span>${t}</span></div></li>`;
     return `<h3 class="sech2">Lectura de los datos</h3>
       <article class="card thesis"><p class="tq">El ruido no molesta por su volumen, sino por lo que lo produce.</p>
         <ul class="tev">
-          ${row(top, top.db.toFixed(1), SECT[top.s], 'El mejor valorado de los cuatro.')}
-          ${row(low, low.db.toFixed(1), SECT[low.s], `${f(Math.abs(low.db - top.db))} dB ${low.db > top.db ? 'más' : 'menos'}; ${low.inc} de ${low.ne} personas lo sienten incómodo.`)}
-          ${row(pk, String(pk.mx), SECT[pk.s] + ' · pico', pk === top ? 'Aun con este máximo sigue siendo el mejor valorado.' : 'Máximo registrado.')}
+          ${row(top, top.db.toFixed(1), SECT[top.s], `El mejor valorado de los cuatro: ${top.ags[2] + top.ags[3]} de ${top.ne} respuestas dicen que les gusta${top.inc ? '' : ' y ninguna lo siente incómodo'}. ${WHY[top.s]}`)}
+          ${row(low, low.db.toFixed(1), SECT[low.s], `El peor valorado: ${f(Math.abs(low.db - top.db))} dB ${low.db > top.db ? 'más' : 'menos'} y ${low.inc} de ${low.ne} personas lo sienten incómodo. ${WHY[low.s]}`)}
+          ${row(pk, String(pk.mx), SECT[pk.s] + ' · pico', pk === top ? 'Aun con este máximo sigue siendo el mejor valorado.' : pk.s === 5 ? 'Máximo registrado, de noche (00:20 h): la música de los bares.' : 'Máximo registrado.')}
         </ul>
         <p class="tn">Pocas encuestas por lugar: es una lectura, no una causa demostrada.</p></article>`;
   };
