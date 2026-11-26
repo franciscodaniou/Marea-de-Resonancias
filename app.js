@@ -16,9 +16,10 @@ const F = FICHAS.map((r, i) => { const nd = r[2] == null, gp = nd ? 48 + ((r[10]
 const NSX = Array.from({ length: NS }, (_, i) => i), real = fs => fs.filter(f => !f.nd), hasAg = s => E.some(e => e[0] === s);
 const DOM = NSX.map(s => { if (PRED[s]) return PRED[s]; const n = {}; F.filter(f => f.s === s && !f.ap).forEach(f => n[f.c] = (n[f.c] || 0) + 1); let b = 'M', v = 0; ['M', 'V', 'C', 'H', 'N'].forEach(c => { if ((n[c] || 0) > v) { v = n[c]; b = c; } }); return b; });
 const E = ENCUESTAS;
+const rOf = s => s < 4 ? 0 : 1, rI = s => s < 4 ? s : s - 4, rN = s => s < 4 ? 4 : 2; // fase intermedia: Valparaíso (4 lugares) y Buenos Aires (2)
 
 let CMY0 = 0, CMR0 = 100, mo = 0, LW = 200, CMX = 0, CMY = 0, CMR = 100, cA = 0, cm = 0, CPX = [0, 0], CPY = 0, CPR = 80; const kc = Array(NS).fill(0); // comparativa: la malla acompaña al texto
-let CX0 = 0, CY0 = 0, S0 = 100, eS = 0, amb = 0, ee = 0, Aglob = 1; // centro y escala de la marea total; progreso de escena
+let CX0 = 0, CY0 = 0, S0 = 100, eS = 0, eR = 0, er = 0, RgR = 100, RC = [[0, 0], [0, 0]], amb = 0, ee = 0, Aglob = 1; // centro y escala de la marea total; progreso de escena
 const FILTERS = { all: [0, 1e4], am: [0, 756], pm: [757, 1049], pk: [1050, 1439] };
 let flt = 'all', want = null, foc = null, k = 0, pf = null, hov = null, hs = null, W, H, dpr, T = 0, Rb, Rf, FX, FY, ctr = [], G = [], pkey = '';
 const cv = document.getElementById('c'), x = cv.getContext('2d'), tip = document.getElementById('tip'), panel = document.getElementById('panel'), back = document.getElementById('back');
@@ -87,7 +88,8 @@ function layout() { // las figuras se reacomodan en sincronía con el pill/leyen
     FX = fl + fw / 2; FY = top0 + 8 + Rf * 1.08 + (gh - 84 - 2.2 * Rf) / 2;
   }
   if (W >= 1100) S0 = Math.min(S0, H * .245); // proporción figura/alto como en escritorio estándar
-  FP = Math.max(560, Math.max(S0, Rb * .48, Rf * .48) * 3.3); // la focal crece con la escala: en pantallas grandes la malla ya no se sale de cuadro
+  { const LBr = mob ? 132 : 215, r = Math.min(gw / 2 / 2.05, (gh - LBr) / 2.2); RgR = Math.max(50, Math.min(r, S0 * 1.35)); const rcy = top0 + 8 + RgR * 1.08 + Math.max(0, (gh - LBr - 2.2 * RgR) / 2); RC = [[x0 + gw * .25, rcy], [x0 + gw * .75, rcy]]; } // fase intermedia: dos ciudades lado a lado
+  FP = Math.max(560, Math.max(S0, Rb * .48, Rf * .48, RgR * .48) * 3.3); // la focal crece con la escala: en pantallas grandes la malla ya no se sale de cuadro
 }
 
 const PAIR = () => (window.MAREA && MAREA.pair) || [0, 1];
@@ -118,6 +120,7 @@ F.forEach((f, i) => {
   const jit = (((i * 37) % 11) - 5) / 5 * .05;
   f.u = cl((f.m - 580) / 570, 0, 1);                          // posición a lo largo de la malla = hora
   f.fl = (((CI[f.c] + .5) / 5 + jit) % 1 + 1) % 1;            // posición alrededor = fuente (carril)
+  f.fgR = (rI(f.s) + f.fl) / rN(f.s);                         // idem en la fase de dos ciudades
   f.fg = (f.s + f.fl) / NS;                                    // idem en la marea total (cada lugar ocupa un cuarto)
   f.sg = .035 + .075 * cl((f.mx - f.mn) / 60, 0, 1);          // ancho de la zona iluminada = rango dB
   f.amp = Math.max(-.08, (f.pr - 48) / 35 * .55);             // relieve = dB promedio
@@ -127,34 +130,38 @@ F.forEach((f, i) => {
 const dfr = (a, b) => { const d = Math.abs(a - b) % 1; return d > .5 ? 1 - d : d; };
 const gws = (f, fr, u, g, sg) => { const a = dfr(fr, g), b = u - f.u; return Math.exp(-(a * a / (2 * sg * sg) + b * b / (2 * .04 * .04))); };
 const MS = NSX.map(s => {
-  const m = { nt: 0, bBD: new Float32Array(NV), bBN: new Float32Array(NV), bSD: new Float32Array(NV), bSN: new Float32Array(NV), SX: new Float32Array(NV), SY: new Float32Array(NV), LW: new Float32Array(NV), LC: new Uint8Array(NV), hv: new Float32Array(NV), EV: new Float32Array(NV), bB: new Float32Array(NV), bS: new Float32Array(NV), ttS: 0 };
+  const m = { nt: 0, bBD: new Float32Array(NV), bBN: new Float32Array(NV), bSD: new Float32Array(NV), bSN: new Float32Array(NV), bR: new Float32Array(NV), bRD: new Float32Array(NV), bRN: new Float32Array(NV), ER: new Float32Array(NV), SX: new Float32Array(NV), SY: new Float32Array(NV), LW: new Float32Array(NV), LC: new Uint8Array(NV), hv: new Float32Array(NV), EV: new Float32Array(NV), bB: new Float32Array(NV), bS: new Float32Array(NV), ttS: 0 };
   const own = F.filter(f => f.s === s);
-  own.forEach(f => { f.litB = []; f.litS = []; });
+  own.forEach(f => { f.litB = []; f.litS = []; f.litR = []; });
   for (let i = 0; i <= NZ; i++) for (let j = 0; j <= NA; j++) {
-    const id = i * (NA + 1) + j, u = i / NZ, frB = (s + j / NA) / NS, frS = j / NA;
+    const id = i * (NA + 1) + j, u = i / NZ, frB = (s + j / NA) / NS, frS = j / NA, frR = (rI(s) + j / NA) / rN(s), nR = rN(s);
     m.hv[id] = pn(i * .21 + s * 5, j * .21, 3.3);
     F.forEach(f => { const w = f.amp * gws(f, frB, u, f.fg, f.sg / NS); if (f.night) m.bBN[id] += f.ampN * gws(f, frB, u, f.fg, f.sg / NS); else if (f.ap) m.bBD[id] += w; else m.bB[id] += w; });
+    F.forEach(f => { if (rOf(f.s) !== rOf(s)) return; const gr = gws(f, frR, u, f.fgR, f.sg / nR); if (f.night) m.bRN[id] += f.ampN * gr; else if (f.ap) m.bRD[id] += f.amp * gr; else m.bR[id] += f.amp * gr; });
+    own.forEach(f => { const wr = gws(f, frR, u, f.fgR, f.sg / nR); if (wr > .07) f.litR.push(id, wr); });
     own.forEach(f => { const w = f.amp * gws(f, frS, u, f.fl, f.sg); if (f.night) m.bSN[id] += f.ampN * gws(f, frS, u, f.fl, f.sg); else if (f.ap) m.bSD[id] += w; else m.bS[id] += w; const wb = gws(f, frB, u, f.fg, f.sg / NS), ws = gws(f, frS, u, f.fl, f.sg); if (wb > .07) f.litB.push(id, wb); if (ws > .07) f.litS.push(id, ws); });
   }
   return m;
 });
-F.forEach(f => { f.bAB = 0; f.bAS = 0; F.forEach(g => { if (g.ap) return; f.bAB += g.amp * gws(g, f.fg, f.u, g.fg, g.sg / NS); if (g.s === f.s) f.bAS += g.amp * gws(g, f.fl, f.u, g.fl, g.sg); }); });
+F.forEach(f => { f.bAB = 0; f.bAS = 0; f.bAR = 0; F.forEach(g => { if (g.ap) return; f.bAB += g.amp * gws(g, f.fg, f.u, g.fg, g.sg / NS); if (rOf(g.s) === rOf(f.s)) f.bAR += g.amp * gws(g, f.fgR, f.u, g.fgR, g.sg / rN(g.s)); if (g.s === f.s) f.bAS += g.amp * gws(g, f.fl, f.u, g.fl, g.sg); }); });
 
 let cY = 1, sY = 0, cX = 1, sX = 0, RX_ = 0, RY_ = 0, RZ_ = 0, oy = 0, ox = 0;
 const rot = (a, b, c, S) => { const x1 = a * cY + c * sY, z1 = -a * sY + c * cY, y2 = b * cX - z1 * sX, z2 = b * sX + z1 * cX; RX_ = x1 * S; RY_ = y2 * S; RZ_ = z2 * S; };
 const rad0 = (th, u, tt, off) => .30 + .85 * pn(Math.cos(th) * 1.3 + off, Math.sin(th) * 1.3 + off, u * 2.2 - tt);
 const evOf = (ee0, h) => ee0 <= 0 ? 0 : ee0 >= 1 ? 1 : cl(ee0 * 1.6 - .6 * h, 0, 1); // el paso de marea total a sectores se disuelve por zonas
 
-function updMesh(s, ee0) {
-  const m = MS[s], g = G[s], ag = cl(1 - (agrSec(s) + 1) / 3, 0, 1), rm = RM ? .2 : 1, ttS = T * rm * (.16 + .5 * ag), ttB = T * rm * .3, S1 = g.R * .48; m.ttS = ttS;
+function updMesh(s, ee0, er0) {
+  const m = MS[s], g = G[s], ag = cl(1 - (agrSec(s) + 1) / 3, 0, 1), rm = RM ? .2 : 1, ttS = T * rm * (.16 + .5 * ag), ttB = T * rm * .3, S1 = g.R * .48, SR = RgR * .48, rg = rOf(s), nR = rN(s); m.ttS = ttS;
   for (let i = 0; i <= NZ; i++) {
     const u = i / NZ, zz = (u - .5) * LZ;
     for (let j = 0; j <= NA; j++) {
-      const id = i * (NA + 1) + j, ev = evOf(ee0, m.hv[id]); let bx = 0, by = 0, bz = 0, qx = 0, qy = 0, qz = 0;
-      if (ev < 1) { const th = (s + j / NA) / NS * TAU, r = Math.max(.16, rad0(th, u, ttB, 11.3) + m.bB[id] + m.bBD[id] * (1 - m.nt) + m.bBN[id] * m.nt); rot(r * Math.cos(th), r * Math.sin(th), zz, S0); bx = RX_; by = RY_; bz = RZ_; }
+      const id = i * (NA + 1) + j, ev = evOf(ee0, m.hv[id]), er = evOf(er0, m.hv[id]); let bx = 0, by = 0, bz = 0, rx = 0, ry = 0, rz = 0, qx = 0, qy = 0, qz = 0;
+      if (ev < 1 && er < 1) { const th = (s + j / NA) / NS * TAU, r = Math.max(.16, rad0(th, u, ttB, 11.3) + m.bB[id] + m.bBD[id] * (1 - m.nt) + m.bBN[id] * m.nt); rot(r * Math.cos(th), r * Math.sin(th), zz, S0); bx = RX_; by = RY_; bz = RZ_; }
+      if (ev < 1 && er > 0) { const th = (rI(s) + j / NA) / nR * TAU, r = Math.max(.16, rad0(th, u, ttB, 11.3 + rg * 5.9) + m.bR[id] + m.bRD[id] * (1 - m.nt) + m.bRN[id] * m.nt); rot(r * Math.cos(th), r * Math.sin(th), zz, SR); rx = RX_; ry = RY_; rz = RZ_; }
       if (ev > 0) { const th = j / NA * TAU, r = Math.max(.16, rad0(th, u, ttS, s * 3.7) + m.bS[id] + m.bSD[id] * (1 - m.nt) + m.bSN[id] * m.nt); rot(r * Math.cos(th), r * Math.sin(th), zz, S1); qx = RX_; qy = RY_; qz = RZ_; }
-      const kf = FP / (FP + lerp(bz, qz, ev));
-      m.SX[id] = lerp(CX0, g.cx, ev) + lerp(bx, qx, ev) * kf; m.SY[id] = lerp(CY0, g.cy, ev) + lerp(by, qy, ev) * kf; m.EV[id] = ev;
+      const px = lerp(bx, rx, er), py = lerp(by, ry, er), pz = lerp(bz, rz, er), cx1 = lerp(CX0, RC[rg][0], er), cy1 = lerp(CY0, RC[rg][1], er);
+      const kf = FP / (FP + lerp(pz, qz, ev));
+      m.SX[id] = lerp(cx1, g.cx, ev) + lerp(px, qx, ev) * kf; m.SY[id] = lerp(cy1, g.cy, ev) + lerp(py, qy, ev) * kf; m.EV[id] = ev; m.ER[id] = er;
     }
   }
 }
@@ -164,7 +171,8 @@ function lightMesh(s) { // cada ficha ilumina parte de la malla; cada tramo tien
   F.forEach(f => {
     if (f.s !== s || !on(f)) return;
     const h = hov === f || pf === f, mul = (pf && pf !== f ? .22 : 1) * (h ? 1.6 : 1), ph = T * rm * (1 + f.pr / 45);
-    for (let q = 0; q < f.litB.length; q += 2) { const id = f.litB[q], w = f.litB[q + 1] * (1 - m.EV[id]); if (w > .05) put(m, id, w, f, ph, mul); }
+    for (let q = 0; q < f.litB.length; q += 2) { const id = f.litB[q], w = f.litB[q + 1] * (1 - m.EV[id]) * (1 - m.ER[id]); if (w > .05) put(m, id, w, f, ph, mul); }
+    for (let q = 0; q < f.litR.length; q += 2) { const id = f.litR[q], w = f.litR[q + 1] * (1 - m.EV[id]) * m.ER[id]; if (w > .05) put(m, id, w, f, ph, mul); }
     for (let q = 0; q < f.litS.length; q += 2) { const id = f.litS[q], w = f.litS[q + 1] * m.EV[id]; if (w > .05) put(m, id, w, f, ph, mul); }
   });
 }
@@ -190,15 +198,16 @@ function drawMesh(s, al, e1) {
   }
 }
 const DOTS = [];
-function calcDots(ee0) {
+function calcDots(ee0, er0) {
   DOTS.length = 0;
   F.forEach(f => {
     const g = G[f.s], al = g.al * Aglob; if (al < .05 || !on(f)) return;
-    const ev = evOf(ee0, f.hf), zz = (f.u - .5) * LZ, ag = cl(1 - (agrSec(f.s) + 1) / 3, 0, 1), rm = RM ? .2 : 1; let bx = 0, by = 0, bz = 0, qx = 0, qy = 0, qz = 0;
-    if (ev < 1) { const th = f.fg * TAU, r = Math.max(.16, rad0(th, f.u, T * rm * .3, 11.3) + f.bAB); rot(r * Math.cos(th), r * Math.sin(th), zz, S0); bx = RX_; by = RY_; bz = RZ_; }
+    const ev = evOf(ee0, f.hf), er = evOf(er0, f.hf), zz = (f.u - .5) * LZ, ag = cl(1 - (agrSec(f.s) + 1) / 3, 0, 1), rm = RM ? .2 : 1, rg = rOf(f.s); let bx = 0, by = 0, bz = 0, rx = 0, ry = 0, rz = 0, qx = 0, qy = 0, qz = 0;
+    if (ev < 1 && er < 1) { const th = f.fg * TAU, r = Math.max(.16, rad0(th, f.u, T * rm * .3, 11.3) + f.bAB); rot(r * Math.cos(th), r * Math.sin(th), zz, S0); bx = RX_; by = RY_; bz = RZ_; }
+    if (ev < 1 && er > 0) { const th = f.fgR * TAU, r = Math.max(.16, rad0(th, f.u, T * rm * .3, 11.3 + rg * 5.9) + f.bAR); rot(r * Math.cos(th), r * Math.sin(th), zz, RgR * .48); rx = RX_; ry = RY_; rz = RZ_; }
     if (ev > 0) { const th = f.fl * TAU, r = Math.max(.16, rad0(th, f.u, T * rm * (.16 + .5 * ag), f.s * 3.7) + f.bAS); rot(r * Math.cos(th), r * Math.sin(th), zz, g.R * .48); qx = RX_; qy = RY_; qz = RZ_; }
-    const kf = FP / (FP + lerp(bz, qz, ev));
-    DOTS.push({ f, x: lerp(CX0, g.cx, ev) + lerp(bx, qx, ev) * kf, y: lerp(CY0, g.cy, ev) + lerp(by, qy, ev) * kf, al });
+    const px = lerp(bx, rx, er), py = lerp(by, ry, er), pz = lerp(bz, rz, er), cx1 = lerp(CX0, RC[rg][0], er), cy1 = lerp(CY0, RC[rg][1], er), kf = FP / (FP + lerp(pz, qz, ev));
+    DOTS.push({ f, x: lerp(cx1, g.cx, ev) + lerp(px, qx, ev) * kf, y: lerp(cy1, g.cy, ev) + lerp(py, qy, ev) * kf, al });
   });
 }
 const lite = (c, t) => c.map(v => Math.round(v + (255 - v) * t)), dark = (c, t) => c.map(v => Math.round(v * (1 - t)));
@@ -248,6 +257,28 @@ function flows(s, dt, al) {
   });
 }
 
+const REG = [{ n: 'Valparaíso', ss: [0, 1, 2, 3] }, { n: 'Buenos Aires', ss: [4, 5] }];
+REG.forEach(R => { const q = uniq(F.filter(f => R.ss.includes(f.s) && !f.ap && !f.night)), qr = real(q), cnt = {}; q.forEach(f => cnt[f.c] = (cnt[f.c] || 0) + 1);
+  R.nm = q.length; R.db = qr.length ? mean(qr, f => f.pr) : null; R.fr = ['am', 'pm', 'pk'].map(k => { const z = qr.filter(f => f.m >= FILTERS[k][0] && f.m <= FILTERS[k][1]); return z.length ? mean(z, f => f.pr) : null; });
+  let b = 'M', v = 0; ['M', 'V', 'C', 'H', 'N'].forEach(c => { if ((cnt[c] || 0) > v) { v = cnt[c]; b = c; } }); R.dom = b;
+  const es = E.filter(e => R.ss.includes(e[0])); R.ag = es.length ? mean(es, e => e[1]) : null; R.ne = es.length;
+  R.p = mean(q.filter(f => f.fp != null), f => f.fp) || 1; R.v = mean(q.filter(f => f.fv != null), f => f.fv) || 1; });
+function regLab(i, a) { // bajada de cada ciudad: mismos datos y composición que la de cada lugar, promediando sus mediciones
+  const R = REG[i], cx = RC[i][0], mob = W < 760, c = rgbOf(COL[R.dom]), y = RC[i][1] + RgR * 1.12 + (mob ? 26 : 22), cellW = W * .5 - (mob ? 14 : 38), sc = mob ? Math.min(1, cellW / 176) : Math.min(1, cellW / 250);
+  x.save(); x.textAlign = 'center'; if (sc < 1) { x.translate(cx, y); x.scale(sc, sc); x.translate(-cx, -y); }
+  const nd = R.db == null, dv = nd ? 0 : R.db * cl(a * 1.15, 0, 1), o1 = 36, bw = Math.min(mob ? 190 : 150, cellW / sc - 12), by = y + o1 + 8, py = mob ? 0 : 40;
+  const rr = (px, qy, w, h, r) => { x.beginPath(); if (x.roundRect) x.roundRect(px, qy, w, h, r); else x.rect(px, qy, w, h); x.fill(); };
+  x.globalAlpha = a; x.fillStyle = '#3b4234'; x.font = `700 ${mob ? 19 : 20}px Helvetica,Arial`; x.fillText(R.n.toUpperCase(), cx, y);
+  { const nf = `300 ${mob ? 34 : 32}px Inter,Helvetica,Arial`, uf = '13px Inter,Helvetica,Arial', ns = dv.toFixed(1), un = ' dB promedio'; x.font = nf; const w1 = x.measureText(ns).width; x.font = uf; const w2 = x.measureText(un).width, x0 = cx - (w1 + w2) / 2; x.textAlign = 'left';
+    x.font = nf; x.fillStyle = `rgb(${c})`; x.fillText(ns, x0, y + o1 + (mob ? 2 : 4)); x.font = uf; x.fillStyle = '#8F9984'; x.fillText(un, x0 + w1, y + o1 + (mob ? 2 : 4)); x.textAlign = 'center'; }
+  const bh = 7, by2 = by + 3; x.globalAlpha = a * .16; x.fillStyle = '#5E6655'; rr(cx - bw / 2, by2, bw, bh, bh / 2); x.globalAlpha = a; x.fillStyle = `rgb(${c})`; rr(cx - bw / 2, by2, Math.max(bh, bw * cl((dv - 40) / 55, 0, 1)), bh, bh / 2);
+  if (!mob) { const names = ['Mañana', 'Tarde', 'H. punta'], ks = ['am', 'pm', 'pk'], base = by + 46; R.fr.forEach((v, j) => { const cxp = cx + (j - 1) * 46, hh = v == null ? 3 : Math.max(3, cl((v - 55) / 25, 0, 1) * 24 + 3); x.globalAlpha = a * (v == null ? .16 : (flt === 'all' || flt === ks[j] ? .9 : .35)); x.fillStyle = v == null ? '#5E6655' : `rgb(${c})`; rr(cxp - 9, base - hh, 18, hh, 3); x.globalAlpha = a; x.fillStyle = '#8F9984'; x.font = '10px Inter,Helvetica,Arial'; x.fillText(names[j], cxp, base + 12); }); x.globalAlpha = a; }
+  x.font = '15px Helvetica,Arial'; x.fillStyle = `rgb(${c})`; x.fillText((mob ? '' : 'Predomina: ') + SH[R.dom], cx, by + (mob ? 38 : 34) + py);
+  x.fillText(R.ag == null ? 'sin encuestas' : mob ? AGW(R.ag) : `agrado ${R.ag.toFixed(2)} · ${AGW(R.ag)}`, cx, by + (mob ? 58 : 50) + py); x.fillStyle = '#3b4234';
+  if (!mob) x.fillText(`Personas: ${lvn(R.p)} · Vehículos: ${lvn(R.v)}`, cx, by + 68 + py);
+  x.fillStyle = '#8F9984'; x.font = '13px Inter,Helvetica,Arial'; x.fillText(`${R.nm} mediciones${R.ne ? ' · ' + R.ne + ' encuestas' : ''}`, cx, by + (mob ? 58 : 68) + py + (mob ? 20 : 22));
+  x.restore(); x.globalAlpha = 1;
+}
 let sndT = 0, lastBlip = null, lastFoc = false, lastT = 0, curDt = 0, lastLh = 0, lastHt = '', lastDeep = false, lastTide = true;
 function frame(ms) {
   T = ms / 1000; const dt = Math.min(.05, T - lastT); lastT = T;
@@ -264,11 +295,12 @@ function frame(ms) {
   { const ob = W < 760 && cS >= 0 && !cmpT && stEl[cS].querySelector('.blk.open') ? 1 : 0; mo += (ob - mo) * (1 - Math.exp(-dt * 6)); }
   cA += (cT - cA) * (1 - Math.exp(-dt * 7)); cm += (cmpT - cm) * (1 - Math.exp(-dt * 5)); for (let s = 0; s < NS; s++) kc[s] += ((cT > .02 && (cmpT ? PAIR().includes(s) : s === cS) ? 1 : 0) - kc[s]) * (1 - Math.exp(-dt * 4));
   if (window.SND && SND.active) { sndT += dt; if (sndT > .2) { sndT = 0; SND.update(want !== null ? [[want, 0]] : cmpT && cT > .02 ? [[PAIR()[0], -.7], [PAIR()[1], .7]] : cT > .02 && cS >= 0 ? [[cS, 0]] : NSX.map(s => [s, (s / (NS - 1) * 2 - 1) * .8]), hero ? 0 : 1 - amb); } } // sonido por fuentes (opcional)
-  const tt0 = cl(sy0 / (.9 * vh), 0, 1), eT = want !== null ? 1 : hero ? 0 : tt0 * tt0 * (3 - 2 * tt0);
+  const sm3 = t => t * t * (3 - 2 * t), eRT = want !== null ? 1 : hero ? 0 : sm3(cl(sy0 / (.75 * vh), 0, 1)), eT = want !== null ? 1 : hero ? 0 : sm3(cl((sy0 - 1.05 * vh) / (.8 * vh), 0, 1)); // tres tramos de scroll: marea total → dos ciudades → seis lugares
+  eR += (eRT - eR) * (1 - Math.exp(-dt * 5)); if (Math.abs(eRT - eR) < .002) eR = eRT;
   eS += (eT - eS) * (1 - Math.exp(-dt * 5)); if (Math.abs(eT - eS) < .002) eS = eT;
   { const on = W < 760 && want === null && eS > .85 && cA < .05 && amb < .05 && !hero; if (on !== lastCar) { lastCar = on; car.classList.toggle('on', on); cdots.classList.toggle('on', on); }
     carPos += (carTgt - carPos) * (1 - Math.exp(-dt * 14)); if (!carInit && car.scrollWidth > W * 1.5) { car.scrollLeft = W; carInit = true; } const ci = ((Math.round(carTgt) % NS) + NS) % NS; if (ci !== lastCi) { lastCi = ci; [...cdots.children].forEach((d, i) => d.classList.toggle('on', i === ci)); } }
-  ee = eS * (1 - amb); Aglob = document.body.classList.contains('about') ? .6 : lerp(1, .27, amb);
+  ee = eS * (1 - amb); er = eR * (1 - amb); Aglob = document.body.classList.contains('about') ? .6 : lerp(1, .27, amb);
   const fo = want !== null; if (fo !== lastFoc) { lastFoc = fo; document.body.classList.toggle('foc', fo); }
   const deep = amb > .06 || cA > .03, tide = eS < .5; if (deep !== lastDeep) { lastDeep = deep; document.body.classList.toggle('deep', deep); } if (tide !== lastTide) { lastTide = tide; document.body.classList.toggle('tide', tide); }
   const rm = RM ? .2 : 1, ry = Math.sin(T * rm * .17) * .62 + oy, rx = -.28 + Math.sin(T * rm * .11 + 1) * .14 + ox; // se favorecen las vistas de las bases del tubo cY = Math.cos(ry); sY = Math.sin(ry); cX = Math.cos(rx); sX = Math.sin(rx);
@@ -280,9 +312,9 @@ function frame(ms) {
     if (bk && cp) { const t0 = Math.max(cp.getBoundingClientRect().bottom + 6, 96), b0 = bk.getBoundingClientRect().top - 8, h0 = b0 - t0; if (h0 > 80) { CPR = cl(h0 / 2.6, 36, W >= 760 ? Math.min(W * .26, 240) : Math.min(W * .27, 130)); CPY = (t0 + b0) / 2 - 4; } } } // CMY/CMR (lugares) no se tocan: al volver desde Comparar el modelo ya no pasa por la posición de la comparación
   geoms(); x.globalCompositeOperation = 'source-over'; x.fillStyle = '#DCDDD3'; x.fillRect(0, 0, W, H);
   curDt = dt * rm;
-  for (let s = 0; s < NS; s++) { updMesh(s, ee); lightMesh(s); }
+  for (let s = 0; s < NS; s++) { updMesh(s, ee, er); lightMesh(s); }
   for (let s = 0; s < NS; s++) { const al = G[s].al * Aglob; if (al > .01 && !(W < 760 && ee > .9 && Math.abs(G[s].cx - W / 2) > W * 1.2)) { drawMesh(s, al, evOf(ee, .5)); flows(s, curDt, al); } }
-  calcDots(ee); drawDots();
+  calcDots(ee, er); drawDots();
   x.globalCompositeOperation = 'source-over'; x.textAlign = 'center';
   // anillo de agrado (encuestas) en los lugares acoplados; en la comparación, además A/B, nombre y agrado
   { const mobq = W < 760; G.forEach((g, s) => { const q = kc[s] * cA; if (q < .04) return; const ags = AGS[s], tot = ags.reduce((p, c) => p + c, 0) || 1, r0 = g.R * .72; let a0 = -Math.PI / 2;
@@ -319,8 +351,9 @@ function frame(ms) {
     else { x.fillText('Predomina: ' + SH[DOM[s]] + ' · ' + (mob ? (hasAg(s) ? AGW(agrSec(s)) : 'sin encuestas') : agL(s)), g.cx, y + (mob ? 18 : 24)); x.fillStyle = '#3b4234'; x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, y + (mob ? 35 : 46)); }
     x.restore(); x.globalAlpha = 1;
   });
-  const ht = want !== null ? '' : (tide ? 'Todas las mediciones · toca un punto' : 'Clic en un sector para expandirlo · teclas 1–' + NS); if (ht !== lastHt) { lastHt = ht; hint.textContent = ht; }
-  const dw = document.getElementById('down'), dl = tide ? 'Desplegar sectores ↓' : 'Ver lugar por lugar ↓'; if (dw.textContent !== dl) dw.textContent = dl;
+  { const labR = cl((eR - .6) / .35, 0, 1) * (1 - cl(eS / .4, 0, 1)) * (1 - amb) * (1 - cl(cA * 4, 0, 1)); if (labR > .05 && want === null) { regLab(0, labR); regLab(1, labR); } }
+  const stg = eS > .5 ? 2 : eR > .5 ? 1 : 0, ht = want !== null ? '' : (stg === 0 ? 'Todas las mediciones · toca un punto' : stg === 1 ? 'Dos ciudades · toca un punto' : 'Clic en un sector para expandirlo · teclas 1–' + NS); if (ht !== lastHt) { lastHt = ht; hint.textContent = ht; }
+  const dw = document.getElementById('down'), dl = stg === 0 ? 'Separar las dos ciudades ↓' : stg === 1 ? 'Desplegar sectores ↓' : 'Ver lugar por lugar ↓'; if (dw.textContent !== dl) dw.textContent = dl;
   requestAnimationFrame(frame);
 }
 
@@ -377,7 +410,7 @@ cv.addEventListener('click', e => {
   else if (eS < .5) { if (hov) pf = pf === hov ? null : hov; else pf = null; }
   else if (hs !== null) { const h0 = hov; focus(hs); if (want !== null && h0 && h0.s === hs) { pf = h0; render(); } }
 });
-document.getElementById('down').onclick = () => { const vh = innerHeight; scrollTo({ top: eS < .5 ? vh : document.querySelector('.steps').getBoundingClientRect().top + scrollY - 70, behavior: RM ? 'auto' : 'smooth' }); };
+document.getElementById('down').onclick = () => { const vh = innerHeight; scrollTo({ top: eS < .5 ? (eR < .5 ? vh * .9 : vh * 1.92) : document.querySelector('.steps').getBoundingClientRect().top + scrollY - 70, behavior: RM ? 'auto' : 'smooth' }); };
 panel.addEventListener('click', e => { const b = e.target.closest('.it'); if (b) { const f = F[+b.dataset.i]; pf = pf === f ? null : f; render(); } });
 back.onclick = () => focus(null);
 addEventListener('keydown', e => { if (e.key === 'Escape') focus(null); });
