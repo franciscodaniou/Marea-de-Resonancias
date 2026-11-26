@@ -25,7 +25,7 @@ window.SND = (() => {
     v.V = gain(0); B.V = d => { const o = osc('sawtooth', 56), o2 = osc('sawtooth', 56.7), f = filt('lowpass', 340, .9), m = gain(.8); o.connect(f); o2.connect(f); f.connect(m); m.connect(d); lfo(8.5, .22, m.gain);
       const n = noise(), r = filt('bandpass', 620, .5), rg = gain(.22); n.connect(r); r.connect(rg); rg.connect(d); };
     // H · tumulto de gente murmurando: muchas voces graves superpuestas (pulso glótico suave + formantes anchos + algo de aire), sin vibrato ni agudos, cada una con sílabas y pausas propias → un fondo de habla indistinta
-    v.H = gain(0); B.H = d => { const bus = gain(.85), lp = filt('lowpass', 2100, .3); bus.connect(lp); lp.connect(d);
+    v.H = gain(0); B.H = d => { const bus = gain(.45), lp = filt('lowpass', 2100, .3); bus.connect(lp); lp.connect(d);
       const FM = [[640, 1190, 2300], [330, 1500, 2400], [420, 900, 2200], [520, 1650, 2400], [600, 1300, 2350], [380, 1100, 2300]], nz0 = noise();
       for (let i = 0; i < 8; i++) { const f0 = i % 4 === 0 ? r(150, 200) : r(80, 140), o = osc('sawtooth', f0), amp = gain(.5), fm = FM[i % 6], hp = filt('lowpass', 900 + Math.random() * 500, .4), sum = gain(1);
         lfo(r(.1, .35), f0 * .035, o.frequency);   // deriva lenta de entonación; sin vibrato
@@ -52,7 +52,7 @@ window.SND = (() => {
     let sh = c.map((x, j) => tot ? Math.pow(x / tot, 1.5) * (j === top ? 1.7 : 1) : 0); const sm = sh.reduce((a, b) => a + b, 0) || 1; sh = sh.map(x => x / sm);   // la fuente predominante manda
     return { share: sh, top, db: u.length ? mean(u, f => f.pr) : 0, fv: u.length ? mean(u, f => f.fv) : 1, fp: u.length ? mean(u, f => f.fp) : 1, ag: agrSec(s), n: u.length }; };
   /* eventos: máximo 3 nuevos por ciclo de 120 ms, para que no se apilen voces y el procesador no se sature */
-  let made = 0, nextV = 0; const allow = () => made++ < 3;
+  let made = 0, nextV = 0, nextC = 0; const allow = () => made++ < 3;
 
   function pass(sl, g) { if (!allow()) return; const t = ctx.currentTime, d = r(2, 3.4), e = gain(0), f = filt('lowpass', 520, .8), o = ctx.createOscillator(), n = noise(), nf = filt('bandpass', 700, .6), ng = gain(.35);
     o.type = 'sawtooth'; o.frequency.setValueAtTime(r(60, 72), t); o.frequency.linearRampToValueAtTime(r(95, 120), t + d * .45); o.frequency.linearRampToValueAtTime(r(55, 68), t + d);
@@ -60,9 +60,13 @@ window.SND = (() => {
   function beep(sl, g) { if (!allow()) return; const t = ctx.currentTime, e = gain(0), f = filt('lowpass', 1800, .7), k = Math.random() < .4 ? 2 : 1;
     [420, 525].forEach(fr => { const o = ctx.createOscillator(); o.type = 'square'; o.frequency.value = fr; o.connect(f); o.start(t); o.stop(t + .7); }); f.connect(e); e.connect(sl.out);
     e.gain.setValueAtTime(0, t); for (let i = 0; i < k; i++) { const a = t + i * .32; e.gain.linearRampToValueAtTime(g * .45, a + .02); e.gain.setValueAtTime(g * .45, a + .17); e.gain.linearRampToValueAtTime(0, a + .2); } }
-  function note(sl, g, st) { if (!allow()) return; const t = ctx.currentTime, o = ctx.createOscillator(), e = gain(0), f = 196 * Math.pow(2, PENT[Math.floor(Math.random() * PENT.length)] / 12); o.type = st.ag < 0 ? 'square' : 'triangle'; o.frequency.value = f;
-    if (st.ag < 0) { const o2 = ctx.createOscillator(); o2.type = 'triangle'; o2.frequency.value = f * 1.045; o2.connect(e); o2.start(t); o2.stop(t + 1); }
-    o.connect(e); e.connect(sl.out); e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(g * .4, t + .015); e.gain.exponentialRampToValueAtTime(.0008, t + .9); o.start(t); o.stop(t + 1); }
+  function note(sl, g, st, off = 0, fz = 0, dec = .9, free = false) { if (!free && !allow()) return; const t = ctx.currentTime + off, o = ctx.createOscillator(), e = gain(0), f = fz || 196 * Math.pow(2, PENT[Math.floor(Math.random() * PENT.length)] / 12); o.type = st.ag < 0 ? 'square' : 'triangle'; o.frequency.value = f;
+    if (st.ag < 0) { const o2 = ctx.createOscillator(); o2.type = 'triangle'; o2.frequency.value = f * 1.045; o2.connect(e); o2.start(t); o2.stop(t + dec + .1); }
+    o.connect(e); e.connect(sl.out); e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(g * .4, t + .012); e.gain.exponentialRampToValueAtTime(.0008, t + dec); o.start(t); o.stop(t + dec + .1); }
+  /* caja registradora: ráfaga de teclas (2–5 golpes secos y rápidos) + «ching» de dos notas con cola larga; luego silencio */
+  function register(sl, g, st) { if (!allow()) return; const n = 2 + Math.floor(Math.random() * 4), base = 196 * Math.pow(2, PENT[3 + Math.floor(Math.random() * 3)] / 12); let t = 0;
+    for (let i = 0; i < n; i++) { note(sl, g * .55, st, t, base * (i % 2 ? 1.5 : 1), .13, true); t += r(.07, .12); }
+    t += r(.08, .16); note(sl, g * 1.05, st, t, base * 4, 1.1, true); note(sl, g * .8, st, t + .1, base * 6, 1.4, true); }
   function vowel(sl, g) { if (!allow()) return; const t = ctx.currentTime, d = Math.random() < .25 ? r(.7, 1.2) : r(.22, .6), f0 = r(80, 165), o = ctx.createOscillator(), lp = filt('lowpass', 1100, .4), e = gain(0), F = [[640, 1190], [420, 900], [520, 1650], [380, 1100]][Math.floor(Math.random() * 4)];
     o.type = 'sawtooth'; o.frequency.setValueAtTime(f0, t); o.frequency.linearRampToValueAtTime(f0 * r(.92, 1.06), t + d); o.connect(lp);
     [[F[0], 1.4, 1], [F[1], 1.8, .6]].forEach(([fr, q, m]) => { const bp = filt('bandpass', fr, q), bg = gain(m); lp.connect(bp); bp.connect(bg); bg.connect(e); });
@@ -70,12 +74,14 @@ window.SND = (() => {
   function horn(sl, g, big) { if (!allow()) return; const t = ctx.currentTime, e = gain(0), f = filt('lowpass', big ? 520 : 760, .7), base = big ? 87.3 : 155, a = big ? .6 : .35, hold = big ? 2.2 : 1.1, rel = big ? 2.4 : 1.2;
     const os = [osc('sawtooth', base), osc('sawtooth', base * 1.5), osc('sine', base / 2)]; os.forEach(o => { o.connect(f); }); const v = lfo(5, base * .006, os[0].frequency); f.connect(e); e.connect(sl.out);
     e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(g, t + a); e.gain.setValueAtTime(g, t + a + hold); e.gain.linearRampToValueAtTime(0, t + a + hold + rel); const end = t + a + hold + rel + .1; os.forEach(o => o.stop(end)); v.stop(end); }
-  function tick() { if (!active) return; made = 0; const dt = .12; slots.forEach(sl => { if (!sl.st || sl.gain < .02) return; const st = sl.st, sh = st.share, lv = sl.gain, P = j => (st.top === j ? 1.5 : 1);
+  function tick() { if (!active) return; made = 0; const dt = .12, now0 = ctx.currentTime; slots.forEach(sl => { if (!sl.st || sl.gain < .02) return; const st = sl.st, sh = st.share, lv = sl.gain, P = j => (st.top === j ? 1.5 : 1);
     if (sh[0] > .05 && Math.random() < dt * (.05 + .22 * (st.fv - 1)) * (.5 + 2 * sh[0])) pass(sl, .55 * lv * (.4 + sh[0]));
     if (sh[0] > .1 && Math.random() < dt * (.03 + .05 * (st.fv - 1)) * (.4 + 2 * sh[0])) beep(sl, lv * (.5 + sh[0]));
-    if (sh[2] > .05 && Math.random() < dt * 1.6 * (.3 + 1.5 * sh[2])) note(sl, lv * (.3 + sh[2]), st);
     if (sh[3] > .04 && Math.random() < dt * (.09 + .12 * sh[3]) * P(3)) horn(sl, lv * (.4 + .9 * sh[3]), Math.random() < .7);
     if (sh[3] > .25 && Math.random() < dt * .04) horn(sl, lv * .5, false); });
+    if (now0 >= nextC) { let W = 0; const ws = slots.map(q => { const w = q.st && q.gain > .02 ? q.st.share[2] * q.gain : 0; W += w; return w; });
+      if (W > .015) { let x = Math.random() * W, k = 0; while (k < ws.length - 1 && x > ws[k]) { x -= ws[k]; k++; } const q = slots[k]; register(q, q.gain * (.3 + q.st.share[2]), q.st); }
+      nextC = now0 + r(1.6, 4.2) / (.6 + Math.min(1.2, W * 2)); }
     /* vocales graves: un solo flujo global con intervalos irregulares (exponenciales) y lugar elegido al azar según su peso humano → voces sueltas, asíncronas, sin ritmo de coro */
     const now = ctx.currentTime; if (now >= nextV) { let W = 0; const ws = slots.map(q => { const w = q.st && q.gain > .02 ? q.st.share[1] * q.gain : 0; W += w; return w; });
       if (W > .02) { let x = Math.random() * W, k = 0; while (k < ws.length - 1 && x > ws[k]) { x -= ws[k]; k++; } const q = slots[k], sh1 = q.st.share[1]; vowel(q, q.gain * (.6 + 1.3 * sh1)); }
