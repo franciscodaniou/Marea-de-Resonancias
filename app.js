@@ -19,7 +19,7 @@ const E = ENCUESTAS;
 const rOf = s => s < 4 ? 0 : 1, rI = s => s < 4 ? s : s - 4, rN = s => s < 4 ? 4 : 2; // fase intermedia: Valparaíso (4 lugares) y Buenos Aires (2)
 
 let CMY0 = 0, CMR0 = 100, mo = 0, LW = 200, CMX = 0, CMY = 0, CMR = 100, cA = 0, cm = 0, CPX = [0, 0], CPY = 0, CPR = 80; const kc = Array(NS).fill(0); // comparativa: la malla acompaña al texto
-let CX0 = 0, CY0 = 0, S0 = 100, eS = 0, eR = 0, er = 0, RgR = 100, RC = [[0, 0], [0, 0]], amb = 0, ee = 0, Aglob = 1; // centro y escala de la marea total; progreso de escena
+let CX0 = 0, CY0 = 0, S0 = 100, eS = 0, eR = 0, er = 0, RgR = 100, KR = .64, RC = [[0, 0], [0, 0]], amb = 0, ee = 0, Aglob = 1; // centro y escala de la marea total; progreso de escena
 const FILTERS = { all: [0, 1e4], am: [0, 756], pm: [757, 1049], pk: [1050, 1439] };
 let flt = 'all', want = null, foc = null, k = 0, pf = null, hov = null, hs = null, W, H, dpr, T = 0, Rb, Rf, FX, FY, ctr = [], G = [], pkey = '';
 const cv = document.getElementById('c'), x = cv.getContext('2d'), tip = document.getElementById('tip'), panel = document.getElementById('panel'), back = document.getElementById('back');
@@ -88,8 +88,8 @@ function layout() { // las figuras se reacomodan en sincronía con el pill/leyen
     FX = fl + fw / 2; FY = top0 + 8 + Rf * 1.08 + (gh - 84 - 2.2 * Rf) / 2;
   }
   if (W >= 1100) S0 = Math.min(S0, H * .245); // proporción figura/alto como en escritorio estándar
-  { const LBr = mob ? 132 : 215, r = Math.min(gw / 2 / 2.05, (gh - LBr) / 2.2); RgR = Math.max(50, Math.min(r, S0 * 1.35)); const rcy = top0 + 8 + RgR * 1.08 + Math.max(0, (gh - LBr - 2.2 * RgR) / 2); RC = [[x0 + gw * .25, rcy], [x0 + gw * .75, rcy]]; } // fase intermedia: dos ciudades lado a lado
-  FP = Math.max(560, Math.max(S0, Rb * .48, Rf * .48, RgR * .48) * 3.3); // la focal crece con la escala: en pantallas grandes la malla ya no se sale de cuadro
+  { KR = mob ? .58 : W < 1100 ? .5 : .6; const LBr = mob ? 132 : 215, r = Math.min(gw / 2 / 2.05, (gh - LBr) / 2.2); RgR = Math.max(50, Math.min(r, S0 * 1.35)); const rcy = top0 + 8 + RgR * 1.08 + Math.max(0, (gh - LBr - 2.2 * RgR) / 2); RC = [[x0 + gw * .25, rcy], [x0 + gw * .75, rcy]]; } // fase intermedia: dos ciudades lado a lado
+  FP = Math.max(560, Math.max(S0, Rb * .48, Rf * .48, RgR * KR) * 3.3); // la focal crece con la escala: en pantallas grandes la malla ya no se sale de cuadro
 }
 
 const PAIR = () => (window.MAREA && MAREA.pair) || [0, 1];
@@ -151,7 +151,7 @@ const rad0 = (th, u, tt, off) => .30 + .85 * pn(Math.cos(th) * 1.3 + off, Math.s
 const evOf = (ee0, h) => ee0 <= 0 ? 0 : ee0 >= 1 ? 1 : cl(ee0 * 1.6 - .6 * h, 0, 1); // el paso de marea total a sectores se disuelve por zonas
 
 function updMesh(s, ee0, er0) {
-  const m = MS[s], g = G[s], ag = cl(1 - (agrSec(s) + 1) / 3, 0, 1), rm = RM ? .2 : 1, ttS = T * rm * (.16 + .5 * ag), ttB = T * rm * .3, S1 = g.R * .48, SR = RgR * .48, rg = rOf(s), nR = rN(s); m.ttS = ttS;
+  const m = MS[s], g = G[s], ag = cl(1 - (agrSec(s) + 1) / 3, 0, 1), rm = RM ? .2 : 1, ttS = T * rm * (.16 + .5 * ag), ttB = T * rm * .3, S1 = g.R * .48, SR = RgR * KR, rg = rOf(s), nR = rN(s); m.ttS = ttS;
   for (let i = 0; i <= NZ; i++) {
     const u = i / NZ, zz = (u - .5) * LZ;
     for (let j = 0; j <= NA; j++) {
@@ -204,7 +204,7 @@ function calcDots(ee0, er0) {
     const g = G[f.s], al = g.al * Aglob; if (al < .05 || !on(f)) return;
     const ev = evOf(ee0, f.hf), er = evOf(er0, f.hf), zz = (f.u - .5) * LZ, ag = cl(1 - (agrSec(f.s) + 1) / 3, 0, 1), rm = RM ? .2 : 1, rg = rOf(f.s); let bx = 0, by = 0, bz = 0, rx = 0, ry = 0, rz = 0, qx = 0, qy = 0, qz = 0;
     if (ev < 1 && er < 1) { const th = f.fg * TAU, r = Math.max(.16, rad0(th, f.u, T * rm * .3, 11.3) + f.bAB); rot(r * Math.cos(th), r * Math.sin(th), zz, S0); bx = RX_; by = RY_; bz = RZ_; }
-    if (ev < 1 && er > 0) { const th = f.fgR * TAU, r = Math.max(.16, rad0(th, f.u, T * rm * .3, 11.3 + rg * 5.9) + f.bAR); rot(r * Math.cos(th), r * Math.sin(th), zz, RgR * .48); rx = RX_; ry = RY_; rz = RZ_; }
+    if (ev < 1 && er > 0) { const th = f.fgR * TAU, r = Math.max(.16, rad0(th, f.u, T * rm * .3, 11.3 + rg * 5.9) + f.bAR); rot(r * Math.cos(th), r * Math.sin(th), zz, RgR * KR); rx = RX_; ry = RY_; rz = RZ_; }
     if (ev > 0) { const th = f.fl * TAU, r = Math.max(.16, rad0(th, f.u, T * rm * (.16 + .5 * ag), f.s * 3.7) + f.bAS); rot(r * Math.cos(th), r * Math.sin(th), zz, g.R * .48); qx = RX_; qy = RY_; qz = RZ_; }
     const px = lerp(bx, rx, er), py = lerp(by, ry, er), pz = lerp(bz, rz, er), cx1 = lerp(CX0, RC[rg][0], er), cy1 = lerp(CY0, RC[rg][1], er), kf = FP / (FP + lerp(pz, qz, ev));
     DOTS.push({ f, x: lerp(cx1, g.cx, ev) + lerp(px, qx, ev) * kf, y: lerp(cy1, g.cy, ev) + lerp(py, qy, ev) * kf, al });
@@ -264,7 +264,7 @@ REG.forEach(R => { const q = uniq(F.filter(f => R.ss.includes(f.s) && !f.ap && !
   const es = E.filter(e => R.ss.includes(e[0])); R.ag = es.length ? mean(es, e => e[1]) : null; R.ne = es.length;
   R.p = mean(q.filter(f => f.fp != null), f => f.fp) || 1; R.v = mean(q.filter(f => f.fv != null), f => f.fv) || 1; });
 function regLab(i, a) { // bajada de cada ciudad: mismos datos y composición que la de cada lugar, promediando sus mediciones
-  const R = REG[i], cx = RC[i][0], mob = W < 760, c = rgbOf(COL[R.dom]), y = RC[i][1] + RgR * 1.12 + (mob ? 26 : 22), cellW = W * .5 - (mob ? 14 : 38), sc = mob ? Math.min(1, cellW / 176) : Math.min(1, cellW / 250);
+  const R = REG[i], cx = RC[i][0], mob = W < 760, c = rgbOf(COL[R.dom]), y = RC[i][1] + RgR * (mob ? 1.12 : 1.22) + (mob ? 26 : 22), cellW = W * .5 - (mob ? 14 : 38), sc = mob ? Math.min(1, cellW / 176) : Math.min(1, cellW / 250);
   x.save(); x.textAlign = 'center'; if (sc < 1) { x.translate(cx, y); x.scale(sc, sc); x.translate(-cx, -y); }
   const nd = R.db == null, dv = nd ? 0 : R.db * cl(a * 1.15, 0, 1), o1 = 36, bw = Math.min(mob ? 190 : 150, cellW / sc - 12), by = y + o1 + 8, py = mob ? 0 : 40;
   const rr = (px, qy, w, h, r) => { x.beginPath(); if (x.roundRect) x.roundRect(px, qy, w, h, r); else x.rect(px, qy, w, h); x.fill(); };
