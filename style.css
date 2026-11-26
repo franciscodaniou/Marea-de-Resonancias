@@ -1045,3 +1045,6 @@ body.about .tiles.c5>.tile:nth-child(n+4){grid-column:span 3}
 @media(max-width:1000px){body.about .tiles.c5{grid-template-columns:repeat(2,minmax(0,1fr))}body.about .tiles.c5>.tile,body.about .tiles.c5>.tile:nth-child(n+4){grid-column:auto}body.about .tiles.c5>.tile:last-child{grid-column:1/-1}}
 @media(max-width:760px){body.about .tiles.c5{grid-template-columns:1fr}body.about .tiles.c5>.tile:last-child{grid-column:auto}}
 body.about .kg{white-space:nowrap;display:inline-block;margin:3px 0}
+
+/* v153 · about: fondo algo más desenfocado para leer las bajadas */
+body.about #c{filter:blur(6px)}
