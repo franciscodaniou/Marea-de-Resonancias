@@ -156,7 +156,7 @@ void main(){
 
   function frame() {
     try {
-      const W = innerWidth, H = innerHeight, dpr = Math.min(window.devicePixelRatio || 1, W < 760 ? 1.5 : 2), now = performance.now() / 1000, dt = Math.min(.05, now - lt); lt = now, hero = document.getElementById('hero'), ho = document.body.classList.contains('about') ? .72 : hero ? eo(hero) : 0; // about: el fondo se desenfoca igual que tras el título del Barrio Puerto
+      const W = innerWidth, H = innerHeight, dpr = Math.min(window.devicePixelRatio || 1, W < 760 ? 1.5 : 2), now = performance.now() / 1000, dt = Math.min(.05, now - lt); lt = now, hero = document.getElementById('hero'), ho = document.body.classList.contains('about') ? .55 : hero ? eo(hero) : 0; // about: el fondo se desenfoca igual que tras el título del Barrio Puerto
       if (gc.width !== Math.round(W * dpr) || gc.height !== Math.round(H * dpr)) { gc.width = Math.round(W * dpr); gc.height = Math.round(H * dpr); gl.viewport(0, 0, gc.width, gc.height); }
       const R = new Float32Array(64), Rr = new Float32Array(16), E = new Float32Array(16); let n = 0;
       SEL.forEach(s => document.querySelectorAll(s).forEach(el => {
