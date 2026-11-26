@@ -1412,3 +1412,14 @@ body #bar .morph .lbl>span>b{font-weight:700}
 body.about .brow{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;margin-left:auto;margin-right:auto}
 body.about .brow .btn{display:flex;align-items:center;justify-content:center;text-align:center;white-space:nowrap;margin:0;box-sizing:border-box}
 @media(max-width:760px){body.about .brow{grid-template-columns:1fr;width:100%}body.about .brow .btn{white-space:normal;width:100%}}
+
+/* v204 · móvil: chevron de Más/Menos centrado ópticamente en el círculo */
+@media(max-width:759px){
+ .cfrow .bmore{display:flex!important;align-items:center;justify-content:center}
+ .cfrow .bmore i{display:block;flex:0 0 auto;margin:0;transform:rotate(45deg) translate(-.9px,-.9px)}
+ .cfrow .bmore.on i{transform:rotate(-135deg) translate(-.9px,-.9px)}
+}
+@media(max-width:759px){
+ .cfrow .bmore i{transform:translate(-.35px,-1px) rotate(45deg) translate(-.9px,-.9px)}
+ .cfrow .bmore.on i{transform:translate(-.35px,-.6px) rotate(-135deg) translate(-.9px,-.9px)}
+}
