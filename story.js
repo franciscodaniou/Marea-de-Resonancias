@@ -24,11 +24,11 @@
   const card = d => `<section class="step" data-s="${d.s}"><div class="stk"><div class="blk"><div class="bh"><h3>${SECT[d.s]}</h3><div class="sub">${SUB[d.s]} · ${d.n} ${d.n === 1 ? "medición" : "mediciones"}</div></div><button class="cmin" type="button" aria-expanded="false">Ver detalle ▾</button><article class="card sc">
     <div class="big" style="color:${d.hex}">${d.db == null && d.ref ? `<span data-big data-n="${d.ref.pr.toFixed(1)}" data-dec="1">${d.ref.pr.toFixed(1)}</span>` : d.db == null ? '<span class="nd">sin dB</span>' : `<span data-big data-n="${d.db.toFixed(1)}" data-dec="1">${d.db.toFixed(1)}</span>`}<small>${d.db == null && d.ref ? 'dB · modelo APrA 2018, no medido en terreno' : d.db == null ? 'sin medir · relieve por intensidad percibida' : 'dB promedio'}</small></div>
     ${d.db == null && !d.ref ? '' : `<div class="dbs"><div class="dtr"><i data-w="${dbPos(d.db == null ? d.ref.pr : d.db).toFixed(1)}" style="background:${d.hex}"></i></div><small>≈ ${DBW(d.db == null ? d.ref.pr : d.db)}</small></div>`}
-    <div class="chips"><span style="color:${d.hex}">● ${SH[DOM[d.s]]}</span>${d.ag == null ? '<span>sin encuestas</span>' : `<span style="color:rgb(${agr(d.ag)})">agrado percibido <i style="font-style:normal" data-n="${d.ag.toFixed(2)}" data-dec="2">${d.ag.toFixed(2)}</i> · ${AGW(d.ag)}</span>`}</div>
+    <div class="chips"><span style="color:${d.hex}">● Predomina: ${SH[DOM[d.s]]}</span>${d.ag == null ? '<span>sin encuestas</span>' : `<span style="color:rgb(${agr(d.ag)})">Agrado: ${AGW(d.ag)}</span>`}</div>
     <div class="fnow"><b class="fn"></b><span class="fh"></span><span class="fv"></span></div>
     <div class="ag${d.ne ? '' : ' na'}"><div class="agb" data-reveal>${d.ags.map((c, k) => c ? `<span style="flex:${c};background:${AGC[k]}" title="${AGN[k]}: ${c}">${c}</span>` : '').join('')}</div>${agCap(d.ags, d.ne)}<q style="color:${qCol(d.s)}">${QUOTE[d.s]}</q></div>
     <div class="fact">${d.mx == null && d.ref ? `<span class="bnd">Banda modelada de día ${d.ref.mn}–${d.ref.mx} dB</span>` : factLine(d.mx, d.fp, d.fv)}</div>${fiBlock(FI[d.s])}
-    <div class="pf"><h5>Qué tan fuerte suena según la hora del día (dB promedio)</h5>${['Mañana', 'Tarde', 'Hora punta'].map((n, i) => bar(n, d.fr[i], false)).join('')}</div></article></div></div></section>`;
+    <div class="pf"><h5>Cuánto ruido hay según la hora del día (promedio, en dB)</h5>${['Mañana', 'Tarde', 'Hora punta'].map((n, i) => bar(n, d.fr[i], false)).join('')}</div></article></div></div></section>`;
 
   /* ---- motor de transformación: cada vista es un mapa id → forma; los ids compartidos se interpolan ---- */
   const INK = '#5E6655', MUT = '#8F9984', GR = '#C4C7B9';

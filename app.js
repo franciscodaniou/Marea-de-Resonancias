@@ -37,7 +37,7 @@ const agr = a => { const t = cl((a + 1) / 3, 0, 1); return t < .5 ? mix([210, 10
 const hex = (h, a) => { const n = parseInt(h.slice(1), 16); return `rgba(${n >> 16},${n >> 8 & 255},${n & 255},${a})`; };
 const mean = (a, f) => a.length ? a.reduce((s, v) => s + f(v), 0) / a.length : 0;
 const agrSec = s => mean(E.filter(e => e[0] === s), e => e[1]);
-const AGW = v => v < -.5 ? 'incomoda' : v < .5 ? 'da igual' : v < 1.5 ? 'gusta un poco' : 'gusta', agL2 = s => hasAg(s) ? 'agrado ' + agrSec(s).toFixed(2) + ' · ' + AGW(agrSec(s)) : 'sin encuestas', agL = s => hasAg(s) ? 'agrado ' + agrSec(s).toFixed(2) : 'sin encuestas', dbL = s => dbAvg(s) == null ? 'sin dB medido' : dbAvg(s).toFixed(1) + ' dB promedio';
+const AGW = v => v < -.5 ? 'incomoda' : v < .5 ? 'da igual' : v < 1.5 ? 'gusta un poco' : 'gusta', agL2 = s => hasAg(s) ? 'agrado: ' + AGW(agrSec(s)) : 'sin encuestas', agL = s => hasAg(s) ? 'agrado: ' + AGW(agrSec(s)) : 'sin encuestas', dbL = s => dbAvg(s) == null ? 'sin dB medido' : dbAvg(s).toFixed(1) + ' dB promedio';
 let srcF = null; // filtro por fuente (se activa tocando un color de la leyenda)
 let nightOn = false; const on = f => (f.night ? nightOn && f.s >= 4 : nightOn && f.s >= 4 ? false : f.ap || f.m >= FILTERS[flt][0] && f.m <= FILTERS[flt][1]) && (!srcF || f.c === srcF), FM = F.filter(f => !f.ap), FB = FM.filter(f => f.s < 4), tmx = f => f.ap ? (f.night ? 'noche · modelo' : 'día · modelo') : f.t, apOnly = s => { const q = real(F.filter(f => f.s === s)); return q.length > 0 && q.every(f => f.ap); };
 const RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; // movimiento reducido
@@ -58,11 +58,11 @@ const cen = (g, f) => { const a = angM(f.m); return [g.cx + Math.cos(a) * g.R * 
 const bar = (lab, v, hi, lo = 45, hi2 = 90) => `<div${hi ? ' class="hi"' : ''}>${lab}<span class="tr"><i style="width:${v == null ? 0 : cl((v - lo) / (hi2 - lo), 0, 1) * 100}%"${v == null ? '' : ` data-w="${(cl((v - lo) / (hi2 - lo), 0, 1) * 100).toFixed(1)}"`}></i></span><b${v == null ? '' : ` class="u" data-n="${v.toFixed(0)}"`}>${v == null ? '–' : v.toFixed(0)}</b></div>`;
 function horasHtml(s) { // patrón horario del sector (dB promedio, mediciones únicas)
   const ss = Array.isArray(s) ? s : [s], mine = uniq(F.filter(f => ss.includes(f.s))), fr = [['Mañana', 'am'], ['Tarde', 'pm'], ['Hora punta', 'pk']].map(([n, k]) => { const q = real(mine.filter(f => !f.ap && f.m >= FILTERS[k][0] && f.m <= FILTERS[k][1])); return bar(n, q.length ? mean(q, f => f.pr) : null, false); }).join('');
-  return `<div class="pf"><h5>Qué tan fuerte suena según la hora del día (dB promedio)</h5>${fr}${real(mine).length ? '' : '<small class="nd">Sin dB medido en este lugar: el relieve de la malla usa la intensidad percibida.</small>'}</div>`;
+  return `<div class="pf"><h5>Cuánto ruido hay según la hora del día (promedio, en dB)</h5>${fr}${real(mine).length ? '' : '<small class="nd">Sin dB medido en este lugar: el relieve de la malla usa la intensidad percibida.</small>'}</div>`;
 }
 function compHtml(s) { return `<div class="pf cmpf"><h5>Comparación entre sectores (dB promedio)</h5>${SECT.map((n, i) => bar(n, dbAvg(i), i === s)).join('')}</div>`; }
 function flowHtml(s) { const [p, v] = lvl(s); return flowH(p, v); }
-function flowH(p, v) { return `<div class="fl"><div>Personas<span class="tr"><i style="width:${p / 3 * 100}%" data-w="${(p / 3 * 100).toFixed(1)}"></i></span><b>${lvn(p)}</b></div><div class="v">Vehículos<span class="tr"><i style="width:${v / 3 * 100}%" data-w="${(v / 3 * 100).toFixed(1)}"></i></span><b>${lvn(v)}</b></div></div>`; }
+function flowH(p, v) { return `<div class="fl"><div>Gente a pie<span class="tr"><i style="width:${p / 3 * 100}%" data-w="${(p / 3 * 100).toFixed(1)}"></i></span><b>${lvn(p)}</b></div><div class="v">Vehículos<span class="tr"><i style="width:${v / 3 * 100}%" data-w="${(v / 3 * 100).toFixed(1)}"></i></span><b>${lvn(v)}</b></div></div>`; }
 
 function panelGeo() { // medidas reales de la tarjeta de «Cada lugar, a cada hora» (ya equilibradas por fitBlk), para replicarlas en el sector expandido
   if (W <= 1100) return null; const blk = document.querySelector('#sref .step .blk'), card = blk && blk.querySelector('.card'); if (!blk || !card) return null;
@@ -231,9 +231,9 @@ const CRGBA = CK.map(q => rgbOf(COL[q]));
 const fbk = fcard;
 const qCol = s => 'rgb(' + dark(rgbOf(COL[DOM[s]]), .32).join(',') + ')'; // la cita toma el color de la fuente que predomina, oscurecido para leerse
 const fiBlock = o => o ? `<div class="fi2">${o.map(([k, t]) => `<div><b>${k}</b><span>${t}</span></div>`).join('')}</div>` : '';
-const AGP = ['les incomoda', 'les da igual', 'les gusta un poco', 'les gusta']; // texto llano del agrado: sin escalas ni ceros
-const agCap = (ags, n) => `<small>${n === 1 ? '1 persona respondió' : n + ' personas respondieron'} (agrado de −1 a 2): ${ags.map((c, k) => c ? `<b style="color:${AGC[k]}">${c}</b> ${AGP[k]}` : '').filter(Boolean).join(' · ')}</small>`;
-const factLine = (peak, p, v, extra = '') => `${peak == null ? 'Sin dB medido' : `Pico más alto: <b><span data-n="${peak}">${peak}</span> dB</b>${extra}`} · Peatones: flujo <b>${lvn(p).toLowerCase()}</b> (${p.toFixed(1)} de 3) · Vehículos: flujo <b>${lvn(v).toLowerCase()}</b> (${v.toFixed(1)} de 3)`;
+const AGP = ['se sienten incómodas', 'sienten que da igual', 'les gusta un poco', 'les gusta']; // texto llano del agrado: sin escalas ni ceros
+const agCap = (ags, n) => { const ps = ags.map((c, k) => c ? `<b style="color:${AGC[k]}">${c}</b> ${AGP[k]}` : '').filter(Boolean), t = ps.length > 1 ? ps.slice(0, -1).join(', ') + ' y ' + ps[ps.length - 1] : ps[0]; return `<small>De ${n} ${n === 1 ? 'persona encuestada' : 'personas encuestadas'}: ${t}.</small>`; };
+const factLine = (peak, p, v, extra = '') => peak == null ? 'Sin dB medido en este lugar' : `Lo más fuerte que se midió: <b><span data-n="${peak}">${peak}</span> dB</b>${extra}`;
 
 function bead(px, py, r, rgb, a, h) {
   const c = rgb.join(','), lt = lite(rgb, .55).join(','), dk = dark(rgb, .4).join(','), mob = W < 760;
@@ -297,7 +297,7 @@ function regLab(i, a) { // bajada de cada ciudad: mismos datos y composición qu
   const bh = 7, by2 = by + 3; x.globalAlpha = a * .16; x.fillStyle = '#5E6655'; rr(cx - bw / 2, by2, bw, bh, bh / 2); x.globalAlpha = a; x.fillStyle = `rgb(${c})`; rr(cx - bw / 2, by2, Math.max(bh, bw * cl((dv - 40) / 55, 0, 1)), bh, bh / 2);
   if (!mob) { const names = ['Mañana', 'Tarde', 'H. punta'], ks = ['am', 'pm', 'pk'], base = by + 46; rfr.forEach((v, j) => { const cxp = cx + (j - 1) * 46, hh = v == null ? 3 : Math.max(3, cl((v - 55) / 25, 0, 1) * 24 + 3); x.globalAlpha = a * (v == null ? .16 : (flt === 'all' || flt === ks[j] ? .9 : .35)); x.fillStyle = v == null ? '#5E6655' : `rgb(${c})`; rr(cxp - 9, base - hh, 18, hh, 3); x.globalAlpha = a; x.fillStyle = '#8F9984'; x.font = '10px Inter,Helvetica,Arial'; x.fillText(names[j], cxp, base + 12); }); x.globalAlpha = a; }
   x.font = '15px Helvetica,Arial'; x.fillStyle = `rgb(${c})`; x.fillText((mob ? '' : 'Predomina: ') + SH[R.dom], cx, by + (mob ? 38 : 34) + py);
-  x.fillText(R.ag == null ? 'sin encuestas' : mob ? AGW(R.ag) : `agrado ${R.ag.toFixed(2)} · ${AGW(R.ag)}`, cx, by + (mob ? 58 : 50) + py); x.fillStyle = '#3b4234';
+  x.fillText(R.ag == null ? 'sin encuestas' : mob ? AGW(R.ag) : `agrado: ${AGW(R.ag)}`, cx, by + (mob ? 58 : 50) + py); x.fillStyle = '#3b4234';
   if (!mob) x.fillText(`Personas: ${lvn(R.p)} · Vehículos: ${lvn(R.v)}`, cx, by + 68 + py);
   x.fillStyle = '#8F9984'; x.font = '13px Inter,Helvetica,Arial'; x.fillText(rz ? `${rz.n} de ${R.nm} mediciones con este filtro` : `${R.nm} mediciones${R.ne ? ' · ' + R.ne + ' encuestas' : ''}`, cx, by + (mob ? 58 : 68) + py + (mob ? 20 : 22));
   x.restore(); x.globalAlpha = 1;
@@ -305,7 +305,7 @@ function regLab(i, a) { // bajada de cada ciudad: mismos datos y composición qu
 function regBig(i, a) { // ciudad aislada: mismo rótulo que un sector expandido (nombre + predominio + flujos); el detalle va en la tarjeta
   const R = REG[i], g = GR[i], mob = W < 760, c = rgbOf(COL[R.dom]), y = g.cy + Rf * 1.12 + (mob ? 24 : 32);
   x.save(); x.textAlign = 'center'; x.globalAlpha = a; x.fillStyle = '#3b4234'; x.font = `700 ${mob ? 20 : 28}px Helvetica,Arial`; x.fillText(R.n.toUpperCase(), g.cx, y);
-  x.font = `${mob ? 13 : 16}px Helvetica,Arial`; x.fillStyle = `rgb(${c})`; x.fillText('Predomina: ' + SH[R.dom] + ' · ' + (R.ag == null ? 'sin encuestas' : mob ? AGW(R.ag) : 'agrado ' + R.ag.toFixed(2)), g.cx, y + (mob ? 18 : 24));
+  x.font = `${mob ? 13 : 16}px Helvetica,Arial`; x.fillStyle = `rgb(${c})`; x.fillText('Predomina: ' + SH[R.dom] + ' · ' + (R.ag == null ? 'sin encuestas' : mob ? AGW(R.ag) : 'agrado: ' + AGW(R.ag)), g.cx, y + (mob ? 18 : 24));
   x.fillStyle = '#3b4234'; x.fillText(`Personas: ${lvn(R.p)} · Vehículos: ${lvn(R.v)}`, g.cx, y + (mob ? 35 : 46)); x.restore(); x.globalAlpha = 1;
 }
 let sndT = 0, lastBlip = null, lastFoc = false, lastT = 0, curDt = 0, lastLh = 0, lastHt = '', lastDeep = false, lastTide = true;
@@ -386,6 +386,7 @@ function frame(ms) {
   requestAnimationFrame(frame);
 }
 
+const SND = { V: 'vehicular', H: 'humano', C: 'comercial', M: 'portuario', N: 'natural' }, LOW = { V: 'lo vehicular', H: 'lo humano', C: 'lo comercial', M: 'lo portuario', N: 'lo natural' };
 const FBN = { am: ['Mañana', '09:40–12:36'], pm: ['Tarde', '12:37–17:29'], pk: ['Hora punta', '17:30–18:50'] };
 const fsel = (ss, ff, sf) => uniq(F.filter(f => ss.includes(f.s) && !f.ap && !f.night && (ff === 'all' || f.m >= FILTERS[ff][0] && f.m <= FILTERS[ff][1]) && (!sf || f.c === sf)));
 const fst = a => { const r = real(a); return { n: a.length, db: r.length ? mean(r, f => f.pr) : null }; };
@@ -394,20 +395,20 @@ const fdb = s => fact() ? fst(fsel([s], flt, srcF)).db : dbAvg(s); // dB promedi
 const qCol2 = c => 'rgb(' + dark(rgbOf(COL[c]), .32).join(',') + ')';
 function fcard(v) { // bloque dentro de la tarjeta: explica en palabras qué cambia con el filtro activo (hora y/o fuente)
   if (!fact()) return '';
-  const sc = v.k === 'city' ? REG[v.i].ss : [v.i], nm = v.k === 'city' ? REG[v.i].n : SECT[v.i], tt = [flt !== 'all' ? `${FBN[flt][0].toLowerCase()} (${FBN[flt][1]} h)` : '', srcF ? `sonido ${SH[srcF].toLowerCase()}` : ''].filter(Boolean).join(' · ');
+  const sc = v.k === 'city' ? REG[v.i].ss : [v.i], nm = v.k === 'city' ? REG[v.i].n : SECT[v.i], tt = [flt !== 'all' ? `${FBN[flt][0].toLowerCase()} (${FBN[flt][1]} h)` : '', srcF ? `sonido ${SND[srcF]}` : ''].filter(Boolean).join(' · ');
   const sub = fsel(sc, flt, srcF), base = fsel(sc, 'all', null), A = fst(sub), B = fst(base), rows = [], pl = n => n === 1 ? 'medición' : 'mediciones';
   if (!sub.length) rows.push(['En breve', `Con este filtro no hay mediciones en ${nm}.`]);
   else {
     const d = A.db != null && B.db != null ? A.db - B.db : null, w = d == null ? '' : d >= 3 ? 'bastante más fuerte' : d >= 1 ? 'algo más fuerte' : d <= -3 ? 'bastante más tranquilo' : d <= -1 ? 'algo más tranquilo' : 'casi igual';
-    rows.push(['En breve', A.db == null ? `Hay ${A.n} ${pl(A.n)} con este filtro, pero ninguna con dB medido.` : d == null ? `${A.db.toFixed(0)} dB en promedio.` : w === 'casi igual' ? `Con este filtro, ${nm} suena casi igual que sin filtrar: ${A.db.toFixed(0)} dB.` : `Con este filtro, ${nm} suena ${w} que sin filtrar: ${A.db.toFixed(0)} dB frente a ${B.db.toFixed(0)} dB.`]);
-    if (A.db != null) rows.push(['Qué significa', `Referencia: ${DBW(A.db)}. Los dB (decibeles) miden qué tan fuerte suena: más dB, más ruido.`]);
-    rows.push(['En qué se basa', `${A.n} de ${B.n} ${pl(B.n)}${A.n < 3 ? '. Son pocas: tómalo como una pista, no como una conclusión' : ''}.`]);
+    rows.push(['En breve', A.db == null ? `Hay ${A.n} ${pl(A.n)} con este filtro, pero ninguna con dB medido.` : d == null ? `${A.db.toFixed(0)} dB en promedio.` : w === 'casi igual' ? `${nm} suena casi igual que en el resto de las mediciones: ${A.db.toFixed(0)} dB.` : `${nm} suena ${w} en esta selección: ${A.db.toFixed(0)} dB, contra ${B.db.toFixed(0)} dB sin el filtro.`]);
+    if (A.db != null) rows.push(['Qué significa', `${A.db.toFixed(0)} dB es parecido a ${DBW(A.db)}. Los decibeles (dB) miden el ruido: más dB, más ruido.`]);
+    rows.push(['En qué se basa', `Se calcula con ${A.n} de las ${B.n} ${pl(B.n)} del lugar${A.n < 3 ? '. Son pocas: sirve como pista, no como conclusión' : ''}.`]);
     if (v.k === 'city') { const rk = sc.map(q => [q, fst(fsel([q], flt, srcF)).db]).filter(a => a[1] != null).sort((p, q) => q[1] - p[1]); rows.push(['Dónde', rk.length > 1 ? `Suena más en ${SECT[rk[0][0]]} (${rk[0][1].toFixed(0)} dB) y menos en ${SECT[rk[rk.length - 1][0]]} (${rk[rk.length - 1][1].toFixed(0)} dB).` : rk.length ? `Solo hay mediciones en ${SECT[rk[0][0]]}.` : 'Sin dB medido en los lugares de la ciudad.']); }
     else if (srcF && flt === 'all') rows.push(['A lo largo del día', ['am', 'pm', 'pk'].map(k => { const z = fst(fsel(sc, k, srcF)); return `${FBN[k][0].toLowerCase()} ${z.db != null ? z.db.toFixed(0) + ' dB' : 'sin datos'}`; }).join(' · ') + '.']);
-    else if (srcF) { const t = fsel(sc, flt, null).length; rows.push(['Peso de esta fuente', `Es ${Math.round(A.n / Math.max(1, t) * 100)}% de las mediciones de esa franja (${A.n} de ${t}).`]); }
-    else { const c = {}; sub.forEach(f => c[f.c] = (c[f.c] || 0) + 1); const top = Object.keys(c).sort((p, q) => c[q] - c[p])[0]; rows.push(['Lo que más suena', `Predomina lo ${SH[top].toLowerCase()} (${c[top]} de ${sub.length} ${pl(sub.length)}).`]); }
+    else if (srcF) { const t = fsel(sc, flt, null).length; rows.push(['Peso de esta fuente', `Es el ${Math.round(A.n / Math.max(1, t) * 100)}% de lo medido en esa franja (${A.n} de ${t}).`]); }
+    else { const c = {}; sub.forEach(f => c[f.c] = (c[f.c] || 0) + 1); const top = Object.keys(c).sort((p, q) => c[q] - c[p])[0]; rows.push(['Lo que más se escucha', `${LOW[top][0].toUpperCase() + LOW[top].slice(1)} (${c[top]} de ${sub.length} ${pl(sub.length)}).`]); }
   }
-  return `<div class="fbk2"><b${srcF ? ` style="color:${qCol2(srcF)}"` : ''}>Con este filtro · ${tt}</b><div class="fi2">${rows.map(([k, t]) => `<div><b>${k}</b><span>${t}</span></div>`).join('')}</div></div>`;
+  return `<div class="fbk2"><b${srcF ? ` style="color:${qCol2(srcF)}"` : ''}>Mirando solo: ${tt}</b><div class="fi2">${rows.map(([k, t]) => `<div><b>${k}</b><span>${t}</span></div>`).join('')}</div></div>`;
 }
 
 const hint = document.getElementById('hint'), psub = document.getElementById('psub') || document.createElement('div');
@@ -422,13 +423,13 @@ function cityHtml(i) { // ciudad aislada: promedia las mediciones de sus lugares
   const hd = `<div class="bh"><h3>${R.n}</h3><div class="sub">${ss.length} lugares · ${nB} ${nB === 1 ? 'medición visible' : 'mediciones visibles'}</div></div>`,
     bigH = `<div class="big" style="color:${hex}">${dbm == null ? '<span class="nd">sin dB</span>' : `<span data-n="${dbm.toFixed(1)}" data-dec="1">${dbm.toFixed(1)}</span>`}<small>${dbm == null ? 'sin medir' : 'dB promedio de la ciudad'}</small></div>`,
     dbsH = dbm == null ? '' : `<div class="dbs"><div class="dtr"><i data-w="${P(dbm).toFixed(1)}" style="background:${hex}"></i></div><small>≈ ${DBW(dbm)}</small></div>`,
-    chipsH = `<div class="chips"><span style="color:${hex}">● ${SH[R.dom]}</span>${es.length ? `<span style="color:rgb(${agr(a)})">agrado percibido <i style="font-style:normal" data-n="${a.toFixed(2)}" data-dec="2">${a.toFixed(2)}</i> · ${AGW(a)}</span>` : '<span>sin encuestas de agrado</span>'}</div>`,
+    chipsH = `<div class="chips"><span style="color:${hex}">● Predomina: ${SH[R.dom]}</span>${es.length ? `<span style="color:rgb(${agr(a)})">Agrado: ${AGW(a)}</span>` : '<span>sin encuestas de agrado</span>'}</div>`,
     fnowH = `<div class="fnow"><b class="fn">${FNM[0]}</b><span class="fh">${FNM[1]} h</span><span class="fv">${dbm == null ? 'sin dB' : `<i>${dbm.toFixed(0)}</i> dB`} · ${nB} ${nB === 1 ? 'medición' : 'mediciones'}</span></div>`,
     agBar = es.length ? `<div class="agb" data-reveal>${ags.map((c, k) => c ? `<span style="flex:${c};background:${AGC[k]}">${c}</span>` : '').join('')}</div>${agCap(ags, es.length)}` : '',
-    factH = `<div class="fact">${factLine(mxv, fpm, fvm, mx100.length ? ` <em class="ex">(sin ${mx100.length} pico${mx100.length > 1 ? 's' : ''} puntual${mx100.length > 1 ? 'es' : ''} de ${Math.round(Math.max(...mx100.map(f => f.mx)))} dB)</em>` : '')}</div>`,
-    dbeH = db.length ? `<small class="dbe">dB medidos en encuestas: ${mean(db, e => e[2]).toFixed(1)} (n=${db.length})</small>` : '',
-    fiH = fiBlock([['Qué se oye', `Predomina lo ${SH[R.dom].toLowerCase()}: ${nDom} de ${nm} mediciones.`], rk.length > 1 ? ['Quién es quién', `El más ruidoso es ${SECT[rk[0]]} (${dbAvg(rk[0]).toFixed(1)} dB) y el más tranquilo, ${SECT[rk[rk.length - 1]]} (${dbAvg(rk[rk.length - 1]).toFixed(1)} dB).`] : null, ['Cómo se vive', R.ne ? `${R.ne} respuestas de agrado: en promedio ${AGW(R.ag)}.` : 'Sin encuestas de agrado en esta ciudad.']].filter(Boolean)),
-    listH = `<div class="pf"><h5>Cada medición · la barra muestra el rango de dB (mín–máx) y la marca, el promedio</h5></div><div class="list">` + F.map((f, q) => ss.includes(f.s) && (on(f) || f.night && (!srcF || f.c === srcF)) ? `<button class="it${pf === f ? ' on' : ''}" data-i="${q}"><span style="background:${COL[f.c]}"></span>${f.id} · ${tmx(f)} · ${SECT[f.s]}<em>${f.src}</em><div class="rg${f.nd ? ' nd' : ''}${f.ap ? ' ap' : ''}">${f.nd ? '' : `<i style="left:${P(f.mn)}%;width:${Math.max(3, P(f.mx) - P(f.mn))}%;background:${COL[f.c]}"></i><u style="left:${P(f.pr)}%"></u>`}</div><b>${f.nd ? 'sin dB' : f.ap ? f.mn + '–' + f.mx + ' dB' : f.pr + ' dB'}</b></button>` : '').join('') + '</div>',
+    factH = `<div class="fact">${factLine(mxv, fpm, fvm, mx100.length ? ` <em class="ex">(sin contar ${mx100.length} ruido${mx100.length > 1 ? 's' : ''} aislado${mx100.length > 1 ? 's' : ''} de ${Math.round(Math.max(...mx100.map(f => f.mx)))} dB)</em>` : '')}</div>`,
+    dbeH = db.length ? `<small class="dbe">En ${db.length} ${db.length === 1 ? 'encuesta' : 'encuestas'} la gente también anotó el ruido: ${mean(db, e => e[2]).toFixed(0)} dB en promedio.</small>` : '',
+    fiH = fiBlock([['Lo que más se escucha', `${LOW[R.dom][0].toUpperCase() + LOW[R.dom].slice(1)} (${nDom} de ${nm} mediciones).`], rk.length > 1 ? ['Dónde suena más y menos', `El lugar más ruidoso es ${SECT[rk[0]]} (${dbAvg(rk[0]).toFixed(0)} dB) y el más tranquilo, ${SECT[rk[rk.length - 1]]} (${dbAvg(rk[rk.length - 1]).toFixed(0)} dB).`] : null, ['Cómo se vive', R.ne ? `${R.ne} personas respondieron la encuesta; en promedio, el lugar ${AGW(R.ag) === 'incomoda' ? 'les incomoda' : AGW(R.ag) === 'da igual' ? 'les da igual' : AGW(R.ag) === 'gusta' ? 'les gusta' : 'les gusta un poco'}.` : 'En esta ciudad no hay encuestas de agrado.']].filter(Boolean)),
+    listH = `<div class="pf"><h5>Mediciones hechas en terreno · la barra muestra de cuánto a cuánto varió el ruido</h5></div><div class="list">` + F.map((f, q) => ss.includes(f.s) && (on(f) || f.night && (!srcF || f.c === srcF)) ? `<button class="it${pf === f ? ' on' : ''}" data-i="${q}"><span style="background:${COL[f.c]}"></span>${f.id} · ${tmx(f)} · ${SECT[f.s]}<em>${f.src}</em><div class="rg${f.nd ? ' nd' : ''}${f.ap ? ' ap' : ''}">${f.nd ? '' : `<i style="left:${P(f.mn)}%;width:${Math.max(3, P(f.mx) - P(f.mn))}%;background:${COL[f.c]}"></i><u style="left:${P(f.pr)}%"></u>`}</div><b>${f.nd ? 'sin dB' : f.ap ? f.mn + '–' + f.mx + ' dB' : f.pr + ' dB'}</b></button>` : '').join('') + '</div>',
     cmpH = `<div class="pf cmpf"><h5>Comparación entre los lugares de la ciudad (dB promedio)</h5>${ss.map(q => bar(SECT[q], dbAvg(q), false)).join('')}</div><div class="pf cmpf"><h5>Comparación entre ciudades (dB promedio)</h5>${REG.map((r, q) => bar(r.n, r.db, q === i)).join('')}</div>`;
   if (D) return `<div class="pd">${hd}<article class="card sc pcard">${bigH}${dbsH}${chipsH}${fnowH}${fbk({ k: 'city', i })}<div class="ag${es.length ? '' : ' na'}">${agBar}</div>${factH}${fiH}${flowH(fpm, fvm)}${horasHtml(ss)}${dbeH}${detOf()}${listH}${cmpH}</article></div>`;
   return `<div class="sc pn">${hd}${bigH}${dbsH}${chipsH}${fbk({ k: 'city', i })}${es.length ? `<div class="ag">${agBar}</div>` : ''}${factH}${flowH(fpm, fvm)}${horasHtml(ss)}${dbeH}${fiH}${detOf()}${listH}${cmpH}</div>`;
@@ -445,13 +446,13 @@ function render() {
   const hd = `<div class="bh"><h3>${SECT[s]}</h3><div class="sub">${SUB[s]} · ${nB} ${nB === 1 ? 'medición visible' : 'mediciones visibles'}${aO ? ' · dB de referencia oficial' : ''}</div></div>`,
     bigH = `<div class="big" style="color:${hex}">${dbm == null ? '<span class="nd">sin dB</span>' : `<span data-n="${dbm.toFixed(1)}" data-dec="1">${dbm.toFixed(1)}</span>`}<small>${dbm == null ? 'sin medir · relieve por intensidad percibida' : aO ? 'dB · modelo APrA 2018, no medido en terreno' : 'dB promedio'}</small></div>`,
     dbsH = dbm == null ? '' : `<div class="dbs"><div class="dtr"><i data-w="${P(dbm).toFixed(1)}" style="background:${hex}"></i></div><small>≈ ${DBW(dbm)}</small></div>`,
-    chipsH = `<div class="chips"><span style="color:${hex}">● ${SH[DOM[s]]}</span>${es.length ? `<span style="color:rgb(${agr(a)})">agrado percibido <i style="font-style:normal" data-n="${a.toFixed(2)}" data-dec="2">${a.toFixed(2)}</i> · ${mood}</span>` : '<span>sin encuestas</span>'}</div>`,
+    chipsH = `<div class="chips"><span style="color:${hex}">● Predomina: ${SH[DOM[s]]}</span>${es.length ? `<span style="color:rgb(${agr(a)})">Agrado: ${mood}</span>` : '<span>sin encuestas</span>'}</div>`,
     fnowH = `<div class="fnow"><b class="fn">${FNM[0]}</b><span class="fh">${FNM[1]} h</span><span class="fv">${dbm == null ? 'sin dB' : `<i>${dbm.toFixed(0)}</i> dB`} · ${nB} ${nB === 1 ? 'medición' : 'mediciones'}</span></div>`,
     agBar = es.length ? `<div class="agb" data-reveal>${ags.map((c, k) => c ? `<span style="flex:${c};background:${AGC[k]}">${c}</span>` : '').join('')}</div>${agCap(ags, es.length)}` : '',
-    factH = `<div class="fact">${aO ? `Banda modelada de día ${rf[0].mn}–${rf[0].mx} dB` : factLine(mxv, fpm, fvm, mx100.length ? ` <em class="ex">(sin ${mx100.length} pico${mx100.length > 1 ? 's' : ''} puntual${mx100.length > 1 ? 'es' : ''} de ${Math.round(Math.max(...mx100.map(f => f.mx)))} dB)</em>` : '')}</div>`,
-    dbeH = db.length ? `<small class="dbe">dB medidos en encuestas: ${mean(db, e => e[2]).toFixed(1)} (n=${db.length})</small>` : '',
+    factH = `<div class="fact">${aO ? `Banda modelada de día ${rf[0].mn}–${rf[0].mx} dB` : factLine(mxv, fpm, fvm, mx100.length ? ` <em class="ex">(sin contar ${mx100.length} ruido${mx100.length > 1 ? 's' : ''} aislado${mx100.length > 1 ? 's' : ''} de ${Math.round(Math.max(...mx100.map(f => f.mx)))} dB)</em>` : '')}</div>`,
+    dbeH = db.length ? `<small class="dbe">En ${db.length} ${db.length === 1 ? 'encuesta' : 'encuestas'} la gente también anotó el ruido: ${mean(db, e => e[2]).toFixed(0)} dB en promedio.</small>` : '',
     detH = detOf(),
-    listH = `<div class="pf"><h5>Cada medición · la barra muestra el rango de dB (mín–máx) y la marca, el promedio</h5></div><div class="list">` + F.map((f, i) => f.s === s && (on(f) || f.night && (!srcF || f.c === srcF)) ? `<button class="it${pf === f ? ' on' : ''}" data-i="${i}"><span style="background:${COL[f.c]}"></span>${f.id} · ${tmx(f)}<em>${f.src}</em><div class="rg${f.nd ? ' nd' : ''}${f.ap ? ' ap' : ''}">${f.nd ? '' : `<i style="left:${P(f.mn)}%;width:${Math.max(3, P(f.mx) - P(f.mn))}%;background:${COL[f.c]}"></i><u style="left:${P(f.pr)}%"></u>`}</div><b>${f.nd ? 'sin dB' : f.ap ? f.mn + '–' + f.mx + ' dB' : f.pr + ' dB'}</b></button>` : '').join('') + '</div>',
+    listH = `<div class="pf"><h5>Mediciones hechas en terreno · la barra muestra de cuánto a cuánto varió el ruido</h5></div><div class="list">` + F.map((f, i) => f.s === s && (on(f) || f.night && (!srcF || f.c === srcF)) ? `<button class="it${pf === f ? ' on' : ''}" data-i="${i}"><span style="background:${COL[f.c]}"></span>${f.id} · ${tmx(f)}<em>${f.src}</em><div class="rg${f.nd ? ' nd' : ''}${f.ap ? ' ap' : ''}">${f.nd ? '' : `<i style="left:${P(f.mn)}%;width:${Math.max(3, P(f.mx) - P(f.mn))}%;background:${COL[f.c]}"></i><u style="left:${P(f.pr)}%"></u>`}</div><b>${f.nd ? 'sin dB' : f.ap ? f.mn + '–' + f.mx + ' dB' : f.pr + ' dB'}</b></button>` : '').join('') + '</div>',
     quoteH = `<q style="color:${qCol(s)}">${QUOTE[s]}</q>`, fiH = fiBlock(window.FIX && FIX[s]);
   let h;
   if (D) { // escritorio: misma tarjeta que «Cada lugar, a cada hora» (título fuera, vidrio, scroll interno) + registro de mediciones y comparativo al final
