@@ -1308,3 +1308,11 @@ body.cmpv .lgb{transition:opacity .4s,transform .75s var(--spring)!important}
   border:1px solid rgba(255,255,255,.42)!important;
   box-shadow:inset 1px 1.5px 1px -.5px rgba(255,255,255,.95),inset -1px -1.5px 1px -.5px rgba(255,255,255,.5),inset 0 0 0 1px rgba(255,255,255,.14),inset 6px 8px 14px -9px rgba(255,255,255,.55),inset -6px -8px 14px -9px rgba(94,102,85,.14),inset 2px 0 5px -3px rgba(210,10,46,.2),inset -2px 0 5px -3px rgba(26,94,137,.2),0 6px 14px -6px rgba(59,66,52,.38),0 1px 3px rgba(59,66,52,.16)!important}
 .cmpc #cfg .th{-webkit-backdrop-filter:blur(1px)!important;backdrop-filter:blur(1px)!important}
+
+/* v193 · mismo selector que la franja horaria del comparador, en about: hover oscuro y gota de vidrio transparente */
+@media(hover:hover){body.about .tg button:not(.on):hover{background:rgba(59,66,52,.12)!important;box-shadow:0 0 0 1px rgba(59,66,52,.1),inset 0 0 18px rgba(59,66,52,.1)!important}}
+body.about .tg button:active{background:rgba(59,66,52,.2)!important;box-shadow:0 0 0 1px rgba(59,66,52,.14),inset 0 0 22px rgba(59,66,52,.2)!important}
+body.about .tg .th{
+  background:linear-gradient(155deg,rgba(255,255,255,.2),rgba(255,255,255,.05) 40%,rgba(255,255,255,.04) 62%,rgba(255,255,255,.14))!important;
+  border:1px solid rgba(255,255,255,.42)!important;-webkit-backdrop-filter:blur(1px)!important;backdrop-filter:blur(1px)!important;
+  box-shadow:inset 1px 1.5px 1px -.5px rgba(255,255,255,.95),inset -1px -1.5px 1px -.5px rgba(255,255,255,.5),inset 0 0 0 1px rgba(255,255,255,.14),inset 6px 8px 14px -9px rgba(255,255,255,.55),inset -6px -8px 14px -9px rgba(94,102,85,.14),inset 2px 0 5px -3px rgba(210,10,46,.2),inset -2px 0 5px -3px rgba(26,94,137,.2),0 6px 14px -6px rgba(59,66,52,.38),0 1px 3px rgba(59,66,52,.16)!important}
