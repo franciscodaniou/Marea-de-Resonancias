@@ -297,7 +297,7 @@ function regLab(i, a) { // bajada de cada ciudad: mismos datos y composición qu
   x.save(); x.textAlign = 'center'; if (sc < 1) { x.translate(cx, y); x.scale(sc, sc); x.translate(-cx, -y); }
   const rz = fact() ? fst(fsel(R.ss, flt, srcF)) : null, rdb = rz ? rz.db : R.db, rfr = srcF ? ['am', 'pm', 'pk'].map(k => fst(fsel(R.ss, k, srcF)).db) : R.fr, nd = rdb == null, dv = nd ? 0 : rdb * cl(a * 1.15, 0, 1), o1 = 36, bw = Math.min(mob ? 190 : 150, cellW / sc - 12), by = y + o1 + 8, py = mob ? 0 : 40;
   const rr = (px, qy, w, h, r) => { x.beginPath(); if (x.roundRect) x.roundRect(px, qy, w, h, r); else x.rect(px, qy, w, h); x.fill(); };
-  x.globalAlpha = a; x.fillStyle = '#3b4234'; x.font = `700 ${mob ? 19 : 20}px "Playfair Display",serif`; x.fillText(R.n.toUpperCase(), cx, y);
+  x.globalAlpha = a; x.fillStyle = '#3b4234'; x.font = `700 ${mob ? 19 : 20}px "Plus Jakarta Sans",sans-serif`; x.fillText(R.n.toUpperCase(), cx, y);
   { const nf = `300 ${mob ? 34 : 32}px Montserrat,sans-serif`, uf = '13px Montserrat,sans-serif', ns = dv.toFixed(1), un = ' dB promedio'; x.font = nf; const w1 = x.measureText(ns).width; x.font = uf; const w2 = x.measureText(un).width, x0 = cx - (w1 + w2) / 2; x.textAlign = 'left';
     x.font = nf; x.fillStyle = `rgb(${c})`; x.fillText(ns, x0, y + o1 + (mob ? 2 : 4)); x.font = uf; x.fillStyle = '#8F9984'; x.fillText(un, x0 + w1, y + o1 + (mob ? 2 : 4)); x.textAlign = 'center'; }
   const bh = 7, by2 = by + 3; x.globalAlpha = a * .16; x.fillStyle = '#5E6655'; rr(cx - bw / 2, by2, bw, bh, bh / 2); x.globalAlpha = a; x.fillStyle = `rgb(${c})`; rr(cx - bw / 2, by2, Math.max(bh, bw * cl((dv - 40) / 55, 0, 1)), bh, bh / 2);
@@ -310,7 +310,7 @@ function regLab(i, a) { // bajada de cada ciudad: mismos datos y composición qu
 }
 function regBig(i, a) { // ciudad aislada: mismo rótulo que un sector expandido (nombre + predominio + flujos); el detalle va en la tarjeta
   const R = REG[i], g = GR[i], mob = W < 760, c = rgbOf(COL[R.dom]), y = g.cy + Rf * 1.12 + (mob ? 24 : 32);
-  x.save(); x.textAlign = 'center'; x.globalAlpha = a; x.fillStyle = '#3b4234'; x.font = `700 ${mob ? 20 : 28}px "Playfair Display",serif`; x.fillText(R.n.toUpperCase(), g.cx, y);
+  x.save(); x.textAlign = 'center'; x.globalAlpha = a; x.fillStyle = '#3b4234'; x.font = `700 ${mob ? 20 : 28}px "Plus Jakarta Sans",sans-serif`; x.fillText(R.n.toUpperCase(), g.cx, y);
   x.font = `${mob ? 13 : 16}px Montserrat,sans-serif`; x.fillStyle = `rgb(${c})`; x.fillText('Predomina: ' + SH[R.dom] + ' · ' + (R.ag == null ? 'sin encuestas' : mob ? AGX(R.ag) : 'según encuestas: ' + AGX(R.ag)), g.cx, y + (mob ? 18 : 24));
   x.fillStyle = '#3b4234'; x.fillText(`Personas: ${lvn(R.p)} · Vehículos: ${lvn(R.v)}`, g.cx, y + (mob ? 35 : 46)); x.restore(); x.globalAlpha = 1;
 }
@@ -359,9 +359,9 @@ function frame(ms) {
     if (!real(F.filter(f => f.s === s)).length) { /* sin dB: sin anillos de referencia */ } else [55, 65, 75, 85].forEach(d => { const rr = g.R * (.35 + .00754 * (d - 48)); x.globalAlpha = q * .3; x.beginPath(); x.arc(g.cx, g.cy, rr, 0, TAU); x.stroke(); x.globalAlpha = q * .6; x.fillText(d === 85 ? '85 dB' : d, g.cx + rr * .7071 + 2, g.cy - rr * .7071 - 1); }); x.restore();
     x.lineWidth = mobq ? 1.2 : 1.5; x.lineCap = 'butt'; { const sw = 1 - Math.pow(1 - cl((q - .04) / .55, 0, 1), 3); let cum = 0; ags.forEach((c, i) => { if (!c) return; const f0 = cum / tot, f1 = (cum + c) / tot, e1 = Math.min(f1, sw); cum += c; if (e1 <= f0 + .002) return; x.globalAlpha = q * .8; x.strokeStyle = AGC[i]; x.beginPath(); x.arc(g.cx, g.cy, r0, a0 + TAU * f0 + .035, a0 + TAU * e1 - (e1 === f1 ? .035 : 0)); x.stroke(); }); } // el anillo de agrado se dibuja al acoplarse
     const pi = PAIR().indexOf(s), qc = pi >= 0 ? cm * kc[s] * cA : 0;
-    if (qc > .25) { const c = rgbOf(COL[DOM[s]]); x.globalAlpha = qc; x.fillStyle = '#3b4234'; x.font = `700 ${mobq ? 13 : 18}px "Playfair Display",serif`; x.fillText(SECT[s].toUpperCase(), g.cx, g.cy + r0 + (mobq ? 20 : 30));
+    if (qc > .25) { const c = rgbOf(COL[DOM[s]]); x.globalAlpha = qc; x.fillStyle = '#3b4234'; x.font = `700 ${mobq ? 13 : 18}px "Plus Jakarta Sans",sans-serif`; x.fillText(SECT[s].toUpperCase(), g.cx, g.cy + r0 + (mobq ? 20 : 30));
       x.font = `${mobq ? 11 : 14}px Montserrat,sans-serif`; x.fillStyle = '#5E6655'; x.fillText(hasAg(s) ? (mobq ? `${AGX(agrSec(s))} · ${tot} resp.` : `según ${tot} encuestas: ${AGX(agrSec(s))}`) : 'sin encuestas de agrado', g.cx, g.cy + r0 + (mobq ? 34 : 50));
-      x.font = `800 ${mobq ? 15 : 22}px "Playfair Display",serif`; x.fillStyle = `rgb(${c})`; x.fillText('AB'[pi], g.cx, g.cy - r0 - (mobq ? 8 : 12)); }
+      x.font = `800 ${mobq ? 15 : 22}px "Plus Jakarta Sans",sans-serif`; x.fillStyle = `rgb(${c})`; x.fillText('AB'[pi], g.cx, g.cy - r0 - (mobq ? 8 : 12)); }
     x.globalAlpha = 1; }); }
   const lab = cl((eS - .6) / .35, 0, 1) * (1 - amb) * (1 - cl(cA * 4, 0, 1));
   const labT = (document.body.classList.contains('legopen') || (W >= 1100 && (document.getElementById('ans') || {classList: {contains: () => false}}).classList.contains('open'))) ? 0 : 1; window.labK = (window.labK == null ? labT : window.labK) + (labT - (window.labK == null ? labT : window.labK)) * .14; const labS = window.labK * window.labK * (3 - 2 * window.labK);
@@ -370,7 +370,7 @@ function frame(ms) {
   if (lab > .05) G.forEach((g, s) => {
     if (g.al < .05) return; const c = rgbOf(COL[DOM[s]]), big = g.kk > .5, mob = W < 760, [p, v] = lvl(s), y = g.cy + g.R * 1.12 + (big ? (mob ? 24 : 32) : (mob ? 26 : 22));
     const sc = big || mob ? 1 : Math.min(1, (LW - 14) / 250); x.save(); if (sc < 1) { x.translate(g.cx, y); x.scale(sc, sc); x.translate(-g.cx, -y); }
-    x.globalAlpha = g.al * lab; x.fillStyle = '#3b4234'; x.font = `700 ${big ? (mob ? 20 : 28) : (mob ? 19 : 20)}px "Playfair Display",serif`; x.fillText(SECT[s].toUpperCase(), g.cx, y);
+    x.globalAlpha = g.al * lab; x.fillStyle = '#3b4234'; x.font = `700 ${big ? (mob ? 20 : 28) : (mob ? 19 : 20)}px "Plus Jakarta Sans",sans-serif`; x.fillText(SECT[s].toUpperCase(), g.cx, y);
     x.font = `${big ? (mob ? 13 : 16) : 14}px Montserrat,sans-serif`; x.fillStyle = `rgb(${c})`;
     const dbl = dbAvg(s) == null ? dbL(s) : (dbAvg(s) * cl(lab * 1.15, 0, 1)).toFixed(1) + (apOnly(s) ? ' dB modelo' : ' dB promedio');
     if (!big) { const nd = fdb(s) == null, dv = nd ? 0 : fdb(s) * cl(lab * 1.15, 0, 1), o1 = 36, bw = mob ? 190 : 150, by = y + o1 + 8; // intensidad legible: número grande + barra con la misma escala en todos los lugares
@@ -380,7 +380,7 @@ function frame(ms) {
         x.font = nf; x.fillStyle = `rgb(${c})`; x.fillText(ns, x0, y + o1 + (mob ? 2 : 4)); x.font = uf; x.fillStyle = '#8F9984'; x.fillText(un, x0 + w1, y + o1 + (mob ? 2 : 4)); x.textAlign = 'center'; }
       const bh = 7, by2 = by + 3; x.globalAlpha = g.al * lab * .16; x.fillStyle = '#5E6655'; rr(g.cx - bw / 2, by2, bw, bh, bh / 2);
       if (!nd) { x.globalAlpha = g.al * lab; x.fillStyle = `rgb(${c})`; rr(g.cx - bw / 2, by2, Math.max(bh, bw * cl((dv - 40) / 55, 0, 1)), bh, bh / 2); } x.globalAlpha = g.al * lab;
-      if (s === loud || s === quiet) { x.save(); x.globalAlpha = g.al * lab; x.fillStyle = `rgb(${c})`; x.font = `700 12px Montserrat,sans-serif`; if ('letterSpacing' in x) x.letterSpacing = '1.5px'; x.textAlign = 'center'; x.fillText(s === loud ? 'MÁS RUIDOSO' : 'MÁS TRANQUILO', g.cx, mob ? by + 76 : y - 26); x.restore(); }
+      if (s === loud || s === quiet) { x.save(); x.globalAlpha = g.al * lab; x.fillStyle = `rgb(${c})`; x.font = `700 12px "Plus Jakarta Sans",sans-serif`; if ('letterSpacing' in x) x.letterSpacing = '1.5px'; x.textAlign = 'center'; x.fillText(s === loud ? 'MÁS RUIDOSO' : 'MÁS TRANQUILO', g.cx, mob ? by + 76 : y - 26); x.restore(); }
       if (!mob) { const names = ['Mañana', 'Tarde', 'H. punta'], ks = ['am', 'pm', 'pk'], base = by + 46; (srcF ? ['am', 'pm', 'pk'].map(k => fst(fsel([s], k, srcF)).db) : FRDB[NSX.indexOf(s)]).forEach((v, i) => { const cxp = g.cx + (i - 1) * 46, hh = v == null ? 3 : Math.max(3, cl((v - 55) / 25, 0, 1) * 24 + 3); x.globalAlpha = g.al * lab * (v == null ? .16 : (flt === 'all' || flt === ks[i] ? .9 : .35)); x.fillStyle = v == null ? '#5E6655' : `rgb(${c})`; rr(cxp - 9, base - hh, 18, hh, 3); x.globalAlpha = g.al * lab; x.fillStyle = '#8F9984'; x.font = '10px Montserrat,sans-serif'; x.fillText(names[i], cxp, base + 12); }); x.globalAlpha = g.al * lab; }
       const py = mob ? 0 : 40;
       x.font = '15px Montserrat,sans-serif'; x.fillStyle = `rgb(${c})`; x.fillText((mob ? '' : 'Predomina: ') + SH[DOM[s]], g.cx, by + (mob ? 38 : 34) + py); x.fillText(mob ? (hasAg(s) ? AGX(agrSec(s)) : 'sin encuestas') : agL2(s), g.cx, by + (mob ? 58 : 50) + py); x.fillStyle = '#3b4234';

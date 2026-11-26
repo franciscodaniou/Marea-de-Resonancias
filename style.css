@@ -1114,8 +1114,10 @@ body.about #c{filter:blur(14px)}
 @media(min-width:760px){#carR,#cdotsR{display:none!important}}
 @media(max-width:759px) and (max-height:760px){.bfn{display:none}}
 
-/* v172 · tipografía: Montserrat (cuerpos) · Playfair Display bold (títulos y subtítulos) */
+/* v172 · tipografía: Montserrat (cuerpos) · Plus Jakarta Sans bold (títulos y subtítulos) */
 html,body,button,input,select,textarea,.cc svg .t,#c{font-family:"Montserrat",sans-serif;font-optical-sizing:auto}
-h1,h2,h3,h4,h5,.sub,.sech,.part-h,.sh,#cmph,.bh h3,.sc h3,.lc h4,.sc .pf h5,#panel .pf h5{font-family:"Playfair Display",serif;font-weight:700;font-optical-sizing:auto}
+h1,h2,h3,h4,h5,.sub,.sech,.part-h,.sh,#cmph,.bh h3,.sc h3,.lc h4,.sc .pf h5,#panel .pf h5,header b,.eb,.eb2,#hero .eb,.fi2 b,.cl dt,.bf em,.cn,.chips{font-family:"Plus Jakarta Sans",sans-serif;font-weight:700;font-optical-sizing:auto}
 body.about h2.part-h,body.about h2.sh{font-weight:700}
 .cc svg text{font-family:"Montserrat",sans-serif}
+
+/* v173 · Plus Jakarta Sans en títulos, subtítulos, rótulos y etiquetas */
