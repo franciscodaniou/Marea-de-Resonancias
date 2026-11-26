@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="theme-color" content="#DCDDD3"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Acerca de Marea de resonancias</title><link rel="stylesheet" href="style.css?v=164"></head>
+<title>Acerca de Marea de resonancias</title><link rel="stylesheet" href="style.css?v=165"></head>
 <body class="about">
 <header><b>Marea de resonancias</b><nav id="nav" class="morph"><span class="lbl" tabindex="0">Inicio</span><a class="mb" href="index.html">Visualización</a><a class="mb on" href="about.html">Acerca del estudio</a></nav></header>
 <canvas id="c" aria-hidden="true"></canvas>
@@ -35,7 +35,7 @@
 <div class="tiles">
 <article class="card tile"><span class="num">46</span><h3>Mediciones de terreno</h3><p>38 del Barrio Puerto y 8 de Buenos Aires. Por medición: sector, hora de inicio, dB mínimo, promedio y máximo, fuente predominante, flujos peatonal y vehicular (1 a 3) y el fenómeno sonoro observado.</p></article>
 <article class="card tile"><span class="num">20</span><h3>Encuestas de percepción</h3><p>Sector, agrado (de «me incomoda un poco» a «me gusta»), dB medido y una cita textual.</p></article>
-<article class="card tile"><h3>Datos abiertos</h3><p><a href="data.json">data.json</a> es la base completa y <a href="data.js?v=164">data.js</a> es la misma información como script que carga el sitio, con la fuente y los criterios de preparación en su cabecera.</p></article>
+<article class="card tile"><h3>Datos abiertos</h3><p><a href="data.json">data.json</a> es la base completa y <a href="data.js?v=165">data.js</a> es la misma información como script que carga el sitio, con la fuente y los criterios de preparación en su cabecera.</p></article>
 </div>
 
 <h2 class="sh">Figuración</h2>
@@ -59,12 +59,11 @@
 <h2 class="sh">Interacción</h2>
 <p class="lead3">La visualización se recorre hacia abajo, en seis momentos.</p>
 <div class="tiles">
-<article class="card tile"><span class="sn">1</span><h3>El Barrio Puerto</h3><p>todas las mediciones sobre una misma malla, bajo la pregunta orientadora y una respuesta corta. Se puede tocar una medición, filtrar por «Hora del día» o «Fuente» y girar la malla arrastrando.</p></article>
+<article class="card tile"><span class="sn">1</span><h3>El Barrio Puerto</h3><p>todas las mediciones sobre una misma malla, bajo la pregunta orientadora y una respuesta corta. Se puede tocar una medición, filtrar por «Hora del día» o «Fuente» y girar la malla arrastrando. Al filtrar aparece un recuadro con el hallazgo: promedio de dB, comparación con la vista sin filtro y el lugar más fuerte y más tranquilo; en cada vista (todo, dos ciudades, seis sectores, ciudad o sector aislados) se calcula sobre lo que se ve.</p></article>
 <article class="card tile"><span class="sn">2</span><h3>Dos ciudades</h3><p>la malla se separa en Valparaíso y Buenos Aires, cada una con el promedio de sus mediciones: dB, franjas del día, fuente que predomina, agrado y flujos.</p></article>
 <article class="card tile"><span class="sn">3</span><h3>Sectores</h3><p>la malla se disuelve en seis mallas lado a lado, con su dB promedio en barra, «más ruidoso» y «más tranquilo», agrado y flujos. Un clic expande el sector en una tarjeta con dB, fuentes, agrado, flujos, perfil por hora y el registro de cada medición.</p></article>
-<article class="card tile"><span class="sn">4</span><h3>Hallazgos</h3><p>«Lo que dice el Barrio Puerto»: tres respuestas (según el lugar, la fuente y la hora) con cifras que se animan y un gráfico de dB por hora. Cada lugar enlaza a su tramo.</p></article>
-<article class="card tile"><span class="sn">5</span><h3>Lugares, a cada hora</h3><p>el título y la leyenda quedan fijos mientras dura la sección. Cada lugar ocupa tres tramos de scroll: mañana, tarde y hora punta. La malla se filtra por esa hora y la tarjeta muestra su dB promedio, el registro y el número de mediciones; al terminar se restaura el filtro previo.</p></article>
-<article class="card tile"><span class="sn">6</span><h3>Comparar</h3><p>se eligen dos lugares (A y B) y una hora del día. Las dos mallas se muestran con la misma escala y barras que crecen desde el centro comparan dB, máximo, flujos, agrado y número de mediciones, con una lectura automática de la diferencia. El agrado no se filtra por hora porque las encuestas no registran hora.</p></article>
+<article class="card tile"><span class="sn">4</span><h3>Hallazgos</h3><p>«Lo que dice el Barrio Puerto»: tres respuestas (según el lugar, la fuente y la hora) con cifras que se animan y un gráfico de dB por hora. Cada lugar enlaza a su sector expandido.</p></article>
+<article class="card tile"><span class="sn">5</span><h3>Comparar</h3><p>se eligen dos lugares (A y B) y una hora del día. Las dos mallas se muestran con la misma escala y barras que crecen desde el centro comparan dB, máximo, flujos, agrado y número de mediciones, con una lectura automática de la diferencia. El agrado no se filtra por hora porque las encuestas no registran hora.</p></article>
 </div>
 <h3 class="sh3">Ayudas de lectura</h3>
 <div class="tiles t2">
@@ -81,7 +80,7 @@
 </div>
 <p class="foot">Proyecto grupal: <a href="https://wiki.ead.pucv.cl/Proyecto_de_Visualizaci%C3%B3n_-_Grupo_2">Proyecto de Visualización – Grupo 2</a> · Proyecto individual: <a href="https://wiki.ead.pucv.cl/Visualizaci%C3%B3n_de_Datos_Interactiva_TDS_2026_-_Francisco_Daniou">Visualización de Datos Interactiva TDS 2026 – Francisco Daniou</a> · Taller de Diseño de Servicios 2026</p>
 </div>
-<script src="data.js?v=164"></script><script src="vita.js?v=164"></script><script src="app.js?v=164"></script><script src="story.js?v=164"></script><script src="glass.js?v=164"></script>
+<script src="data.js?v=165"></script><script src="vita.js?v=165"></script><script src="app.js?v=165"></script><script src="story.js?v=165"></script><script src="glass.js?v=165"></script>
 <script>(function(){var S=[['hallazgos','Hallazgos']];var els=document.querySelectorAll('h2.sh');var nav=document.createElement('nav');nav.id='sec';nav.setAttribute('aria-label','Secciones de la página');
 var items=[];els.forEach(function(h){items.push([h,h.textContent.trim()]);});
 nav.innerHTML=items.map(function(it,i){return '<button data-i="'+i+'" aria-label="'+it[1]+'"><span>'+it[1]+'</span><i></i></button>'}).join('');document.body.appendChild(nav);

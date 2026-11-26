@@ -65,7 +65,7 @@ function flowHtml(s) { const [p, v] = lvl(s); return flowH(p, v); }
 function flowH(p, v) { return `<div class="fl"><div>Personas<span class="tr"><i style="width:${p / 3 * 100}%" data-w="${(p / 3 * 100).toFixed(1)}"></i></span><b>${lvn(p)}</b></div><div class="v">Vehículos<span class="tr"><i style="width:${v / 3 * 100}%" data-w="${(v / 3 * 100).toFixed(1)}"></i></span><b>${lvn(v)}</b></div></div>`; }
 
 function panelGeo() { // medidas reales de la tarjeta de «Cada lugar, a cada hora» (ya equilibradas por fitBlk), para replicarlas en el sector expandido
-  if (W <= 1100) return null; const blk = document.querySelector('.step .blk'), card = blk && blk.querySelector('.card'); if (!blk || !card) return null;
+  if (W <= 1100) return null; const blk = document.querySelector('#sref .step .blk'), card = blk && blk.querySelector('.card'); if (!blk || !card) return null;
   const cs = getComputedStyle(blk.parentNode), w = blk.offsetWidth, ch = card.offsetHeight; if (!w || !ch) return null; const tr = blk.style.transform || '', m = /scale\(([\d.]+)\)/.exec(tr), sc = m ? +m[1] : 1;
   return { w, ch, right: parseFloat(cs.paddingRight) || 22, top: parseFloat(cs.paddingTop) || 70, sc, tr: tr || 'none' };
 }
@@ -228,6 +228,7 @@ function calcDots(ee0, er0) {
 }
 const lite = (c, t) => c.map(v => Math.round(v + (255 - v) * t)), dark = (c, t) => c.map(v => Math.round(v * (1 - t)));
 const CRGBA = CK.map(q => rgbOf(COL[q]));
+const fbk = v => { const t = finding(v); return t ? `<div class="fbk2">${t}</div>` : ''; };
 const qCol = s => 'rgb(' + dark(rgbOf(COL[DOM[s]]), .32).join(',') + ')'; // la cita toma el color de la fuente que predomina, oscurecido para leerse
 const fiBlock = o => o ? `<div class="fi2">${o.map(([k, t]) => `<div><b>${k}</b><span>${t}</span></div>`).join('')}</div>` : '';
 const AGP = ['les incomoda', 'les da igual', 'les gusta un poco', 'les gusta']; // texto llano del agrado: sin escalas ni ceros
@@ -315,12 +316,12 @@ function frame(ms) {
   if (want === null && k < .003) { k = 0; foc = null; } else if (want !== null) foc = want;
   // scroll → marea total (arriba) → sectores → ambiente (contraste y estadísticas)
   const vh = innerHeight, sy0 = window.scrollY, hero = document.body.classList.contains('heroing') || document.body.classList.contains('about');
-  const stEl = document.querySelectorAll('.step'), chEl = document.querySelector('.finds') || document.querySelector('.charts2'), csE = document.querySelector('.cstage'); let cT = 0, cS = -1, cmpT = 0;
+  const stEl = document.querySelectorAll('.steps .step'), chEl = document.querySelector('.finds') || document.querySelector('.charts2'), csE = document.querySelector('.cstage'); let cT = 0, cS = -1, cmpT = 0;
   const fdE = document.querySelector('.finds'), stpE = document.querySelector('.steps'), rmp = e => cl((vh * .95 - e.getBoundingClientRect().top) / (.5 * vh), 0, 1);
   amb = hero || iso() ? 0 : chEl ? Math.max(fdE && stpE ? rmp(fdE) * (1 - cl((vh * .42 - stpE.getBoundingClientRect().top) / (vh * .3), 0, 1)) : 0, (document.querySelector('.charts2') ? rmp(document.querySelector('.charts2')) : 0)) : cl((sy0 - 1.0 * vh) / (.6 * vh), 0, 1);
-  if (stEl.length && !hero && !iso()) { const f0 = stEl[0].getBoundingClientRect(), l0 = (csE || stEl[stEl.length - 1]).getBoundingClientRect(); cT = cl((vh * .42 - f0.top) / (vh * .3), 0, 1) * cl((l0.bottom - vh * .45) / (vh * .3), 0, 1);
-    let best = 1e9; stEl.forEach((el, q) => { const r = el.getBoundingClientRect(), d = Math.abs((r.top + r.bottom) / 2 - vh / 2); if (d < best) { best = d; cS = q; } }); if (csE && csE.getBoundingClientRect().top < vh * .5) cmpT = 1; }
-  { const ob = W < 760 && cS >= 0 && !cmpT && stEl[cS].querySelector('.blk.open') ? 1 : 0; mo += (ob - mo) * (1 - Math.exp(-dt * 6)); }
+  if (csE && !hero && !iso()) { const f0 = (stEl[0] || csE).getBoundingClientRect(), l0 = csE.getBoundingClientRect(); cT = cl((vh * .42 - f0.top) / (vh * .3), 0, 1) * cl((l0.bottom - vh * .45) / (vh * .3), 0, 1); // sin tarjetas por lugar: el acople arranca con la comparación A/B
+    let best = 1e9; stEl.forEach((el, q) => { const r = el.getBoundingClientRect(), d = Math.abs((r.top + r.bottom) / 2 - vh / 2); if (d < best) { best = d; cS = q; } }); if (!stEl.length || csE.getBoundingClientRect().top < vh * .5) cmpT = 1; }
+  { const ob = W < 760 && cS >= 0 && !cmpT && stEl[cS] && stEl[cS].querySelector('.blk.open') ? 1 : 0; mo += (ob - mo) * (1 - Math.exp(-dt * 6)); }
   cA += (cT - cA) * (1 - Math.exp(-dt * 7)); cm += (cmpT - cm) * (1 - Math.exp(-dt * 5)); for (let s = 0; s < NS; s++) kc[s] += ((cT > .02 && (cmpT ? PAIR().includes(s) : s === cS) ? 1 : 0) - kc[s]) * (1 - Math.exp(-dt * 4));
   if (window.SND && SND.active) { sndT += dt; if (sndT > .2) { sndT = 0; SND.update(want !== null ? [[want, 0]] : wantR !== null ? REG[wantR].ss.map((q, j, a0) => [q, (j / Math.max(1, a0.length - 1) * 2 - 1) * .5]) : cmpT && cT > .02 ? [[PAIR()[0], -.7], [PAIR()[1], .7]] : cT > .02 && cS >= 0 ? [[cS, 0]] : NSX.map(s => [s, (s / (NS - 1) * 2 - 1) * .8]), hero ? 0 : 1 - amb); } } // sonido por fuentes (opcional)
   const sm3 = t => t * t * (3 - 2 * t), eRT = iso() ? 1 : hero ? 0 : sm3(cl(sy0 / (.75 * vh), 0, 1)), eT = want !== null ? 1 : wantR !== null ? 0 : hero ? 0 : sm3(cl((sy0 - 1.05 * vh) / (.8 * vh), 0, 1)); // tres tramos de scroll: marea total → dos ciudades → seis lugares
@@ -380,13 +381,41 @@ function frame(ms) {
     x.restore(); x.globalAlpha = 1;
   });
   { const labR = cl((eR - .6) / .35, 0, 1) * (1 - cl(eS / .4, 0, 1)) * (1 - amb) * (1 - cl(cA * 4, 0, 1)); if (labR > .05 && want === null) { [0, 1].forEach(i => regLab(i, labR * (focR === null ? 1 : focR === i ? cl(1 - kR * 4, 0, 1) : 1 - kR))); if (focR !== null && kR > .5) regBig(focR, cl((kR - .5) * 2, 0, 1)); } }
-  const stg = eS > .5 ? 2 : eR > .5 ? 1 : 0, ht = iso() ? '' : (stg === 0 ? 'Todas las mediciones · toca un punto' : stg === 1 ? 'Dos ciudades · clic para aislar' : 'Clic en un sector para expandirlo · teclas 1–' + NS); if (ht !== lastHt) { lastHt = ht; hint.textContent = ht; }
-  const dw = document.getElementById('down'), dl = stg === 0 ? 'Separar las dos ciudades ↓' : stg === 1 ? 'Desplegar sectores ↓' : 'Ver lugar por lugar ↓'; if (dw.textContent !== dl) dw.textContent = dl;
+  fboxSync(deep); const stg = eS > .5 ? 2 : eR > .5 ? 1 : 0, ht = iso() ? '' : (stg === 0 ? 'Todas las mediciones · toca un punto' : stg === 1 ? 'Dos ciudades · clic para aislar' : 'Clic en un sector para expandirlo · teclas 1–' + NS); if (ht !== lastHt) { lastHt = ht; hint.textContent = ht; }
+  const dw = document.getElementById('down'), dl = stg === 0 ? 'Separar las dos ciudades ↓' : stg === 1 ? 'Desplegar sectores ↓' : 'Ver hallazgos ↓'; if (dw.textContent !== dl) dw.textContent = dl;
   requestAnimationFrame(frame);
 }
 
+const fbox = document.createElement('div'); fbox.id = 'fbox'; document.body.appendChild(fbox);
+const FBN = { am: ['Mañana', '09:40–12:36'], pm: ['Tarde', '12:37–17:29'], pk: ['Hora punta', '17:30–18:50'] };
+const fsel = (ss, ff, sf) => uniq(F.filter(f => ss.includes(f.s) && !f.ap && !f.night && (ff === 'all' || f.m >= FILTERS[ff][0] && f.m <= FILTERS[ff][1]) && (!sf || f.c === sf)));
+const fst = a => { const r = real(a); return { n: a.length, db: r.length ? mean(r, f => f.pr) : null }; };
+function finding(v) { // hallazgo del filtro activo (hora y/o fuente) en la vista actual: promedia lo que queda y lo compara con la vista sin filtro
+  if (flt === 'all' && !srcF) return null;
+  const sc = v.k === 'city' ? REG[v.i].ss : v.k === 'sector' ? [v.i] : NSX, nm = v.k === 'city' ? REG[v.i].n : v.k === 'sector' ? SECT[v.i] : v.k === 'cities' ? 'las dos ciudades' : v.k === 'sectors' ? 'los seis lugares' : 'todo el atlas',
+    tt = [flt !== 'all' ? `${FBN[flt][0]} (${FBN[flt][1]} h)` : '', srcF ? 'fuente ' + SH[srcF].toLowerCase() : ''].filter(Boolean).join(' · '), head = `<b${srcF ? ` style="color:${qCol2(srcF)}"` : ''}>${tt}<em> · ${nm}</em></b>`;
+  const sub = fsel(sc, flt, srcF), base = fsel(sc, 'all', null), A = fst(sub), B = fst(base);
+  if (!sub.length) return head + '<span>Sin mediciones con este filtro.</span>';
+  const d = A.db != null && B.db != null ? A.db - B.db : null, dl = d == null ? '' : Math.abs(d) < .5 ? ' (igual al promedio sin filtro)' : ` (${d > 0 ? '+' : '−'}${Math.abs(d).toFixed(0)} dB respecto del promedio sin filtro, ${B.db.toFixed(0)} dB)`;
+  const l2 = `<span>${A.n} de ${B.n} mediciones${A.db != null ? ` · <strong>${A.db.toFixed(1)} dB</strong> promedio` : ''}${dl}</span>`;
+  let l3 = '';
+  if (v.k === 'cities') l3 = REG.map(r => { const z = fst(fsel(r.ss, flt, srcF)); return `${r.n}: ${z.n ? (z.db != null ? z.db.toFixed(0) + ' dB' : 'sin dB') + ' · ' + z.n + (z.n === 1 ? ' medición' : ' mediciones') : 'sin mediciones'}`; }).join(' · ');
+  else if (v.k === 'sector') { if (srcF && flt === 'all') l3 = 'Por franja: ' + ['am', 'pm', 'pk'].map(k => { const z = fst(fsel(sc, k, srcF)); return `${FBN[k][0].toLowerCase()} ${z.db != null ? z.db.toFixed(0) + ' dB' : '–'}`; }).join(' · '); else { const c = {}; sub.forEach(f => c[f.c] = (c[f.c] || 0) + 1); const top = Object.keys(c).sort((p, q) => c[q] - c[p])[0]; l3 = `Lo que más suena: ${SH[top].toLowerCase()} (${c[top]} de ${sub.length})`; } }
+  else { const rk = sc.map(q => [q, fst(fsel([q], flt, srcF)).db]).filter(a => a[1] != null).sort((p, q) => q[1] - p[1]); l3 = rk.length > 1 ? `Más fuerte: ${SECT[rk[0][0]]} (${rk[0][1].toFixed(0)} dB) · más tranquilo: ${SECT[rk[rk.length - 1][0]]} (${rk[rk.length - 1][1].toFixed(0)} dB)` : rk.length ? `Solo aparece en ${SECT[rk[0][0]]}` : ''; }
+  return head + l2 + (l3 ? `<span>${l3}</span>` : '');
+}
+const qCol2 = c => 'rgb(' + dark(rgbOf(COL[c]), .32).join(',') + ')';
+let lastFk = '';
+function fboxPos() { // el recuadro se ubica donde no tapa rótulos: junto a los filtros; centrado entre las dos ciudades; a la derecha del modelo si hay sector/ciudad aislados
+  const v = fbox._v || {}, hl = parseFloat(hint.style.left) || 22; let left = hl, mw = innerWidth - hl - 260;
+  if (iso()) { left = Math.max(hl, FX + 175); mw = Math.min(720, innerWidth - left - 50); } else if (v.k === 'cities') mw = 430;
+  fbox.style.maxWidth = Math.max(260, mw) + 'px'; fbox.style.left = left + 'px'; if (!iso() && v.k === 'cities') fbox.style.left = Math.max(hl, (innerWidth - fbox.offsetWidth) / 2) + 'px'; }
+function fboxSync(deep) { const v = want !== null ? { k: 'sector', i: want } : wantR !== null ? { k: 'city', i: wantR } : eS > .5 ? { k: 'sectors' } : eR > .5 ? { k: 'cities' } : { k: 'all' }, key = [v.k, v.i, flt, srcF, W].join();
+  if (key !== lastFk) { lastFk = key; const t = finding(v); fbox._has = !!t; if (t) fbox.innerHTML = t; fbox._v = v; fboxPos(); }
+  const show = fbox._has && W > 1100 && !deep && !document.body.classList.contains('heroing') && !document.body.classList.contains('about'); if (show !== fbox._on) { fbox._on = show; fbox.classList.toggle('on', show); document.body.classList.toggle('fbon', show); } }
+
 const hint = document.getElementById('hint'), psub = document.getElementById('psub') || document.createElement('div');
-function hintPos() { if (innerWidth > 900) { const r = document.getElementById('cts').getBoundingClientRect(); if (r.width) hint.style.left = Math.round(r.right + 12) + 'px'; } else hint.style.left = ''; }
+function hintPos() { if (innerWidth > 900) { const r = document.getElementById('cts').getBoundingClientRect(); if (r.width) { hint.style.left = Math.round(r.right + 12) + 'px'; if (fbox._on) fboxPos(); } } else hint.style.left = ''; }
 addEventListener('resize', () => setTimeout(() => { if (iso()) { layout(); fitPanel(); } }, 160)); addEventListener('resize', hintPos); setInterval(hintPos, 400);
 const detOf = () => pf ? `<div class="det" style="border-left-color:${COL[pf.c]}"><b>${pf.id} · ${tmx(pf)}${pf.ap ? '' : ' h'}</b>${pf.src}<br>${pf.nd ? 'sin dB medido · intensidad percibida ' + FICHAS[F.indexOf(pf)][10] + '/5' : pf.mn + '–' + pf.mx + ' dB · prom. ' + pf.pr}<br>${pf.ap ? '' : `Flujo peatonal ${pf.fp}/3 · vehicular ${pf.fv}/3<br>`}<span style="color:${COL[pf.c]}">${CAT[pf.c]}</span><br><i>${pf.ph}</i>${pf.ap ? `<br><span class="org"><b>Procedencia:</b> ${APRA}. Modelo de simulación validado con mediciones; no es una medición del equipo. Rango de la banda, no mínimo y máximo registrados. Cruce propio con los polígonos del mapa (CSV ${pf.night ? 'nocturno' : 'diurno'} 2018) en unos 150 m alrededor del lugar.</span>` : ''}</div>` : '';
 function cityHtml(i) { // ciudad aislada: promedia las mediciones de sus lugares con la misma composición que la tarjeta de un sector
@@ -406,7 +435,7 @@ function cityHtml(i) { // ciudad aislada: promedia las mediciones de sus lugares
     listH = `<div class="pf"><h5>Cada medición · la barra muestra el rango de dB (mín–máx) y la marca, el promedio</h5></div><div class="list">` + F.map((f, q) => ss.includes(f.s) && (on(f) || f.night && (!srcF || f.c === srcF)) ? `<button class="it${pf === f ? ' on' : ''}" data-i="${q}"><span style="background:${COL[f.c]}"></span>${f.id} · ${tmx(f)} · ${SECT[f.s]}<em>${f.src}</em><div class="rg${f.nd ? ' nd' : ''}${f.ap ? ' ap' : ''}">${f.nd ? '' : `<i style="left:${P(f.mn)}%;width:${Math.max(3, P(f.mx) - P(f.mn))}%;background:${COL[f.c]}"></i><u style="left:${P(f.pr)}%"></u>`}</div><b>${f.nd ? 'sin dB' : f.ap ? f.mn + '–' + f.mx + ' dB' : f.pr + ' dB'}</b></button>` : '').join('') + '</div>',
     cmpH = `<div class="pf cmpf"><h5>Comparación entre los lugares de la ciudad (dB promedio)</h5>${ss.map(q => bar(SECT[q], dbAvg(q), false)).join('')}</div><div class="pf cmpf"><h5>Comparación entre ciudades (dB promedio)</h5>${REG.map((r, q) => bar(r.n, r.db, q === i)).join('')}</div>`;
   if (D) return `<div class="pd">${hd}<article class="card sc pcard">${bigH}${dbsH}${chipsH}${fnowH}<div class="ag${es.length ? '' : ' na'}">${agBar}</div>${factH}${fiH}${flowH(fpm, fvm)}${horasHtml(ss)}${dbeH}${detOf()}${listH}${cmpH}</article></div>`;
-  return `<div class="sc pn">${hd}${bigH}${dbsH}${chipsH}${es.length ? `<div class="ag">${agBar}</div>` : ''}${factH}${flowH(fpm, fvm)}${horasHtml(ss)}${dbeH}${fiH}${detOf()}${listH}${cmpH}</div>`;
+  return `<div class="sc pn">${hd}${bigH}${dbsH}${chipsH}${fbk({ k: 'city', i })}${es.length ? `<div class="ag">${agBar}</div>` : ''}${factH}${flowH(fpm, fvm)}${horasHtml(ss)}${dbeH}${fiH}${detOf()}${listH}${cmpH}</div>`;
 }
 function render() {
   panel.style.display = iso() ? 'block' : 'none'; psub.style.display = 'none'; hint.style.display = iso() ? 'none' : 'block';
@@ -432,7 +461,7 @@ function render() {
   if (D) { // escritorio: misma tarjeta que «Cada lugar, a cada hora» (título fuera, vidrio, scroll interno) + registro de mediciones y comparativo al final
     h = `<div class="pd">${hd}<article class="card sc pcard">${bigH}${dbsH}${chipsH}${fnowH}<div class="ag${es.length ? '' : ' na'}">${agBar}${quoteH}</div>${factH}${fiH}${flowHtml(s)}${horasHtml(s)}${dbeH}${detH}${listH}${compHtml(s)}</article></div>`;
   } else {
-    h = `<div class="sc pn">${hd}${bigH}${dbsH}${chipsH}${es.length ? `<div class="ag">${agBar}</div>` : ''}${factH}`;
+    h = `<div class="sc pn">${hd}${bigH}${dbsH}${chipsH}${fbk({ k: 'sector', i: s })}${es.length ? `<div class="ag">${agBar}</div>` : ''}${factH}`;
     h += flowHtml(s) + horasHtml(s);
     h += dbeH + `<div class="ag">${quoteH}</div>`;
     if (want === null) h += '<small class="hint">Clic para expandir este sector</small>';
@@ -471,7 +500,7 @@ cv.addEventListener('click', e => {
   else if (eS < .5) { if (hov) pf = pf === hov ? null : hov; else pf = null; }
   else if (hs !== null) { const h0 = hov; focus(hs); if (want !== null && h0 && h0.s === hs) { pf = h0; render(); } }
 });
-document.getElementById('down').onclick = () => { const vh = innerHeight; scrollTo({ top: eS < .5 ? (eR < .5 ? vh * .9 : vh * 1.92) : document.querySelector('.steps').getBoundingClientRect().top + scrollY - 70, behavior: RM ? 'auto' : 'smooth' }); };
+document.getElementById('down').onclick = () => { const vh = innerHeight; scrollTo({ top: eS < .5 ? (eR < .5 ? vh * .9 : vh * 1.92) : document.querySelector('.finds').getBoundingClientRect().top + scrollY - 40, behavior: RM ? 'auto' : 'smooth' }); };
 panel.addEventListener('click', e => { const b = e.target.closest('.it'); if (b) { const f = F[+b.dataset.i]; pf = pf === f ? null : f; render(); } });
 back.onclick = () => wantR !== null ? focusR(null) : focus(null);
 addEventListener('keydown', e => { if (e.key === 'Escape') wantR !== null ? focusR(null) : focus(null); if (/^[12]$/.test(e.key) && want === null && eR > .85 && eS < .3 && !document.body.classList.contains('heroing')) focusR(+e.key - 1); });

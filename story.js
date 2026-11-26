@@ -192,15 +192,16 @@
       <p class="foot2">Plaza de Mayo y Puente de la Mujer (Buenos Aires) son lugares de comparación: tienen dB propios, pero no entran en las cifras del Barrio Puerto. Las equivalencias en palabras son aproximadas.</p></section>`;
   };
   const ABOUT = document.body.classList.contains('about');
-  if (!ABOUT) document.getElementById('s3').innerHTML = `${finds()}<div class="steps"><div class="cmpw"><div class="cmp"><h2 id="cmph">Cada lugar, a cada hora</h2><p class="cq"></p>
+  if (!ABOUT) document.getElementById('s3').innerHTML = `${finds()}<div class="steps"><div class="cmpw"><div class="cmp"><h2 id="cmph">Dos lugares frente a frente</h2><p class="cq"></p>
       <div class="ft">${FN.map(f => `<span>${f[0]}<em> ${f[1]}</em></span>`).join('')}</div>
       <div class="cp"><span class="dots">${S.map((d, i) => `<span style="background:${d.hex}"${i ? '' : ' class="on"'}></span>`).join('')}</span><span class="cn r">Lugar <i id="cmpn">1</i> de ${NS} · <i id="cmpt">${SECT[0]}</i></span><span class="cn c">Comparando · <i id="cmpa"></i> ↔ <i id="cmpb"></i></span></div>
-      <dl class="cl"></dl></div></div>${S.map(card).join('')}
+      <dl class="cl"></dl></div></div>
     <section class="cstage"><div class="stk"><div class="blk"><div class="bh"><h3>Comparar dos lugares</h3><div class="sub">elige A, B y la hora del día · mismas escalas en mallas y barras</div></div><article class="card sc cmpc"><p class="rd" id="rd" aria-live="polite"></p>
       ${[0, 1].map(k => `<div class="pk" data-k="${k}"><b style="color:${S[k ? 1 : 0].hex}">${'AB'[k]}</b>${S.map((d, i) => `<button data-i="${i}"><i style="background:${d.hex}"></i>${nm(i)}</button>`).join('')}</div>`).join('')}
       <div class="tg fg" id="cfg">${[['all', 'Día'], ['am', 'Mañana'], ['pm', 'Tarde'], ['pk', 'Hora punta']].map(([k, n], i) => `<button data-f="${k}"${i ? '' : ' class="on"'}>${n}</button>`).join('')}</div>
       <div class="bfs" id="bfs"></div></article></div></div></section></div>
 `;
+  if (!ABOUT) document.body.insertAdjacentHTML('beforeend', '<div id="sref" aria-hidden="true">' + S.map(card).join('') + '</div>'); // molde invisible: da a app.js el tamaño de tarjeta que replican sectores y ciudades expandidos
   const CH = `<p class="lead3">Cada gráfica se transforma en otra del mismo tema con el botón.</p><div class="grid2"><div class="mg" id="gA"></div><div class="mg" id="gB"></div></div>
       <div class="ptr"><div class="mg" id="gD"></div></div>`;
   const S4 = `<p class="lead3">Qué suena, cuánta gente y tráfico hay, y dónde están los picos.</p>
@@ -268,7 +269,7 @@
   renderCmp(); setMode('r');
 
   /* scroll → lugar (seis tramos) y, dentro de cada lugar, franja horaria (mañana → tarde → hora punta); después, modo comparar */
-  const stp = [...document.querySelectorAll('.step')], dots = cmpDots, cn = document.getElementById('cmpn'), ct = document.getElementById('cmpt'),
+  const stp = [...document.querySelectorAll('.steps .step')], dots = cmpDots, cn = document.getElementById('cmpn'), ct = document.getElementById('cmpt'),
     ft = [...document.querySelectorAll('.cmp .ft span')], stepsEl = document.querySelector('.steps'), stg = document.querySelector('.cstage');
   const paint = f => stp.forEach((el, q) => { const d = S[q], v = d.fr[f], n = d.fn[f], c = el.querySelector('.fnow');
     if (d.ref && d.refN) { const fb = Math.min(f, 1), r = fb ? d.refN : d.ref; c.querySelector('.fn').textContent = fb ? 'Noche' : 'Día'; c.querySelector('.fh').textContent = fb ? '22:01–07:00 · modelo' : '07:01–22:00 · modelo'; c.querySelector('.fv').innerHTML = `<i data-n="${r.pr.toFixed(1)}" data-dec="1">${r.pr.toFixed(1)}</i> dB · banda ${r.mn}–${r.mx}`; const bg = el.querySelector('.big span[data-n]'), br = el.querySelector('.dbs i'), bn = el.querySelector('.bnd'); if (bg) { bg.dataset.n = r.pr.toFixed(1); bg.textContent = r.pr.toFixed(1); } if (br) { br.dataset.w = dbPos(r.pr).toFixed(1); br.style.width = dbPos(r.pr).toFixed(1) + '%'; } if (bn) bn.textContent = `Banda modelada de ${fb ? 'noche' : 'día'} ${r.mn}–${r.mx} dB`; if (window.VITA) { VITA.scan(c); if (q === vk) VITA.play(c); } el.querySelectorAll('.pf > div').forEach(r => r.classList.remove('hi')); return; }
@@ -276,31 +277,24 @@
     c.querySelector('.fv').innerHTML = n ? `${v == null ? '<i class="nd">sin dB</i>' : `<i data-n="${v.toFixed(0)}">${v.toFixed(0)}</i> dB`} · ${n} ${n > 1 ? 'mediciones' : 'medición'}` : 'sin mediciones'; if (window.VITA) { VITA.scan(c); if (q === vk) VITA.play(c); }
     el.querySelectorAll('.pf > div').forEach((r, i) => r.classList.toggle('hi', i === f)); });
   let vk = -1, ftBA = false;
-  const upd = () => { tk = 0; const vh = innerHeight; let b = 1e9, k = 0;
-    stp.forEach((el, q) => { const r = el.getBoundingClientRect(), d = Math.abs((r.top + r.bottom) / 2 - vh / 2); if (d < b) { b = d; k = q; } });
-    const r = stp[k].getBoundingClientRect(), sr = stepsEl.getBoundingClientRect(), gr = stg.getBoundingClientRect(), p = cl01((vh * .25 - r.top) / (r.height - vh * 1.15)), nph = 3, f = Math.min(nph - 1, Math.floor(p * nph)), w = p * nph - f,
-      inside = sr.top < vh * .5 && sr.bottom > vh * .5, cmp = inside && gr.top < vh * .5;
-    setMode(cmp ? 'c' : 'r');
-    { const act = inside && !cmp ? k : -1; if (act !== vk) { if (window.VITA) { if (vk >= 0) VITA.reset(stp[vk]); if (act >= 0) VITA.play(stp[act]); } vk = act; } }
-    if (k !== cur) { cur = k; cn.textContent = k + 1; ct.textContent = SECT[k]; if (!cmp) dots.forEach((d, q) => d.classList.toggle('on', q === k)); }
-    if (f !== curF) { curF = f; paint(f); }
-    { const baM = false; if (baM !== ftBA) { ftBA = baM; ft.forEach((e, j) => { e.style.display = baM && j > 1 ? 'none' : ''; e.innerHTML = baM ? (j < 2 ? `${['Día', 'Noche'][j]}<em> ${['07:01–22:00', '22:01–07:00'][j]} · modelo</em>` : '') : `${FN[j][0]}<em> ${FN[j][1]}</em>`; }); } }
-    const fi = cmp ? ['am', 'pm', 'pk'].indexOf(cf) : f; ft.forEach((e, j) => { e.classList.toggle('on', j === fi); e.style.setProperty('--p', cmp ? (j === fi ? 1 : 0) : j < f ? 1 : j === f ? w : 0); });
-    if (window.MAREA) { if (inside) { if (saved === null) saved = MAREA.flt; const ba = k >= 4 && !cmp; MAREA.setFlt(cmp ? cf : ba ? 'all' : FN[f][2]); MAREA.setNight(ba && f === 1); } else { MAREA.setNight(false); if (saved !== null) { MAREA.setFlt(saved); saved = null; } } }
+  const upd = () => { tk = 0; const vh = innerHeight, sr = stepsEl.getBoundingClientRect(), inside = sr.top < vh * .5 && sr.bottom > vh * .5; // la sección es solo la comparación A/B
+    setMode('c');
+    const fi = ['am', 'pm', 'pk'].indexOf(cf); ft.forEach((e, j) => { e.classList.toggle('on', j === fi); e.style.setProperty('--p', j === fi ? 1 : 0); });
+    if (window.MAREA) { MAREA.setNight(false); if (inside) { if (saved === null) saved = MAREA.flt; MAREA.setFlt(cf); } else if (saved !== null) { MAREA.setFlt(saved); saved = null; } }
     const lim = 68 + cmpEl.offsetHeight + 40, o = cl01((vh * .92 - sr.top) / (vh * .2)) * cl01((sr.bottom - lim) / 90);
     stepsEl.style.setProperty('--ei', cl01((vh * .75 - sr.top) / (vh * .35))); cmpEl.style.opacity = o; cmpEl.style.visibility = o < .02 ? 'hidden' : 'visible'; };
-  document.addEventListener('click', e => { const mb = e.target.closest('.cmin'); if (mb) { const b = mb.closest('.blk'), o = b.classList.toggle('open'); mb.setAttribute('aria-expanded', o); mb.textContent = o ? 'Ocultar detalle ▴' : 'Ver detalle ▾'; if (o && window.VITA) VITA.play(b); return; } const g = e.target.closest('#ans a'); if (g) { e.preventDefault(); scrollTo({ top: abs(q1('.finds')) - 40, behavior: 'smooth' }); return; } const a = e.target.closest('.fc'); if (!a) return; e.preventDefault(); const el = stp[+a.dataset.s]; if (el) scrollTo({ top: el.getBoundingClientRect().top + scrollY + el.offsetHeight * .22, behavior: 'smooth' }); });
+  document.addEventListener('click', e => { const mb = e.target.closest('.cmin'); if (mb) { const b = mb.closest('.blk'), o = b.classList.toggle('open'); mb.setAttribute('aria-expanded', o); mb.textContent = o ? 'Ocultar detalle ▴' : 'Ver detalle ▾'; if (o && window.VITA) VITA.play(b); return; } const g = e.target.closest('#ans a'); if (g) { e.preventDefault(); scrollTo({ top: abs(q1('.finds')) - 40, behavior: 'smooth' }); return; } const a = e.target.closest('.fc'); if (!a) return; e.preventDefault(); const q = +a.dataset.s; scrollTo({ top: innerHeight * 1.95, behavior: 'smooth' }); setTimeout(() => { if (window.MAREA) MAREA.focus(q); }, 1100); });
   addEventListener('scroll', () => { if (!tk) tk = requestAnimationFrame(upd); }, { passive: true }); addEventListener('resize', upd); upd();
 
   /* ---- navegación por secciones, estado en la URL y teclado ---- */
   const abs = el => el.getBoundingClientRect().top + scrollY, vhh = () => innerHeight, q1 = sel => document.querySelector(sel);
-  const SEC = [['barrio', 'Barrio', () => 0], ['ciudades', 'Dos ciudades', () => vhh() * .9], ['sectores', 'Sectores', () => vhh() * 1.95], ['hallazgos', 'Hallazgos', () => abs(q1('.finds')) - 40], ['contraste', 'Lugares', () => abs(stepsEl), () => stopY(0)], ['comparar', 'Comparar', () => abs(stg) - vhh() * .3]];
+  const SEC = [['barrio', 'Barrio', () => 0], ['ciudades', 'Dos ciudades', () => vhh() * .9], ['sectores', 'Sectores', () => vhh() * 1.95], ['hallazgos', 'Hallazgos', () => abs(q1('.finds')) - 40], ['comparar', 'Comparar', () => abs(stg) - vhh() * .3]];
   const nav = document.createElement('nav'); nav.id = 'sec'; nav.setAttribute('aria-label', 'Secciones del atlas');
   nav.innerHTML = SEC.map(([k, n]) => `<button data-k="${k}" aria-label="${n}"><span>${n}</span><i></i></button>`).join('')
     + '<button class="snd" hidden aria-pressed="false" aria-label="Activar sonido"><span>Sonido silenciado</span><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6v4h2.6L8.5 12.6V3.4L5.1 6z"/><path class="w" d="M10.8 5.6a3.4 3.4 0 010 4.8M12.6 3.8a6 6 0 010 8.4"/></svg></button><button class="lk" aria-label="Copiar enlace a esta vista"><span>Copiar enlace</span><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6.5 9.5l3-3M5 8l-1.2 1.2a2.4 2.4 0 003.4 3.4L8.4 11.4M11 8l1.2-1.2A2.4 2.4 0 008.8 3.4L7.6 4.6"/></svg></button><button class="kb" aria-label="Atajos de teclado"><span>Atajos de teclado</span><b>?</b></button>';
   document.body.appendChild(nav);
   const kbd = document.createElement('div'); kbd.id = 'kbd'; kbd.hidden = true; kbd.setAttribute('role', 'dialog'); kbd.setAttribute('aria-label', 'Atajos de teclado');
-  kbd.innerHTML = '<h4>Atajos de teclado</h4><dl><dt>← →</dt><dd>paso anterior o siguiente (lugar y franja); en Comparar, cambia la franja</dd><dt>A · B</dt><dd>en Comparar, cambia el lugar A o B</dd><dt>N · P</dt><dd>sección siguiente o anterior</dd><dt>1 – 4</dt><dd>expande un sector · Esc vuelve</dd><dt>M</dt><dd>activa o silencia el sonido por fuentes</dd><dt>?</dt><dd>muestra u oculta esta ayuda</dd></dl>';
+  kbd.innerHTML = '<h4>Atajos de teclado</h4><dl><dt>← →</dt><dd>en Comparar, cambia la franja horaria</dd><dt>A · B</dt><dd>en Comparar, cambia el lugar A o B</dd><dt>N · P</dt><dd>sección siguiente o anterior</dd><dt>1 – 4</dt><dd>expande un sector · Esc vuelve</dd><dt>M</dt><dd>activa o silencia el sonido por fuentes</dd><dt>?</dt><dd>muestra u oculta esta ayuda</dd></dl>';
   document.body.appendChild(kbd);
   const sbtn = [...nav.querySelectorAll('button[data-k]')]; let act = -1, ready = false, ut = 0, pin = null;
   const go = (y, i) => { pin = i == null ? null : { i, y: Math.max(0, y), landed: false, ly: 0 }; scrollTo({ top: Math.max(0, y), behavior: RM ? 'auto' : 'smooth' }); };
@@ -318,13 +312,12 @@
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(u).then(done, () => prompt('Copia este enlace', u)); else prompt('Copia este enlace', u); });
   const measK = () => { const bt = nav.querySelector('.kb'), r = bt.getBoundingClientRect(), st = kbd.style; st.transition = 'none'; st.setProperty('width', 'var(--kw)', 'important'); st.setProperty('height', 'auto', 'important'); const h = kbd.offsetHeight; st.removeProperty('width'); st.removeProperty('height'); void kbd.offsetWidth; st.transition = ''; kbd.style.setProperty('--kh', h + 'px'); kbd.style.setProperty('--kb', Math.max(12, innerHeight - r.bottom - 6) + 'px'); };
   const tkb = () => { if (kbd.hidden) measK(); kbd.hidden = !kbd.hidden; }; nav.querySelector('.kb').addEventListener('click', tkb);
-  const stopY = n => { const el = stp[Math.floor(n / 3)], p = (n % 3 + .5) / 3; return abs(el) + p * el.offsetHeight - vhh() / 2; };
   addEventListener('keydown', e => { if (e.ctrlKey || e.metaKey || e.altKey || document.body.classList.contains('heroing')) return; const t = e.target; if (t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return; const k = e.key;
     if (k === '?') { tkb(); e.preventDefault(); return; } if (k === 'Escape') { kbd.hidden = true; return; }
     if (/^[np]$/i.test(k)) { go(SEC[Math.max(0, Math.min(SEC.length - 1, act + (/n/i.test(k) ? 1 : -1)))][2]()); e.preventDefault(); return; }
     if (k === 'ArrowRight' || k === 'ArrowLeft') { const d = k === 'ArrowRight' ? 1 : -1;
       if (mode === 'c') { const o = ['all', 'am', 'pm', 'pk'], j = Math.max(0, Math.min(3, o.indexOf(cf) + d)); document.querySelector(`#cfg button[data-f="${o[j]}"]`).click(); e.preventDefault(); }
-      else if (act === 3) { const n = cur * 3 + curF + d; go(n < 0 ? SEC[2][2]() : n > 11 ? SEC[4][2]() : stopY(n)); e.preventDefault(); } return; }
+      return; }
     if (mode === 'c' && /^[ab]$/i.test(k)) { const i = /a/i.test(k) ? 0 : 1; let n = (pair[i] + 1) % NS; if (n === pair[1 - i]) n = (n + 1) % NS; pair[i] = n; renderCmp(); sync(); e.preventDefault(); } });
   // pantallas de poca altura: la tarjeta derecha se escala para caber en el alto visible (sin solapar la anterior)
   const fitBlk = () => { const av = innerHeight - 150, wide = innerWidth > 1100, all = [...document.querySelectorAll('.step .blk'), ...document.querySelectorAll('.cstage .blk')]; all.forEach(b => { b.style.minHeight = ''; b.style.transform = ''; b.style.width = ''; });
