@@ -87,7 +87,7 @@ window.SND = (() => {
       if (W > .015) { let x = Math.random() * W, k = 0; while (k < ws.length - 1 && x > ws[k]) { x -= ws[k]; k++; } const q = slots[k]; register(q, q.gain * (.3 + q.st.share[2]), q.st); }
       nextC = now0 + r(1.6, 4.2) / (.6 + Math.min(1.2, W * 2)); }
     if (now0 >= nextB) { let W = 0; const ws = slots.map(q => { const w = q.st && q.gain > .02 ? q.st.share[4] * q.gain : 0; W += w; return w; });
-      if (W > .015) { let x = Math.random() * W, k = 0; while (k < ws.length - 1 && x > ws[k]) { x -= ws[k]; k++; } const q = slots[k]; bird(q, q.gain * (.25 + q.st.share[4])); }
+      if (W > .015) { let x = Math.random() * W, k = 0; while (k < ws.length - 1 && x > ws[k]) { x -= ws[k]; k++; } const q = slots[k]; bird(q, q.gain * (.35 + 1.2 * q.st.share[4])); }
       nextB = now0 + r(1.2, 4.5) / (.6 + Math.min(1.2, W * 2)); }
     /* vocales graves: un solo flujo global con intervalos irregulares (exponenciales) y lugar elegido al azar según su peso humano → voces sueltas, asíncronas, sin ritmo de coro */
     const now = ctx.currentTime; if (now >= nextV) { let W = 0; const ws = slots.map(q => { const w = q.st && q.gain > .02 ? q.st.share[1] * q.gain : 0; W += w; return w; });
@@ -98,7 +98,7 @@ window.SND = (() => {
     const k = 1 / Math.sqrt(Math.max(1, sc.length));
     slots.forEach((sl, i) => { const e = sc[i]; if (!e) { sl.gain = 0; sl.out.gain.setTargetAtTime(0, t, .4); CK.forEach(c => { sl.v[c].gain.setTargetAtTime(0, t, .4); ensure(sl, c, 0); }); return; }
       const st = stats(e[0]); sl.st = st; const lvl = Math.pow(cl((st.db - 45) / 35, 0, 1), 1.4) * k * v; sl.gain = lvl; sl.out.gain.setTargetAtTime(1, t, .4); if (sl.pan) sl.pan.pan.setTargetAtTime(e[1], t, .4);
-      CK.forEach((c, j) => { const g = st.n ? st.share[j] * TRIM[c] * lvl : 0; let gg = g; if (c === 'V') gg = g * (.5 + .25 * st.fv); if (c === 'H') gg = g * (.5 + .25 * st.fp); ensure(sl, c, gg * .8); sl.v[c].gain.setTargetAtTime(gg * .8, t, .45); });
+      CK.forEach((c, j) => { const g = st.n ? st.share[j] * TRIM[c] * lvl : 0; let gg = g; if (c === 'V') gg = g * (.5 + .25 * st.fv); if (c === 'H') gg = g * (.5 + .25 * st.fp); if (c === 'N') gg = g * .4; ensure(sl, c, gg * .8); sl.v[c].gain.setTargetAtTime(gg * .8, t, .45); });
       sl.v.C.gain.setTargetAtTime(0, t, .1); }); sceneKey = key; }
   function blip(c, db) { if (!active || !ctx || vol <= .05) return; const t = ctx.currentTime, e = gain(0), g = .12 + .25 * cl((db - 45) / 40, 0, 1); let o;
     if (c === 'H') { o = filt('bandpass', r(320, 900), .7); const n = noise(); n.connect(o); o.connect(e); n.stop(t + 1); }
