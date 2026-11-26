@@ -1061,3 +1061,14 @@ body.about #c{filter:blur(6px)}
   #panel .pcard .list{margin-bottom:4px}
 }
 @media(min-width:1500px){#panel .pd .bh h3{font-size:26px}#panel .pd .bh .sub{font-size:17px}}
+
+/* v162 · lectura amigable de las tarjetas: cita con el color de su fuente, bloque «Qué se oye / Cómo se vive», cifras con palabras */
+.ag q,#panel .ag q{font-weight:700;font-style:italic;font-size:14.5px;line-height:1.45;opacity:1}
+.sc .fi2{margin:2px 0 10px;display:grid;gap:9px}
+.sc .fi2 div{display:grid;gap:1px}
+.sc .fi2 b{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#8F9984}
+.sc .fi2 span{font-size:14.5px;line-height:1.5;color:#444b3b}
+.sc .fact b{font-weight:700;color:#3b4234}
+.ag small b{font-weight:700}
+@media(min-width:1500px){.sc .fi2 span{font-size:16.5px}.sc .fi2 b{font-size:12px}.ag q,#panel .ag q{font-size:17px}}
+body.about #c{filter:blur(14px)}

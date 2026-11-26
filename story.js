@@ -7,12 +7,12 @@
       fr: [bk('am'), bk('pm'), bk('pk')], hex: COL[DOM[s]], cats: CK.map(c => all.filter(f => f.c === c).length), ags: [-1, 0, 1, 2].map(v => es.filter(e => e[1] === v).length), inc: es.filter(e => e[1] < 0).length };
   });
   const FI = [
-    'El lugar más diverso: portuaria, humana, vehicular y comercial. Tiene los picos más altos y, aun así, las 7 respuestas lo valoran bien: el mar y las voces pesan más que los decibeles.',
-    'El techo del barrio: micros y bocinas dominan (10 de 11 mediciones) y los flujos son los más altos. 4 de 6 personas lo sienten incómodo.',
-    'Un tubo comercial: captadores, música de locales y cortinas. Es tranquilo en la mañana y salta a 72 dB en la hora punta.',
-    'Voces y canto en torno a la pileta seca: el sonido más parejo. Con 3 mediciones y 2 encuestas es una lectura preliminar.',
-    'Buenos Aires, plaza junto a avenida: dominan los colectivos y autos, con mucha gente a pie. Tres mediciones propias con dB, sin encuestas; el promedio sube de 70 a 74 dB entre la mañana y la hora punta.',
-    'Buenos Aires, borde del río: el zumbido de la ciudad como aura de fondo, turistas y terrazas; de noche la música de los bares lleva el máximo a 96 dB. Cinco mediciones propias con dB, sin encuestas.'];
+    [['Qué se oye', 'Mar, motores portuarios, voces y locales: el lugar con más variedad de sonidos.'], ['Cómo se vive', 'Tiene los picos más altos, pero las 7 personas encuestadas lo valoran bien: el mar y las voces pesan más que los decibeles.']],
+    [['Qué se oye', 'Micros y bocinas: 10 de 11 mediciones son tráfico, y es donde más gente y vehículos circulan.'], ['Cómo se vive', '4 de 6 personas encuestadas lo sienten incómodo.']],
+    [['Qué se oye', 'Captadores, música de locales y cortinas metálicas: un pasaje comercial.'], ['Cómo cambia', 'Tranquilo en la mañana; sube a 72 dB en la hora punta.']],
+    [['Qué se oye', 'Voces y canto en torno a la pileta seca: el sonido más parejo del barrio.'], ['Ojo con el dato', 'Solo 3 mediciones y 2 encuestas: es una lectura preliminar.']],
+    [['Qué se oye', 'Colectivos y autos, con mucha gente a pie: una plaza junto a una avenida.'], ['Cómo cambia', 'El promedio sube de 70 a 74 dB entre la mañana y la hora punta.'], ['Ojo con el dato', 'Tres mediciones propias con dB y ninguna encuesta de agrado.']],
+    [['Qué se oye', 'El zumbido de la ciudad de fondo, turistas y terrazas, en el borde del río.'], ['Cómo cambia', 'De noche, la música de los bares lleva el máximo a 96 dB.'], ['Ojo con el dato', 'Cinco mediciones propias con dB y ninguna encuesta de agrado.']]];
   window.FIX = FI;
   const cl01 = v => Math.max(0, Math.min(1, v));
   const RM = matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -26,8 +26,8 @@
     ${d.db == null && !d.ref ? '' : `<div class="dbs"><div class="dtr"><i data-w="${dbPos(d.db == null ? d.ref.pr : d.db).toFixed(1)}" style="background:${d.hex}"></i></div><small>≈ ${DBW(d.db == null ? d.ref.pr : d.db)}</small></div>`}
     <div class="chips"><span style="color:${d.hex}">● ${SH[DOM[d.s]]}</span>${d.ag == null ? '<span>sin encuestas</span>' : `<span style="color:rgb(${agr(d.ag)})">agrado percibido <i style="font-style:normal" data-n="${d.ag.toFixed(2)}" data-dec="2">${d.ag.toFixed(2)}</i> · ${AGW(d.ag)}</span>`}</div>
     <div class="fnow"><b class="fn"></b><span class="fh"></span><span class="fv"></span></div>
-    <div class="ag${d.ne ? '' : ' na'}"><div class="agb" data-reveal>${d.ags.map((c, k) => c ? `<span style="flex:${c};background:${AGC[k]}" title="${AGN[k]}: ${c}">${c}</span>` : '').join('')}</div><small>agrado percibido · ${d.ne} respuestas: ${d.ags.map((c, k) => `<b style="color:${AGC[k]}">${c}</b> ${AGN[k].toLowerCase()}`).join(' · ')}</small><q>${QUOTE[d.s]}</q></div>
-    <div class="fact">${d.mx == null ? (d.ref ? `<span class="bnd">Banda modelada de día ${d.ref.mn}–${d.ref.mx} dB</span>` : 'Sin dB medido') : `Máximo <span data-n="${d.mx}">${d.mx}</span> dB`} · flujo peatonal <span data-n="${d.fp.toFixed(1)}" data-dec="1">${d.fp.toFixed(1)}</span> · vehicular <span data-n="${d.fv.toFixed(1)}" data-dec="1">${d.fv.toFixed(1)}</span></div><p class="fi">${FI[d.s]}</p>
+    <div class="ag${d.ne ? '' : ' na'}"><div class="agb" data-reveal>${d.ags.map((c, k) => c ? `<span style="flex:${c};background:${AGC[k]}" title="${AGN[k]}: ${c}">${c}</span>` : '').join('')}</div>${agCap(d.ags, d.ne)}<q style="color:${qCol(d.s)}">${QUOTE[d.s]}</q></div>
+    <div class="fact">${d.mx == null && d.ref ? `<span class="bnd">Banda modelada de día ${d.ref.mn}–${d.ref.mx} dB</span>` : factLine(d.mx, d.fp, d.fv)}</div>${fiBlock(FI[d.s])}
     <div class="pf"><h5>dB promedio según la hora del día</h5>${['Mañana', 'Tarde', 'Hora punta'].map((n, i) => bar(n, d.fr[i], false)).join('')}</div></article></div></div></section>`;
 
   /* ---- motor de transformación: cada vista es un mapa id → forma; los ids compartidos se interpolan ---- */
@@ -238,9 +238,9 @@
 
 
   /* ---- modo comparar: dos lugares frente a frente, misma franja y misma escala ---- */
-  const REC = [['Color', 'fuente de sonido que predomina'], ['Largo', 'hora, de 09:40 a 18:50'], ['Relieve', 'dB promedio del lugar'], ['Puntos brillantes', 'cada uno es una medición de terreno'], ['Puntos y estelas', 'personas y vehículos'], ['Anillos', 'finos: dB de referencia · exterior: agrado percibido']];
+  const REC = [['Color', 'qué suena más en el lugar'], ['Largo', 'la hora del día, de 09:40 a 18:50'], ['Relieve', 'qué tan fuerte suena (dB): más alto, más fuerte'], ['Puntos brillantes', 'una medición hecha en terreno'], ['Puntos y estelas', 'personas caminando y vehículos pasando'], ['Anillos', 'los finos miden los dB; el grande, cuánto agrada el lugar']];
   const RING = AGC.map((c, i) => `<span style="color:${c}">● ${AGN[i].toLowerCase()}</span>`).join(' ');
-  const CMPL = [['Mallas', 'A a la izquierda, B a la derecha, misma escala'], ['Color y relieve', 'fuente que predomina · dB promedio'], ['Anillo exterior', 'agrado percibido ' + RING + ' (no cambia con la hora)']];
+  const CMPL = [['Mallas', 'A a la izquierda, B a la derecha, a la misma escala'], ['Color y relieve', 'qué suena más · qué tan fuerte (dB promedio)'], ['Anillo exterior', 'cuánto agrada el lugar: ' + RING + ' (no cambia con la hora)']];
   const CQ = ['¿Cómo varían las fuentes y la intensidad del sonido según el lugar y la hora? Un lugar a la vez, con el mismo modelo.', 'Misma hora del día y misma escala en los dos lugares.'];
   let cur = -1, curF = -1, saved = null, tk = 0;
   const FNM = { all: 'todo el día', am: 'la mañana', pm: 'la tarde', pk: 'la hora punta' }, pair = [0, 1]; let cf = 'all', mode = '';

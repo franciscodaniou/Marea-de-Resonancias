@@ -24,8 +24,9 @@ window.SND = (() => {
     // V · motor al ralentí (tono grave con armónicos y pulso suave) + rodadura de neumáticos
     v.V = gain(0); { const o = osc('sawtooth', 56), o2 = osc('sawtooth', 56.7), f = filt('lowpass', 340, .9), m = gain(.8); o.connect(f); o2.connect(f); f.connect(m); m.connect(v.V); lfo(8.5, .22, m.gain);
       const n = noise(), r = filt('bandpass', 620, .5), rg = gain(.22); n.connect(r); r.connect(rg); rg.connect(v.V); }
-    // H · murmullo de voces
-    v.H = gain(0); { const n = noise(), a = filt('bandpass', 650, 1.1), b = filt('bandpass', 1500, 1.4), m = gain(.5); n.connect(a); a.connect(m); n.connect(b); b.connect(m); m.connect(v.H); lfo(3.2 + Math.random(), .35, m.gain); }
+    // H · murmullo de voces: ruido suave en tres bandas bajas (como sílabas lejanas), cada una con su propio vaivén lento
+    v.H = gain(0); { const n = noise(), lp = filt('lowpass', 1500, .5), m = gain(.55); lp.connect(m); m.connect(v.H); n.connect(lp);
+      [[320, .8, 2.3], [700, .9, 3.4 + Math.random() * .6], [1150, 1, 4.6]].forEach(([fr, q, rt], j) => { const bp = filt('bandpass', fr, q), bg = gain(.5); n.connect(bp); bp.connect(bg); bg.connect(lp); lfo(rt, .32, bg.gain); lfo(.13 + j * .06, fr * .22, bp.frequency); }); }
     // C · se toca con notas sueltas (eventos)
     v.C = gain(0);
     // M · oleaje suave (barrido lento de un ruido grave) + casco/motor de barco (dos senos graves)
@@ -69,9 +70,9 @@ window.SND = (() => {
       CK.forEach((c, j) => { const g = st.n ? st.share[j] * TRIM[c] * lvl : 0; let gg = g; if (c === 'V') gg = g * (.5 + .25 * st.fv); if (c === 'H') gg = g * (.5 + .25 * st.fp); sl.v[c].gain.setTargetAtTime(gg * .8, t, .45); });
       sl.v.C.gain.setTargetAtTime(0, t, .1); }); sceneKey = key; }
   function blip(c, db) { if (!active || !ctx || vol <= .05) return; const t = ctx.currentTime, e = gain(0), g = .12 + .25 * cl((db - 45) / 40, 0, 1); let o;
-    if (c === 'H') { o = filt('bandpass', r(500, 1400), 1.6); const n = noise(); n.connect(o); o.connect(e); n.stop(t + .5); }
+    if (c === 'H') { o = filt('bandpass', r(320, 900), .7); const n = noise(); n.connect(o); o.connect(e); n.stop(t + 1); }
     else { const os = ctx.createOscillator(); os.type = c === 'C' ? 'triangle' : c === 'M' ? 'sawtooth' : c === 'N' ? 'sine' : 'sawtooth'; os.frequency.value = { V: 110, C: 523, M: 73, N: 880 }[c] || 220; const f = filt('lowpass', c === 'M' || c === 'V' ? 400 : 3000); os.connect(f); f.connect(e); os.start(t); os.stop(t + .5); }
-    e.connect(master); e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(g * vol, t + .02); e.gain.exponentialRampToValueAtTime(.0005, t + .45); }
+    e.connect(master); e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(g * vol, t + (c === 'H' ? .12 : .02)); e.gain.exponentialRampToValueAtTime(.0005, t + (c === 'H' ? .9 : .45)); }
   function setActive(on) { if (on && !ctx) init(); active = !!on; if (ctx) { if (on) ctx.resume(); master.gain.setTargetAtTime(on ? .55 : 0, ctx.currentTime, .15); if (!on) setTimeout(() => { if (!active && ctx) ctx.suspend(); }, 600); }
     clearInterval(timer); if (on) timer = setInterval(tick, 120); document.body.classList.toggle('snd-on', !!on); return active; }
   document.addEventListener('visibilitychange', () => { if (!ctx) return; if (document.hidden) ctx.suspend(); else if (active) ctx.resume(); });
