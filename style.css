@@ -1167,3 +1167,44 @@ body.cmpv .lgin{width:min(640px,calc(100vw - 28px))!important}
 /* v179 · la píldora «Cómo leer» conserva su transición elástica también en comparar (body.deep la anulaba) */
 body.cmpv #leg,body.cmpv.deep #leg{transition:width .7s var(--spring-soft),height .7s var(--spring-soft),border-radius .6s var(--spring-soft),scale .8s var(--spring-el),box-shadow .35s ease,background-color .3s,opacity .35s ease .1s,visibility 0s!important}
 body.cmpv .lgb{transition:opacity .4s,transform .75s var(--spring)!important}
+
+/* v180 · tarjetas de sector y ciudad: jerarquía, peso y aire */
+#panel .sc{--ink:#2b3227;--ink2:#444b3b;--rule:rgba(94,102,85,.2)}
+#panel .sc .big{margin:0 0 4px}
+#panel .sc .dbs{margin:2px 0 20px!important}
+#panel .sc .dbs small{font-size:15px!important;color:var(--ink2)!important}
+/* chips: dos datos clave, como píldoras */
+#panel .sc .chips{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 24px!important;font-size:15px!important}
+#panel .sc .chips span{padding:7px 14px;border-radius:99px;background:rgba(255,255,255,.55);box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 1px 3px rgba(60,70,50,.1);font-weight:700;line-height:1.2}
+/* encabezados de sección (nivel 1) */
+#panel .sc .sl,#panel .sc .pf h5{display:block;margin:34px 0 14px!important;padding:24px 0 0;border-top:1px solid var(--rule);font:700 18px/1.25 "SF Pro",-apple-system,"Helvetica Neue",Arial,sans-serif!important;letter-spacing:0!important;text-transform:none!important;color:var(--ink)!important}
+#panel .sc .sl:first-of-type{margin-top:26px!important}
+#panel .sc .pfs{margin:-6px 0 14px;font-size:14.5px;line-height:1.45;color:var(--ink2)}
+/* gente: barra, pie, cita */
+#panel .sc .agb{height:26px;border-radius:13px;font-size:13px}
+#panel .sc .ag small{display:block;margin:12px 0 0;font-size:15px;line-height:1.5;color:var(--ink2)}
+#panel .sc .ag q{display:block;margin:20px 0 0;padding-left:16px;border-left:3px solid currentColor;font-size:19px!important;line-height:1.38;font-weight:700}
+/* lo que se oyó: dato duro destacado + filas con etiqueta (nivel 2) */
+#panel .sc .fact{margin:0 0 20px!important;font-size:16px!important;line-height:1.5;color:var(--ink)!important}
+#panel .sc .fact b{font-size:1.25em;font-weight:800}
+#panel .sc .fi2{display:grid;gap:18px!important;margin:0 0 22px!important}
+#panel .sc .fi2 b{font-size:12px!important;letter-spacing:.1em!important;color:#6b7460!important;margin-bottom:3px}
+#panel .sc .fi2 span{font-size:16px!important;line-height:1.55!important;color:var(--ink)!important}
+/* flujos y horas */
+#panel .sc .fl{margin:6px 0 0;display:grid;gap:10px}
+#panel .sc .fl div,#panel .sc .pf div{font-size:15.5px!important}
+#panel .sc .pf div{margin:0 0 9px}
+#panel .sc .pf div b{font-weight:700}
+#panel .sc .dbe{display:block;margin:12px 0 0;font-size:14.5px;line-height:1.5;color:var(--ink2)}
+/* bloque del filtro */
+#panel .sc .fbk2{margin:4px 0 22px}
+/* margen interior de la tarjeta */
+@media(min-width:1100px){#panel .pcard{padding:36px 40px 34px!important}}
+@media(min-width:1500px){#panel .sc .sl,#panel .sc .pf h5{font-size:20px!important}#panel .sc .fi2 span,#panel .sc .fact{font-size:17.5px!important}#panel .sc .ag q{font-size:21px!important}#panel .sc .chips{font-size:16.5px!important}#panel .sc .fl div,#panel .sc .pf div{font-size:16.5px!important}}
+@media(max-width:1099px){
+ #panel .sc.pn .sl,#panel .sc.pn .pf h5{margin:26px 0 12px!important;padding-top:20px;font-size:16.5px!important}
+ #panel .sc.pn .chips{gap:8px;margin-bottom:18px!important;font-size:13.5px!important}#panel .sc.pn .chips span{padding:6px 12px}
+ #panel .sc.pn .fi2{gap:14px!important}#panel .sc.pn .fi2 span{font-size:14.5px!important}#panel .sc.pn .fact{font-size:14.5px!important}
+ #panel .sc.pn .ag q{font-size:16.5px!important;margin-top:16px}
+ #panel .sc.pn .fl div,#panel .sc.pn .pf div{font-size:14px!important}
+}
