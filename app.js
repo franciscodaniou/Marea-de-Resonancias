@@ -94,7 +94,7 @@ function layout() { // las figuras se reacomodan en sincronía con el pill/leyen
   ctr = NSX.map(i => { const rw = Math.floor(i / best.c), inRow = Math.min(best.c, NS - rw * best.c), cx = i % best.c + (best.c - inRow) / 2; return [x0 + gw * (cx + .5) / best.c, top0 + (gh / best.nr) * rw + off + 8 + Rb * 1.08]; });
   if (mob) { const ghc = H - 150 - top0, LBc = 184; Rb = Math.max(70, Math.min(gw / 2.1, (ghc - LBc) / 2.1)); LW = gw; const cyc = top0 + 8 + Rb * 1.08 + Math.max(0, (ghc - LBc - 2.2 * Rb) / 2); ctr = NSX.map(i => [W / 2 + i * W, cyc]); car.style.top = top0 + 'px'; car.style.height = Math.max(0, ghc) + 'px'; cdots.style.top = Math.round(Math.max(top0 + 6, cyc - Rb * 1.15 - 22)) + 'px'; }
   const tab = W < 1100; CMX = tab ? W / 2 : W * .27; CMY = tab ? H * .37 : H * .70; CMR = tab ? Math.min(W * .26, H * .115) : Math.min(W * .15, H * .23); CMY0 = CMY; CMR0 = CMR;
-  CPX = mob ? [W * .27, W * .73] : tab ? [W * .27, W * .73] : [W * .15, W * .4]; CPY = tab ? H * .385 : H * .72; CPR = tab ? Math.min(W * .27, H * .115) : Math.min(W * .13, H * .24);
+  CPX = mob ? [W * .27, W * .73] : tab ? [W * .27, W * .73] : [W * .145, W * .41]; CPY = tab ? H * .385 : H * .72; CPR = tab ? Math.min(W * .27, H * .115) : Math.min(W * .165, H * .3);
   CX0 = x0 + gw / 2; CY0 = top0 + gh / 2 + (mob ? -8 : 0); S0 = W >= 760 && W < 1100 && H > W ? Math.min(gw * .18, gh * .3) : Math.min(gw * (mob ? (H < 700 ? .25 : .3) : .15), gh * (mob ? (H < 720 ? .27 : .38) : .36));
   if (mob) { // móvil: figura arriba, panel como hoja inferior (la mitad inferior de la pantalla)
     const pt = Math.round(H * .5), t1 = 100, A = pt - t1 - 6;
@@ -346,7 +346,7 @@ function frame(ms) {
   const rm = RM ? .2 : 1, ry = Math.sin(T * rm * .17) * .62 + oy, rx = -.28 + Math.sin(T * rm * .11 + 1) * .14 + ox; // se favorecen las vistas de las bases del tubo cY = Math.cos(ry); sY = Math.sin(ry); cX = Math.cos(rx); sX = Math.sin(rx);
   CMY = CMY0; CMR = CMR0; // la posición/tamaño base se restablece cada cuadro: la comparación ya no deja el modelo desplazado al volver a Lugares
   if (W >= 760 && W < 1100 && cA > .01 && cS >= 0) { const bk = stEl[cS] && stEl[cS].querySelector('.blk'); if (bk) { const t0 = 150, b0 = bk.getBoundingClientRect().top - 8, h0 = b0 - t0; if (h0 > 80) { CMR = cl(h0 / 2.5, 40, Math.min(W * .26, 230)); CMY = (t0 + b0) / 2; } } } // tableta: el modelo se centra en el hueco entre la cabecera y la tarjeta
-  if (W >= 1100 && cm > .01) { const cp = document.querySelector('.cmp'); if (cp) { const t0 = cp.getBoundingClientRect().bottom + 14, b0 = H - 24, h0 = b0 - t0; if (h0 > 200) { CPY = (t0 + b0) / 2 - 8; CMY = CPY; } } } // comparación: mallas centradas verticalmente en el espacio libre
+  if (W >= 1100 && cm > .01) { const cp = document.querySelector('.cmp'); if (cp) { const t0 = cp.getBoundingClientRect().bottom + 14, b0 = H - 24, h0 = b0 - t0; if (h0 > 200) { const rr = .72 * CPR; CPY = cl(H * .53, t0 + rr * 1.12, Math.max(t0 + rr * 1.12, b0 - rr * 1.12 - 56)); CMY = CPY; } } } // comparación: mallas centradas verticalmente en el espacio libre
   if (W >= 1100 && cA > .01) { const cp = document.querySelector('.cmp'); if (cp) { const t0 = cp.getBoundingClientRect().bottom + 14, b0 = H - 24, h0 = b0 - t0; if (h0 > 60) { const r = Math.max(34, Math.min(Math.min(W * .165, H * .25), h0 / 2.2)); CMR = r; CMY = (t0 + b0) / 2; } } } // escritorio de poca altura: la figura baja de la leyenda
   if (W < 1100 && cm > .01) { const bk = document.querySelector('.cstage .blk'), cp = document.querySelector('.cmp'); // comparación en pantallas chicas: los dos modelos ocupan el hueco entre el título y la tarjeta
     if (bk && cp) { const t0 = Math.max(cp.getBoundingClientRect().bottom + 6, 96), b0 = bk.getBoundingClientRect().top - 8, h0 = b0 - t0; if (h0 > 80) { CPR = cl(h0 / (W < 760 ? (H < 700 ? 2.5 : 2.15) : H < 700 ? 2.85 : 2.4), 36, W >= 760 ? Math.min(W * .29, 265) : Math.min(W * (W < 760 ? .4 : .3), W < 760 ? 190 : 150)); CPY = (t0 + b0) / 2 - 4; } } } // CMY/CMR (lugares) no se tocan: al volver desde Comparar el modelo ya no pasa por la posición de la comparación
@@ -397,7 +397,7 @@ function frame(ms) {
   requestAnimationFrame(frame);
 }
 
-const SND = { V: 'vehicular', H: 'humano', C: 'comercial', M: 'portuario', N: 'natural' }, LOW = { V: 'lo vehicular', H: 'lo humano', C: 'lo comercial', M: 'lo portuario', N: 'lo natural' };
+const SNM = { V: 'vehicular', H: 'humano', C: 'comercial', M: 'portuario', N: 'natural' }, LOW = { V: 'lo vehicular', H: 'lo humano', C: 'lo comercial', M: 'lo portuario', N: 'lo natural' };
 const FBN = { am: ['Mañana', '09:40–12:36'], pm: ['Tarde', '12:37–17:29'], pk: ['Hora punta', '17:30–18:50'] };
 const fsel = (ss, ff, sf) => uniq(F.filter(f => ss.includes(f.s) && !f.ap && !f.night && (ff === 'all' || f.m >= FILTERS[ff][0] && f.m <= FILTERS[ff][1]) && (!sf || f.c === sf)));
 const fst = a => { const r = real(a); return { n: a.length, db: r.length ? mean(r, f => f.pr) : null }; };
@@ -406,7 +406,7 @@ const fdb = s => fact() ? fst(fsel([s], flt, srcF)).db : dbAvg(s); // dB promedi
 const qCol2 = c => 'rgb(' + dark(rgbOf(COL[c]), .32).join(',') + ')';
 function fcard(v) { // bloque dentro de la tarjeta: explica en palabras qué cambia con el filtro activo (hora y/o fuente)
   if (!fact()) return '';
-  const sc = v.k === 'city' ? REG[v.i].ss : [v.i], nm = v.k === 'city' ? REG[v.i].n : SECT[v.i], tt = [flt !== 'all' ? `${FBN[flt][0].toLowerCase()} (${FBN[flt][1]} h)` : '', srcF ? `sonido ${SND[srcF]}` : ''].filter(Boolean).join(' · ');
+  const sc = v.k === 'city' ? REG[v.i].ss : [v.i], nm = v.k === 'city' ? REG[v.i].n : SECT[v.i], tt = [flt !== 'all' ? `${FBN[flt][0].toLowerCase()} (${FBN[flt][1]} h)` : '', srcF ? `sonido ${SNM[srcF]}` : ''].filter(Boolean).join(' · ');
   const sub = fsel(sc, flt, srcF), base = fsel(sc, 'all', null), A = fst(sub), B = fst(base), rows = [], pl = n => n === 1 ? 'medición' : 'mediciones';
   if (!sub.length) rows.push(['En breve', `Con este filtro no hay mediciones en ${nm}.`]);
   else {
