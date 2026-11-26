@@ -1072,3 +1072,20 @@ body.about #c{filter:blur(6px)}
 .ag small b{font-weight:700}
 @media(min-width:1500px){.sc .fi2 span{font-size:16.5px}.sc .fi2 b{font-size:12px}.ag q,#panel .ag q{font-size:17px}}
 body.about #c{filter:blur(14px)}
+
+/* v164 · tarjetas legibles: subtítulos grandes y oscuros, unidades dB a la vista */
+.sc .pf h5,#panel .pf h5{font-size:15px!important;letter-spacing:0!important;text-transform:none!important;color:#3b4234!important;font-weight:700!important;line-height:1.3;margin:18px 0 6px!important}
+.sc .fi2 b{font-size:13px;color:#4a5340;letter-spacing:.07em}
+.sc .fi2 span{font-size:15px;color:#2f352b}
+.sc .ag small,#panel .ag small{font-size:13.5px;color:#4a5340;line-height:1.45}
+.sc .dbs small,#panel .dbs small,.card .dbs small{font-size:14px;color:#4a5340}
+.sc .big small,#panel .sc .big small{font-size:16px;color:#4a5340}
+.bh .sub,#panel .pd .bh .sub,.sc .sub{font-size:14.5px;color:#4a5340}
+.sc .fact{font-size:14.5px;color:#2f352b}
+.sc .dbe,#panel .sc .dbe{font-size:13.5px!important;color:#4a5340!important}
+.sc .fnow .fh{font-size:13.5px;color:#4a5340}
+.sc .pf div{font-size:15px;grid-template-columns:112px 1fr 62px}
+.sc .pf b.u::after,#panel .pf b.u::after{content:' dB';font-weight:600;font-size:.78em;color:#5E6655}
+.sc .pf div b{white-space:nowrap}
+@media(min-width:1500px){.sc .pf h5,#panel .pf h5{font-size:17px!important}.sc .fi2 b{font-size:14px}.sc .fi2 span{font-size:17px}.sc .ag small,#panel .ag small{font-size:15px}.bh .sub,#panel .pd .bh .sub,.sc .sub{font-size:17px}.sc .fact{font-size:16.5px}.sc .pf div{font-size:17px;grid-template-columns:140px 1fr 74px}.sc .dbs small{font-size:15px}}
+@media(max-width:760px){.sc .pf div{grid-template-columns:92px 1fr 56px}.sc .pf h5,#panel .pf h5{font-size:14px!important}}

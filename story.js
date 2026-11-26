@@ -28,7 +28,7 @@
     <div class="fnow"><b class="fn"></b><span class="fh"></span><span class="fv"></span></div>
     <div class="ag${d.ne ? '' : ' na'}"><div class="agb" data-reveal>${d.ags.map((c, k) => c ? `<span style="flex:${c};background:${AGC[k]}" title="${AGN[k]}: ${c}">${c}</span>` : '').join('')}</div>${agCap(d.ags, d.ne)}<q style="color:${qCol(d.s)}">${QUOTE[d.s]}</q></div>
     <div class="fact">${d.mx == null && d.ref ? `<span class="bnd">Banda modelada de día ${d.ref.mn}–${d.ref.mx} dB</span>` : factLine(d.mx, d.fp, d.fv)}</div>${fiBlock(FI[d.s])}
-    <div class="pf"><h5>dB promedio según la hora del día</h5>${['Mañana', 'Tarde', 'Hora punta'].map((n, i) => bar(n, d.fr[i], false)).join('')}</div></article></div></div></section>`;
+    <div class="pf"><h5>Qué tan fuerte suena según la hora del día (dB promedio)</h5>${['Mañana', 'Tarde', 'Hora punta'].map((n, i) => bar(n, d.fr[i], false)).join('')}</div></article></div></div></section>`;
 
   /* ---- motor de transformación: cada vista es un mapa id → forma; los ids compartidos se interpolan ---- */
   const INK = '#5E6655', MUT = '#8F9984', GR = '#C4C7B9';
