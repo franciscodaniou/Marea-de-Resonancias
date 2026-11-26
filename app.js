@@ -21,7 +21,7 @@ const rOf = s => s < 4 ? 0 : 1, rI = s => s < 4 ? s : s - 4, rN = s => s < 4 ? 4
 let CMY0 = 0, CMR0 = 100, mo = 0, LW = 200, CMX = 0, CMY = 0, CMR = 100, cA = 0, cm = 0, CPX = [0, 0], CPY = 0, CPR = 80; const kc = Array(NS).fill(0); // comparativa: la malla acompaña al texto
 let CX0 = 0, CY0 = 0, S0 = 100, eS = 0, eR = 0, er = 0, RgR = 100, KR = .64, RC = [[0, 0], [0, 0]], amb = 0, ee = 0, Aglob = 1; // centro y escala de la marea total; progreso de escena
 const FILTERS = { all: [0, 1e4], am: [0, 756], pm: [757, 1049], pk: [1050, 1439] };
-let flt = 'all', want = null, foc = null, k = 0, pf = null, hov = null, hs = null, W, H, dpr, T = 0, Rb, Rf, FX, FY, ctr = [], G = [], pkey = '';
+let flt = 'all', want = null, wantR = null, focR = null, kR = 0, hsR = null, GR = [{ cx: 0, cy: 0, sc: 100, al: 1 }, { cx: 0, cy: 0, sc: 100, al: 1 }],  foc = null, k = 0, pf = null, hov = null, hs = null, W, H, dpr, T = 0, Rb, Rf, FX, FY, ctr = [], G = [], pkey = '';
 const cv = document.getElementById('c'), x = cv.getContext('2d'), tip = document.getElementById('tip'), panel = document.getElementById('panel'), back = document.getElementById('back');
 let carPos = 0, carTgt = 0, lastCar = false, lastCi = -1, carInit = false, carTm = 0; // móvil: carrusel horizontal de sectores (uno por pantalla)
 const car = document.createElement('div'), cdots = document.createElement('div'); car.id = 'car'; cdots.id = 'cdots'; car.innerHTML = '<div class="sl"></div>'.repeat(NS + 2); /* [copia del último, sectores…, copia del primero] → carrusel infinito */ cdots.innerHTML = '<i></i>'.repeat(NS); document.body.append(car, cdots);
@@ -31,6 +31,7 @@ const carWrap = () => { const sl = car.scrollLeft; if (Math.abs(sl - carLast) > 
 car.addEventListener('scroll', () => { carTgt = car.scrollLeft / W - 1; clearTimeout(carTm); carTm = setTimeout(carWrap, 140); }, { passive: true });
 car.addEventListener('click', e => cv.dispatchEvent(new MouseEvent('click', { clientX: e.clientX, clientY: e.clientY, bubbles: true })));
 const lerp = (a, b, t) => a + (b - a) * t, cl = (v, a, b) => Math.max(a, Math.min(b, v));
+const iso = () => want !== null || wantR !== null; // vista aislada: un sector o una ciudad
 const mix = (a, b, t) => a.map((v, i) => Math.round(lerp(v, b[i], t)));
 const agr = a => { const t = cl((a + 1) / 3, 0, 1); return t < .5 ? mix([210, 10, 46], [226, 172, 44], t * 2) : mix([226, 172, 44], [0, 103, 91], (t - .5) * 2); };
 const hex = (h, a) => { const n = parseInt(h.slice(1), 16); return `rgba(${n >> 16},${n >> 8 & 255},${n & 255},${a})`; };
@@ -56,18 +57,19 @@ const lvn = v => LV[cl(Math.round(v), 1, 3)];
 const cen = (g, f) => { const a = angM(f.m); return [g.cx + Math.cos(a) * g.R * .45, g.cy + Math.sin(a) * g.R * .45, g.R * (.16 + .34 * cl((f.pr - 50) / 30, 0, 1))]; };
 const bar = (lab, v, hi, lo = 45, hi2 = 90) => `<div${hi ? ' class="hi"' : ''}>${lab}<span class="tr"><i style="width:${v == null ? 0 : cl((v - lo) / (hi2 - lo), 0, 1) * 100}%"${v == null ? '' : ` data-w="${(cl((v - lo) / (hi2 - lo), 0, 1) * 100).toFixed(1)}"`}></i></span><b${v == null ? '' : ` data-n="${v.toFixed(0)}"`}>${v == null ? '–' : v.toFixed(0)}</b></div>`;
 function horasHtml(s) { // patrón horario del sector (dB promedio, mediciones únicas)
-  const mine = uniq(F.filter(f => f.s === s)), fr = [['Mañana', 'am'], ['Tarde', 'pm'], ['Hora punta', 'pk']].map(([n, k]) => { const q = real(mine.filter(f => !f.ap && f.m >= FILTERS[k][0] && f.m <= FILTERS[k][1])); return bar(n, q.length ? mean(q, f => f.pr) : null, false); }).join('');
+  const ss = Array.isArray(s) ? s : [s], mine = uniq(F.filter(f => ss.includes(f.s))), fr = [['Mañana', 'am'], ['Tarde', 'pm'], ['Hora punta', 'pk']].map(([n, k]) => { const q = real(mine.filter(f => !f.ap && f.m >= FILTERS[k][0] && f.m <= FILTERS[k][1])); return bar(n, q.length ? mean(q, f => f.pr) : null, false); }).join('');
   return `<div class="pf"><h5>dB promedio según la hora del día</h5>${fr}${real(mine).length ? '' : '<small class="nd">Sin dB medido en este lugar: el relieve de la malla usa la intensidad percibida.</small>'}</div>`;
 }
 function compHtml(s) { return `<div class="pf cmpf"><h5>Comparación entre sectores</h5>${SECT.map((n, i) => bar(n, dbAvg(i), i === s)).join('')}</div>`; }
-function flowHtml(s) { const [p, v] = lvl(s); return `<div class="fl"><div>Personas<span class="tr"><i style="width:${p / 3 * 100}%" data-w="${(p / 3 * 100).toFixed(1)}"></i></span><b>${lvn(p)}</b></div><div class="v">Vehículos<span class="tr"><i style="width:${v / 3 * 100}%" data-w="${(v / 3 * 100).toFixed(1)}"></i></span><b>${lvn(v)}</b></div></div>`; }
+function flowHtml(s) { const [p, v] = lvl(s); return flowH(p, v); }
+function flowH(p, v) { return `<div class="fl"><div>Personas<span class="tr"><i style="width:${p / 3 * 100}%" data-w="${(p / 3 * 100).toFixed(1)}"></i></span><b>${lvn(p)}</b></div><div class="v">Vehículos<span class="tr"><i style="width:${v / 3 * 100}%" data-w="${(v / 3 * 100).toFixed(1)}"></i></span><b>${lvn(v)}</b></div></div>`; }
 
 function panelGeo() { // medidas reales de la tarjeta de «Cada lugar, a cada hora» (ya equilibradas por fitBlk), para replicarlas en el sector expandido
   if (W <= 1100) return null; const blk = document.querySelector('.step .blk'), card = blk && blk.querySelector('.card'); if (!blk || !card) return null;
   const cs = getComputedStyle(blk.parentNode), w = blk.offsetWidth, ch = card.offsetHeight; if (!w || !ch) return null; const tr = blk.style.transform || '', m = /scale\(([\d.]+)\)/.exec(tr), sc = m ? +m[1] : 1;
   return { w, ch, right: parseFloat(cs.paddingRight) || 22, top: parseFloat(cs.paddingTop) || 70, sc, tr: tr || 'none' };
 }
-function fitPanel() { const g = want !== null ? panelGeo() : null, st = panel.style; if (!g) { ['--pw', '--pch', '--pright', '--ptop', '--ptr'].forEach(k => st.removeProperty(k)); return; }
+function fitPanel() { const g = iso() ? panelGeo() : null, st = panel.style; if (!g) { ['--pw', '--pch', '--pright', '--ptop', '--ptr'].forEach(k => st.removeProperty(k)); return; }
   st.setProperty('--pw', g.w + 'px'); st.setProperty('--pch', g.ch + 'px'); st.setProperty('--pright', g.right + 'px'); st.setProperty('--ptop', g.top + 'px'); st.setProperty('--ptr', g.tr); }
 function size() {
   W = innerWidth; H = innerHeight; const mob = W < 760;
@@ -77,7 +79,7 @@ function size() {
 }
 function layout() { // las figuras se reacomodan en sincronía con el pill/leyenda «Cómo leer»
   const mob = W < 760;
-  const ansB0 = (document.getElementById('ans') || {getBoundingClientRect: () => ({bottom: 0})}).getBoundingClientRect().bottom, ansB = document.body.classList.contains('legopen') && window.ANS_B0 ? window.ANS_B0 : (window.ANS_B0 = ansB0), top0 = W < 760 ? 160 : W < 1100 ? 64 : want !== null ? 124 : (leg.classList.contains('open') && H >= 820) ? 72 + leg.offsetHeight + 14 + (window.ANS_EXTRA || 0) : Math.max(72 + 38 + 14 + (window.ANS_EXTRA || 0), (innerWidth >= 1100 ? 0 : Math.round(ansB) + 22)), LB = mob ? 106 : H < 760 ? 150 : 176, gh = H - (mob ? 124 : 100) - top0, gw = W - (mob ? 28 : 76), x0 = mob ? 14 : 22;
+  const ansB0 = (document.getElementById('ans') || {getBoundingClientRect: () => ({bottom: 0})}).getBoundingClientRect().bottom, ansB = document.body.classList.contains('legopen') && window.ANS_B0 ? window.ANS_B0 : (window.ANS_B0 = ansB0), top0 = W < 760 ? 160 : W < 1100 ? 64 : iso() ? 124 : (leg.classList.contains('open') && H >= 820) ? 72 + leg.offsetHeight + 14 + (window.ANS_EXTRA || 0) : Math.max(72 + 38 + 14 + (window.ANS_EXTRA || 0), (innerWidth >= 1100 ? 0 : Math.round(ansB) + 22)), LB = mob ? 106 : H < 760 ? 150 : 176, gh = H - (mob ? 124 : 100) - top0, gw = W - (mob ? 28 : 76), x0 = mob ? 14 : 22;
   const minCw = mob ? 170 : 190; let best = null; // columnas: todas en fila, 3 o 2; el ancho de celda debe alojar la etiqueta
   (mob ? [2] : [NS, 3, 2]).forEach(c => { const nr = Math.ceil(NS / c); if (c > 2 && gw / c < minCw) return; const r = Math.min(gw / c / 2.05, (gh / nr - LB) / 2.2); if (!best || r > best.r) best = { c, nr, r }; });
   if (!best) { const nr = Math.ceil(NS / 2); best = { c: 2, nr, r: Math.min(gw / 2 / 2.05, (gh / nr - LB) / 2.2) }; }
@@ -94,7 +96,7 @@ function layout() { // las figuras se reacomodan en sincronía con el pill/leyen
   } else {
     const fl = W < 900 ? 20 : 300, fr = W < 900 ? W - 20 : W - 440 - 22 - 30, fw = fr - fl; Rf = Math.max(80, Math.min((gh - 84) / 2.2, fw / 2.3));
     FX = fl + fw / 2; FY = top0 + 8 + Rf * 1.08 + (gh - 84 - 2.2 * Rf) / 2;
-    const pg = want !== null ? panelGeo() : null; // sector expandido (escritorio): el modelo crece un poco y se centra en el espacio libre fuera de la tarjeta (x) y en el alto útil (y)
+    const pg = iso() ? panelGeo() : null; // sector expandido (escritorio): el modelo crece un poco y se centra en el espacio libre fuera de la tarjeta (x) y en el alto útil (y)
     if (pg) { const cl0 = W - pg.right - pg.w * pg.sc; Rf = Math.max(80, Math.min(H * .32, (H - 260) / 2.12, (cl0 - 90) / 2.3)); FX = cl0 / 2; FY = (90 + H - 92) / 2 - .06 * Rf - 39; }
   }
   if (W >= 1100) S0 = Math.min(S0, H * .245); // proporción figura/alto como en escritorio estándar
@@ -110,6 +112,10 @@ function geoms() {
     if (cA > .001) { const q = kc[s], pi = PAIR().indexOf(s), tm = pi >= 0 ? cm : 0; cx = lerp(cx, lerp(CMX, CPX[pi] || CMX, tm), q); cy = lerp(cy, lerp(CMY - (W < 760 ? mo * H * .095 : 0), CPY, tm), q); R = lerp(R, lerp(CMR * (W < 760 ? 1 - mo * .5 : 1), CPR, tm), q); al *= lerp(1 - cA, 1, q); }
     return { cx, cy, R, al, kk };
   });
+}
+
+function geomsR() { // fase de dos ciudades: al aislar una, su malla crece y se centra como en un sector expandido
+  GR = [0, 1].map(i => { const kk = focR === i ? kR : 0; return { cx: lerp(RC[i][0], FX, kk), cy: lerp(RC[i][1], FY, kk), sc: lerp(RgR * KR, Rf * .48, kk), al: focR === null || focR === i ? 1 : 1 - kR }; });
 }
 
 // ===== Marea de resonancias: malla orgánica (tubo deformado por ruido Perlin) =====
@@ -161,7 +167,7 @@ const rad0 = (th, u, tt, off) => .30 + .85 * pn(Math.cos(th) * 1.3 + off, Math.s
 const evOf = (ee0, h) => ee0 <= 0 ? 0 : ee0 >= 1 ? 1 : cl(ee0 * 1.6 - .6 * h, 0, 1); // el paso de marea total a sectores se disuelve por zonas
 
 function updMesh(s, ee0, er0) {
-  const m = MS[s], g = G[s], ag = cl(1 - (agrSec(s) + 1) / 3, 0, 1), rm = RM ? .2 : 1, ttS = T * rm * (.16 + .5 * ag), ttB = T * rm * .3, S1 = g.R * .48, SR = RgR * KR, rg = rOf(s), nR = rN(s); m.ttS = ttS;
+  const m = MS[s], g = G[s], ag = cl(1 - (agrSec(s) + 1) / 3, 0, 1), rm = RM ? .2 : 1, ttS = T * rm * (.16 + .5 * ag), ttB = T * rm * .3, S1 = g.R * .48, SR = GR[rOf(s)].sc, rg = rOf(s), nR = rN(s); m.ttS = ttS;
   for (let i = 0; i <= NZ; i++) {
     const u = i / NZ, zz = (u - .5) * LZ;
     for (let j = 0; j <= NA; j++) {
@@ -169,7 +175,7 @@ function updMesh(s, ee0, er0) {
       if (ev < 1 && er < 1) { const th = (s + j / NA) / NS * TAU, r = Math.max(.16, rad0(th, u, ttB, 11.3) + m.bB[id] + m.bBD[id] * (1 - m.nt) + m.bBN[id] * m.nt); rot(r * Math.cos(th), r * Math.sin(th), zz, S0); bx = RX_; by = RY_; bz = RZ_; }
       if (ev < 1 && er > 0) { const th = (rI(s) + j / NA) / nR * TAU, r = Math.max(.16, rad0(th, u, ttB, 11.3 + rg * 5.9) + m.bR[id] + m.bRD[id] * (1 - m.nt) + m.bRN[id] * m.nt); rot(r * Math.cos(th), r * Math.sin(th), zz, SR); rx = RX_; ry = RY_; rz = RZ_; }
       if (ev > 0) { const th = j / NA * TAU, r = Math.max(.16, rad0(th, u, ttS, s * 3.7) + m.bS[id] + m.bSD[id] * (1 - m.nt) + m.bSN[id] * m.nt); rot(r * Math.cos(th), r * Math.sin(th), zz, S1); qx = RX_; qy = RY_; qz = RZ_; }
-      const px = lerp(bx, rx, er), py = lerp(by, ry, er), pz = lerp(bz, rz, er), cx1 = lerp(CX0, RC[rg][0], er), cy1 = lerp(CY0, RC[rg][1], er);
+      const px = lerp(bx, rx, er), py = lerp(by, ry, er), pz = lerp(bz, rz, er), cx1 = lerp(CX0, GR[rg].cx, er), cy1 = lerp(CY0, GR[rg].cy, er);
       const kf = FP / (FP + lerp(pz, qz, ev));
       m.SX[id] = lerp(cx1, g.cx, ev) + lerp(px, qx, ev) * kf; m.SY[id] = lerp(cy1, g.cy, ev) + lerp(py, qy, ev) * kf; m.EV[id] = ev; m.ER[id] = er;
     }
@@ -211,12 +217,12 @@ const DOTS = [];
 function calcDots(ee0, er0) {
   DOTS.length = 0;
   F.forEach(f => {
-    const g = G[f.s], al = g.al * Aglob; if (al < .05 || !on(f)) return;
+    const g = G[f.s], al = g.al * Aglob * GR[rOf(f.s)].al; if (al < .05 || !on(f)) return;
     const ev = evOf(ee0, f.hf), er = evOf(er0, f.hf), zz = (f.u - .5) * LZ, ag = cl(1 - (agrSec(f.s) + 1) / 3, 0, 1), rm = RM ? .2 : 1, rg = rOf(f.s); let bx = 0, by = 0, bz = 0, rx = 0, ry = 0, rz = 0, qx = 0, qy = 0, qz = 0;
     if (ev < 1 && er < 1) { const th = f.fg * TAU, r = Math.max(.16, rad0(th, f.u, T * rm * .3, 11.3) + f.bAB); rot(r * Math.cos(th), r * Math.sin(th), zz, S0); bx = RX_; by = RY_; bz = RZ_; }
-    if (ev < 1 && er > 0) { const th = f.fgR * TAU, r = Math.max(.16, rad0(th, f.u, T * rm * .3, 11.3 + rg * 5.9) + f.bAR); rot(r * Math.cos(th), r * Math.sin(th), zz, RgR * KR); rx = RX_; ry = RY_; rz = RZ_; }
+    if (ev < 1 && er > 0) { const th = f.fgR * TAU, r = Math.max(.16, rad0(th, f.u, T * rm * .3, 11.3 + rg * 5.9) + f.bAR); rot(r * Math.cos(th), r * Math.sin(th), zz, GR[rg].sc); rx = RX_; ry = RY_; rz = RZ_; }
     if (ev > 0) { const th = f.fl * TAU, r = Math.max(.16, rad0(th, f.u, T * rm * (.16 + .5 * ag), f.s * 3.7) + f.bAS); rot(r * Math.cos(th), r * Math.sin(th), zz, g.R * .48); qx = RX_; qy = RY_; qz = RZ_; }
-    const px = lerp(bx, rx, er), py = lerp(by, ry, er), pz = lerp(bz, rz, er), cx1 = lerp(CX0, RC[rg][0], er), cy1 = lerp(CY0, RC[rg][1], er), kf = FP / (FP + lerp(pz, qz, ev));
+    const px = lerp(bx, rx, er), py = lerp(by, ry, er), pz = lerp(bz, rz, er), cx1 = lerp(CX0, GR[rg].cx, er), cy1 = lerp(CY0, GR[rg].cy, er), kf = FP / (FP + lerp(pz, qz, ev));
     DOTS.push({ f, x: lerp(cx1, g.cx, ev) + lerp(px, qx, ev) * kf, y: lerp(cy1, g.cy, ev) + lerp(py, qy, ev) * kf, al });
   });
 }
@@ -274,7 +280,7 @@ REG.forEach(R => { const q = uniq(F.filter(f => R.ss.includes(f.s) && !f.ap && !
   const es = E.filter(e => R.ss.includes(e[0])); R.ag = es.length ? mean(es, e => e[1]) : null; R.ne = es.length;
   R.p = mean(q.filter(f => f.fp != null), f => f.fp) || 1; R.v = mean(q.filter(f => f.fv != null), f => f.fv) || 1; });
 function regLab(i, a) { // bajada de cada ciudad: mismos datos y composición que la de cada lugar, promediando sus mediciones
-  const R = REG[i], cx = RC[i][0], mob = W < 760, c = rgbOf(COL[R.dom]), y = RC[i][1] + RgR * (mob ? 1.12 : 1.22) + (mob ? 26 : 22), cellW = W * .5 - (mob ? 14 : 38), sc = mob ? Math.min(1, cellW / 176) : Math.min(1, cellW / 250);
+  const R = REG[i], cx = GR[i].cx, mob = W < 760, c = rgbOf(COL[R.dom]), y = GR[i].cy + RgR * (mob ? 1.12 : 1.22) + (mob ? 26 : 22), cellW = W * .5 - (mob ? 14 : 38), sc = mob ? Math.min(1, cellW / 176) : Math.min(1, cellW / 250);
   x.save(); x.textAlign = 'center'; if (sc < 1) { x.translate(cx, y); x.scale(sc, sc); x.translate(-cx, -y); }
   const nd = R.db == null, dv = nd ? 0 : R.db * cl(a * 1.15, 0, 1), o1 = 36, bw = Math.min(mob ? 190 : 150, cellW / sc - 12), by = y + o1 + 8, py = mob ? 0 : 40;
   const rr = (px, qy, w, h, r) => { x.beginPath(); if (x.roundRect) x.roundRect(px, qy, w, h, r); else x.rect(px, qy, w, h); x.fill(); };
@@ -289,29 +295,35 @@ function regLab(i, a) { // bajada de cada ciudad: mismos datos y composición qu
   x.fillStyle = '#8F9984'; x.font = '13px Inter,Helvetica,Arial'; x.fillText(`${R.nm} mediciones${R.ne ? ' · ' + R.ne + ' encuestas' : ''}`, cx, by + (mob ? 58 : 68) + py + (mob ? 20 : 22));
   x.restore(); x.globalAlpha = 1;
 }
+function regBig(i, a) { // ciudad aislada: mismo rótulo que un sector expandido (nombre + predominio + flujos); el detalle va en la tarjeta
+  const R = REG[i], g = GR[i], mob = W < 760, c = rgbOf(COL[R.dom]), y = g.cy + Rf * 1.12 + (mob ? 24 : 32);
+  x.save(); x.textAlign = 'center'; x.globalAlpha = a; x.fillStyle = '#3b4234'; x.font = `700 ${mob ? 20 : 28}px Helvetica,Arial`; x.fillText(R.n.toUpperCase(), g.cx, y);
+  x.font = `${mob ? 13 : 16}px Helvetica,Arial`; x.fillStyle = `rgb(${c})`; x.fillText('Predomina: ' + SH[R.dom] + ' · ' + (R.ag == null ? 'sin encuestas' : mob ? AGW(R.ag) : 'agrado ' + R.ag.toFixed(2)), g.cx, y + (mob ? 18 : 24));
+  x.fillStyle = '#3b4234'; x.fillText(`Personas: ${lvn(R.p)} · Vehículos: ${lvn(R.v)}`, g.cx, y + (mob ? 35 : 46)); x.restore(); x.globalAlpha = 1;
+}
 let sndT = 0, lastBlip = null, lastFoc = false, lastT = 0, curDt = 0, lastLh = 0, lastHt = '', lastDeep = false, lastTide = true;
 function frame(ms) {
   T = ms / 1000; const dt = Math.min(.05, T - lastT); lastT = T;
   const lh = leg.offsetHeight; if (W >= 1100 && Math.abs(lh - lastLh) > 1) { lastLh = lh; layout(); document.documentElement.style.setProperty('--lb', (72 + lh + 14) + 'px'); }
-  k += ((want === null ? 0 : 1) - k) * .09;
+  k += ((want === null ? 0 : 1) - k) * .09; kR += ((wantR === null ? 0 : 1) - kR) * .09; if (wantR === null && kR < .003) { kR = 0; focR = null; } else if (wantR !== null) focR = wantR;
   if (want === null && k < .003) { k = 0; foc = null; } else if (want !== null) foc = want;
   // scroll → marea total (arriba) → sectores → ambiente (contraste y estadísticas)
   const vh = innerHeight, sy0 = window.scrollY, hero = document.body.classList.contains('heroing') || document.body.classList.contains('about');
   const stEl = document.querySelectorAll('.step'), chEl = document.querySelector('.finds') || document.querySelector('.charts2'), csE = document.querySelector('.cstage'); let cT = 0, cS = -1, cmpT = 0;
   const fdE = document.querySelector('.finds'), stpE = document.querySelector('.steps'), rmp = e => cl((vh * .95 - e.getBoundingClientRect().top) / (.5 * vh), 0, 1);
-  amb = hero || want !== null ? 0 : chEl ? Math.max(fdE && stpE ? rmp(fdE) * (1 - cl((vh * .42 - stpE.getBoundingClientRect().top) / (vh * .3), 0, 1)) : 0, (document.querySelector('.charts2') ? rmp(document.querySelector('.charts2')) : 0)) : cl((sy0 - 1.0 * vh) / (.6 * vh), 0, 1);
-  if (stEl.length && !hero && want === null) { const f0 = stEl[0].getBoundingClientRect(), l0 = (csE || stEl[stEl.length - 1]).getBoundingClientRect(); cT = cl((vh * .42 - f0.top) / (vh * .3), 0, 1) * cl((l0.bottom - vh * .45) / (vh * .3), 0, 1);
+  amb = hero || iso() ? 0 : chEl ? Math.max(fdE && stpE ? rmp(fdE) * (1 - cl((vh * .42 - stpE.getBoundingClientRect().top) / (vh * .3), 0, 1)) : 0, (document.querySelector('.charts2') ? rmp(document.querySelector('.charts2')) : 0)) : cl((sy0 - 1.0 * vh) / (.6 * vh), 0, 1);
+  if (stEl.length && !hero && !iso()) { const f0 = stEl[0].getBoundingClientRect(), l0 = (csE || stEl[stEl.length - 1]).getBoundingClientRect(); cT = cl((vh * .42 - f0.top) / (vh * .3), 0, 1) * cl((l0.bottom - vh * .45) / (vh * .3), 0, 1);
     let best = 1e9; stEl.forEach((el, q) => { const r = el.getBoundingClientRect(), d = Math.abs((r.top + r.bottom) / 2 - vh / 2); if (d < best) { best = d; cS = q; } }); if (csE && csE.getBoundingClientRect().top < vh * .5) cmpT = 1; }
   { const ob = W < 760 && cS >= 0 && !cmpT && stEl[cS].querySelector('.blk.open') ? 1 : 0; mo += (ob - mo) * (1 - Math.exp(-dt * 6)); }
   cA += (cT - cA) * (1 - Math.exp(-dt * 7)); cm += (cmpT - cm) * (1 - Math.exp(-dt * 5)); for (let s = 0; s < NS; s++) kc[s] += ((cT > .02 && (cmpT ? PAIR().includes(s) : s === cS) ? 1 : 0) - kc[s]) * (1 - Math.exp(-dt * 4));
-  if (window.SND && SND.active) { sndT += dt; if (sndT > .2) { sndT = 0; SND.update(want !== null ? [[want, 0]] : cmpT && cT > .02 ? [[PAIR()[0], -.7], [PAIR()[1], .7]] : cT > .02 && cS >= 0 ? [[cS, 0]] : NSX.map(s => [s, (s / (NS - 1) * 2 - 1) * .8]), hero ? 0 : 1 - amb); } } // sonido por fuentes (opcional)
-  const sm3 = t => t * t * (3 - 2 * t), eRT = want !== null ? 1 : hero ? 0 : sm3(cl(sy0 / (.75 * vh), 0, 1)), eT = want !== null ? 1 : hero ? 0 : sm3(cl((sy0 - 1.05 * vh) / (.8 * vh), 0, 1)); // tres tramos de scroll: marea total → dos ciudades → seis lugares
+  if (window.SND && SND.active) { sndT += dt; if (sndT > .2) { sndT = 0; SND.update(want !== null ? [[want, 0]] : wantR !== null ? REG[wantR].ss.map((q, j, a0) => [q, (j / Math.max(1, a0.length - 1) * 2 - 1) * .5]) : cmpT && cT > .02 ? [[PAIR()[0], -.7], [PAIR()[1], .7]] : cT > .02 && cS >= 0 ? [[cS, 0]] : NSX.map(s => [s, (s / (NS - 1) * 2 - 1) * .8]), hero ? 0 : 1 - amb); } } // sonido por fuentes (opcional)
+  const sm3 = t => t * t * (3 - 2 * t), eRT = iso() ? 1 : hero ? 0 : sm3(cl(sy0 / (.75 * vh), 0, 1)), eT = want !== null ? 1 : wantR !== null ? 0 : hero ? 0 : sm3(cl((sy0 - 1.05 * vh) / (.8 * vh), 0, 1)); // tres tramos de scroll: marea total → dos ciudades → seis lugares
   eR += (eRT - eR) * (1 - Math.exp(-dt * 5)); if (Math.abs(eRT - eR) < .002) eR = eRT;
   eS += (eT - eS) * (1 - Math.exp(-dt * 5)); if (Math.abs(eT - eS) < .002) eS = eT;
   { const on = W < 760 && want === null && eS > .85 && cA < .05 && amb < .05 && !hero; if (on !== lastCar) { lastCar = on; car.classList.toggle('on', on); cdots.classList.toggle('on', on); }
     carPos += (carTgt - carPos) * (1 - Math.exp(-dt * 14)); if (!carInit && car.scrollWidth > W * 1.5) { car.scrollLeft = W; carInit = true; } const ci = ((Math.round(carTgt) % NS) + NS) % NS; if (ci !== lastCi) { lastCi = ci; [...cdots.children].forEach((d, i) => d.classList.toggle('on', i === ci)); } }
   ee = eS * (1 - amb); er = eR * (1 - amb); Aglob = document.body.classList.contains('about') ? .6 : lerp(1, .27, amb);
-  const fo = want !== null; if (fo !== lastFoc) { lastFoc = fo; document.body.classList.toggle('foc', fo); }
+  const fo = iso(); if (fo !== lastFoc) { lastFoc = fo; document.body.classList.toggle('foc', fo); }
   const deep = amb > .06 || cA > .03, tide = eS < .5; if (deep !== lastDeep) { lastDeep = deep; document.body.classList.toggle('deep', deep); } if (tide !== lastTide) { lastTide = tide; document.body.classList.toggle('tide', tide); }
   const rm = RM ? .2 : 1, ry = Math.sin(T * rm * .17) * .62 + oy, rx = -.28 + Math.sin(T * rm * .11 + 1) * .14 + ox; // se favorecen las vistas de las bases del tubo cY = Math.cos(ry); sY = Math.sin(ry); cX = Math.cos(rx); sX = Math.sin(rx);
   CMY = CMY0; CMR = CMR0; // la posición/tamaño base se restablece cada cuadro: la comparación ya no deja el modelo desplazado al volver a Lugares
@@ -320,10 +332,10 @@ function frame(ms) {
   if (W >= 1100 && cA > .01) { const cp = document.querySelector('.cmp'); if (cp) { const t0 = cp.getBoundingClientRect().bottom + 14, b0 = H - 24, h0 = b0 - t0; if (h0 > 60) { const r = Math.max(34, Math.min(Math.min(W * .15, H * .23), h0 / 2.25)); CMR = r; CMY = (t0 + b0) / 2; } } } // escritorio de poca altura: la figura baja de la leyenda
   if (W < 1100 && cm > .01) { const bk = document.querySelector('.cstage .blk'), cp = document.querySelector('.cmp'); // comparación en pantallas chicas: los dos modelos ocupan el hueco entre el título y la tarjeta
     if (bk && cp) { const t0 = Math.max(cp.getBoundingClientRect().bottom + 6, 96), b0 = bk.getBoundingClientRect().top - 8, h0 = b0 - t0; if (h0 > 80) { CPR = cl(h0 / 2.6, 36, W >= 760 ? Math.min(W * .26, 240) : Math.min(W * .27, 130)); CPY = (t0 + b0) / 2 - 4; } } } // CMY/CMR (lugares) no se tocan: al volver desde Comparar el modelo ya no pasa por la posición de la comparación
-  geoms(); x.globalCompositeOperation = 'source-over'; x.fillStyle = '#DCDDD3'; x.fillRect(0, 0, W, H);
+  geoms(); geomsR(); x.globalCompositeOperation = 'source-over'; x.fillStyle = '#DCDDD3'; x.fillRect(0, 0, W, H);
   curDt = dt * rm;
   for (let s = 0; s < NS; s++) { updMesh(s, ee, er); lightMesh(s); }
-  for (let s = 0; s < NS; s++) { const al = G[s].al * Aglob; if (al > .01 && !(W < 760 && ee > .9 && Math.abs(G[s].cx - W / 2) > W * 1.2)) { drawMesh(s, al, evOf(ee, .5)); flows(s, curDt, al); } }
+  for (let s = 0; s < NS; s++) { const al = G[s].al * Aglob * GR[rOf(s)].al; if (al > .01 && !(W < 760 && ee > .9 && Math.abs(G[s].cx - W / 2) > W * 1.2)) { drawMesh(s, al, evOf(ee, .5)); flows(s, curDt, al); } }
   calcDots(ee, er); drawDots();
   x.globalCompositeOperation = 'source-over'; x.textAlign = 'center';
   // anillo de agrado (encuestas) en los lugares acoplados; en la comparación, además A/B, nombre y agrado
@@ -338,7 +350,7 @@ function frame(ms) {
     x.globalAlpha = 1; }); }
   const lab = cl((eS - .6) / .35, 0, 1) * (1 - amb) * (1 - cl(cA * 4, 0, 1));
   const labT = (document.body.classList.contains('legopen') || (W >= 1100 && (document.getElementById('ans') || {classList: {contains: () => false}}).classList.contains('open'))) ? 0 : 1; window.labK = (window.labK == null ? labT : window.labK) + (labT - (window.labK == null ? labT : window.labK)) * .14; const labS = window.labK * window.labK * (3 - 2 * window.labK);
-  if (lab * labS > .02 && want === null && W >= 760) { const mob = W < 760, ar = (document.getElementById('ans') || {getBoundingClientRect: () => ({bottom: 0})}).getBoundingClientRect(), ab = ar.bottom, yt = Math.max(ab + 16, Math.min(Math.max(ab + 26, 0), Math.min(...G.map(g => g.cy - g.R)) - (mob ? 26 : 20))); x.globalAlpha = lab * labS * .9; x.fillStyle = '#5E6655'; const cx0 = W >= 1100 ? W / 2 : (ar.left + ar.right) / 2, lgO = document.getElementById('leg'), lr0 = 0, long = 'Un anillo es un lugar · el color es qué suena · la barra es qué tan fuerte (dB) · las columnas, cómo cambia en el día'; x.font = `${mob ? 12 : 16}px Helvetica,Arial`; const sh = mob || x.measureText(long).width > 2 * Math.min(cx0 - lr0, W - 90 - cx0); x.fillText(sh ? 'Un anillo = un lugar · color = qué suena · barra = qué tan fuerte' : long, cx0, yt + (1 - labS) * 12); x.globalAlpha = 1; }
+  if (lab * labS > .02 && !iso() && W >= 760) { const mob = W < 760, ar = (document.getElementById('ans') || {getBoundingClientRect: () => ({bottom: 0})}).getBoundingClientRect(), ab = ar.bottom, yt = Math.max(ab + 16, Math.min(Math.max(ab + 26, 0), Math.min(...G.map(g => g.cy - g.R)) - (mob ? 26 : 20))); x.globalAlpha = lab * labS * .9; x.fillStyle = '#5E6655'; const cx0 = W >= 1100 ? W / 2 : (ar.left + ar.right) / 2, lgO = document.getElementById('leg'), lr0 = 0, long = 'Un anillo es un lugar · el color es qué suena · la barra es qué tan fuerte (dB) · las columnas, cómo cambia en el día'; x.font = `${mob ? 12 : 16}px Helvetica,Arial`; const sh = mob || x.measureText(long).width > 2 * Math.min(cx0 - lr0, W - 90 - cx0); x.fillText(sh ? 'Un anillo = un lugar · color = qué suena · barra = qué tan fuerte' : long, cx0, yt + (1 - labS) * 12); x.globalAlpha = 1; }
   const rk = NSX.filter(s => dbAvg(s) != null && !apOnly(s)).sort((a, b) => dbAvg(b) - dbAvg(a)), loud = rk[0], quiet = rk.length > 1 ? rk[rk.length - 1] : -1;
   if (lab > .05) G.forEach((g, s) => {
     if (g.al < .05) return; const c = rgbOf(COL[DOM[s]]), big = g.kk > .5, mob = W < 760, [p, v] = lvl(s), y = g.cy + g.R * 1.12 + (big ? (mob ? 24 : 32) : (mob ? 26 : 22));
@@ -361,19 +373,40 @@ function frame(ms) {
     else { x.fillText('Predomina: ' + SH[DOM[s]] + ' · ' + (mob ? (hasAg(s) ? AGW(agrSec(s)) : 'sin encuestas') : agL(s)), g.cx, y + (mob ? 18 : 24)); x.fillStyle = '#3b4234'; x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, y + (mob ? 35 : 46)); }
     x.restore(); x.globalAlpha = 1;
   });
-  { const labR = cl((eR - .6) / .35, 0, 1) * (1 - cl(eS / .4, 0, 1)) * (1 - amb) * (1 - cl(cA * 4, 0, 1)); if (labR > .05 && want === null) { regLab(0, labR); regLab(1, labR); } }
-  const stg = eS > .5 ? 2 : eR > .5 ? 1 : 0, ht = want !== null ? '' : (stg === 0 ? 'Todas las mediciones · toca un punto' : stg === 1 ? 'Dos ciudades · toca un punto' : 'Clic en un sector para expandirlo · teclas 1–' + NS); if (ht !== lastHt) { lastHt = ht; hint.textContent = ht; }
+  { const labR = cl((eR - .6) / .35, 0, 1) * (1 - cl(eS / .4, 0, 1)) * (1 - amb) * (1 - cl(cA * 4, 0, 1)); if (labR > .05 && want === null) { [0, 1].forEach(i => regLab(i, labR * (focR === null ? 1 : focR === i ? cl(1 - kR * 4, 0, 1) : 1 - kR))); if (focR !== null && kR > .5) regBig(focR, cl((kR - .5) * 2, 0, 1)); } }
+  const stg = eS > .5 ? 2 : eR > .5 ? 1 : 0, ht = iso() ? '' : (stg === 0 ? 'Todas las mediciones · toca un punto' : stg === 1 ? 'Dos ciudades · clic para aislar' : 'Clic en un sector para expandirlo · teclas 1–' + NS); if (ht !== lastHt) { lastHt = ht; hint.textContent = ht; }
   const dw = document.getElementById('down'), dl = stg === 0 ? 'Separar las dos ciudades ↓' : stg === 1 ? 'Desplegar sectores ↓' : 'Ver lugar por lugar ↓'; if (dw.textContent !== dl) dw.textContent = dl;
   requestAnimationFrame(frame);
 }
 
 const hint = document.getElementById('hint'), psub = document.getElementById('psub') || document.createElement('div');
 function hintPos() { if (innerWidth > 900) { const r = document.getElementById('cts').getBoundingClientRect(); if (r.width) hint.style.left = Math.round(r.right + 12) + 'px'; } else hint.style.left = ''; }
-addEventListener('resize', () => setTimeout(() => { if (want !== null) { layout(); fitPanel(); } }, 160)); addEventListener('resize', hintPos); setInterval(hintPos, 400);
+addEventListener('resize', () => setTimeout(() => { if (iso()) { layout(); fitPanel(); } }, 160)); addEventListener('resize', hintPos); setInterval(hintPos, 400);
+const detOf = () => pf ? `<div class="det" style="border-left-color:${COL[pf.c]}"><b>${pf.id} · ${tmx(pf)}${pf.ap ? '' : ' h'}</b>${pf.src}<br>${pf.nd ? 'sin dB medido · intensidad percibida ' + FICHAS[F.indexOf(pf)][10] + '/5' : pf.mn + '–' + pf.mx + ' dB · prom. ' + pf.pr}<br>${pf.ap ? '' : `Flujo peatonal ${pf.fp}/3 · vehicular ${pf.fv}/3<br>`}<span style="color:${COL[pf.c]}">${CAT[pf.c]}</span><br><i>${pf.ph}</i>${pf.ap ? `<br><span class="org"><b>Procedencia:</b> ${APRA}. Modelo de simulación validado con mediciones; no es una medición del equipo. Rango de la banda, no mínimo y máximo registrados. Cruce propio con los polígonos del mapa (CSV ${pf.night ? 'nocturno' : 'diurno'} 2018) en unos 150 m alrededor del lugar.</span>` : ''}</div>` : '';
+function cityHtml(i) { // ciudad aislada: promedia las mediciones de sus lugares con la misma composición que la tarjeta de un sector
+  const R = REG[i], ss = R.ss, D = W > 1100, fs = uniq(F.filter(f => ss.includes(f.s) && on(f))), nB = fs.filter(f => !f.ap).length, rf = real(fs), dbm = rf.length ? mean(rf, f => f.pr) : null, lo = rf.filter(f => f.mx < 100), mx100 = rf.filter(f => f.mx >= 100), mxv = lo.length ? Math.max(...lo.map(f => f.mx)) : null,
+    hex = COL[R.dom], es = E.filter(e => ss.includes(e[0])), a = R.ag, ags = [-1, 0, 1, 2].map(v => es.filter(e => e[1] === v).length), db = es.filter(e => e[2]), AGN = ['Incomoda', 'Da igual', 'Gusta un poco', 'Gusta'], P = v => cl((v - 40) / 55, 0, 1) * 100,
+    fpm = mean(fs.filter(f => !f.ap), f => f.fp) || 1, fvm = mean(fs.filter(f => !f.ap), f => f.fv) || 1, FNM = { all: ['Todo el día', '09:40–18:50'], am: ['Mañana', '09:40–12:36'], pm: ['Tarde', '12:37–17:29'], pk: ['Hora punta', '17:30–18:50'] }[flt] || ['Todo el día', '09:40–18:50'];
+  const rk = ss.filter(q => dbAvg(q) != null).sort((p, q) => dbAvg(q) - dbAvg(p)), nm = R.nm;
+  const hd = `<div class="bh"><h3>${R.n}</h3><div class="sub">${ss.length} lugares · ${nB} ${nB === 1 ? 'medición visible' : 'mediciones visibles'}</div></div>`,
+    bigH = `<div class="big" style="color:${hex}">${dbm == null ? '<span class="nd">sin dB</span>' : `<span data-n="${dbm.toFixed(1)}" data-dec="1">${dbm.toFixed(1)}</span>`}<small>${dbm == null ? 'sin medir' : 'dB promedio de la ciudad'}</small></div>`,
+    dbsH = dbm == null ? '' : `<div class="dbs"><div class="dtr"><i data-w="${P(dbm).toFixed(1)}" style="background:${hex}"></i></div><small>≈ ${DBW(dbm)}</small></div>`,
+    chipsH = `<div class="chips"><span style="color:${hex}">● ${SH[R.dom]}</span>${es.length ? `<span style="color:rgb(${agr(a)})">agrado percibido <i style="font-style:normal" data-n="${a.toFixed(2)}" data-dec="2">${a.toFixed(2)}</i> · ${AGW(a)}</span>` : '<span>sin encuestas de agrado</span>'}</div>`,
+    fnowH = `<div class="fnow"><b class="fn">${FNM[0]}</b><span class="fh">${FNM[1]} h</span><span class="fv">${dbm == null ? 'sin dB' : `<i>${dbm.toFixed(0)}</i> dB`} · ${nB} ${nB === 1 ? 'medición' : 'mediciones'}</span></div>`,
+    agBar = es.length ? `<div class="agb" data-reveal>${ags.map((c, k) => c ? `<span style="flex:${c};background:${AGC[k]}">${c}</span>` : '').join('')}</div><small>agrado percibido (−1…2) · ${es.length} respuestas: ${ags.map((c, k) => `<b style="color:${AGC[k]}">${c}</b> ${AGN[k].toLowerCase()}`).join(' · ')}</small>` : '',
+    factH = `<div class="fact">${mxv == null ? 'Sin dB medido' : `dB máx. registrado <span data-n="${mxv}">${mxv}</span>${mx100.length ? ` <em class="ex">(sin ${mx100.length} pico${mx100.length > 1 ? 's' : ''} puntual${mx100.length > 1 ? 'es' : ''} de ${Math.max(...mx100.map(f => f.mx))} dB)</em>` : ''}`} · flujo peatonal <span data-n="${fpm.toFixed(1)}" data-dec="1">${fpm.toFixed(1)}</span> · vehicular <span data-n="${fvm.toFixed(1)}" data-dec="1">${fvm.toFixed(1)}</span> (1-3)</div>`,
+    dbeH = db.length ? `<small class="dbe">dB medidos en encuestas: ${mean(db, e => e[2]).toFixed(1)} (n=${db.length})</small>` : '',
+    fiH = rk.length > 1 ? `<p class="fi">${ss.length} lugares y ${nm} mediciones${R.ne ? ` con ${R.ne} encuestas` : ', sin encuestas de agrado'}. El más ruidoso es ${SECT[rk[0]]} (${dbAvg(rk[0]).toFixed(1)} dB) y el más tranquilo, ${SECT[rk[rk.length - 1]]} (${dbAvg(rk[rk.length - 1]).toFixed(1)} dB).</p>` : '',
+    listH = `<div class="pf"><h5>Registro de mediciones · barra = rango dB mín→máx, marca = promedio</h5></div><div class="list">` + F.map((f, q) => ss.includes(f.s) && (on(f) || f.night && (!srcF || f.c === srcF)) ? `<button class="it${pf === f ? ' on' : ''}" data-i="${q}"><span style="background:${COL[f.c]}"></span>${f.id} · ${tmx(f)} · ${SECT[f.s]}<em>${f.src}</em><div class="rg${f.nd ? ' nd' : ''}${f.ap ? ' ap' : ''}">${f.nd ? '' : `<i style="left:${P(f.mn)}%;width:${Math.max(3, P(f.mx) - P(f.mn))}%;background:${COL[f.c]}"></i><u style="left:${P(f.pr)}%"></u>`}</div><b>${f.nd ? 'sin dB' : f.ap ? f.mn + '–' + f.mx + ' dB' : f.pr + ' dB'}</b></button>` : '').join('') + '</div>',
+    cmpH = `<div class="pf cmpf"><h5>Comparación entre lugares de la ciudad</h5>${ss.map(q => bar(SECT[q], dbAvg(q), false)).join('')}</div><div class="pf cmpf"><h5>Comparación entre ciudades</h5>${REG.map((r, q) => bar(r.n, r.db, q === i)).join('')}</div>`;
+  if (D) return `<div class="pd">${hd}<article class="card sc pcard">${bigH}${dbsH}${chipsH}${fnowH}<div class="ag${es.length ? '' : ' na'}">${agBar}</div>${factH}${fiH}${flowH(fpm, fvm)}${horasHtml(ss)}${dbeH}${detOf()}${listH}${cmpH}</article></div>`;
+  return `<div class="sc pn">${hd}${bigH}${dbsH}${chipsH}${es.length ? `<div class="ag">${agBar}</div>` : ''}${factH}${flowH(fpm, fvm)}${horasHtml(ss)}${dbeH}${fiH}${detOf()}${listH}${cmpH}</div>`;
+}
 function render() {
-  panel.style.display = want !== null ? 'block' : 'none'; psub.style.display = 'none'; hint.style.display = want !== null ? 'none' : 'block';
-  const s = want !== null ? want : hs, key = [want, flt, srcF, pf && pf.id, s].join();
-  if (key === pkey || want === null) return; pkey = key; const sc = panel.scrollTop;
+  panel.style.display = iso() ? 'block' : 'none'; psub.style.display = 'none'; hint.style.display = iso() ? 'none' : 'block';
+  const s = want !== null ? want : hs, key = [want, wantR, flt, srcF, pf && pf.id, s].join();
+  if (key === pkey || !iso()) return; pkey = key; const sc = panel.scrollTop;
+  if (wantR !== null) { panel.className = 'big'; panel.innerHTML = cityHtml(wantR); panel.scrollTop = sc; if (window.VITA) VITA.scan(panel); return; }
   if (s === null) { panel.className = ''; panel.innerHTML = '<h2>Explora los seis sectores</h2>'; psub.textContent = 'Pasa el cursor sobre un sector y haz clic para expandirlo y aislarlo; luego elige una medición.'; if (panel.style.display !== 'none') { psub.style.display = 'block'; psub.style.bottom = (22 + panel.offsetHeight + 10) + 'px'; } return; }
   const fs = uniq(F.filter(f => f.s === s && on(f))), es = E.filter(e => e[0] === s), a = agrSec(s), db = es.filter(e => e[2]), mood = AGW(a);
   const AGN = ['Incomoda', 'Da igual', 'Gusta un poco', 'Gusta'], rf = real(fs), dbm = rf.length ? mean(rf, f => f.pr) : null, mx100 = rf.filter(f => f.mx >= 100), mxv = rf.length ? Math.max(...rf.filter(f => f.mx < 100).map(f => f.mx)) : null, hex = COL[DOM[s]], ags = AGS[s], fpm = mean(fs.filter(f => !f.ap), f => f.fp), fvm = mean(fs.filter(f => !f.ap), f => f.fv), aO = apOnly(s), P = v => cl((v - 40) / 55, 0, 1) * 100;
@@ -386,7 +419,7 @@ function render() {
     agBar = es.length ? `<div class="agb" data-reveal>${ags.map((c, k) => c ? `<span style="flex:${c};background:${AGC[k]}">${c}</span>` : '').join('')}</div><small>agrado percibido (−1…2) · ${es.length} respuestas: ${ags.map((c, k) => `<b style="color:${AGC[k]}">${c}</b> ${AGN[k].toLowerCase()}`).join(' · ')}</small>` : '',
     factH = `<div class="fact">${aO ? `Banda modelada de día ${rf[0].mn}–${rf[0].mx} dB` : mxv == null ? 'Sin dB medido' : `dB máx. registrado <span data-n="${mxv}">${mxv}</span>${mx100.length ? ` <em class="ex">(sin ${mx100.length} pico${mx100.length > 1 ? 's' : ''} puntual${mx100.length > 1 ? 'es' : ''} de ${Math.max(...mx100.map(f => f.mx))} dB)</em>` : ''}`} · flujo peatonal <span data-n="${fpm.toFixed(1)}" data-dec="1">${fpm.toFixed(1)}</span> · vehicular <span data-n="${fvm.toFixed(1)}" data-dec="1">${fvm.toFixed(1)}</span> (1-3)</div>`,
     dbeH = db.length ? `<small class="dbe">dB medidos en encuestas: ${mean(db, e => e[2]).toFixed(1)} (n=${db.length})</small>` : '',
-    detH = pf ? `<div class="det" style="border-left-color:${COL[pf.c]}"><b>${pf.id} · ${tmx(pf)}${pf.ap ? '' : ' h'}</b>${pf.src}<br>${pf.nd ? 'sin dB medido · intensidad percibida ' + FICHAS[F.indexOf(pf)][10] + '/5' : pf.mn + '–' + pf.mx + ' dB · prom. ' + pf.pr}<br>${pf.ap ? '' : `Flujo peatonal ${pf.fp}/3 · vehicular ${pf.fv}/3<br>`}<span style="color:${COL[pf.c]}">${CAT[pf.c]}</span><br><i>${pf.ph}</i>${pf.ap ? `<br><span class="org"><b>Procedencia:</b> ${APRA}. Modelo de simulación validado con mediciones; no es una medición del equipo. Rango de la banda, no mínimo y máximo registrados. Cruce propio con los polígonos del mapa (CSV ${pf.night ? 'nocturno' : 'diurno'} 2018) en unos 150 m alrededor del lugar.</span>` : ''}</div>` : '',
+    detH = detOf(),
     listH = `<div class="pf"><h5>Registro de mediciones · barra = rango dB mín→máx, marca = promedio</h5></div><div class="list">` + F.map((f, i) => f.s === s && (on(f) || f.night && (!srcF || f.c === srcF)) ? `<button class="it${pf === f ? ' on' : ''}" data-i="${i}"><span style="background:${COL[f.c]}"></span>${f.id} · ${tmx(f)}<em>${f.src}</em><div class="rg${f.nd ? ' nd' : ''}${f.ap ? ' ap' : ''}">${f.nd ? '' : `<i style="left:${P(f.mn)}%;width:${Math.max(3, P(f.mx) - P(f.mn))}%;background:${COL[f.c]}"></i><u style="left:${P(f.pr)}%"></u>`}</div><b>${f.nd ? 'sin dB' : f.ap ? f.mn + '–' + f.mx + ' dB' : f.pr + ' dB'}</b></button>` : '').join('') + '</div>',
     quoteH = `<q>${QUOTE[s]}</q>`, fiH = (window.FIX && FIX[s]) ? `<p class="fi">${FIX[s]}</p>` : '';
   let h;
@@ -408,33 +441,37 @@ cv.addEventListener('pointerdown', e => { if (e.pointerType === 'mouse' && e.but
 addEventListener('pointermove', e => { if (!dragM) return; const dx = e.clientX - dragM.x, dy = e.clientY - dragM.y; dragM.mv = Math.max(dragM.mv, Math.hypot(e.clientX - dragM.sx, e.clientY - dragM.sy)); dragM.x = e.clientX; dragM.y = e.clientY; if (dragM.mv > 10) { oy += dx * .006; ox = cl(ox + dy * .006, -1.1, 1.1); } });
 addEventListener('pointerup', () => { if (dragM && dragM.mv > 10) { dragged = true; setTimeout(() => dragged = false, 60); } dragM = null; });
 function pick(e) {
-  const mx = e.clientX, my = e.clientY; hs = null; hov = null;
+  const mx = e.clientX, my = e.clientY; hs = null; hov = null; hsR = null;
   if (amb < .2) {
     let best = Math.pow(W < 760 ? 24 : 17, 2);
     DOTS.forEach(d => { const q = (d.x - mx) * (d.x - mx) + (d.y - my) * (d.y - my); if (d.al > .3 && q < best) { best = q; hov = d.f; } });
     if (eS > .85) G.forEach((g, s) => { if (g.al < .5) return; const inFig = Math.hypot(mx - g.cx, my - g.cy) < g.R * 1.25 || (want === null && Math.abs(mx - g.cx) < Math.max(g.R * 1.1, W < 760 ? 60 : 90) && my > g.cy - g.R * 1.1 && my < g.cy + g.R * 1.12), inLbl = want === null && Math.abs(mx - g.cx) < Math.min(LW / 2, Math.max(g.R, W < 760 ? 70 : 110)) && my > g.cy + g.R * .95 && my < g.cy + g.R * 1.12 + 92; if ((inFig && (want === null || k > .5)) || inLbl) hs = s; });
   }
+  if (amb < .2 && !iso() && eR > .85 && eS < .3) [0, 1].forEach(i => { const g = GR[i]; if (Math.hypot(mx - g.cx, my - g.cy) < RgR * 1.1 || (Math.abs(mx - g.cx) < Math.min(RgR, 130) && my > g.cy + RgR * .95 && my < g.cy + RgR * 1.22 + 130)) hsR = i; });
   if (hov) { tip.innerHTML = `<b>${hov.id} · ${tmx(hov)}${hov.ap ? '' : ' h'}</b>${hov.src}<br>${hov.ap ? 'modelo APrA 2018 · ' : ''}${hov.nd ? 'sin dB medido · intensidad ' + FICHAS[F.indexOf(hov)][10] + '/5' : hov.mn + '–' + hov.mx + ' dB · prom ' + hov.pr}<br><span style="color:${COL[hov.c]}">${CAT[hov.c]}</span><br><i>${hov.ph}</i>`; tip.style.display = 'block'; tip.style.left = Math.max(8, Math.min(mx + 16, W - 280)) + 'px'; tip.style.top = (W < 760 ? Math.max(60, my - 130) : my + 16) + 'px'; }
   else tip.style.display = 'none';
   if (hov !== lastBlip) { lastBlip = hov; if (hov && window.SND) SND.blip(hov.c, hov.pr); }
-  cv.style.cursor = hs !== null || hov ? 'pointer' : (dragM ? 'grabbing' : 'grab'); render();
+  cv.style.cursor = hs !== null || hsR !== null || hov ? 'pointer' : (dragM ? 'grabbing' : 'grab'); render();
 }
-function focus(s) { if (s !== null && eS < .85) return; if (innerWidth >= 1100) { if (s !== null) { if (want === null) legWas = leg.classList.contains('open'); legSet(false); } else legSet(legWas); } /* escritorio: la leyenda se pliega al expandir y vuelve a su estado previo */ want = s; layout(); pf = null; back.style.display = s === null ? 'none' : 'block'; document.body.classList.toggle('lock', s !== null); pkey = ''; render(); }
+function focusR(i) { if (want !== null || (i !== null && (eR < .85 || eS > .3))) return; if (innerWidth >= 1100) { if (i !== null) { if (wantR === null) legWas = leg.classList.contains('open'); legSet(false); } else if (wantR !== null) legSet(legWas); } wantR = i; layout(); pf = null; back.textContent = '← Volver a las dos ciudades'; back.style.display = i === null ? 'none' : 'block'; document.body.classList.toggle('lock', i !== null); pkey = ''; render(); }
+function focus(s) { if (s !== null && eS < .85) return; back.textContent = '← Volver a los seis sectores'; if (innerWidth >= 1100) { if (s !== null) { if (want === null) legWas = leg.classList.contains('open'); legSet(false); } else legSet(legWas); } /* escritorio: la leyenda se pliega al expandir y vuelve a su estado previo */ want = s; layout(); pf = null; back.style.display = s === null ? 'none' : 'block'; document.body.classList.toggle('lock', s !== null); pkey = ''; render(); }
 
 cv.addEventListener('mousemove', pick);
 cv.addEventListener('click', e => {
   if (dragged) return; pick(e);
   if (want !== null) { if (hov) { pf = pf === hov ? null : hov; render(); } }
+  else if (wantR !== null) { if (hov && rOf(hov.s) === wantR) { pf = pf === hov ? null : hov; render(); } }
+  else if (hsR !== null) { const h0 = hov; focusR(hsR); if (wantR !== null && h0 && rOf(h0.s) === wantR) { pf = h0; render(); } }
   else if (eS < .5) { if (hov) pf = pf === hov ? null : hov; else pf = null; }
   else if (hs !== null) { const h0 = hov; focus(hs); if (want !== null && h0 && h0.s === hs) { pf = h0; render(); } }
 });
 document.getElementById('down').onclick = () => { const vh = innerHeight; scrollTo({ top: eS < .5 ? (eR < .5 ? vh * .9 : vh * 1.92) : document.querySelector('.steps').getBoundingClientRect().top + scrollY - 70, behavior: RM ? 'auto' : 'smooth' }); };
 panel.addEventListener('click', e => { const b = e.target.closest('.it'); if (b) { const f = F[+b.dataset.i]; pf = pf === f ? null : f; render(); } });
-back.onclick = () => focus(null);
-addEventListener('keydown', e => { if (e.key === 'Escape') focus(null); });
+back.onclick = () => wantR !== null ? focusR(null) : focus(null);
+addEventListener('keydown', e => { if (e.key === 'Escape') wantR !== null ? focusR(null) : focus(null); if (/^[12]$/.test(e.key) && want === null && eR > .85 && eS < .3 && !document.body.classList.contains('heroing')) focusR(+e.key - 1); });
 document.querySelectorAll('#ctl button').forEach(b => b.onclick = () => { flt = b.dataset.f; document.querySelectorAll('#ctl button').forEach(o => o.classList.toggle('on', o === b)); document.querySelector('#ctl .lbl').innerHTML = '<b>Hora del día</b> · ' + b.textContent; document.getElementById('ctl').classList.remove('open'); b.blur(); render(); });
 
-window.MAREA = { pair: [0, 1], get want() { return want; }, get srcF() { return srcF; }, setSrc(c) { setSrc(c); }, focus(s) { focus(s); }, get flt() { return flt; }, get night() { return nightOn; }, setNight(v) { if (nightOn === v) return; nightOn = v; render(); }, setFlt(f) { if (flt === f) return; flt = f; const b = document.querySelector(`#ctl button[data-f="${f}"]`); document.querySelectorAll('#ctl button').forEach(o => o.classList.toggle('on', o === b)); if (b) document.querySelector('#ctl .lbl').innerHTML = '<b>Hora del día</b> · ' + b.textContent; render(); } }; // la comparativa avanza la franja horaria con el scroll
+window.MAREA = { pair: [0, 1], get want() { return want; }, get wantR() { return wantR; }, focusR(i) { focusR(i); }, get srcF() { return srcF; }, setSrc(c) { setSrc(c); }, focus(s) { focus(s); }, get flt() { return flt; }, get night() { return nightOn; }, setNight(v) { if (nightOn === v) return; nightOn = v; render(); }, setFlt(f) { if (flt === f) return; flt = f; const b = document.querySelector(`#ctl button[data-f="${f}"]`); document.querySelectorAll('#ctl button').forEach(o => o.classList.toggle('on', o === b)); if (b) document.querySelector('#ctl .lbl').innerHTML = '<b>Hora del día</b> · ' + b.textContent; render(); } }; // la comparativa avanza la franja horaria con el scroll
 document.getElementById('go').onclick = () => { document.getElementById('hero').classList.add('off'); document.body.classList.remove('heroing'); };
 // escala de referencia: traduce dB a algo cotidiano (aproximada)
 const DBW = v => v < 50 ? 'oficina o biblioteca tranquila' : v < 60 ? 'conversación suave' : v < 70 ? 'conversación fuerte o calle tranquila' : v < 80 ? 'calle con tráfico constante' : v < 90 ? 'tráfico intenso o maquinaria' : 'bocina o maquinaria muy fuerte';
