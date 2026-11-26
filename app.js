@@ -228,7 +228,7 @@ function calcDots(ee0, er0) {
 }
 const lite = (c, t) => c.map(v => Math.round(v + (255 - v) * t)), dark = (c, t) => c.map(v => Math.round(v * (1 - t)));
 const CRGBA = CK.map(q => rgbOf(COL[q]));
-const fbk = v => { const t = finding(v); return t ? `<div class="fbk2">${t}</div>` : ''; };
+const fbk = fcard;
 const qCol = s => 'rgb(' + dark(rgbOf(COL[DOM[s]]), .32).join(',') + ')'; // la cita toma el color de la fuente que predomina, oscurecido para leerse
 const fiBlock = o => o ? `<div class="fi2">${o.map(([k, t]) => `<div><b>${k}</b><span>${t}</span></div>`).join('')}</div>` : '';
 const AGP = ['les incomoda', 'les da igual', 'les gusta un poco', 'les gusta']; // texto llano del agrado: sin escalas ni ceros
@@ -289,17 +289,17 @@ REG.forEach(R => { const q = uniq(F.filter(f => R.ss.includes(f.s) && !f.ap && !
 function regLab(i, a) { // bajada de cada ciudad: mismos datos y composición que la de cada lugar, promediando sus mediciones
   const R = REG[i], cx = GR[i].cx, mob = W < 760, c = rgbOf(COL[R.dom]), y = GR[i].cy + RgR * (mob ? 1.12 : 1.22) + (mob ? 26 : 22), cellW = W * .5 - (mob ? 14 : 38), sc = mob ? Math.min(1, cellW / 176) : Math.min(1, cellW / 250);
   x.save(); x.textAlign = 'center'; if (sc < 1) { x.translate(cx, y); x.scale(sc, sc); x.translate(-cx, -y); }
-  const nd = R.db == null, dv = nd ? 0 : R.db * cl(a * 1.15, 0, 1), o1 = 36, bw = Math.min(mob ? 190 : 150, cellW / sc - 12), by = y + o1 + 8, py = mob ? 0 : 40;
+  const rz = fact() ? fst(fsel(R.ss, flt, srcF)) : null, rdb = rz ? rz.db : R.db, rfr = srcF ? ['am', 'pm', 'pk'].map(k => fst(fsel(R.ss, k, srcF)).db) : R.fr, nd = rdb == null, dv = nd ? 0 : rdb * cl(a * 1.15, 0, 1), o1 = 36, bw = Math.min(mob ? 190 : 150, cellW / sc - 12), by = y + o1 + 8, py = mob ? 0 : 40;
   const rr = (px, qy, w, h, r) => { x.beginPath(); if (x.roundRect) x.roundRect(px, qy, w, h, r); else x.rect(px, qy, w, h); x.fill(); };
   x.globalAlpha = a; x.fillStyle = '#3b4234'; x.font = `700 ${mob ? 19 : 20}px Helvetica,Arial`; x.fillText(R.n.toUpperCase(), cx, y);
   { const nf = `300 ${mob ? 34 : 32}px Inter,Helvetica,Arial`, uf = '13px Inter,Helvetica,Arial', ns = dv.toFixed(1), un = ' dB promedio'; x.font = nf; const w1 = x.measureText(ns).width; x.font = uf; const w2 = x.measureText(un).width, x0 = cx - (w1 + w2) / 2; x.textAlign = 'left';
     x.font = nf; x.fillStyle = `rgb(${c})`; x.fillText(ns, x0, y + o1 + (mob ? 2 : 4)); x.font = uf; x.fillStyle = '#8F9984'; x.fillText(un, x0 + w1, y + o1 + (mob ? 2 : 4)); x.textAlign = 'center'; }
   const bh = 7, by2 = by + 3; x.globalAlpha = a * .16; x.fillStyle = '#5E6655'; rr(cx - bw / 2, by2, bw, bh, bh / 2); x.globalAlpha = a; x.fillStyle = `rgb(${c})`; rr(cx - bw / 2, by2, Math.max(bh, bw * cl((dv - 40) / 55, 0, 1)), bh, bh / 2);
-  if (!mob) { const names = ['Mañana', 'Tarde', 'H. punta'], ks = ['am', 'pm', 'pk'], base = by + 46; R.fr.forEach((v, j) => { const cxp = cx + (j - 1) * 46, hh = v == null ? 3 : Math.max(3, cl((v - 55) / 25, 0, 1) * 24 + 3); x.globalAlpha = a * (v == null ? .16 : (flt === 'all' || flt === ks[j] ? .9 : .35)); x.fillStyle = v == null ? '#5E6655' : `rgb(${c})`; rr(cxp - 9, base - hh, 18, hh, 3); x.globalAlpha = a; x.fillStyle = '#8F9984'; x.font = '10px Inter,Helvetica,Arial'; x.fillText(names[j], cxp, base + 12); }); x.globalAlpha = a; }
+  if (!mob) { const names = ['Mañana', 'Tarde', 'H. punta'], ks = ['am', 'pm', 'pk'], base = by + 46; rfr.forEach((v, j) => { const cxp = cx + (j - 1) * 46, hh = v == null ? 3 : Math.max(3, cl((v - 55) / 25, 0, 1) * 24 + 3); x.globalAlpha = a * (v == null ? .16 : (flt === 'all' || flt === ks[j] ? .9 : .35)); x.fillStyle = v == null ? '#5E6655' : `rgb(${c})`; rr(cxp - 9, base - hh, 18, hh, 3); x.globalAlpha = a; x.fillStyle = '#8F9984'; x.font = '10px Inter,Helvetica,Arial'; x.fillText(names[j], cxp, base + 12); }); x.globalAlpha = a; }
   x.font = '15px Helvetica,Arial'; x.fillStyle = `rgb(${c})`; x.fillText((mob ? '' : 'Predomina: ') + SH[R.dom], cx, by + (mob ? 38 : 34) + py);
   x.fillText(R.ag == null ? 'sin encuestas' : mob ? AGW(R.ag) : `agrado ${R.ag.toFixed(2)} · ${AGW(R.ag)}`, cx, by + (mob ? 58 : 50) + py); x.fillStyle = '#3b4234';
   if (!mob) x.fillText(`Personas: ${lvn(R.p)} · Vehículos: ${lvn(R.v)}`, cx, by + 68 + py);
-  x.fillStyle = '#8F9984'; x.font = '13px Inter,Helvetica,Arial'; x.fillText(`${R.nm} mediciones${R.ne ? ' · ' + R.ne + ' encuestas' : ''}`, cx, by + (mob ? 58 : 68) + py + (mob ? 20 : 22));
+  x.fillStyle = '#8F9984'; x.font = '13px Inter,Helvetica,Arial'; x.fillText(rz ? `${rz.n} de ${R.nm} mediciones con este filtro` : `${R.nm} mediciones${R.ne ? ' · ' + R.ne + ' encuestas' : ''}`, cx, by + (mob ? 58 : 68) + py + (mob ? 20 : 22));
   x.restore(); x.globalAlpha = 1;
 }
 function regBig(i, a) { // ciudad aislada: mismo rótulo que un sector expandido (nombre + predominio + flujos); el detalle va en la tarjeta
@@ -358,64 +358,60 @@ function frame(ms) {
   const lab = cl((eS - .6) / .35, 0, 1) * (1 - amb) * (1 - cl(cA * 4, 0, 1));
   const labT = (document.body.classList.contains('legopen') || (W >= 1100 && (document.getElementById('ans') || {classList: {contains: () => false}}).classList.contains('open'))) ? 0 : 1; window.labK = (window.labK == null ? labT : window.labK) + (labT - (window.labK == null ? labT : window.labK)) * .14; const labS = window.labK * window.labK * (3 - 2 * window.labK);
   if (lab * labS > .02 && !iso() && W >= 760) { const mob = W < 760, ar = (document.getElementById('ans') || {getBoundingClientRect: () => ({bottom: 0})}).getBoundingClientRect(), ab = ar.bottom, yt = Math.max(ab + 16, Math.min(Math.max(ab + 26, 0), Math.min(...G.map(g => g.cy - g.R)) - (mob ? 26 : 20))); x.globalAlpha = lab * labS * .9; x.fillStyle = '#5E6655'; const cx0 = W >= 1100 ? W / 2 : (ar.left + ar.right) / 2, lgO = document.getElementById('leg'), lr0 = 0, long = 'Cada anillo es un lugar · el color dice qué suena más · la barra y el número, qué tan fuerte · las columnas, cómo cambia en el día'; x.font = `${mob ? 12 : 16}px Helvetica,Arial`; const sh = mob || x.measureText(long).width > 2 * Math.min(cx0 - lr0, W - 90 - cx0); x.fillText(sh ? 'Cada anillo es un lugar · color: qué suena · barra: qué tan fuerte' : long, cx0, yt + (1 - labS) * 12); x.globalAlpha = 1; }
-  const rk = NSX.filter(s => dbAvg(s) != null && !apOnly(s)).sort((a, b) => dbAvg(b) - dbAvg(a)), loud = rk[0], quiet = rk.length > 1 ? rk[rk.length - 1] : -1;
+  const rk = NSX.filter(s => fdb(s) != null && !apOnly(s)).sort((a, b) => fdb(b) - fdb(a)), loud = rk[0], quiet = rk.length > 1 ? rk[rk.length - 1] : -1;
   if (lab > .05) G.forEach((g, s) => {
     if (g.al < .05) return; const c = rgbOf(COL[DOM[s]]), big = g.kk > .5, mob = W < 760, [p, v] = lvl(s), y = g.cy + g.R * 1.12 + (big ? (mob ? 24 : 32) : (mob ? 26 : 22));
     const sc = big || mob ? 1 : Math.min(1, (LW - 14) / 250); x.save(); if (sc < 1) { x.translate(g.cx, y); x.scale(sc, sc); x.translate(-g.cx, -y); }
     x.globalAlpha = g.al * lab; x.fillStyle = '#3b4234'; x.font = `700 ${big ? (mob ? 20 : 28) : (mob ? 19 : 20)}px Helvetica,Arial`; x.fillText(SECT[s].toUpperCase(), g.cx, y);
     x.font = `${big ? (mob ? 13 : 16) : 14}px Helvetica,Arial`; x.fillStyle = `rgb(${c})`;
     const dbl = dbAvg(s) == null ? dbL(s) : (dbAvg(s) * cl(lab * 1.15, 0, 1)).toFixed(1) + (apOnly(s) ? ' dB modelo' : ' dB promedio');
-    if (!big) { const nd = dbAvg(s) == null, dv = nd ? 0 : dbAvg(s) * cl(lab * 1.15, 0, 1), o1 = 36, bw = mob ? 190 : 150, by = y + o1 + 8; // intensidad legible: número grande + barra con la misma escala en todos los lugares
+    if (!big) { const nd = fdb(s) == null, dv = nd ? 0 : fdb(s) * cl(lab * 1.15, 0, 1), o1 = 36, bw = mob ? 190 : 150, by = y + o1 + 8; // intensidad legible: número grande + barra con la misma escala en todos los lugares
       const rr = (px, py, w, h, r) => { x.beginPath(); if (x.roundRect) x.roundRect(px, py, w, h, r); else x.rect(px, py, w, h); x.fill(); };
-      if (nd) { x.fillStyle = '#8F9984'; x.font = `15px Inter,Helvetica,Arial`; x.fillText('sin dB medido', g.cx, y + o1); }
+      if (nd) { x.fillStyle = '#8F9984'; x.font = `15px Inter,Helvetica,Arial`; x.fillText(fact() ? 'sin dB con este filtro' : 'sin dB medido', g.cx, y + o1); }
       else { const nf = `300 ${mob ? 34 : 32}px Inter,Helvetica,Arial`, uf = `13px Inter,Helvetica,Arial`, ns = dv.toFixed(1), un = apOnly(s) ? ' dB · modelo APrA' : ' dB promedio'; x.font = nf; const w1 = x.measureText(ns).width; x.font = uf; const w2 = x.measureText(un).width, x0 = g.cx - (w1 + w2) / 2; x.textAlign = 'left';
         x.font = nf; x.fillStyle = `rgb(${c})`; x.fillText(ns, x0, y + o1 + (mob ? 2 : 4)); x.font = uf; x.fillStyle = '#8F9984'; x.fillText(un, x0 + w1, y + o1 + (mob ? 2 : 4)); x.textAlign = 'center'; }
       const bh = 7, by2 = by + 3; x.globalAlpha = g.al * lab * .16; x.fillStyle = '#5E6655'; rr(g.cx - bw / 2, by2, bw, bh, bh / 2);
       if (!nd) { x.globalAlpha = g.al * lab; x.fillStyle = `rgb(${c})`; rr(g.cx - bw / 2, by2, Math.max(bh, bw * cl((dv - 40) / 55, 0, 1)), bh, bh / 2); } x.globalAlpha = g.al * lab;
       if (s === loud || s === quiet) { x.save(); x.globalAlpha = g.al * lab; x.fillStyle = `rgb(${c})`; x.font = `700 12px Inter,Helvetica,Arial`; if ('letterSpacing' in x) x.letterSpacing = '1.5px'; x.textAlign = 'center'; x.fillText(s === loud ? 'MÁS RUIDOSO' : 'MÁS TRANQUILO', g.cx, mob ? by + 76 : y - 26); x.restore(); }
-      if (!mob) { const names = ['Mañana', 'Tarde', 'H. punta'], ks = ['am', 'pm', 'pk'], base = by + 46; FRDB[NSX.indexOf(s)].forEach((v, i) => { const cxp = g.cx + (i - 1) * 46, hh = v == null ? 3 : Math.max(3, cl((v - 55) / 25, 0, 1) * 24 + 3); x.globalAlpha = g.al * lab * (v == null ? .16 : (flt === 'all' || flt === ks[i] ? .9 : .35)); x.fillStyle = v == null ? '#5E6655' : `rgb(${c})`; rr(cxp - 9, base - hh, 18, hh, 3); x.globalAlpha = g.al * lab; x.fillStyle = '#8F9984'; x.font = '10px Inter,Helvetica,Arial'; x.fillText(names[i], cxp, base + 12); }); x.globalAlpha = g.al * lab; }
+      if (!mob) { const names = ['Mañana', 'Tarde', 'H. punta'], ks = ['am', 'pm', 'pk'], base = by + 46; (srcF ? ['am', 'pm', 'pk'].map(k => fst(fsel([s], k, srcF)).db) : FRDB[NSX.indexOf(s)]).forEach((v, i) => { const cxp = g.cx + (i - 1) * 46, hh = v == null ? 3 : Math.max(3, cl((v - 55) / 25, 0, 1) * 24 + 3); x.globalAlpha = g.al * lab * (v == null ? .16 : (flt === 'all' || flt === ks[i] ? .9 : .35)); x.fillStyle = v == null ? '#5E6655' : `rgb(${c})`; rr(cxp - 9, base - hh, 18, hh, 3); x.globalAlpha = g.al * lab; x.fillStyle = '#8F9984'; x.font = '10px Inter,Helvetica,Arial'; x.fillText(names[i], cxp, base + 12); }); x.globalAlpha = g.al * lab; }
       const py = mob ? 0 : 40;
       x.font = '15px Helvetica,Arial'; x.fillStyle = `rgb(${c})`; x.fillText((mob ? '' : 'Predomina: ') + SH[DOM[s]], g.cx, by + (mob ? 38 : 34) + py); x.fillText(mob ? (hasAg(s) ? AGW(agrSec(s)) : 'sin encuestas') : agL2(s), g.cx, by + (mob ? 58 : 50) + py); x.fillStyle = '#3b4234';
-      if (mob) { /* personas y vehículos: en la tarjeta del sector */ } else x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, by + 68 + py); }
+      if (mob) { /* personas y vehículos: en la tarjeta del sector */ } else { x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, by + 68 + py); if (fact()) { const z = fst(fsel([s], flt, srcF)); x.fillStyle = '#8F9984'; x.font = '13px Inter,Helvetica,Arial'; x.fillText(`${z.n} ${z.n === 1 ? 'medición' : 'mediciones'} con este filtro`, g.cx, by + 90 + py); } } }
     else { x.fillText('Predomina: ' + SH[DOM[s]] + ' · ' + (mob ? (hasAg(s) ? AGW(agrSec(s)) : 'sin encuestas') : agL(s)), g.cx, y + (mob ? 18 : 24)); x.fillStyle = '#3b4234'; x.fillText(`Personas: ${lvn(p)} · Vehículos: ${lvn(v)}`, g.cx, y + (mob ? 35 : 46)); }
     x.restore(); x.globalAlpha = 1;
   });
   { const labR = cl((eR - .6) / .35, 0, 1) * (1 - cl(eS / .4, 0, 1)) * (1 - amb) * (1 - cl(cA * 4, 0, 1)); if (labR > .05 && want === null) { [0, 1].forEach(i => regLab(i, labR * (focR === null ? 1 : focR === i ? cl(1 - kR * 4, 0, 1) : 1 - kR))); if (focR !== null && kR > .5) regBig(focR, cl((kR - .5) * 2, 0, 1)); } }
-  fboxSync(deep); const stg = eS > .5 ? 2 : eR > .5 ? 1 : 0, ht = iso() ? '' : (stg === 0 ? 'Todas las mediciones · toca un punto' : stg === 1 ? 'Dos ciudades · clic para aislar' : 'Clic en un sector para expandirlo · teclas 1–' + NS); if (ht !== lastHt) { lastHt = ht; hint.textContent = ht; }
+  const stg = eS > .5 ? 2 : eR > .5 ? 1 : 0, ht = iso() ? '' : (stg === 0 ? 'Todas las mediciones · toca un punto' : stg === 1 ? 'Dos ciudades · clic para aislar' : 'Clic en un sector para expandirlo · teclas 1–' + NS); if (ht !== lastHt) { lastHt = ht; hint.textContent = ht; }
   const dw = document.getElementById('down'), dl = stg === 0 ? 'Separar las dos ciudades ↓' : stg === 1 ? 'Desplegar sectores ↓' : 'Ver hallazgos ↓'; if (dw.textContent !== dl) dw.textContent = dl;
   requestAnimationFrame(frame);
 }
 
-const fbox = document.createElement('div'); fbox.id = 'fbox'; document.body.appendChild(fbox);
 const FBN = { am: ['Mañana', '09:40–12:36'], pm: ['Tarde', '12:37–17:29'], pk: ['Hora punta', '17:30–18:50'] };
 const fsel = (ss, ff, sf) => uniq(F.filter(f => ss.includes(f.s) && !f.ap && !f.night && (ff === 'all' || f.m >= FILTERS[ff][0] && f.m <= FILTERS[ff][1]) && (!sf || f.c === sf)));
 const fst = a => { const r = real(a); return { n: a.length, db: r.length ? mean(r, f => f.pr) : null }; };
-function finding(v) { // hallazgo del filtro activo (hora y/o fuente) en la vista actual: promedia lo que queda y lo compara con la vista sin filtro
-  if (flt === 'all' && !srcF) return null;
-  const sc = v.k === 'city' ? REG[v.i].ss : v.k === 'sector' ? [v.i] : NSX, nm = v.k === 'city' ? REG[v.i].n : v.k === 'sector' ? SECT[v.i] : v.k === 'cities' ? 'las dos ciudades' : v.k === 'sectors' ? 'los seis lugares' : 'todo el atlas',
-    tt = [flt !== 'all' ? `${FBN[flt][0]} (${FBN[flt][1]} h)` : '', srcF ? 'fuente ' + SH[srcF].toLowerCase() : ''].filter(Boolean).join(' · '), head = `<b${srcF ? ` style="color:${qCol2(srcF)}"` : ''}>${tt}<em> · ${nm}</em></b>`;
-  const sub = fsel(sc, flt, srcF), base = fsel(sc, 'all', null), A = fst(sub), B = fst(base);
-  if (!sub.length) return head + '<span>Sin mediciones con este filtro.</span>';
-  const d = A.db != null && B.db != null ? A.db - B.db : null, dl = d == null ? '' : Math.abs(d) < .5 ? ' (igual al promedio sin filtro)' : ` (${d > 0 ? '+' : '−'}${Math.abs(d).toFixed(0)} dB respecto del promedio sin filtro, ${B.db.toFixed(0)} dB)`;
-  const l2 = `<span>${A.n} de ${B.n} mediciones${A.db != null ? ` · <strong>${A.db.toFixed(1)} dB</strong> promedio` : ''}${dl}</span>`;
-  let l3 = '';
-  if (v.k === 'cities') l3 = REG.map(r => { const z = fst(fsel(r.ss, flt, srcF)); return `${r.n}: ${z.n ? (z.db != null ? z.db.toFixed(0) + ' dB' : 'sin dB') + ' · ' + z.n + (z.n === 1 ? ' medición' : ' mediciones') : 'sin mediciones'}`; }).join(' · ');
-  else if (v.k === 'sector') { if (srcF && flt === 'all') l3 = 'Por franja: ' + ['am', 'pm', 'pk'].map(k => { const z = fst(fsel(sc, k, srcF)); return `${FBN[k][0].toLowerCase()} ${z.db != null ? z.db.toFixed(0) + ' dB' : '–'}`; }).join(' · '); else { const c = {}; sub.forEach(f => c[f.c] = (c[f.c] || 0) + 1); const top = Object.keys(c).sort((p, q) => c[q] - c[p])[0]; l3 = `Lo que más suena: ${SH[top].toLowerCase()} (${c[top]} de ${sub.length})`; } }
-  else { const rk = sc.map(q => [q, fst(fsel([q], flt, srcF)).db]).filter(a => a[1] != null).sort((p, q) => q[1] - p[1]); l3 = rk.length > 1 ? `Más fuerte: ${SECT[rk[0][0]]} (${rk[0][1].toFixed(0)} dB) · más tranquilo: ${SECT[rk[rk.length - 1][0]]} (${rk[rk.length - 1][1].toFixed(0)} dB)` : rk.length ? `Solo aparece en ${SECT[rk[0][0]]}` : ''; }
-  return head + l2 + (l3 ? `<span>${l3}</span>` : '');
-}
+const fact = () => flt !== 'all' || !!srcF; // hay filtro de hora o de fuente activo
+const fdb = s => fact() ? fst(fsel([s], flt, srcF)).db : dbAvg(s); // dB promedio del lugar con el filtro activo
 const qCol2 = c => 'rgb(' + dark(rgbOf(COL[c]), .32).join(',') + ')';
-let lastFk = '';
-function fboxPos() { // el recuadro se ubica donde no tapa rótulos: junto a los filtros; centrado entre las dos ciudades; a la derecha del modelo si hay sector/ciudad aislados
-  const v = fbox._v || {}, hl = parseFloat(hint.style.left) || 22; let left = hl, mw = innerWidth - hl - 260;
-  if (iso()) { left = Math.max(hl, FX + 175); mw = Math.min(720, innerWidth - left - 50); } else if (v.k === 'cities') mw = 430;
-  fbox.style.maxWidth = Math.max(260, mw) + 'px'; fbox.style.left = left + 'px'; if (!iso() && v.k === 'cities') fbox.style.left = Math.max(hl, (innerWidth - fbox.offsetWidth) / 2) + 'px'; }
-function fboxSync(deep) { const v = want !== null ? { k: 'sector', i: want } : wantR !== null ? { k: 'city', i: wantR } : eS > .5 ? { k: 'sectors' } : eR > .5 ? { k: 'cities' } : { k: 'all' }, key = [v.k, v.i, flt, srcF, W].join();
-  if (key !== lastFk) { lastFk = key; const t = finding(v); fbox._has = !!t; if (t) fbox.innerHTML = t; fbox._v = v; fboxPos(); }
-  const show = fbox._has && W > 1100 && !deep && !document.body.classList.contains('heroing') && !document.body.classList.contains('about'); if (show !== fbox._on) { fbox._on = show; fbox.classList.toggle('on', show); document.body.classList.toggle('fbon', show); } }
+function fcard(v) { // bloque dentro de la tarjeta: explica en palabras qué cambia con el filtro activo (hora y/o fuente)
+  if (!fact()) return '';
+  const sc = v.k === 'city' ? REG[v.i].ss : [v.i], nm = v.k === 'city' ? REG[v.i].n : SECT[v.i], tt = [flt !== 'all' ? `${FBN[flt][0].toLowerCase()} (${FBN[flt][1]} h)` : '', srcF ? `sonido ${SH[srcF].toLowerCase()}` : ''].filter(Boolean).join(' · ');
+  const sub = fsel(sc, flt, srcF), base = fsel(sc, 'all', null), A = fst(sub), B = fst(base), rows = [], pl = n => n === 1 ? 'medición' : 'mediciones';
+  if (!sub.length) rows.push(['En breve', `Con este filtro no hay mediciones en ${nm}.`]);
+  else {
+    const d = A.db != null && B.db != null ? A.db - B.db : null, w = d == null ? '' : d >= 3 ? 'bastante más fuerte' : d >= 1 ? 'algo más fuerte' : d <= -3 ? 'bastante más tranquilo' : d <= -1 ? 'algo más tranquilo' : 'casi igual';
+    rows.push(['En breve', A.db == null ? `Hay ${A.n} ${pl(A.n)} con este filtro, pero ninguna con dB medido.` : d == null ? `${A.db.toFixed(0)} dB en promedio.` : w === 'casi igual' ? `Con este filtro, ${nm} suena casi igual que sin filtrar: ${A.db.toFixed(0)} dB.` : `Con este filtro, ${nm} suena ${w} que sin filtrar: ${A.db.toFixed(0)} dB frente a ${B.db.toFixed(0)} dB.`]);
+    if (A.db != null) rows.push(['Qué significa', `Referencia: ${DBW(A.db)}. Los dB (decibeles) miden qué tan fuerte suena: más dB, más ruido.`]);
+    rows.push(['En qué se basa', `${A.n} de ${B.n} ${pl(B.n)}${A.n < 3 ? '. Son pocas: tómalo como una pista, no como una conclusión' : ''}.`]);
+    if (v.k === 'city') { const rk = sc.map(q => [q, fst(fsel([q], flt, srcF)).db]).filter(a => a[1] != null).sort((p, q) => q[1] - p[1]); rows.push(['Dónde', rk.length > 1 ? `Suena más en ${SECT[rk[0][0]]} (${rk[0][1].toFixed(0)} dB) y menos en ${SECT[rk[rk.length - 1][0]]} (${rk[rk.length - 1][1].toFixed(0)} dB).` : rk.length ? `Solo hay mediciones en ${SECT[rk[0][0]]}.` : 'Sin dB medido en los lugares de la ciudad.']); }
+    else if (srcF && flt === 'all') rows.push(['A lo largo del día', ['am', 'pm', 'pk'].map(k => { const z = fst(fsel(sc, k, srcF)); return `${FBN[k][0].toLowerCase()} ${z.db != null ? z.db.toFixed(0) + ' dB' : 'sin datos'}`; }).join(' · ') + '.']);
+    else if (srcF) { const t = fsel(sc, flt, null).length; rows.push(['Peso de esta fuente', `Es ${Math.round(A.n / Math.max(1, t) * 100)}% de las mediciones de esa franja (${A.n} de ${t}).`]); }
+    else { const c = {}; sub.forEach(f => c[f.c] = (c[f.c] || 0) + 1); const top = Object.keys(c).sort((p, q) => c[q] - c[p])[0]; rows.push(['Lo que más suena', `Predomina lo ${SH[top].toLowerCase()} (${c[top]} de ${sub.length} ${pl(sub.length)}).`]); }
+  }
+  return `<div class="fbk2"><b${srcF ? ` style="color:${qCol2(srcF)}"` : ''}>Con este filtro · ${tt}</b><div class="fi2">${rows.map(([k, t]) => `<div><b>${k}</b><span>${t}</span></div>`).join('')}</div></div>`;
+}
 
 const hint = document.getElementById('hint'), psub = document.getElementById('psub') || document.createElement('div');
-function hintPos() { if (innerWidth > 900) { const r = document.getElementById('cts').getBoundingClientRect(); if (r.width) { hint.style.left = Math.round(r.right + 12) + 'px'; if (fbox._on) fboxPos(); } } else hint.style.left = ''; }
+function hintPos() { if (innerWidth > 900) { const r = document.getElementById('cts').getBoundingClientRect(); if (r.width) { hint.style.left = Math.round(r.right + 12) + 'px'; } } else hint.style.left = ''; }
 addEventListener('resize', () => setTimeout(() => { if (iso()) { layout(); fitPanel(); } }, 160)); addEventListener('resize', hintPos); setInterval(hintPos, 400);
 const detOf = () => pf ? `<div class="det" style="border-left-color:${COL[pf.c]}"><b>${pf.id} · ${tmx(pf)}${pf.ap ? '' : ' h'}</b>${pf.src}<br>${pf.nd ? 'sin dB medido · intensidad percibida ' + FICHAS[F.indexOf(pf)][10] + '/5' : pf.mn + '–' + pf.mx + ' dB · prom. ' + pf.pr}<br>${pf.ap ? '' : `Flujo peatonal ${pf.fp}/3 · vehicular ${pf.fv}/3<br>`}<span style="color:${COL[pf.c]}">${CAT[pf.c]}</span><br><i>${pf.ph}</i>${pf.ap ? `<br><span class="org"><b>Procedencia:</b> ${APRA}. Modelo de simulación validado con mediciones; no es una medición del equipo. Rango de la banda, no mínimo y máximo registrados. Cruce propio con los polígonos del mapa (CSV ${pf.night ? 'nocturno' : 'diurno'} 2018) en unos 150 m alrededor del lugar.</span>` : ''}</div>` : '';
 function cityHtml(i) { // ciudad aislada: promedia las mediciones de sus lugares con la misma composición que la tarjeta de un sector
@@ -434,7 +430,7 @@ function cityHtml(i) { // ciudad aislada: promedia las mediciones de sus lugares
     fiH = fiBlock([['Qué se oye', `Predomina lo ${SH[R.dom].toLowerCase()}: ${nDom} de ${nm} mediciones.`], rk.length > 1 ? ['Quién es quién', `El más ruidoso es ${SECT[rk[0]]} (${dbAvg(rk[0]).toFixed(1)} dB) y el más tranquilo, ${SECT[rk[rk.length - 1]]} (${dbAvg(rk[rk.length - 1]).toFixed(1)} dB).`] : null, ['Cómo se vive', R.ne ? `${R.ne} respuestas de agrado: en promedio ${AGW(R.ag)}.` : 'Sin encuestas de agrado en esta ciudad.']].filter(Boolean)),
     listH = `<div class="pf"><h5>Cada medición · la barra muestra el rango de dB (mín–máx) y la marca, el promedio</h5></div><div class="list">` + F.map((f, q) => ss.includes(f.s) && (on(f) || f.night && (!srcF || f.c === srcF)) ? `<button class="it${pf === f ? ' on' : ''}" data-i="${q}"><span style="background:${COL[f.c]}"></span>${f.id} · ${tmx(f)} · ${SECT[f.s]}<em>${f.src}</em><div class="rg${f.nd ? ' nd' : ''}${f.ap ? ' ap' : ''}">${f.nd ? '' : `<i style="left:${P(f.mn)}%;width:${Math.max(3, P(f.mx) - P(f.mn))}%;background:${COL[f.c]}"></i><u style="left:${P(f.pr)}%"></u>`}</div><b>${f.nd ? 'sin dB' : f.ap ? f.mn + '–' + f.mx + ' dB' : f.pr + ' dB'}</b></button>` : '').join('') + '</div>',
     cmpH = `<div class="pf cmpf"><h5>Comparación entre los lugares de la ciudad (dB promedio)</h5>${ss.map(q => bar(SECT[q], dbAvg(q), false)).join('')}</div><div class="pf cmpf"><h5>Comparación entre ciudades (dB promedio)</h5>${REG.map((r, q) => bar(r.n, r.db, q === i)).join('')}</div>`;
-  if (D) return `<div class="pd">${hd}<article class="card sc pcard">${bigH}${dbsH}${chipsH}${fnowH}<div class="ag${es.length ? '' : ' na'}">${agBar}</div>${factH}${fiH}${flowH(fpm, fvm)}${horasHtml(ss)}${dbeH}${detOf()}${listH}${cmpH}</article></div>`;
+  if (D) return `<div class="pd">${hd}<article class="card sc pcard">${bigH}${dbsH}${chipsH}${fnowH}${fbk({ k: 'city', i })}<div class="ag${es.length ? '' : ' na'}">${agBar}</div>${factH}${fiH}${flowH(fpm, fvm)}${horasHtml(ss)}${dbeH}${detOf()}${listH}${cmpH}</article></div>`;
   return `<div class="sc pn">${hd}${bigH}${dbsH}${chipsH}${fbk({ k: 'city', i })}${es.length ? `<div class="ag">${agBar}</div>` : ''}${factH}${flowH(fpm, fvm)}${horasHtml(ss)}${dbeH}${fiH}${detOf()}${listH}${cmpH}</div>`;
 }
 function render() {
@@ -459,7 +455,7 @@ function render() {
     quoteH = `<q style="color:${qCol(s)}">${QUOTE[s]}</q>`, fiH = fiBlock(window.FIX && FIX[s]);
   let h;
   if (D) { // escritorio: misma tarjeta que «Cada lugar, a cada hora» (título fuera, vidrio, scroll interno) + registro de mediciones y comparativo al final
-    h = `<div class="pd">${hd}<article class="card sc pcard">${bigH}${dbsH}${chipsH}${fnowH}<div class="ag${es.length ? '' : ' na'}">${agBar}${quoteH}</div>${factH}${fiH}${flowHtml(s)}${horasHtml(s)}${dbeH}${detH}${listH}${compHtml(s)}</article></div>`;
+    h = `<div class="pd">${hd}<article class="card sc pcard">${bigH}${dbsH}${chipsH}${fnowH}${fbk({ k: 'sector', i: s })}<div class="ag${es.length ? '' : ' na'}">${agBar}${quoteH}</div>${factH}${fiH}${flowHtml(s)}${horasHtml(s)}${dbeH}${detH}${listH}${compHtml(s)}</article></div>`;
   } else {
     h = `<div class="sc pn">${hd}${bigH}${dbsH}${chipsH}${fbk({ k: 'sector', i: s })}${es.length ? `<div class="ag">${agBar}</div>` : ''}${factH}`;
     h += flowHtml(s) + horasHtml(s);
