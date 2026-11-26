@@ -1131,3 +1131,6 @@ body:not(.about) h3{font-weight:600}
 body:not(.about) .sc h3,body:not(.about) .bh h3,body:not(.about) #panel .pd .bh h3{font-weight:700}
 body:not(.about) q,body:not(.about) .ag q,body:not(.about) #panel q,body:not(.about) .card em.q{font-weight:700}
 body:not(.about) .sech2{font-weight:800}
+/* v176 · overlay móvil: la pregunta con más protagonismo y aire antes de la bajada */
+@media(max-width:759px){#hero h1{font-size:clamp(32px,min(10.8vw,5.6vh),54px);line-height:1.06;font-weight:800;letter-spacing:-.015em;margin-bottom:clamp(20px,3.8vh,34px)}#hero p{margin-top:0}#hero .eb{margin-bottom:18px}}
+@media(max-width:759px) and (max-height:700px){#hero h1{font-size:clamp(30px,min(5.6vw,8.2vh),80px);margin-bottom:16px}#hero .eb{margin-bottom:12px}}
