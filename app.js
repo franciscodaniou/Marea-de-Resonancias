@@ -364,7 +364,7 @@ function frame(ms) {
     const pi = PAIR().indexOf(s), qc = pi >= 0 ? cm * kc[s] * cA : 0;
     if (qc > .25) { const c = rgbOf(COL[DOM[s]]); x.globalAlpha = qc; x.fillStyle = '#3b4234'; x.font = `700 ${mobq ? 13 : 18}px "SF Pro",sans-serif`; x.fillText(SECT[s].toUpperCase(), g.cx, g.cy + r0 + (mobq ? 20 : 30));
       x.font = `${mobq ? 11 : 14}px "SF Compact",sans-serif`; x.fillStyle = '#5E6655'; x.fillText(hasAg(s) ? (mobq ? `${AGX(agrSec(s))} · ${tot} resp.` : `según ${tot} encuestas: ${AGX(agrSec(s))}`) : 'sin encuestas de agrado', g.cx, g.cy + r0 + (mobq ? 34 : 50));
-      { const br = mobq ? 11 : 17, by0 = g.cy - r0 - br - (mobq ? 4 : 6); x.fillStyle = `rgb(${c})`; x.beginPath(); x.arc(g.cx, by0, br, 0, TAU); x.fill(); x.fillStyle = '#fff'; x.textBaseline = 'middle'; x.font = `800 ${mobq ? 13 : 20}px "SF Pro",sans-serif`; x.fillText('AB'[pi], g.cx, by0 + (mobq ? 1 : 1.5)); x.textBaseline = 'alphabetic'; } }
+      x.font = `800 ${mobq ? 15 : 22}px "SF Pro",sans-serif`; x.fillStyle = `rgb(${c})`; x.fillText('AB'[pi], g.cx, g.cy - r0 - (mobq ? 8 : 12)); }
     x.globalAlpha = 1; }); }
   const lab = cl((eS - .6) / .35, 0, 1) * (1 - amb) * (1 - cl(cA * 4, 0, 1));
   const labT = (document.body.classList.contains('legopen') || (W >= 1100 && (document.getElementById('ans') || {classList: {contains: () => false}}).classList.contains('open'))) ? 0 : 1; window.labK = (window.labK == null ? labT : window.labK) + (labT - (window.labK == null ? labT : window.labK)) * .14; const labS = window.labK * window.labK * (3 - 2 * window.labK);
