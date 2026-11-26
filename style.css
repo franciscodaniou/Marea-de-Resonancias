@@ -1114,10 +1114,13 @@ body.about #c{filter:blur(14px)}
 @media(min-width:760px){#carR,#cdotsR{display:none!important}}
 @media(max-width:759px) and (max-height:760px){.bfn{display:none}}
 
-/* v172 · tipografía: Montserrat (cuerpos) · Plus Jakarta Sans bold (títulos y subtítulos) */
-html,body,button,input,select,textarea,.cc svg .t,#c{font-family:"Montserrat",sans-serif;font-optical-sizing:auto}
-h1,h2,h3,h4,h5,.sub,.sech,.part-h,.sh,#cmph,.bh h3,.sc h3,.lc h4,.sc .pf h5,#panel .pf h5,header b,.eb,.eb2,#hero .eb,.fi2 b,.cl dt,.bf em,.cn,.chips{font-family:"Plus Jakarta Sans",sans-serif;font-weight:700;font-optical-sizing:auto}
-body.about h2.part-h,body.about h2.sh{font-weight:700}
-.cc svg text{font-family:"Montserrat",sans-serif}
-
-/* v173 · Plus Jakarta Sans en títulos, subtítulos, rótulos y etiquetas */
+/* v174 · tipografía propia: SF Pro (títulos, subtítulos, cuerpos) · SF Compact (rótulos, etiquetas, textos dentro de tarjetas y contenedores) · New York (citas) */
+@font-face{font-family:"SF Pro";src:url(fonts/sf-pro.woff) format("woff");font-weight:1 1000;font-style:normal;font-display:swap}
+@font-face{font-family:"SF Compact";src:url(fonts/sf-compact.woff) format("woff");font-weight:1 1000;font-style:normal;font-display:swap}
+@font-face{font-family:"New York";src:url(fonts/new-york.woff) format("woff");font-weight:400 1000;font-style:normal;font-display:swap}
+html,body{font-family:"SF Pro",-apple-system,"Helvetica Neue",Arial,sans-serif}
+.card,.tile,.blk,.sc,#panel,#leg,#ans,#kbd,#tip,#hint,#down,#back,#bar,#ctl,#cts,#sec,#car,.cmp .ft,.cmp .cl,.cmp .cp,.rd,.rd2,.lc,.finds .fc,.chips,.cc svg text,button,input,select,textarea,.bf,.pk,.tg,.console,.foot2,.cn{font-family:"SF Compact","SF Pro",-apple-system,"Helvetica Neue",Arial,sans-serif}
+h1,h2,h3,h4,h5,.sub,.sech,.part-h,.sh,#cmph,.bh h3,.sc h3,.sc .pf h5,#panel .pf h5,.lead3,.card h2,.card h3,#ans .q{font-family:"SF Pro",-apple-system,"Helvetica Neue",Arial,sans-serif;font-weight:700}
+header b,header nav a,.eb,.eb2,#hero .eb,.fi2 b,.cl dt,.bf em,.lc h4,.chips,.cn{font-family:"SF Compact","SF Pro",-apple-system,"Helvetica Neue",Arial,sans-serif}
+q,.ag q,#panel q,.card em.q{font-family:"New York",Georgia,"Times New Roman",serif;font-style:normal!important;font-weight:600}
+.lead3{font-weight:400}
