@@ -45,12 +45,12 @@ window.SND = (() => {
     let sh = c.map((x, j) => tot ? Math.pow(x / tot, 1.5) * (j === top ? 1.7 : 1) : 0); const sm = sh.reduce((a, b) => a + b, 0) || 1; sh = sh.map(x => x / sm);   // la fuente predominante manda
     return { share: sh, top, db: u.length ? mean(u, f => f.pr) : 0, fv: u.length ? mean(u, f => f.fv) : 1, fp: u.length ? mean(u, f => f.fp) : 1, ag: agrSec(s), n: u.length }; };
   /* eventos: máximo 3 nuevos por ciclo de 120 ms, para que no se apilen voces y el procesador no se sature */
-  let made = 0, nextC = 0, nextB = 0, spk = [{ f0: 150, rate: 7.5, var: .6, pan: -.6, next: 0 }, { f0: 240, rate: 8.5, var: .7, pan: .45, next: .7 }, { f0: 510, rate: 11, var: 1, pan: -.15, next: 1.4 }, { f0: 690, rate: 15, var: 1, pan: .7, next: 2.1 }]; const allow = () => made++ < 3;
+  let made = 0, cnt = {}, nextC = 0, nextB = 0, spk = [{ f0: 150, rate: 7.5, var: .6, pan: -.6, next: 0 }, { f0: 240, rate: 8.5, var: .7, pan: .45, next: .7 }, { f0: 510, rate: 11, var: 1, pan: -.15, next: 1.4 }, { f0: 690, rate: 15, var: 1, pan: .7, next: 2.1 }]; const allow = (nm, sl) => { const ok = made++ < 5; if (ok && nm) cnt[nm] = (cnt[nm] || 0) + 1; if (ok && sl) { sl.n = sl.n || {}; sl.n[nm] = (sl.n[nm] || 0) + 1; } return ok; };
 
-  function pass(sl, g) { if (!allow()) return; const t = ctx.currentTime, d = r(2, 3.4), e = gain(0), f = filt('lowpass', 520, .8), o = ctx.createOscillator(), n = noise(), nf = filt('bandpass', 700, .6), ng = gain(.35);
+  function pass(sl, g) { if (!allow('pass', sl)) return; const t = ctx.currentTime, d = r(2, 3.4), e = gain(0), f = filt('lowpass', 520, .8), o = ctx.createOscillator(), n = noise(), nf = filt('bandpass', 700, .6), ng = gain(.35);
     o.type = 'sawtooth'; o.frequency.setValueAtTime(r(60, 72), t); o.frequency.linearRampToValueAtTime(r(95, 120), t + d * .45); o.frequency.linearRampToValueAtTime(r(55, 68), t + d);
     o.connect(f); n.connect(nf); nf.connect(ng); ng.connect(f); f.connect(e); e.connect(sl.out); e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(g, t + d * .45); e.gain.linearRampToValueAtTime(0, t + d); o.start(t); o.stop(t + d + .1); n.stop(t + d + .1); }
-  function beep(sl, g) { if (!allow()) return; const t = ctx.currentTime, e = gain(0), f = filt('lowpass', 1800, .7), k = Math.random() < .4 ? 2 : 1;
+  function beep(sl, g) { if (!allow('beep', sl)) return; const t = ctx.currentTime, e = gain(0), f = filt('lowpass', 1800, .7), k = Math.random() < .4 ? 2 : 1;
     [420, 525].forEach(fr => { const o = ctx.createOscillator(); o.type = 'square'; o.frequency.value = fr; o.connect(f); o.start(t); o.stop(t + .7); }); f.connect(e); e.connect(sl.out);
     e.gain.setValueAtTime(0, t); for (let i = 0; i < k; i++) { const a = t + i * .32; e.gain.linearRampToValueAtTime(g * .45, a + .02); e.gain.setValueAtTime(g * .45, a + .17); e.gain.linearRampToValueAtTime(0, a + .2); } }
   function note(sl, g, st, off = 0, fz = 0, dec = .9, free = false) { if (!free && !allow()) return; const t = ctx.currentTime + off, o = ctx.createOscillator(), e = gain(0), f = fz || 196 * Math.pow(2, PENT[Math.floor(Math.random() * PENT.length)] / 12); o.type = st.ag < 0 ? 'square' : 'triangle'; o.frequency.value = f;
@@ -60,7 +60,7 @@ window.SND = (() => {
      sílabas de ataque 8 ms a 8–16 por segundo, pasa-altos ~400 Hz y pasa-bajos ~8,5 kHz, bitcrush muy leve. Cada hablante es una «personalidad» (tono y velocidad). */
   const VF = [[800, 1250], [520, 1900], [310, 2300], [520, 950], [330, 800]].map(v => [v[0] * 1.35, v[1] * 1.35]), ST = [-3, -1, 0, 2, 4, 5, 7, 9];
   const crush = (() => { const n = 256, c = new Float32Array(n); for (let i = 0; i < n; i++) { const x = i / (n - 1) * 2 - 1; c[i] = Math.round(x * 48) / 48; } return c; })();
-  function mumble(sl, g, p) { const t0 = ctx.currentTime + .02, f0 = p.f0 * r(.97, 1.04), per = 1 / (p.rate * r(.92, 1.08)), n = Math.round(p.rate * r(.5, 1.3)) + 3, o = ctx.createOscillator(), hp = filt('highpass', 400, .5), lp = filt('lowpass', 8500, .4), nz = filt('peaking', 1200, 1.2), b1 = filt('bandpass', 900, 3.5), b2 = filt('bandpass', 2000, 3.5), d0 = gain(.3), g1 = gain(1), g2 = gain(.8), e = gain(0), ws = ctx.createWaveShaper(), pn = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+  function mumble(sl, g, p) { allow('mumble', sl); const t0 = ctx.currentTime + .02, f0 = p.f0 * r(.97, 1.04), per = 1 / (p.rate * r(.92, 1.08)), n = Math.round(p.rate * r(.5, 1.3)) + 3, o = ctx.createOscillator(), hp = filt('highpass', 400, .5), lp = filt('lowpass', 8500, .4), nz = filt('peaking', 1200, 1.2), b1 = filt('bandpass', 900, 3.5), b2 = filt('bandpass', 2000, 3.5), d0 = gain(.3), g1 = gain(1), g2 = gain(.8), e = gain(0), ws = ctx.createWaveShaper(), pn = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
     nz.gain.value = 6; ws.curve = crush; o.type = 'sawtooth'; o.connect(hp); hp.connect(nz); nz.connect(lp); lp.connect(d0); lp.connect(b1); lp.connect(b2); b1.connect(g1); b2.connect(g2); d0.connect(e); g1.connect(e); g2.connect(e); e.connect(ws);
     if (pn) { pn.pan.value = p.pan; ws.connect(pn); pn.connect(sl.out); } else ws.connect(sl.out);
     let t = t0, wl = 3 + Math.floor(Math.random() * 4); const q = Math.random() < .3; e.gain.setValueAtTime(0, t);
@@ -70,18 +70,18 @@ window.SND = (() => {
       t += per * r(.9, 1.05); if (--wl <= 0) { t += per * r(.6, 1.6); wl = 3 + Math.floor(Math.random() * 4); } }
     o.start(t0); o.stop(t + .1); return t + .1 - ctx.currentTime; }
   /* pájaros: frase de 2–6 píos con barrido de tono (seno agudo), a veces un trino rápido */
-  function bird(sl, g) { if (!allow()) return; const t0 = ctx.currentTime, n = 2 + Math.floor(Math.random() * 5), base = r(2600, 4200), trill = Math.random() < .3, dir = Math.random() < .5 ? 1 : -1; let t = 0;
+  function bird(sl, g) { allow('bird', sl); const t0 = ctx.currentTime, n = 2 + Math.floor(Math.random() * 5), base = r(2600, 4200), trill = Math.random() < .3, dir = Math.random() < .5 ? 1 : -1; let t = 0;
     for (let i = 0; i < n; i++) { const d = trill ? r(.03, .05) : r(.06, .16), f1 = base * r(.85, 1.2) * (1 + dir * .04 * i), f2 = f1 * (Math.random() < .5 ? r(1.15, 1.5) : r(.65, .88)), o = ctx.createOscillator(), e = gain(0), tt = t0 + t;
       o.type = 'sine'; o.frequency.setValueAtTime(f1, tt); o.frequency.exponentialRampToValueAtTime(f2, tt + d); o.connect(e); e.connect(sl.out); e.gain.setValueAtTime(0, tt); e.gain.linearRampToValueAtTime(g * .5, tt + d * .25); e.gain.linearRampToValueAtTime(0, tt + d); o.start(tt); o.stop(tt + d + .02); t += d + (trill ? r(.02, .04) : r(.07, .22)); } }
   /* caja registradora: ráfaga de teclas (2–5 golpes secos y rápidos) + «ching» de dos notas con cola larga; luego silencio */
-  function register(sl, g, st) { if (!allow()) return; const n = 2 + Math.floor(Math.random() * 4), base = 196 * Math.pow(2, PENT[3 + Math.floor(Math.random() * 3)] / 12); let t = 0;
+  function register(sl, g, st) { allow('register', sl); const n = 2 + Math.floor(Math.random() * 4), base = 196 * Math.pow(2, PENT[3 + Math.floor(Math.random() * 3)] / 12); let t = 0;
     for (let i = 0; i < n; i++) { note(sl, g * .55, st, t, base * (i % 2 ? 1.5 : 1), .13, true); t += r(.07, .12); }
     t += r(.08, .16); note(sl, g * 1.05, st, t, base * 4, 1.1, true); note(sl, g * .8, st, t + .1, base * 6, 1.4, true); }
-  function vowel(sl, g) { if (!allow()) return; const t = ctx.currentTime, d = Math.random() < .25 ? r(.7, 1.2) : r(.22, .6), f0 = r(80, 165), o = ctx.createOscillator(), lp = filt('lowpass', 1100, .4), e = gain(0), F = [[640, 1190], [420, 900], [520, 1650], [380, 1100]][Math.floor(Math.random() * 4)];
+  function vowel(sl, g) { allow('vowel', sl); const t = ctx.currentTime, d = Math.random() < .25 ? r(.7, 1.2) : r(.22, .6), f0 = r(80, 165), o = ctx.createOscillator(), lp = filt('lowpass', 1100, .4), e = gain(0), F = [[640, 1190], [420, 900], [520, 1650], [380, 1100]][Math.floor(Math.random() * 4)];
     o.type = 'sawtooth'; o.frequency.setValueAtTime(f0, t); o.frequency.linearRampToValueAtTime(f0 * r(.92, 1.06), t + d); o.connect(lp);
     [[F[0], 1.4, 1], [F[1], 1.8, .6]].forEach(([fr, q, m]) => { const bp = filt('bandpass', fr, q), bg = gain(m); lp.connect(bp); bp.connect(bg); bg.connect(e); });
     e.connect(sl.out); e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(g * .8, t + .09); e.gain.linearRampToValueAtTime(g * .45, t + d * .6); e.gain.linearRampToValueAtTime(0, t + d); o.start(t); o.stop(t + d + .05); }
-  function horn(sl, g, big) { if (!allow()) return; const t = ctx.currentTime, e = gain(0), f = filt('lowpass', big ? 520 : 760, .7), base = big ? 87.3 : 155, a = big ? .6 : .35, hold = big ? 2.2 : 1.1, rel = big ? 2.4 : 1.2;
+  function horn(sl, g, big) { if (!allow('horn', sl)) return; const t = ctx.currentTime, e = gain(0), f = filt('lowpass', big ? 520 : 760, .7), base = big ? 87.3 : 155, a = big ? .6 : .35, hold = big ? 2.2 : 1.1, rel = big ? 2.4 : 1.2;
     const os = [osc('sawtooth', base), osc('sawtooth', base * 1.5), osc('sine', base / 2)]; os.forEach(o => { o.connect(f); }); const v = lfo(5, base * .006, os[0].frequency); f.connect(e); e.connect(sl.out);
     e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(g, t + a); e.gain.setValueAtTime(g, t + a + hold); e.gain.linearRampToValueAtTime(0, t + a + hold + rel); const end = t + a + hold + rel + .1; os.forEach(o => o.stop(end)); v.stop(end); }
   function tick() { if (!active) return; made = 0; const dt = .12, now0 = ctx.currentTime; slots.forEach(sl => { if (!sl.st || sl.gain < .02) return; const st = sl.st, sh = st.share, lv = sl.gain, P = j => (st.top === j ? 1.5 : 1);
@@ -90,14 +90,14 @@ window.SND = (() => {
     if (sh[3] > .04 && Math.random() < dt * (.09 + .12 * sh[3]) * P(3)) horn(sl, lv * (.4 + .9 * sh[3]), Math.random() < .7);
     if (sh[3] > .25 && Math.random() < dt * .04) horn(sl, lv * .5, false); });
     if (now0 >= nextC) { let W = 0; const ws = slots.map(q => { const w = q.st && q.gain > .02 ? q.st.share[2] * q.gain : 0; W += w; return w; });
-      if (W > .015) { let x = Math.random() * W, k = 0; while (k < ws.length - 1 && x > ws[k]) { x -= ws[k]; k++; } const q = slots[k]; register(q, q.gain * (.3 + q.st.share[2]), q.st); }
+      if (W > .015) { let x = Math.random() * W, k = 0; while (k < ws.length - 1 && x > ws[k]) { x -= ws[k]; k++; } const q = slots[k]; register(q, q.gain * (.12 + 1.5 * q.st.share[2]), q.st); }
       nextC = now0 + r(1.6, 4.2) / (.6 + Math.min(1.2, W * 2)); }
     if (now0 >= nextB) { let W = 0; const ws = slots.map(q => { const w = q.st && q.gain > .02 ? q.st.share[4] * q.gain : 0; W += w; return w; });
-      if (W > .015) { let x = Math.random() * W, k = 0; while (k < ws.length - 1 && x > ws[k]) { x -= ws[k]; k++; } const q = slots[k]; bird(q, q.gain * (.35 + 1.2 * q.st.share[4])); }
+      if (W > .015) { let x = Math.random() * W, k = 0; while (k < ws.length - 1 && x > ws[k]) { x -= ws[k]; k++; } const q = slots[k]; bird(q, q.gain * (.1 + 1.7 * q.st.share[4])); }
       nextB = now0 + r(1.2, 4.5) / (.6 + Math.min(1.2, W * 2)); }
     /* hablantes: 3 voces fijas (tono propio), cada una dice frases sueltas con pausas propias → murmullo de gente, sin coro */
-    const now = ctx.currentTime; spk.forEach(p => { if (now < p.next) return; let W = 0; const ws = slots.map(q => { const w = q.st && q.gain > .02 ? q.st.share[1] * q.gain : 0; W += w; return w; });
-      if (W > .02) { let x = Math.random() * W, k = 0; while (k < ws.length - 1 && x > ws[k]) { x -= ws[k]; k++; } const q = slots[k]; p.next = now + mumble(q, q.gain * (.7 + 1.1 * q.st.share[1]), p) + r(.4, 2.4) / (.6 + Math.min(1.2, W * 2)); } else p.next = now + .5; }); }
+    const now = ctx.currentTime; spk.forEach((p, pi) => { if (now < p.next) return; let W = 0; const ws = slots.map(q => { const w = q.st && q.gain > .02 ? q.st.share[1] * q.gain : 0; W += w; return w; });
+      if (W > [.01, .04, .08, .12][pi]) { let x = Math.random() * W, k = 0; while (k < ws.length - 1 && x > ws[k]) { x -= ws[k]; k++; } const q = slots[k]; p.next = now + mumble(q, q.gain * (.12 + 1.9 * q.st.share[1]), p) + r(.4, 2.4) / (.4 + Math.min(2, W * 3)); } else p.next = now + .5; }); }
   /* escena: lista de [sector, paneo] y volumen general (0 en portada y en gráficas) */
   function update(sc, v) { if (!active) return; vol = v; const t = ctx.currentTime, key = JSON.stringify(sc.map(x => x[0])) + (window.MAREA ? MAREA.flt : '') + (window.MAREA ? MAREA.srcF : '');
     const k = 1 / Math.sqrt(Math.max(1, sc.length));
@@ -112,7 +112,7 @@ window.SND = (() => {
   function setActive(on) { if (on && !ctx) init(); active = !!on; if (ctx) { if (on) ctx.resume(); master.gain.setTargetAtTime(on ? .55 : 0, ctx.currentTime, .15); if (!on) setTimeout(() => { if (!active && ctx) ctx.suspend(); }, 600); }
     clearInterval(timer); if (on) timer = setInterval(tick, 120); document.body.classList.toggle('snd-on', !!on); return active; }
   document.addEventListener('visibilitychange', () => { if (!ctx) return; if (document.hidden) ctx.suspend(); else if (active) ctx.resume(); });
-  return { get active() { return active; }, toggle() { return setActive(!active); }, setActive, update, blip, centroid() { if (!an) return 0; const d = new Float32Array(an.frequencyBinCount); an.getFloatFrequencyData(d); let a = 0, b = 0; d.forEach((x, i) => { const p = Math.pow(10, x / 20); a += p * i; b += p; }); return b ? a / b * ctx.sampleRate / an.fftSize : 0; }, peak() { if (!an) return 0; const d = new Float32Array(an.fftSize); an.getFloatTimeDomainData(d); return d.reduce((m, x) => Math.max(m, Math.abs(x)), 0); }, rms() { if (!an) return 0; const d = new Float32Array(an.fftSize); an.getFloatTimeDomainData(d); return Math.sqrt(d.reduce((s, x) => s + x * x, 0) / d.length); }, get ctx() { return ctx; } };
+  return { dbg() { return { cnt, sl: slots.map(q => q.st ? { n: q.n || {}, sh: q.st.share.map(x => +x.toFixed(2)), g: +q.gain.toFixed(2) } : null) }; }, get active() { return active; }, toggle() { return setActive(!active); }, setActive, update, blip, centroid() { if (!an) return 0; const d = new Float32Array(an.frequencyBinCount); an.getFloatFrequencyData(d); let a = 0, b = 0; d.forEach((x, i) => { const p = Math.pow(10, x / 20); a += p * i; b += p; }); return b ? a / b * ctx.sampleRate / an.fftSize : 0; }, peak() { if (!an) return 0; const d = new Float32Array(an.fftSize); an.getFloatTimeDomainData(d); return d.reduce((m, x) => Math.max(m, Math.abs(x)), 0); }, rms() { if (!an) return 0; const d = new Float32Array(an.fftSize); an.getFloatTimeDomainData(d); return Math.sqrt(d.reduce((s, x) => s + x * x, 0) / d.length); }, get ctx() { return ctx; } };
 })();
 
 (() => { const b = document.querySelector('#sec .snd'); if (!b) return; b.hidden = false;
