@@ -1277,3 +1277,9 @@ body.cmpv .lgb{transition:opacity .4s,transform .75s var(--spring)!important}
  .cfrow .tg button{font-size:12.5px!important;padding:8px 7px!important}
  .cfrow .bmore{padding:9px 10px;gap:5px;font-size:12.5px;min-width:62px;justify-content:center}
 }
+@media(max-width:759px){
+ .cfrow{align-items:stretch}
+ .cfrow .bmore{height:auto;padding:0 12px;border-radius:99px}
+ .bf.dm{margin:0 0 6px!important}
+}
+@media(max-width:759px){.cfrow .bmore{align-self:stretch!important;margin:0!important}}
