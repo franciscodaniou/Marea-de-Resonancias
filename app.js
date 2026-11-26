@@ -55,12 +55,20 @@ const FRDB = NSX.map(s => ['am', 'pm', 'pk'].map(k => { const q = real(uniq(F.fi
 const lvn = v => LV[cl(Math.round(v), 1, 3)];
 const cen = (g, f) => { const a = angM(f.m); return [g.cx + Math.cos(a) * g.R * .45, g.cy + Math.sin(a) * g.R * .45, g.R * (.16 + .34 * cl((f.pr - 50) / 30, 0, 1))]; };
 const bar = (lab, v, hi, lo = 45, hi2 = 90) => `<div${hi ? ' class="hi"' : ''}>${lab}<span class="tr"><i style="width:${v == null ? 0 : cl((v - lo) / (hi2 - lo), 0, 1) * 100}%"${v == null ? '' : ` data-w="${(cl((v - lo) / (hi2 - lo), 0, 1) * 100).toFixed(1)}"`}></i></span><b${v == null ? '' : ` data-n="${v.toFixed(0)}"`}>${v == null ? '–' : v.toFixed(0)}</b></div>`;
-function perfilHtml(s) { // patrón horario del sector y comparación entre sectores (dB promedio, mediciones únicas)
+function horasHtml(s) { // patrón horario del sector (dB promedio, mediciones únicas)
   const mine = uniq(F.filter(f => f.s === s)), fr = [['Mañana', 'am'], ['Tarde', 'pm'], ['Hora punta', 'pk']].map(([n, k]) => { const q = real(mine.filter(f => !f.ap && f.m >= FILTERS[k][0] && f.m <= FILTERS[k][1])); return bar(n, q.length ? mean(q, f => f.pr) : null, false); }).join('');
-  return `<div class="pf"><h5>dB promedio según la hora del día</h5>${fr}<h5>Comparación entre sectores</h5>${SECT.map((n, i) => bar(n, dbAvg(i), i === s)).join('')}${real(mine).length ? '' : '<small class="nd">Sin dB medido en este lugar: el relieve de la malla usa la intensidad percibida.</small>'}</div>`;
+  return `<div class="pf"><h5>dB promedio según la hora del día</h5>${fr}${real(mine).length ? '' : '<small class="nd">Sin dB medido en este lugar: el relieve de la malla usa la intensidad percibida.</small>'}</div>`;
 }
+function compHtml(s) { return `<div class="pf cmpf"><h5>Comparación entre sectores</h5>${SECT.map((n, i) => bar(n, dbAvg(i), i === s)).join('')}</div>`; }
 function flowHtml(s) { const [p, v] = lvl(s); return `<div class="fl"><div>Personas<span class="tr"><i style="width:${p / 3 * 100}%" data-w="${(p / 3 * 100).toFixed(1)}"></i></span><b>${lvn(p)}</b></div><div class="v">Vehículos<span class="tr"><i style="width:${v / 3 * 100}%" data-w="${(v / 3 * 100).toFixed(1)}"></i></span><b>${lvn(v)}</b></div></div>`; }
 
+function panelGeo() { // medidas reales de la tarjeta de «Cada lugar, a cada hora» (ya equilibradas por fitBlk), para replicarlas en el sector expandido
+  if (W <= 1100) return null; const blk = document.querySelector('.step .blk'), card = blk && blk.querySelector('.card'); if (!blk || !card) return null;
+  const cs = getComputedStyle(blk.parentNode), w = blk.offsetWidth, ch = card.offsetHeight; if (!w || !ch) return null; const tr = blk.style.transform || '', m = /scale\(([\d.]+)\)/.exec(tr), sc = m ? +m[1] : 1;
+  return { w, ch, right: parseFloat(cs.paddingRight) || 22, top: parseFloat(cs.paddingTop) || 70, sc, tr: tr || 'none' };
+}
+function fitPanel() { const g = want !== null ? panelGeo() : null, st = panel.style; if (!g) { ['--pw', '--pch', '--pright', '--ptop', '--ptr'].forEach(k => st.removeProperty(k)); return; }
+  st.setProperty('--pw', g.w + 'px'); st.setProperty('--pch', g.ch + 'px'); st.setProperty('--pright', g.right + 'px'); st.setProperty('--ptop', g.top + 'px'); st.setProperty('--ptr', g.tr); }
 function size() {
   W = innerWidth; H = innerHeight; const mob = W < 760;
   dpr = Math.min(devicePixelRatio || 1, mob ? 1.5 : 2);
@@ -86,10 +94,12 @@ function layout() { // las figuras se reacomodan en sincronía con el pill/leyen
   } else {
     const fl = W < 900 ? 20 : 300, fr = W < 900 ? W - 20 : W - 440 - 22 - 30, fw = fr - fl; Rf = Math.max(80, Math.min((gh - 84) / 2.2, fw / 2.3));
     FX = fl + fw / 2; FY = top0 + 8 + Rf * 1.08 + (gh - 84 - 2.2 * Rf) / 2;
+    const pg = want !== null ? panelGeo() : null; // sector expandido (escritorio): el modelo crece un poco y se centra en el espacio libre fuera de la tarjeta (x) y en el alto útil (y)
+    if (pg) { const cl0 = W - pg.right - pg.w * pg.sc; Rf = Math.max(80, Math.min(H * .32, (H - 260) / 2.12, (cl0 - 90) / 2.3)); FX = cl0 / 2; FY = (90 + H - 92) / 2 - .06 * Rf - 39; }
   }
   if (W >= 1100) S0 = Math.min(S0, H * .245); // proporción figura/alto como en escritorio estándar
   { KR = mob ? .58 : W < 1100 ? .5 : .6; const LBr = mob ? 132 : 215, r = Math.min(gw / 2 / 2.05, (gh - LBr) / 2.2); RgR = Math.max(50, Math.min(r, S0 * 1.35)); const rcy = top0 + 8 + RgR * 1.08 + Math.max(0, (gh - LBr - 2.2 * RgR) / 2); RC = [[x0 + gw * .25, rcy], [x0 + gw * .75, rcy]]; } // fase intermedia: dos ciudades lado a lado
-  FP = Math.max(560, Math.max(S0, Rb * .48, Rf * .48, RgR * KR) * 3.3); // la focal crece con la escala: en pantallas grandes la malla ya no se sale de cuadro
+  FP = Math.max(560, Math.max(S0, Rb * .48, Rf * .48, RgR * KR) * 3.3); fitPanel(); // la focal crece con la escala: en pantallas grandes la malla ya no se sale de cuadro
 }
 
 const PAIR = () => (window.MAREA && MAREA.pair) || [0, 1];
@@ -359,7 +369,7 @@ function frame(ms) {
 
 const hint = document.getElementById('hint'), psub = document.getElementById('psub') || document.createElement('div');
 function hintPos() { if (innerWidth > 900) { const r = document.getElementById('cts').getBoundingClientRect(); if (r.width) hint.style.left = Math.round(r.right + 12) + 'px'; } else hint.style.left = ''; }
-addEventListener('resize', hintPos); setInterval(hintPos, 400);
+addEventListener('resize', () => setTimeout(() => { if (want !== null) { layout(); fitPanel(); } }, 160)); addEventListener('resize', hintPos); setInterval(hintPos, 400);
 function render() {
   panel.style.display = want !== null ? 'block' : 'none'; psub.style.display = 'none'; hint.style.display = want !== null ? 'none' : 'block';
   const s = want !== null ? want : hs, key = [want, flt, srcF, pf && pf.id, s].join();
@@ -367,21 +377,29 @@ function render() {
   if (s === null) { panel.className = ''; panel.innerHTML = '<h2>Explora los seis sectores</h2>'; psub.textContent = 'Pasa el cursor sobre un sector y haz clic para expandirlo y aislarlo; luego elige una medición.'; if (panel.style.display !== 'none') { psub.style.display = 'block'; psub.style.bottom = (22 + panel.offsetHeight + 10) + 'px'; } return; }
   const fs = uniq(F.filter(f => f.s === s && on(f))), es = E.filter(e => e[0] === s), a = agrSec(s), db = es.filter(e => e[2]), mood = AGW(a);
   const AGN = ['Incomoda', 'Da igual', 'Gusta un poco', 'Gusta'], rf = real(fs), dbm = rf.length ? mean(rf, f => f.pr) : null, mx100 = rf.filter(f => f.mx >= 100), mxv = rf.length ? Math.max(...rf.filter(f => f.mx < 100).map(f => f.mx)) : null, hex = COL[DOM[s]], ags = AGS[s], fpm = mean(fs.filter(f => !f.ap), f => f.fp), fvm = mean(fs.filter(f => !f.ap), f => f.fv), aO = apOnly(s), P = v => cl((v - 40) / 55, 0, 1) * 100;
-  let h = `<div class="sc pn"><div class="bh"><h3>${SECT[s]}</h3><div class="sub">${SUB[s]} · ${fs.filter(f => !f.ap).length} ${fs.filter(f => !f.ap).length === 1 ? 'medición visible' : 'mediciones visibles'}${aO ? ' · dB de referencia oficial' : ''}</div></div>
-    <div class="big" style="color:${hex}">${dbm == null ? '<span class="nd">sin dB</span>' : `<span data-n="${dbm.toFixed(1)}" data-dec="1">${dbm.toFixed(1)}</span>`}<small>${dbm == null ? 'sin medir · relieve por intensidad percibida' : aO ? 'dB · modelo APrA 2018, no medido en terreno' : 'dB promedio'}</small></div>
-    ${dbm == null ? '' : `<div class="dbs"><div class="dtr"><i data-w="${P(dbm).toFixed(1)}" style="background:${hex}"></i></div><small>≈ ${DBW(dbm)}</small></div>`}
-    <div class="chips"><span style="color:${hex}">● ${SH[DOM[s]]}</span>${es.length ? `<span style="color:rgb(${agr(a)})">agrado percibido <i style="font-style:normal" data-n="${a.toFixed(2)}" data-dec="2">${a.toFixed(2)}</i> · ${mood}</span>` : '<span>sin encuestas</span>'}</div>
-    ${es.length ? `<div class="ag"><div class="agb" data-reveal>${ags.map((c, k) => c ? `<span style="flex:${c};background:${AGC[k]}">${c}</span>` : '').join('')}</div><small>agrado percibido (−1…2) · ${es.length} respuestas: ${ags.map((c, k) => `<b style="color:${AGC[k]}">${c}</b> ${AGN[k].toLowerCase()}`).join(' · ')}</small></div>` : ''}
-    <div class="fact">${aO ? `Banda modelada de día ${rf[0].mn}–${rf[0].mx} dB` : mxv == null ? 'Sin dB medido' : `dB máx. registrado <span data-n="${mxv}">${mxv}</span>${mx100.length ? ` <em class="ex">(sin ${mx100.length} pico${mx100.length > 1 ? 's' : ''} puntual${mx100.length > 1 ? 'es' : ''} de ${Math.max(...mx100.map(f => f.mx))} dB)</em>` : ''}`} · flujo peatonal <span data-n="${fpm.toFixed(1)}" data-dec="1">${fpm.toFixed(1)}</span> · vehicular <span data-n="${fvm.toFixed(1)}" data-dec="1">${fvm.toFixed(1)}</span> (1-3)</div>`;
-  h += flowHtml(s) + perfilHtml(s);
-  if (db.length) h += `<small class="dbe">dB medidos en encuestas: ${mean(db, e => e[2]).toFixed(1)} (n=${db.length})</small>`;
-  h += `<div class="ag"><q>${QUOTE[s]}</q></div>`;
-  if (want === null) h += '<small class="hint">Clic para expandir este sector</small>';
-  else {
-    if (pf) h += `<div class="det" style="border-left-color:${COL[pf.c]}"><b>${pf.id} · ${tmx(pf)}${pf.ap ? '' : ' h'}</b>${pf.src}<br>${pf.nd ? 'sin dB medido · intensidad percibida ' + FICHAS[F.indexOf(pf)][10] + '/5' : pf.mn + '–' + pf.mx + ' dB · prom. ' + pf.pr}<br>${pf.ap ? '' : `Flujo peatonal ${pf.fp}/3 · vehicular ${pf.fv}/3<br>`}<span style="color:${COL[pf.c]}">${CAT[pf.c]}</span><br><i>${pf.ph}</i>${pf.ap ? `<br><span class="org"><b>Procedencia:</b> ${APRA}. Modelo de simulación validado con mediciones; no es una medición del equipo. Rango de la banda, no mínimo y máximo registrados. Cruce propio con los polígonos del mapa (CSV ${pf.night ? 'nocturno' : 'diurno'} 2018) en unos 150 m alrededor del lugar.</span>` : ''}</div>`;
-    h += `<div class="pf"><h5>Registro de mediciones · barra = rango dB mín→máx, marca = promedio</h5></div><div class="list">` + F.map((f, i) => f.s === s && (on(f) || f.night && (!srcF || f.c === srcF)) ? `<button class="it${pf === f ? ' on' : ''}" data-i="${i}"><span style="background:${COL[f.c]}"></span>${f.id} · ${tmx(f)}<em>${f.src}</em><div class="rg${f.nd ? ' nd' : ''}${f.ap ? ' ap' : ''}">${f.nd ? '' : `<i style="left:${P(f.mn)}%;width:${Math.max(3, P(f.mx) - P(f.mn))}%;background:${COL[f.c]}"></i><u style="left:${P(f.pr)}%"></u>`}</div><b>${f.nd ? 'sin dB' : f.ap ? f.mn + '–' + f.mx + ' dB' : f.pr + ' dB'}</b></button>` : '').join('') + '</div>';
+  const D = W > 1100, nB = fs.filter(f => !f.ap).length, FNM = { all: ['Todo el día', '09:40–18:50'], am: ['Mañana', '09:40–12:36'], pm: ['Tarde', '12:37–17:29'], pk: ['Hora punta', '17:30–18:50'] }[flt] || ['Todo el día', '09:40–18:50'];
+  const hd = `<div class="bh"><h3>${SECT[s]}</h3><div class="sub">${SUB[s]} · ${nB} ${nB === 1 ? 'medición visible' : 'mediciones visibles'}${aO ? ' · dB de referencia oficial' : ''}</div></div>`,
+    bigH = `<div class="big" style="color:${hex}">${dbm == null ? '<span class="nd">sin dB</span>' : `<span data-n="${dbm.toFixed(1)}" data-dec="1">${dbm.toFixed(1)}</span>`}<small>${dbm == null ? 'sin medir · relieve por intensidad percibida' : aO ? 'dB · modelo APrA 2018, no medido en terreno' : 'dB promedio'}</small></div>`,
+    dbsH = dbm == null ? '' : `<div class="dbs"><div class="dtr"><i data-w="${P(dbm).toFixed(1)}" style="background:${hex}"></i></div><small>≈ ${DBW(dbm)}</small></div>`,
+    chipsH = `<div class="chips"><span style="color:${hex}">● ${SH[DOM[s]]}</span>${es.length ? `<span style="color:rgb(${agr(a)})">agrado percibido <i style="font-style:normal" data-n="${a.toFixed(2)}" data-dec="2">${a.toFixed(2)}</i> · ${mood}</span>` : '<span>sin encuestas</span>'}</div>`,
+    fnowH = `<div class="fnow"><b class="fn">${FNM[0]}</b><span class="fh">${FNM[1]} h</span><span class="fv">${dbm == null ? 'sin dB' : `<i>${dbm.toFixed(0)}</i> dB`} · ${nB} ${nB === 1 ? 'medición' : 'mediciones'}</span></div>`,
+    agBar = es.length ? `<div class="agb" data-reveal>${ags.map((c, k) => c ? `<span style="flex:${c};background:${AGC[k]}">${c}</span>` : '').join('')}</div><small>agrado percibido (−1…2) · ${es.length} respuestas: ${ags.map((c, k) => `<b style="color:${AGC[k]}">${c}</b> ${AGN[k].toLowerCase()}`).join(' · ')}</small>` : '',
+    factH = `<div class="fact">${aO ? `Banda modelada de día ${rf[0].mn}–${rf[0].mx} dB` : mxv == null ? 'Sin dB medido' : `dB máx. registrado <span data-n="${mxv}">${mxv}</span>${mx100.length ? ` <em class="ex">(sin ${mx100.length} pico${mx100.length > 1 ? 's' : ''} puntual${mx100.length > 1 ? 'es' : ''} de ${Math.max(...mx100.map(f => f.mx))} dB)</em>` : ''}`} · flujo peatonal <span data-n="${fpm.toFixed(1)}" data-dec="1">${fpm.toFixed(1)}</span> · vehicular <span data-n="${fvm.toFixed(1)}" data-dec="1">${fvm.toFixed(1)}</span> (1-3)</div>`,
+    dbeH = db.length ? `<small class="dbe">dB medidos en encuestas: ${mean(db, e => e[2]).toFixed(1)} (n=${db.length})</small>` : '',
+    detH = pf ? `<div class="det" style="border-left-color:${COL[pf.c]}"><b>${pf.id} · ${tmx(pf)}${pf.ap ? '' : ' h'}</b>${pf.src}<br>${pf.nd ? 'sin dB medido · intensidad percibida ' + FICHAS[F.indexOf(pf)][10] + '/5' : pf.mn + '–' + pf.mx + ' dB · prom. ' + pf.pr}<br>${pf.ap ? '' : `Flujo peatonal ${pf.fp}/3 · vehicular ${pf.fv}/3<br>`}<span style="color:${COL[pf.c]}">${CAT[pf.c]}</span><br><i>${pf.ph}</i>${pf.ap ? `<br><span class="org"><b>Procedencia:</b> ${APRA}. Modelo de simulación validado con mediciones; no es una medición del equipo. Rango de la banda, no mínimo y máximo registrados. Cruce propio con los polígonos del mapa (CSV ${pf.night ? 'nocturno' : 'diurno'} 2018) en unos 150 m alrededor del lugar.</span>` : ''}</div>` : '',
+    listH = `<div class="pf"><h5>Registro de mediciones · barra = rango dB mín→máx, marca = promedio</h5></div><div class="list">` + F.map((f, i) => f.s === s && (on(f) || f.night && (!srcF || f.c === srcF)) ? `<button class="it${pf === f ? ' on' : ''}" data-i="${i}"><span style="background:${COL[f.c]}"></span>${f.id} · ${tmx(f)}<em>${f.src}</em><div class="rg${f.nd ? ' nd' : ''}${f.ap ? ' ap' : ''}">${f.nd ? '' : `<i style="left:${P(f.mn)}%;width:${Math.max(3, P(f.mx) - P(f.mn))}%;background:${COL[f.c]}"></i><u style="left:${P(f.pr)}%"></u>`}</div><b>${f.nd ? 'sin dB' : f.ap ? f.mn + '–' + f.mx + ' dB' : f.pr + ' dB'}</b></button>` : '').join('') + '</div>',
+    quoteH = `<q>${QUOTE[s]}</q>`, fiH = (window.FIX && FIX[s]) ? `<p class="fi">${FIX[s]}</p>` : '';
+  let h;
+  if (D) { // escritorio: misma tarjeta que «Cada lugar, a cada hora» (título fuera, vidrio, scroll interno) + registro de mediciones y comparativo al final
+    h = `<div class="pd">${hd}<article class="card sc pcard">${bigH}${dbsH}${chipsH}${fnowH}<div class="ag${es.length ? '' : ' na'}">${agBar}${quoteH}</div>${factH}${fiH}${flowHtml(s)}${horasHtml(s)}${dbeH}${detH}${listH}${compHtml(s)}</article></div>`;
+  } else {
+    h = `<div class="sc pn">${hd}${bigH}${dbsH}${chipsH}${es.length ? `<div class="ag">${agBar}</div>` : ''}${factH}`;
+    h += flowHtml(s) + horasHtml(s);
+    h += dbeH + `<div class="ag">${quoteH}</div>`;
+    if (want === null) h += '<small class="hint">Clic para expandir este sector</small>';
+    else h += detH + listH;
+    h += compHtml(s) + '</div>';
   }
-  h += '</div>';
   panel.className = want !== null ? 'big' : ''; panel.innerHTML = h; panel.scrollTop = sc; if (window.VITA) VITA.scan(panel);
 }
 

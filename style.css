@@ -1048,3 +1048,16 @@ body.about .kg{white-space:nowrap;display:inline-block;margin:3px 0}
 
 /* v153 · about: fondo algo más desenfocado para leer las bajadas */
 body.about #c{filter:blur(6px)}
+
+/* v160 · sector expandido (escritorio): misma tarjeta que «Cada lugar, a cada hora»; título fuera del vidrio, scroll interno, registro y comparativo al final */
+@media(min-width:1101px){
+  #panel.big{position:fixed;top:var(--ptop,70px)!important;bottom:auto!important;right:var(--pright,5vw)!important;left:auto!important;width:var(--pw,500px)!important;height:auto!important;max-height:none!important;padding:0!important;overflow:visible!important;border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;transform:var(--ptr,none);transform-origin:right top}
+  #panel .pd{display:flex;flex-direction:column;min-width:0}
+  #panel .pd .bh{padding:0 8px 10px}#panel .pd .bh h3{margin:0;font-size:21px;line-height:1.15}#panel .pd .bh .sub{margin:3px 0 0;font-size:13.5px;color:var(--mut)}
+  #panel .pcard{height:var(--pch,540px);overflow-y:auto;overflow-x:hidden;box-sizing:border-box;scrollbar-width:thin;scrollbar-color:rgba(94,102,85,.35) transparent;overscroll-behavior:contain}
+  #panel .pcard>*{flex:none}
+  #panel .pcard .fnow{height:54px;min-height:54px;max-height:54px;box-sizing:border-box;overflow:hidden;align-items:center;flex-wrap:nowrap}
+  #panel .pcard .cmpf{margin-top:14px}
+  #panel .pcard .list{margin-bottom:4px}
+}
+@media(min-width:1500px){#panel .pd .bh h3{font-size:26px}#panel .pd .bh .sub{font-size:17px}}

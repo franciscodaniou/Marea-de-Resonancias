@@ -13,6 +13,7 @@
     'Voces y canto en torno a la pileta seca: el sonido más parejo. Con 3 mediciones y 2 encuestas es una lectura preliminar.',
     'Buenos Aires, plaza junto a avenida: dominan los colectivos y autos, con mucha gente a pie. Tres mediciones propias con dB, sin encuestas; el promedio sube de 70 a 74 dB entre la mañana y la hora punta.',
     'Buenos Aires, borde del río: el zumbido de la ciudad como aura de fondo, turistas y terrazas; de noche la música de los bares lleva el máximo a 96 dB. Cinco mediciones propias con dB, sin encuestas.'];
+  window.FIX = FI;
   const cl01 = v => Math.max(0, Math.min(1, v));
   const RM = matchMedia('(prefers-reduced-motion:reduce)').matches;
   const SVGNS = 'http://www.w3.org/2000/svg';
