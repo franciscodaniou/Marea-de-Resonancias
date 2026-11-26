@@ -100,7 +100,7 @@ function layout() { // las figuras se reacomodan en sincronía con el pill/leyen
     if (pg) { const cl0 = W - pg.right - pg.w * pg.sc; Rf = Math.max(80, Math.min(H * .32, (H - 260) / 2.12, (cl0 - 90) / 2.3)); FX = cl0 / 2; FY = (90 + H - 92) / 2 - .06 * Rf - 39; }
   }
   if (W >= 1100) S0 = Math.min(S0, H * .245); // proporción figura/alto como en escritorio estándar
-  { KR = mob ? .58 : W < 1100 ? .5 : .6; const LBr = mob ? 132 : 215, r = Math.min(gw / 2 / 2.05, (gh - LBr) / 2.2); RgR = Math.max(50, Math.min(r, S0 * 1.35)); const rcy = top0 + 8 + RgR * 1.08 + Math.max(0, (gh - LBr - 2.2 * RgR) / 2); RC = [[x0 + gw * .25, rcy], [x0 + gw * .75, rcy]]; } // fase intermedia: dos ciudades lado a lado
+  { KR = mob ? .58 : W < 1100 ? .5 : .6; const LBr = mob ? 176 : 215, r = Math.min(gw / 2 / 2.05, (gh - LBr) / 2.2); RgR = Math.max(50, Math.min(r, S0 * 1.35)); if (mob) RgR = Math.max(50, Math.min(RgR, (H - (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--barh')) || 90) - 78 - 202 - top0) / 2.17)); const rcy = top0 + 8 + RgR * 1.08 + Math.max(0, (gh - LBr - 2.2 * RgR) / 2); let rcy2 = rcy; if (mob) { const dt = H - (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--barh')) || 90) - 78; rcy2 = Math.max(top0 + RgR * 1.05, Math.min(rcy, dt - 8 - RgR * 1.12 - 182)); } RC = [[x0 + gw * .25, rcy2], [x0 + gw * .75, rcy2]]; } // fase intermedia: dos ciudades lado a lado
   FP = Math.max(560, Math.max(S0, Rb * .48, Rf * .48, RgR * KR) * 3.3); fitPanel(); // la focal crece con la escala: en pantallas grandes la malla ya no se sale de cuadro
 }
 
