@@ -1,52 +1,13 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="theme-color" content="#DCDDD3"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Acerca de Marea de resonancias</title><link rel="stylesheet" href="style.css?v=146"></head>
+<title>Acerca de Marea de resonancias</title><link rel="stylesheet" href="style.css?v=147"></head>
 <body class="about">
 <header><b>Marea de resonancias</b><nav id="nav" class="morph"><span class="lbl" tabindex="0">Inicio</span><a class="mb" href="index.html">Visualización</a><a class="mb on" href="about.html">Acerca del estudio</a></nav></header>
 <canvas id="c" aria-hidden="true"></canvas>
 <div hidden><div id="leg"><div class="lgin"><button id="lgbtn" class="lgt" aria-expanded="false">Cómo leer</button><div class="lgb"></div></div></div><div id="bar"><div id="ctl" class="morph"><span class="lbl" tabindex="0"><b>Hora del día</b> · Todo el día</span><button class="mb on" data-f="all">Todo el día</button><button class="mb" data-f="am">Mañana</button><button class="mb" data-f="pm">Tarde</button><button class="mb" data-f="pk">Hora punta</button></div><div id="cts" class="morph"><span class="lbl" tabindex="0"><b>Fuente</b> · Todas</span><button class="mb on" data-c="">Todas</button><button class="mb" data-c="V">Vehicular</button><button class="mb" data-c="H">Humana</button><button class="mb" data-c="C">Comercial</button><button class="mb" data-c="M">Portuaria</button><button class="mb" data-c="N">Natural</button></div></div><div id="panel"></div><button id="back"></button><div id="hint"></div><div id="tip"></div><button id="down"></button><section id="hero" class="off"><button id="next"></button><button id="prev"></button><button id="go"></button></section></div>
 <div class="wrap">
 <section class="top"><h1>Marea de resonancias</h1><p class="sub">Atlas sonoro del Barrio Puerto</p><div class="brow"><a class="btn" href="index.html">Ver la visualización →</a><a class="btn" href="https://wiki.ead.pucv.cl/Proyecto_de_Visualizaci%C3%B3n_-_Grupo_2">Proyecto grupal en la wiki ↗</a><a class="btn" href="https://wiki.ead.pucv.cl/Visualizaci%C3%B3n_de_Datos_Interactiva_TDS_2026_-_Francisco_Daniou">Proyecto individual en la wiki ↗</a></div></section>
-<h2 class="sh">Hallazgos</h2><section class="card wide" id="hallazgos">
-<p class="lead2">El ruido del Barrio Puerto no se juzga solo por cuántos decibeles tiene, sino por qué lo produce y dónde ocurre. Cada hallazgo se puede comprobar en la visualización.</p>
-<div class="g2">
-<div class="hl"><h3>1 · El día sube de volumen y la hora punta es el techo</h3>
-<p>El promedio pasa de 63,4 dB en la mañana (17 mediciones) a 68,8 dB en la tarde (15) y 72,2 dB en la hora punta (6). La subida se repite en Muelle Prat (62,7 → 68,5), Plaza Sotomayor (67,2 → 74,7) y Calle Serrano (60,8 → 72,0).</p>
-<p class="hw">Cómo verlo: filtro «Hora del día»; en la tarjeta de cada sector, «dB promedio por hora». También en «Según la hora», bajo «Lo que dice el Barrio Puerto».</p></div>
-<div class="hl"><h3>2 · Sotomayor concentra la saturación</h3>
-<p>Es el sector con mayor promedio (70,9 dB frente a 65,0–67,0 dB en los demás), 10 de sus 11 mediciones son vehiculares y sus flujos son los más altos (2,5 peatonal y 2,7 vehicular de 3). Cuatro de sus seis encuestas dicen que el sonido incomoda.</p>
-<p class="hw">Cómo verlo: color coral, flujo «Alto» y movimiento errático en su malla; comparación entre sectores en el panel.</p></div>
-<div class="hl"><h3>3 · El agrado no sigue a los decibeles</h3>
-<p>Muelle Prat y Calle Serrano promedian unos 65 dB y tienen agrado alto (1,29 y 1,20; ninguna de sus 12 encuestas incomoda). Sotomayor está a 5 o 6 dB más y su agrado es −0,33. El Muelle tiene los picos más altos (hasta 89 dB) y aun así sus 7 respuestas son positivas: pesa más qué suena (mar, voces, comercio) que cuánto suena.</p>
-<p class="hw">Cómo verlo: compare el anillo de agrado con el dB promedio en la vista general. Es una lectura con muestras pequeñas, no una causa demostrada.</p></div>
-<div class="hl"><h3>4 · Cada lugar tiene una firma sonora</h3>
-<p>Muelle Prat es el más diverso (portuaria, humana, vehicular y comercial) y el de mayor rango entre mínimo y máximo (31 dB en promedio). Calle Serrano es comercial y más parejo (17 dB). Plaza Echaurren es humana y estable (14 dB), pero con solo 3 mediciones y 2 encuestas no permite concluir.</p>
-<p class="hw">Cómo verlo: color y relieve de cada malla; filtro «Fuente».</p></div>
-</div>
-<p class="hw">Alcance: las cifras del Barrio Puerto (más ruidoso, más tranquilo, picos, respuesta corta) usan las 38 mediciones con dB de los cuatro lugares de Valparaíso. Plaza de Mayo y Puente de la Mujer (Buenos Aires) tienen 8 mediciones propias con dB, que se leen lugar por lugar y en la comparación, pero no entran en esos rankings.</p></section>
 <div class="stack">
-
-<h2 class="sh">Planteamiento general</h2><section class="card">
-<p>Marea de resonancias responde a la pregunta central del estudio grupal, abordando el paisaje sonoro desde sus variaciones temporales y espaciales. Sobre esta base, se tomó una decisión estructural: el sonido se muestra como un conjunto de figuras vivas, una por lugar, cuyo aspecto y movimiento cambian con los datos. Los sectores de estudio se presentan lado a lado con el mismo formato. Así, la diferencia entre ellos se percibe de un vistazo.</p>
-<p>La visualización cruza dos fuentes del levantamiento: las 46 mediciones de terreno (38 del Barrio Puerto y 8 de Buenos Aires; niveles de sonido, fuentes, flujos y fenómenos observados) y las 20 encuestas de percepción (agrado y citas textuales). Desde noviembre de 2026 se suman los primeros registros de Buenos Aires: Plaza de Mayo (BA-PI-01, 12:50–13:00) y Puente de la Mujer (BA-M-02, 12:29–12:40), ambos del 19 de noviembre.</p></section>
-
-<h2 class="sh">Definiciones previas del estudio grupal</h2><section class="card">
-<p>Antes de la estructuración de los datos y el modelo visual, el levantamiento grupal estableció los criterios y categorías fundamentales que guían el proyecto.</p>
-<h3>Pregunta orientadora</h3>
-<p>Todo el análisis y la posterior visualización buscan dar respuesta a una interrogante central:</p>
-<em class="q">¿Cómo varían las fuentes sonoras dominantes y los niveles de sonido según el lugar y el horario?</em>
-<h3>Tipologías espaciales de los lugares de estudio</h3>
-<p>El levantamiento definió con precisión las condiciones espaciales que configuran el paisaje sonoro, estableciendo cómo la forma del espacio filtra, concentra o deja escapar el sonido:</p>
-<ul>
-<li><b>Muelle Prat: borde abierto al mar.</b> Explanada amplia y plana, abierta hacia la bahía y cerrada hacia la ciudad por edificios altos de fachada lisa. El ruido portuario de grúas, bocinas y camiones cruza el agua sin obstáculos y llega como un fondo difuso, sin una fuente localizable. Sobre él aparecen voces cercanas de lancheros, captadores y grupos de turistas. La amplitud separa a los grupos y la conducta dominante es la permanencia.</li>
-<li><b>Plaza Sotomayor: explanada de bordes duros.</b> Gran plaza cívica enmarcada por edificios de vidrio y hormigón, con avenidas de alto tránsito en su perímetro. Vereda y calzada forman una plataforma única de losa sin desnivel. El cruce con semáforo concentra motores y personas, haciendo que el sonido late con sus ciclos, mientras las fachadas devuelven las ondas hacia la plaza. Predominan la espera y el paso en oleadas.</li>
-<li><b>Calle Serrano: corredor encerrado.</b> Calle angosta de adoquín, flanqueada por fachadas continuas, con una franja de cielo estrecha. El sonido viaja por el eje de la calle y se acumula. El adoquín anuncia y amplifica el rodaje de los vehículos, transformando el espacio en una caja de resonancia.</li>
-<li><b>Plaza Echaurren: claro rodeado de muros.</b> Plaza rodeada por calzada de adoquín y fachadas continuas. El tránsito queda relegado al borde, mientras el centro es ocupado por la voz humana. Los árboles de copa baja crean un “bajo cielo” que amortigua el entorno; las fachadas devuelven parte del sonido y la apertura hacia arriba disipa el resto, propiciando la permanencia.</li></ul>
-<p>Aunque el análisis principal se focalizó en el contraste entre Muelle Prat y Plaza Sotomayor para evitar redundancias tipológicas, las cuatro condiciones espaciales se conservan porque permiten una lectura comparativa más completa de cómo la arquitectura y la circulación configuran la experiencia sensorial.</p>
-<h3>Tipos de fuentes de sonido</h3>
-<p>Se determinó que el confort acústico depende del sentido de la fuente y no solo del nivel de decibeles. Por ello, los sonidos predominantes se clasificaron en cinco categorías base: <b>vehicular, humana, comercial, portuaria y natural</b>. Esta categorización es la que permite dar un tratamiento cualitativo al ruido medido en terreno.</p></section>
-
-
 <h2 class="sh">Estructura del modelo de visualización</h2><section class="card">
 <p>El modelo conceptual y técnico de la visualización mapea los datos del paisaje sonoro en representaciones gráficas y de comportamiento, estructurado de la siguiente manera:</p>
 <ul>
@@ -59,36 +20,6 @@
 <li><i>Nivel de agrado:</i> determina el grado de agitación o nerviosismo general del movimiento de la figura.</li></ul></li>
 <li><b>Representación espacial:</b> una malla orgánica en movimiento por lugar, que se deforma como una marea para evocar la morfología del espacio; todas juntas se ven en la vista general.</li>
 <li><b>Interfaz e interacción:</b> despliegue mediante una vista general comparativa, filtros «Hora del día» y «Fuente» y tarjetas de detalle que unen las métricas cuantitativas con las citas textuales cualitativas.</li></ul></section>
-
-<h2 class="sh">Inventario de datos</h2><section class="card">
-<p>Del levantamiento del Barrio Puerto se seleccionó solo la información que responde a la pregunta del estudio. Se usaron dos tablas de la base de datos, la de las 46 mediciones de terreno (38 del Barrio Puerto y 8 de Buenos Aires, todas con dB) y la de las 20 encuestas de percepción. Estas se vincularon por sector, así, cada lugar reúne lo que se midió y lo que se sintió.</p>
-<h3>Datos de las mediciones de terreno</h3>
-<ul>
-<li><b>Sector o lugar:</b> se tomó el nombre de cada punto, que es la unidad de la visualización. Cada figura representa un sector, y el estudio se organiza justamente en torno a la comparación entre sus tipologías espaciales, desde el borde abierto del Muelle Prat hasta el corredor encerrado de la Calle Serrano.</li>
-<li><b>Hora del registro:</b> se tomó la hora de inicio de cada medición, entre las 09:40 y las 18:50. Se usa para ubicar cada medición en la figura y para el filtro «Hora del día» (mañana, tarde y hora punta). La fecha del registro no se usó porque el estudio compara por hora del día y no por jornada.</li>
-<li><b>Niveles de sonido:</b> se tomaron los tres valores en decibeles (mínimo, promedio y máximo) para distinguir entre el fondo difuso y los eventos impulsivos. El promedio ubica la medición y el recorrido entre mínimo y máximo muestra la estabilidad o sobresalto del sonido.</li>
-<li><b>Fuente predominante:</b> el tipo de sonido se categorizó según los cinco grupos definidos (vehicular, humana, comercial, portuaria y natural), lo que determina el color de cada sector.</li>
-<li><b>Dinámica de flujos:</b> los niveles peatonal y vehicular (bajo, medio, alto) se tradujeron a valores numéricos (1 al 3) para controlar la cantidad y velocidad de los puntos y estelas, relacionando la conducta espacial con el entorno.</li>
-<li><b>Relación personas-sonido:</b> se extrajo el fenómeno sonoro clave (por ejemplo, “el ritmo del semáforo dirige el volumen de las conversaciones”) para el detalle de la medición, aportando la interpretación cualitativa de terreno.</li></ul>
-<h3>Datos de las encuestas</h3>
-<ul>
-<li><b>Punto de muestreo:</b> sector donde se aplicó cada encuesta, dato esencial para el cruce relacional con las mediciones.</li>
-<li><b>Sensación de agrado:</b> codificada en una escala numérica (“me gusta” = 2, “me gusta un poco” = 1, “me da igual” = 0, “me incomoda un poco” = −1). El promedio controla el grado de agitación del movimiento del sector, evidenciando que el malestar no depende estrictamente de los decibeles.</li>
-<li><b>dB medido:</b> valor registrado durante la encuesta. Se muestra como promedio en el panel para un cruce directo entre lo medido y lo percibido.</li>
-<li><b>Cita textual:</b> selección de una frase representativa por sector para el panel de detalle, logrando que la voz habitante acompañe a las cifras.</li></ul>
-</section>
-
-
-<h2 class="sh">Buenos Aires: mediciones propias</h2><section class="card wide" id="buenos-aires">
-<p><b>Qué hay.</b> Plaza de Mayo (3 mediciones) y Puente de la Mujer (5) tienen dB mínimo, promedio y máximo registrados por el equipo en terreno (19 y 21/11/2026), con el mismo formato que el Barrio Puerto. Fuente: tabla general de registros de Buenos Aires del Grupo 2.</p>
-<ul>
-<li><b>Cómo se muestran:</b> como cualquier otro lugar: relieve por dB promedio, color por fuente predominante, flujos y registro de mediciones. Cada tipo de fuente de la ficha es un punto; el primero es el predominante.</li>
-<li><b>Qué no hace:</b> no entran en «más ruidoso» ni «más tranquilo» del Barrio Puerto, en sus hallazgos ni en los picos del barrio. No tienen encuestas de agrado.</li>
-<li><b>Medición nocturna:</b> BA-M-14 (00:20 del 21/11, Puente de la Mujer, 82 dB promedio, máximo 96) cae fuera del rango 09:40–18:50: se ubica al final del recorrido y no pertenece a mañana, tarde ni hora punta; sí cuenta en el promedio y el máximo del lugar.</li>
-<li><b>Límites:</b> pocas mediciones por franja. Algunas fichas solo detallan la fuente predominante; las demás fuentes se registran por tipo, sin descripción.</li>
-</ul></section>
-<h2 class="sh">Datos que no se incluyeron</h2><section class="card">
-<p>Se excluyeron el observador y el instrumento de medición por ser datos estrictamente metodológicos. No se integraron la relación con el barrio ni horarios habituales (la mayoría son visitantes y la variable no discrimina). Los datos de lugar más ruidoso/tranquilo y razón de la percepción se descartaron para evitar solapamientos con el nivel de agrado y las citas textuales.</p></section>
 <h2 class="sh">Figuración</h2><section class="card">
 <h3>La marea de resonancias</h3>
 <p>Cada lugar es una malla orgánica en movimiento, un tubo que se deforma como una marea. Esta decisión nace de una premisa del estudio grupal: la forma del espacio determina cómo se oye el sonido, porque lo filtra, lo concentra o lo devuelve. La malla no es una barra ni un punto: se hincha donde el sonido es más fuerte y se calma donde no, como el espacio que lo contiene.</p>
@@ -101,7 +32,6 @@
 <p>En la comparación, cada malla lleva un anillo dividido según las respuestas de las encuestas (incomoda, da igual, gusta un poco, gusta) y una cita textual. Así el agrado se lee sin depender solo del movimiento.</p>
 <h3>El movimiento como expresión del agrado</h3>
 <p>Cuanto menor es el agrado que las encuestas registran para un lugar, más errático es el movimiento de su malla y de sus flujos. Sotomayor, con el agrado más bajo, se ve nerviosa; el Muelle, con picos altos pero percibido como tranquilo, se ve calmo. Sustenta la idea de que el malestar no depende solo del nivel de decibeles, sino del sentido de la fuente.</p></section>
-
 <h2 class="sh">El glassmorfismo como metáfora</h2><section class="card">
 <p>Así como las fachadas, el agua y el pavimento del Barrio Puerto filtran, reflejan y desvían lo que se oye, la interfaz, hecha de superficies translúcidas, lo hace con lo que se ve.</p>
 <ul><li><b>Transparencia:</b> deja ver lo que hay detrás, como el sonido que atraviesa una fachada sin desaparecer.</li><li><b>Reflexión:</b> el brillo responde a quien se acerca, como el eco que vuelve según dónde suena.</li><li><b>Refracción:</b> el borde curva lo que se ve, como el medio que desvía y deforma lo que se oye.</li><li><b>Fusión:</b> dos contenedores cercanos se unen en una gota, como dos fuentes que se oyen como una sola masa.</li><li><b>Desenfoque:</b> el fondo difuso del ruido, sobre el que destacan las voces cercanas.</li></ul></section>
@@ -117,45 +47,14 @@
 <li><b>Partitura:</b> cada medición es una nota. La línea es su fuente de sonido, la posición su hora y el tamaño su dB. Se ve todo el barrio o un pentagrama por lugar.</li>
 <li><b>Estadísticas y consola:</b> qué suena, cuánta gente y tráfico hay, cómo se siente cada lugar, los picos más altos y una consola «Cómo funciona» con la malla en vivo.</li></ol>
 <p>El botón «Cómo leer» explica el código visual. A la derecha, un indicador de secciones permite saltar entre ellas y copiar un enlace que restaura la vista (sección, filtros, lugares A y B y hora). Sonido opcional (silenciado por defecto, botón del indicador o tecla M): cada fuente tiene su timbre y el volumen sigue los dB del lugar. Atajos: ← → (paso u hora), A y B (lugar en Comparar), N y P (sección), 1–6 (sector), M (sonido), ? (ayuda). La interfaz usa glassmorfismo (WebGL en controles fijos y CSS en lo que se desplaza).</p></section>
-
-<h2 class="sh">Criterios y límites de los datos</h2><section class="card wide">
-<div class="g2"><ul>
-<li><b>Fuente «comercial»:</b> separa captadores, música de locales, cortinas y locatarios de las voces humanas (8 mediciones recategorizadas por el equipo).</li>
-<li><b>Malla:</b> el largo es la hora, los carriles de alrededor son las fuentes y el relieve crece con el dB promedio de cada medición; no codifica la cantidad de mediciones.</li>
-<li><b>Plaza de Mayo (Buenos Aires):</b> tres mediciones del 19 de noviembre (BA-PI-11 a las 10:30, BA-PI-01 a las 12:50 y BA-PI-12 a las 17:45), con dB propios (70, 72 y 74 dB de promedio), flujos altos de personas y vehículos y fuente predominante vehicular. No tiene encuestas: su agrado figura «sin encuestas».</li>
-<li><b>Puente de la Mujer (Buenos Aires):</b> cinco mediciones con dB propios: BA-M-11 (11:30), BA-M-02 (12:29), BA-M-12 (16:10), BA-M-13 (17:16), del 19 de noviembre, y BA-M-14 (00:20 del 21 de noviembre, con música de bares y un máximo de 96 dB). Sin encuestas. Cada ficha detalla la fuente predominante y los tipos de fuente registrados.</li>
-<li><b>Agrado:</b> escala de −1 a 2 calculada sobre las 20 encuestas. Es distinta de la escala de 1 a 5 de la tabla perceptual del informe, que parte de otra muestra: no son comparables.</li>
-</ul>
-<ul>
-<li><b>Instrumentos:</b> las mediciones usan Apple Watch, Decibel Meter, Decibel X y NIOSH SLM, por lo que los decibeles no son estrictamente comparables.</li>
-<li><b>Muestras pequeñas:</b> Echaurren tiene 3 mediciones y 2 encuestas; la hora punta, 6 mediciones.</li>
-<li><b>Interpretación del equipo:</b> el movimiento errático según el agrado y la deformación según el dB por hora son decisiones expresivas, no estándares de la disciplina.</li>
-</ul></div>
-<p class="hw">Datos abiertos: <a href="data.json">data.json</a> y <a href="data.js?v=146">data.js</a> (con la fuente y los criterios de preparación).</p></section>
-<h2 class="sh">Uso de IA</h2><section class="card wide">
-<p class="lead2">La IA (Claude, de Anthropic) se usó como apoyo técnico para ampliar lo que se podía construir. Las decisiones de diseño, la selección de datos y el punto de vista son del autor.</p>
-<div class="g3">
-<div><h3>Decisiones del autor</h3><ul>
-<li>Pregunta orientadora y enfoque del estudio.</li><li>Que el sitio responda la pregunta a primera vista: la pregunta como título, una respuesta corta y los hallazgos antes del detalle.</li>
-<li>Selección y cruce de los datos (mediciones y encuestas por sector).</li>
-<li>Estilo: arte de datos generativo y glassmorfismo, con sus referencias.</li>
-<li>El lugar como malla orgánica (código de figuración propio, adaptado al modelo), color según la fuente predominante y flujos que recorren la malla.</li>
-<li>Metáfora del vidrio como fenómeno acústico y estructura del inicio.</li>
-<li>Criterios de exclusión de datos y textos del proyecto.</li></ul></div>
-<div><h3>Propuesto por la IA y revisado por el autor</h3><ul>
-<li>Agitación del movimiento según el agrado.</li>
-<li>La medición como hebras que pulsan y el marcador poligonal.</li>
-<li>Propuesta de criterios para mediciones repetidas y valores atípicos.</li></ul></div>
-<div><h3>Implementado por la IA</h3><ul>
-<li>Código de la visualización (canvas) y de la interfaz.</li>
-<li>Shader WebGL del efecto glassmorfismo y su respaldo en CSS.</li>
-<li>Versión móvil y accesibilidad básica.</li>
-<li>Pruebas en navegador y corrección de errores, con verificación del autor en su teléfono.</li></ul></div>
-</div></section>
+<h2 class="sh">Declaración de uso de IA</h2><section class="card wide">
+<p>La IA (Claude, de Anthropic) se usó como apoyo a la implementación técnica: el motor de canvas, el shader del fondo, la maquetación responsiva, la depuración y las pruebas automatizadas en navegador.</p>
+<p>En las fases finales del proyecto, además, actuó de manera autónoma como agente sobre el repositorio de GitHub para los ajustes menores: el autor indicaba qué corregir y cómo hacerlo, y la IA lo ejecutaba directamente (modificaba los archivos, lo probaba en el navegador y publicaba el cambio con un commit y un push a la rama principal), sin proponer ni decidir la dirección creativa.</p>
+</section>
 </div>
 <p class="foot">Proyecto grupal: <a href="https://wiki.ead.pucv.cl/Proyecto_de_Visualizaci%C3%B3n_-_Grupo_2">Proyecto de Visualización – Grupo 2</a> · Proyecto individual: <a href="https://wiki.ead.pucv.cl/Visualizaci%C3%B3n_de_Datos_Interactiva_TDS_2026_-_Francisco_Daniou">Visualización de Datos Interactiva TDS 2026 – Francisco Daniou</a> · Taller de Diseño de Servicios 2026</p>
 </div>
-<script src="data.js?v=146"></script><script src="app.js?v=146"></script><script src="glass.js?v=146"></script>
+<script src="data.js?v=147"></script><script src="app.js?v=147"></script><script src="glass.js?v=147"></script>
 <script>(function(){var S=[['hallazgos','Hallazgos']];var els=document.querySelectorAll('section.card');var nav=document.createElement('nav');nav.id='sec';nav.setAttribute('aria-label','Secciones de la página');
 var items=[];els.forEach(function(s,i){var h=s.previousElementSibling;if(!h||h.className!=='sh')return;if(!s.id)s.id='s'+i;items.push([h,h.textContent.trim()]);});
 nav.innerHTML=items.map(function(it,i){return '<button data-i="'+i+'" aria-label="'+it[1]+'"><span>'+it[1]+'</span><i></i></button>'}).join('');document.body.appendChild(nav);
