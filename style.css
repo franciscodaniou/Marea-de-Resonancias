@@ -1423,3 +1423,8 @@ body.about .brow .btn{display:flex;align-items:center;justify-content:center;tex
  .cfrow .bmore i{transform:translate(-.35px,-1px) rotate(45deg) translate(-.9px,-.9px)}
  .cfrow .bmore.on i{transform:translate(-.35px,-.6px) rotate(-135deg) translate(-.9px,-.9px)}
 }
+
+/* v217 · Valparaíso frente a Buenos Aires (tarjeta de hallazgo con dos gráficas) */
+.fcity .fcl{margin:2px 0 14px;font-size:15px;line-height:1.5;color:#5d6653;max-width:760px}.fcity .fcl b{color:#3b4234;font-weight:700}
+.fcity .fsub{margin:22px 0 4px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#8F9984;font-weight:700}
+.fcity .lgs{display:flex;flex-wrap:wrap;gap:6px 16px;margin:8px 0 2px;font-size:13px;color:#5d6653}.fcity .lgi{display:inline-flex;align-items:center;gap:6px}.fcity .lgi i{width:10px;height:10px;border-radius:50%;display:inline-block}

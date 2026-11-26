@@ -155,6 +155,34 @@
       <svg data-reveal viewBox="0 0 ${Wd} ${Ht}" role="img" aria-label="Línea de dB promedio por franja horaria para cada lugar con datos">${g}${ls}</svg>
       <p>Cada punto es el promedio de las mediciones de ese tramo del día (a veces solo 1 o 2). Los puntos de Plaza de Mayo y Puente de la Mujer (Buenos Aires) usan sus mediciones propias; la de las 00:20 queda fuera de las franjas.</p></article>`;
   };
+  /* Valparaíso frente a Buenos Aires: dB promedio por franja (líneas) y fuente predominante de cada medición (barras al 100 %). Mismos filtros y mediciones únicas que el resto del sitio. */
+  const cityChart = () => {
+    const mob = innerWidth < 700, f1 = v => v.toFixed(1).replace('.', ','), G = [[0, 1, 2, 3], [4, 5]], CN = ['Valparaíso', 'Buenos Aires'], CC = ['#3b4234', '#C77D2B'];
+    const rows = G.map(g => real(uniq(FM.filter(f => g.includes(f.s))))), KS = ['am', 'pm', 'pk'];
+    const fr = rows.map(rs => KS.map(k => { const r = rs.filter(f => f.m >= FILTERS[k][0] && f.m <= FILTERS[k][1]); return r.length ? { v: mean(r, f => f.pr), n: r.length } : null; }));
+    if (fr.some(a => a.some(x => !x))) return '';
+    const gap = fr[1].map((b, j) => b.v - fr[0][j].v), allv = rows.map(rs => mean(rs, f => f.pr));
+    const Wd = mob ? 360 : 940, Ht = mob ? 270 : 300, pl = mob ? 34 : 44, pr = mob ? 124 : 190, x0 = pl + 26, x1 = Wd - pr, xs = [0, 1, 2].map(j => x0 + (x1 - x0) * j / 2), Y = v => 30 + (77 - v) / 18 * (Ht - 96);
+    const names = [['Mañana', '09:40–12:36'], ['Tarde', '12:37–17:29'], ['Hora punta', '17:30–18:50']];
+    let g = [60, 65, 70, 75].map(v => `<line x1="${pl}" x2="${Wd - 8}" y1="${Y(v)}" y2="${Y(v)}" stroke="#C4C7B9" stroke-dasharray="2 5"/><text x="${pl - 6}" y="${Y(v) + 4}" text-anchor="end" font-size="12" fill="#8F9984">${v}</text>`).join('');
+    g += names.map((n, j) => `<text x="${xs[j]}" y="${Ht - 30}" text-anchor="middle" font-size="${mob ? 12 : 14}" font-weight="700" fill="#3b4234">${n[0]}</text>${mob ? '' : `<text x="${xs[j]}" y="${Ht - 12}" text-anchor="middle" font-size="12" fill="#8F9984">${n[1]}</text>`}`).join('');
+    g += xs.map((x, j) => `<line x1="${x + 18}" x2="${x + 18}" y1="${Y(fr[1][j].v)}" y2="${Y(fr[0][j].v)}" stroke="#8F9984" stroke-width="1.5"/>${mob ? `<text x="${xs[j]}" y="${Ht - 12}" text-anchor="middle" font-size="12" font-weight="700" fill="#5d6653">+${f1(gap[j])} dB</text>` : `<text x="${x + 26}" y="${(Y(fr[1][j].v) + Y(fr[0][j].v)) / 2 + 4}" font-size="13" font-weight="700" fill="#5d6653" stroke="#E7E9DF" stroke-opacity=".9" stroke-width="4" paint-order="stroke">+${f1(gap[j])} dB</text>`}`).join('');
+    const ls = fr.map((a, ci) => { const P = a.map((q, j) => [xs[j], Y(q.v), q]), L = P[2], lab = ci ? L[1] - 14 : L[1] + 22;
+      return `<g><polyline fill="none" stroke="${CC[ci]}" stroke-width="3.4" stroke-linejoin="round" stroke-linecap="round" points="${P.map(p => p[0] + ',' + p[1]).join(' ')}"/>${P.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="6.5" fill="${CC[ci]}"/><text x="${p[0] - 12}" y="${p[1] + (ci ? -12 : 22)}" text-anchor="end" font-size="${mob ? 12 : 13}" font-weight="700" fill="${CC[ci]}" stroke="#E7E9DF" stroke-opacity=".88" stroke-width="4" paint-order="stroke">${f1(p[2].v)}</text>`).join('')}<text x="${L[0] + (mob ? 24 : 62)}" y="${lab}" font-size="${mob ? 12 : 14}" font-weight="700" fill="${CC[ci]}" stroke="#E7E9DF" stroke-opacity=".88" stroke-width="4.2" stroke-linejoin="round" paint-order="stroke">${CN[ci]}</text></g>`; }).join('');
+    /* fuente predominante (primera fila de cada medición única) */
+    const mixc = rows.map(rs => CK.map(c => rs.filter(f => f.c === c).length)), tot = mixc.map(a => a.reduce((x, y) => x + y, 0));
+    const bW = Wd - pl - 8 - (mob ? 0 : 0), bx0 = pl + (mob ? 0 : 60), bw = Wd - bx0 - 8, bh = mob ? 34 : 38, by = [26, 26 + bh + 22];
+    let bars = mixc.map((a, ci) => { let x = bx0; return `<text x="${bx0}" y="${by[ci] - 8}" font-size="${mob ? 12 : 13}" font-weight="700" fill="${CC[ci]}">${CN[ci]}<tspan font-weight="400" font-size="12" dx="6" fill="#8F9984">${tot[ci]} mediciones</tspan></text>` + a.map((n, k) => { if (!n) return ''; const w = n / tot[ci] * bw, r = `<rect x="${x.toFixed(1)}" y="${by[ci]}" width="${Math.max(0, w - 2).toFixed(1)}" height="${bh}" rx="9" fill="${COL[CK[k]]}"/>${w > 34 ? `<text x="${(x + w / 2 - 1).toFixed(1)}" y="${by[ci] + bh / 2 + 5}" text-anchor="middle" font-size="${mob ? 12 : 14}" font-weight="700" fill="#fff">${Math.round(n / tot[ci] * 100)}%</text>` : ''}`; x += w; return r; }).join(''); }).join('');
+    const Hb = by[1] + bh + 12, lg = CK.map(c => `<span class="lgi"><i style="background:${COL[c]}"></i>${SH[c]}</span>`).join('');
+    const top = (a, n) => CK.map((c, k) => [c, a[k] / n]).sort((p, q) => q[1] - p[1])[0];
+    const tB = top(mixc[1], tot[1]), tV = top(mixc[0], tot[0]);
+    return `<article class="card fd fday fcity"><span class="k">Valparaíso frente a Buenos Aires</span><h3>Buenos Aires suena más fuerte, pero la brecha se cierra a medida que avanza el día</h3>
+      <p class="fcl">En la mañana Buenos Aires supera a Valparaíso por <b>${f1(gap[0])} dB</b>; en la hora punta, solo por <b>${f1(gap[2])} dB</b>: el barrio sube ${f1(fr[0][2].v - fr[0][0].v)} dB entre la mañana y la hora punta, la ciudad porteña ${f1(fr[1][2].v - fr[1][0].v)}.</p>
+      <svg data-reveal viewBox="0 0 ${Wd} ${Ht}" role="img" aria-label="Línea de dB promedio por franja horaria en Valparaíso y en Buenos Aires">${g}${ls}</svg>
+      <h4 class="fsub">Qué suena en cada ciudad</h4>
+      <svg data-reveal viewBox="0 0 ${Wd} ${Hb}" role="img" aria-label="Fuente predominante de las mediciones en Valparaíso y en Buenos Aires">${bars}</svg><div class="lgs">${lg}</div>
+      <p>En Buenos Aires manda ${SH[tB[0]].toLowerCase()} (${Math.round(tB[1] * 100)} % de las mediciones); en Valparaíso ninguna fuente pasa del ${Math.round(tV[1] * 100)} % y suenan las cinco. Promedio general: ${f1(allv[1])} dB en Buenos Aires y ${f1(allv[0])} dB en Valparaíso. Las franjas de Buenos Aires tienen pocas mediciones (${fr[1].map(q => q.n).join(', ')} frente a ${fr[0].map(q => q.n).join(', ')} en Valparaíso): es una lectura, no una regla.</p></article>`;
+  };
   const thesis = () => {
     const w = S.filter(d => d.db != null && d.ag != null), top = w.slice().sort((a, b) => b.ag - a.ag)[0], low = w.slice().sort((a, b) => a.ag - b.ag)[0], pk = S.filter(d => d.mx != null).sort((a, b) => b.mx - a.mx)[0];
     if (!top || !low || top === low) return '';
@@ -188,6 +216,7 @@
           <div class="fcs">${rise.map(([d, v]) => chip(d, (v > 0 ? '+' : '') + v.toFixed(1))).join('')}</div></article>
       </div>
       ${hourChart()}
+      ${cityChart()}
       ${thesis()}
       <p class="foot2">Plaza de Mayo y Puente de la Mujer (Buenos Aires) son lugares de comparación: tienen dB propios, pero no entran en las cifras del Barrio Puerto. Las equivalencias en palabras son aproximadas.</p></section>`;
   };
