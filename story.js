@@ -192,7 +192,7 @@
       <p class="foot2">Plaza de Mayo y Puente de la Mujer (Buenos Aires) son lugares de comparación: tienen dB propios, pero no entran en las cifras del Barrio Puerto. Las equivalencias en palabras son aproximadas.</p></section>`;
   };
   const ABOUT = document.body.classList.contains('about');
-  if (!ABOUT) document.getElementById('s3').innerHTML = `${finds()}<div class="steps"><div class="cmpw"><div class="cmp"><h2 id="cmph">Dos lugares frente a frente</h2><button class="clt" type="button" aria-expanded="false" aria-controls="cmleg">Cómo leer</button><p class="cq"></p>
+  if (!ABOUT) document.getElementById('s3').innerHTML = `${finds()}<div class="steps"><div class="cmpw"><div class="cmp"><h2 id="cmph">Dos lugares frente a frente</h2><p class="cq"></p>
       <div class="ft">${FN.map(f => `<span>${f[0]}<em> ${f[1]}</em></span>`).join('')}</div>
       <div class="cp"><span class="dots">${S.map((d, i) => `<span style="background:${d.hex}"${i ? '' : ' class="on"'}></span>`).join('')}</span><span class="cn r">Lugar <i id="cmpn">1</i> de ${NS} · <i id="cmpt">${SECT[0]}</i></span><span class="cn c">Comparando · <i id="cmpa"></i> ↔ <i id="cmpb"></i></span></div>
       <div class="cl cmleg" id="cmleg"></div></div></div>
@@ -243,9 +243,10 @@
   const RING = AGC.map((c, i) => `<span style="color:${c}">● ${AGN[i].toLowerCase()}</span>`).join(' ');
   const CMPL = [['Mallas', 'A a la izquierda, B a la derecha, a la misma escala'], ['Color y relieve', 'qué suena más · qué tan fuerte (dB promedio)'], ['Anillo exterior', 'cuánto agrada el lugar: ' + RING + ' (no cambia con la hora)']];
   const CMLEG = () => { const ring = `<svg class="rg" viewBox="0 0 44 44" aria-hidden="true">${AGC.map((c, i) => `<circle cx="22" cy="22" r="17" fill="none" stroke="${c}" stroke-width="6" pathLength="100" stroke-dasharray="24 76" stroke-dashoffset="${-(i * 25)}" />`).join('')}</svg>`;
-  return `<div class="ls"><b>1</b><div><h4>Mallas</h4><p>A a la izquierda, B a la derecha, a la misma escala.</p></div><span class="ab"><i>A</i><i>B</i></span></div>
+  return `<div class="ls"><b>1</b><div><h4>Los dos lugares que elegiste</h4><p>A queda a la izquierda y B a la derecha, con la misma escala. Cámbialos abajo y las mallas se actualizan.</p><div class="abn"><span style="--c:${S[pair[0]].hex}"><i>A</i>${SECT[pair[0]]}</span><span style="--c:${S[pair[1]].hex}"><i>B</i>${SECT[pair[1]]}</span></div></div></div>
   <div class="ls"><b>2</b><div><h4>Color y relieve</h4><p>El color dice qué suena más; el relieve, qué tan fuerte (dB promedio).</p><div class="dbs ref"><div class="dtr"><i style="width:100%"></i></div><div class="dtk">${DB_REF.map(([v, n]) => `<span style="left:${dbPos(v)}%">${n}</span>`).join('')}</div></div></div></div>
   <div class="ls"><b>3</b><div><h4>Anillo exterior</h4><p>Cuánto agrada el lugar (no cambia con la hora):</p><ul class="agl">${AGC.map((c, i) => `<li><i style="background:${c}"></i>${AGN[i].toLowerCase()}</li>`).join('')}</ul></div>${ring}</div>`; };
+window.CMLEG = () => CMLEG();
 const CQ = ['¿Cómo varían las fuentes y la intensidad del sonido según el lugar y la hora? Un lugar a la vez, con el mismo modelo.', 'Misma hora del día y misma escala en los dos lugares.'];
   let cur = -1, curF = -1, saved = null, tk = 0;
   const FNM = { all: 'todo el día', am: 'la mañana', pm: 'la tarde', pk: 'la hora punta' }, pair = [0, 1]; let cf = 'all', mode = '';
@@ -261,17 +262,15 @@ const CQ = ['¿Cómo varían las fuentes y la intensidad del sonido según el lu
     document.getElementById('bfs').innerHTML = bf([A, B]); if (window.VITA) VITA.scan(document.getElementById('bfs'));
     document.getElementById('cmpa').textContent = nm(a); document.getElementById('cmpb').textContent = nm(b);
     document.getElementById('rd').innerHTML = !A.n || !B.n ? 'Sin mediciones en ese tramo del día para uno de los dos lugares.' : A.db == null || B.db == null ? `<b>${SECT[A.db == null ? a : b]}</b> no tiene dB medido, así que la intensidad no se puede comparar en cifras. Predomina ${SH[A.dom].toLowerCase()} frente a ${SH[B.dom].toLowerCase()}. Lectura preliminar: ${A.n} y ${B.n} mediciones.` : (() => { const d = B.db - A.db; return `<b style="color:${S[b].hex}">${SECT[b]}</b> suena <b class="dd">${Math.abs(d).toFixed(1)} dB ${d >= 0 ? 'más fuerte' : 'más bajo'}</b> que <b style="color:${S[a].hex}">${SECT[a]}</b> en ${FNM[cf]}. Predomina ${SH[A.dom].toLowerCase()} frente a ${SH[B.dom].toLowerCase()}. ${A.ag == null || B.ag == null ? '' : `Según las encuestas (${A.ne} y ${B.ne} personas), en <b style="color:${S[a].hex}">${SECT[a]}</b> ${AGX(A.ag)} y en <b style="color:${S[b].hex}">${SECT[b]}</b> ${AGX(B.ag)}.`}${Math.min(A.n, B.n) < 3 ? ` Hay ${A.n} y ${B.n} mediciones: lectura preliminar.` : ''}${A.ap || B.ap ? ` El dB de ${SECT[A.ap ? a : b]} es un modelo oficial (APrA 2018), no una medición propia.` : ''}`; })();
-    document.querySelectorAll('.pk').forEach(p => p.querySelectorAll('button').forEach(x => x.classList.toggle('on', +x.dataset.i === pair[+p.dataset.k]))); if (mode === 'c') cmpDots.forEach((d, q) => d.classList.toggle('on', pair.includes(q))); };
+    document.querySelectorAll('.pk').forEach(p => { p.style.setProperty('--pc', S[pair[+p.dataset.k]].hex); p.querySelectorAll('button').forEach(x => x.classList.toggle('on', +x.dataset.i === pair[+p.dataset.k])); }); if (window.cmLegSync) cmLegSync(); if (mode === 'c') cmpDots.forEach((d, q) => d.classList.toggle('on', pair.includes(q))); };
   const lens = tg => { const th = document.createElement('i'); th.className = 'th'; tg.prepend(th); const place = () => { const b = tg.querySelector('button.on'); if (b) { th.style.left = b.offsetLeft + 'px'; th.style.width = b.offsetWidth + 'px'; } }; place(); addEventListener('resize', place); addEventListener('load', place); if (document.fonts) document.fonts.ready.then(place); return place; };
   const placeF = lens(document.getElementById('cfg'));
   document.querySelectorAll('.pk').forEach(p => p.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const k = +p.dataset.k, i = +b.dataset.i; if (pair[k] === i) return; if (pair[1 - k] === i) pair[1 - k] = pair[k]; pair[k] = i; renderCmp(); }));
   document.getElementById('cfg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; cf = b.dataset.f; document.querySelectorAll('#cfg button').forEach(x => x.classList.toggle('on', x === b)); placeF(); renderCmp(); if (window.MAREA && mode === 'c') MAREA.setFlt(cf); upd(); });
   const setMode = m => { if (m === mode) return; mode = m; const c = m === 'c'; cmpEl.dataset.m = m;
-    cmpL.innerHTML = CMLEG(); cmpQ.textContent = CQ[c ? 1 : 0]; document.getElementById('cmph').textContent = c ? 'Dos lugares frente a frente' : 'Cada lugar, a cada hora';
+    if (window.cmLegSync) cmLegSync(); cmpQ.textContent = CQ[c ? 1 : 0]; document.getElementById('cmph').textContent = c ? 'Dos lugares frente a frente' : 'Cada lugar, a cada hora';
     cmpEl.querySelector('.cn.r').style.display = c ? 'none' : ''; cmpEl.querySelector('.cn.c').style.display = c ? '' : 'none';
     if (c) renderCmp(); else cmpDots.forEach((d, q) => d.classList.toggle('on', q === cur)); };
-  { const clt = cmpEl.querySelector('.clt'); clt.addEventListener('click', e => { e.stopPropagation(); const o = cmpEl.classList.toggle('lgo'); clt.setAttribute('aria-expanded', o); });
-    document.addEventListener('click', e => { if (cmpEl.classList.contains('lgo') && !e.target.closest('.cmleg,.clt')) { cmpEl.classList.remove('lgo'); clt.setAttribute('aria-expanded', 'false'); } }); }
   renderCmp(); setMode('r');
 
   /* scroll → lugar (seis tramos) y, dentro de cada lugar, franja horaria (mañana → tarde → hora punta); después, modo comparar */

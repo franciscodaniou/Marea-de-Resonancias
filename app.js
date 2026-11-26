@@ -335,6 +335,8 @@ function frame(ms) {
   eR += (eRT - eR) * (1 - Math.exp(-dt * 5)); if (Math.abs(eRT - eR) < .002) eR = eRT;
   eS += (eT - eS) * (1 - Math.exp(-dt * 5)); if (Math.abs(eT - eS) < .002) eS = eT;
   { const on = W < 760 && want === null && eS > .85 && cA < .05 && amb < .05 && !hero; if (on !== lastCar) { lastCar = on; car.classList.toggle('on', on); cdots.classList.toggle('on', on); }
+    { const cv2 = cA > .5 && cm > .5 && !hero; if (cv2 !== cmpvOn) { cmpvOn = cv2; document.body.classList.toggle('cmpv', cv2); if (cv2) { cmLegSync(); legWas2 = leg.classList.contains('open'); legSet(false); } else { legSet(legWas2 && W >= 1100); leg.style.removeProperty('left'); leg.style.removeProperty('top'); leg.style.removeProperty('right'); } }
+      if (cv2) { const cr = document.querySelector('.cmp').getBoundingClientRect(), sh = H < 700 && W < 1100; leg.style.setProperty('right', 'auto', 'important'); leg.style.setProperty('left', (sh ? W - 14 - 122 : W >= 1100 ? cr.left : 14) + 'px', 'important'); leg.style.setProperty('top', (sh ? cr.top - 6 : cr.bottom - 44) + 'px', 'important'); } }
     { const onR = W < 760 && want === null && wantR === null && eR > .85 && eS < .3 && cA < .05 && amb < .05 && !hero; if (onR !== lastCarR) { lastCarR = onR; carR.classList.toggle('on', onR); cdotsR.classList.toggle('on', onR); }
       carRPos += (carRTgt - carRPos) * (1 - Math.exp(-dt * 14)); if (!carRInit && carR.scrollWidth > W * 1.5) { carR.scrollLeft = W; carRInit = true; } const cj = ((Math.round(carRTgt) % 2) + 2) % 2; if (cj !== lastCiR) { lastCiR = cj; [...cdotsR.children].forEach((d, i) => d.classList.toggle('on', i === cj)); } }
     carPos += (carTgt - carPos) * (1 - Math.exp(-dt * 14)); if (!carInit && car.scrollWidth > W * 1.5) { car.scrollLeft = W; carInit = true; } const ci = ((Math.round(carTgt) % NS) + NS) % NS; if (ci !== lastCi) { lastCi = ci; [...cdots.children].forEach((d, i) => d.classList.toggle('on', i === ci)); } }
@@ -362,7 +364,7 @@ function frame(ms) {
     const pi = PAIR().indexOf(s), qc = pi >= 0 ? cm * kc[s] * cA : 0;
     if (qc > .25) { const c = rgbOf(COL[DOM[s]]); x.globalAlpha = qc; x.fillStyle = '#3b4234'; x.font = `700 ${mobq ? 13 : 18}px "SF Pro",sans-serif`; x.fillText(SECT[s].toUpperCase(), g.cx, g.cy + r0 + (mobq ? 20 : 30));
       x.font = `${mobq ? 11 : 14}px "SF Compact",sans-serif`; x.fillStyle = '#5E6655'; x.fillText(hasAg(s) ? (mobq ? `${AGX(agrSec(s))} · ${tot} resp.` : `según ${tot} encuestas: ${AGX(agrSec(s))}`) : 'sin encuestas de agrado', g.cx, g.cy + r0 + (mobq ? 34 : 50));
-      x.font = `800 ${mobq ? 15 : 22}px "SF Pro",sans-serif`; x.fillStyle = `rgb(${c})`; x.fillText('AB'[pi], g.cx, g.cy - r0 - (mobq ? 8 : 12)); }
+      { const br = mobq ? 11 : 17, by0 = g.cy - r0 - br - (mobq ? 4 : 6); x.fillStyle = `rgb(${c})`; x.beginPath(); x.arc(g.cx, by0, br, 0, TAU); x.fill(); x.fillStyle = '#fff'; x.textBaseline = 'middle'; x.font = `800 ${mobq ? 13 : 20}px "SF Pro",sans-serif`; x.fillText('AB'[pi], g.cx, by0 + (mobq ? 1 : 1.5)); x.textBaseline = 'alphabetic'; } }
     x.globalAlpha = 1; }); }
   const lab = cl((eS - .6) / .35, 0, 1) * (1 - amb) * (1 - cl(cA * 4, 0, 1));
   const labT = (document.body.classList.contains('legopen') || (W >= 1100 && (document.getElementById('ans') || {classList: {contains: () => false}}).classList.contains('open'))) ? 0 : 1; window.labK = (window.labK == null ? labT : window.labK) + (labT - (window.labK == null ? labT : window.labK)) * .14; const labS = window.labK * window.labK * (3 - 2 * window.labK);
@@ -548,6 +550,9 @@ function legMeasure() {
   leg.style.setProperty('--oh', oh + 'px'); document.documentElement.style.setProperty('--lb', (72 + Math.min(lgin.offsetHeight, 260) + 14) + 'px');
 }
 let legMode = innerWidth >= 1100; leg.classList.toggle('open', false); lgt.setAttribute('aria-expanded', false);
+let cmpvOn = false, cmgW = null, legWas2 = false;
+function cmLegSync() { if (!window.CMLEG) return; if (!cmgW) { cmgW = document.createElement('div'); cmgW.className = 'l3 cmg'; leg.querySelector('.lgb').appendChild(cmgW); } cmgW.innerHTML = window.CMLEG(); legMeasure(); }
+window.cmLegSync = cmLegSync;
 const legSet = v => { legMeasure(); leg.classList.toggle('open', v); document.documentElement.style.setProperty('--lb', (72 + (v ? Math.min(lgin.offsetHeight, 260) : 38) + 14) + 'px'); document.body.classList.toggle('legopen', v); setTimeout(() => size(), 60); setTimeout(() => size(), 700); lgt.setAttribute('aria-expanded', v); };
 lgt.onclick = () => legSet(!leg.classList.contains('open'));
 cv.addEventListener('click', () => { if (innerWidth < 1100) legSet(false); });

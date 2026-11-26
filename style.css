@@ -1135,28 +1135,33 @@ body:not(.about) .sech2{font-weight:800}
 @media(max-width:759px){#hero h1{font-size:clamp(32px,min(10.8vw,5.6vh),54px);line-height:1.06;font-weight:800;letter-spacing:-.015em;margin-bottom:clamp(20px,3.8vh,34px)}#hero p{margin-top:0}#hero .eb{margin-bottom:18px}}
 @media(max-width:759px) and (max-height:700px){#hero h1{font-size:clamp(30px,min(5.6vw,8.2vh),80px);margin-bottom:16px}#hero .eb{margin-bottom:12px}}
 
-/* v177 · comparar: «Cómo leer» con la misma tarjeta de la leyenda; lectura con más protagonismo */
-.cmp .cl.cmleg{display:flex!important;flex-direction:column;gap:14px;margin:16px 0 0!important;padding:16px 20px;border-radius:24px;background:rgba(255,255,255,.52);border:1px solid rgba(255,255,255,.8);box-shadow:0 10px 30px rgba(60,70,50,.12),inset 0 1px 0 rgba(255,255,255,.9);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);max-width:520px;font-size:inherit;line-height:1.4;color:var(--fg)}
-.cmleg .ls{align-items:center;gap:14px}.cmleg .ls>div{flex:1;min-width:0}
-.cmleg .ls h4{font-size:16px;margin:0 0 2px}.cmleg .ls p{font-size:14px;margin:0 0 4px;color:#4a5340}
-.cmleg .ls>b{width:28px;height:28px;font-size:14px;align-self:flex-start;margin-top:2px}
-.cmleg .ab{margin-left:auto;display:flex;gap:6px;flex:none}.cmleg .ab i{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;border:2px solid #5E6655;font:800 13px/1 "SF Pro",sans-serif;color:#3b4234;font-style:normal}
-.cmleg .rg{flex:none;width:46px;height:46px;transform:rotate(-90deg)}
-.cmleg .dbs.ref{max-width:250px;margin:6px 0 0}.cmleg .dots{pointer-events:none}.cmleg .dots li{cursor:default;font-size:13.5px}
-.cmp .clt{display:none}
-@media(min-width:1500px){.cmp .cl.cmleg{max-width:600px}.cmleg .ls h4{font-size:18px}.cmleg .ls p{font-size:15.5px}}
-@media(max-width:1099px){
- .cmp .clt{display:inline-flex;align-items:center;margin:0 0 6px;height:30px;padding:0 14px;font-size:13px;font-weight:700;background:rgba(255,255,255,.55);box-shadow:0 4px 14px rgba(60,70,50,.12)}
- .cmp .clt::after{content:'▾';font-size:11px;opacity:.7;margin-left:6px;transition:transform .3s}.cmp.lgo .clt::after{transform:rotate(180deg)}
- .cmp .cl.cmleg{display:none!important;position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:8;margin:0!important;max-width:none;background:rgba(238,240,230,.94);padding:14px 16px;gap:11px}
- .cmp.lgo .cl.cmleg{display:flex!important}
- .cmleg .ls h4{font-size:14.5px}.cmleg .ls p{font-size:12.5px}.cmleg .ls>b{width:24px;height:24px;font-size:12.5px}.cmleg .rg{width:40px;height:40px}.cmleg .ab i{width:24px;height:24px}
-}
-.cmpc .rd{font-size:clamp(16px,1.3vw,21px)!important;line-height:1.4!important;font-weight:500;color:#2f352b;background:rgba(255,255,255,.55);border-radius:18px;padding:14px 18px;margin:0 0 14px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
+/* v178 · comparar: el «Cómo leer» global (píldora elástica → tarjeta) con la leyenda de comparación */
+.cmp .cl,.cmp .clt{display:none!important}
+.cmgw,.cmg{display:none}
+body.cmpv #leg{opacity:1!important;visibility:visible!important;pointer-events:auto!important}
+body.cmpv .lgb>:not(.cmg){display:none!important}
+body.cmpv .lgb>.cmg{display:grid!important;grid-template-columns:1fr!important;gap:16px;padding-top:6px}
+body.cmpv #leg.open{width:min(640px,calc(100vw - 28px))!important}
+body.cmpv .lgin{width:min(640px,calc(100vw - 28px))!important}
+.cmg .ls{align-items:flex-start;gap:14px}.cmg .ls>div{flex:1;min-width:0}
+.cmg .ls h4{font-size:16px;margin:0 0 3px}.cmg .ls p{font-size:14px;margin:0 0 6px;color:#4a5340;line-height:1.4}
+.cmg .ab,.cmg .rg{flex:none}.cmg .ab{margin-left:auto;display:flex;gap:6px}
+.cmg .rg{width:46px;height:46px;transform:rotate(-90deg);margin-left:auto;align-self:center}
+.cmg .dbs.ref{max-width:260px;margin:6px 0 0}
+.cmg .agl{list-style:none;margin:2px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:3px 14px}.cmg .agl li{display:flex;align-items:center;gap:6px;font-size:13.5px;color:#3b4234}.cmg .agl i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.cmg .abn{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:2px}.cmg .abn span{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14.5px;color:#2f352b}
+.cmg .abn i{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--c);color:#fff;font:800 12.5px/1 "SF Pro",sans-serif;font-style:normal}
+@media(min-width:1500px){body.cmpv #leg.open,body.cmpv .lgin{width:min(720px,calc(100vw - 28px))!important}.cmg .ls h4{font-size:18px}.cmg .ls p{font-size:15.5px}}
+@media(max-width:1099px){.cmg .ls h4{font-size:14.5px}.cmg .ls p{font-size:12.5px}.cmg .agl li{font-size:12px}.cmg .rg{width:40px;height:40px}.cmp{padding-bottom:44px!important}}
+@media(max-width:1099px) and (max-height:700px){.cmp{padding-bottom:0!important}.cmp h2#cmph{font-size:16px!important;margin:0 0 2px!important}}
+/* lectura: peso y color, sin recuadro */
+.cmpc .rd{font-size:clamp(16px,1.3vw,21px)!important;line-height:1.4!important;font-weight:500;color:#2f352b;margin:0 0 14px!important}
 .cmpc .rd b{font-weight:800}.cmpc .rd .dd{font-size:1.14em;color:#1f2a1c}
-@media(max-width:1099px){.cmpc .rd{font-size:14px!important;line-height:1.36!important;padding:10px 14px;margin:0 0 8px!important;border-radius:16px}}
-.cmp .cl.cmleg>.ls{display:flex!important;margin:0!important}.cmp .cl.cmleg>.ls>div{display:block!important;margin:0!important}
-.cmleg .agl{list-style:none;margin:2px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:3px 14px}.cmleg .agl li{display:flex;align-items:center;gap:6px;font-size:13.5px;color:#3b4234}.cmleg .agl i{width:11px;height:11px;border-radius:50%;display:inline-block}
-@media(max-width:1099px){.cmleg .agl li{font-size:12px}}
-@media(max-width:1099px) and (max-height:700px){.cmpc .rd{font-size:12.5px!important;line-height:1.3!important;padding:7px 11px;margin:0 0 5px!important;border-radius:13px}.cmpc .rd .dd{font-size:1.06em}}
-@media(max-width:1099px) and (max-height:700px){.cmp h2#cmph{font-size:16px!important;margin:0 0 2px!important}.cmp .clt{position:absolute;right:0;top:0;margin:0;height:28px;padding:0 12px;font-size:12px}}
+@media(max-width:1099px){.cmpc .rd{font-size:14px!important;line-height:1.36!important;margin:0 0 8px!important}}
+@media(max-width:1099px) and (max-height:700px){.cmpc .rd{font-size:12.5px!important;line-height:1.3!important;margin:0 0 5px!important}}
+/* selector A/B: el lugar elegido se marca con su color */
+.pk[data-k] button.on{box-shadow:0 0 0 2px var(--pc,#5E6655),0 3px 10px rgba(59,66,52,.16)!important;border-color:var(--pc,#fff)!important}
+@media(min-width:1100px){.cmp{padding-bottom:50px!important}body.cmpv #leg.open,body.cmpv .lgin{width:min(640px,44vw)!important}}
+@media(min-width:1500px){body.cmpv #leg.open,body.cmpv .lgin{width:min(700px,44vw)!important}}
+#leg .cmg .abn i{width:24px;height:24px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font:800 12.5px/1 "SF Pro",sans-serif;font-style:normal;flex:none}
+#leg .cmg .agl i{width:11px;height:11px;border-radius:50%;display:inline-block;flex:none}
