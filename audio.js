@@ -45,7 +45,7 @@ window.SND = (() => {
     let sh = c.map((x, j) => tot ? Math.pow(x / tot, 1.5) * (j === top ? 1.7 : 1) : 0); const sm = sh.reduce((a, b) => a + b, 0) || 1; sh = sh.map(x => x / sm);   // la fuente predominante manda
     return { share: sh, top, db: u.length ? mean(u, f => f.pr) : 0, fv: u.length ? mean(u, f => f.fv) : 1, fp: u.length ? mean(u, f => f.fp) : 1, ag: agrSec(s), n: u.length }; };
   /* eventos: máximo 3 nuevos por ciclo de 120 ms, para que no se apilen voces y el procesador no se sature */
-  let made = 0, nextC = 0, nextB = 0, spk = [{ f0: 112, pan: -.5, next: 0 }, { f0: 128, pan: .1, next: .8 }, { f0: 148, pan: .55, next: 1.7 }]; const allow = () => made++ < 3;
+  let made = 0, nextC = 0, nextB = 0, spk = [{ f0: 175, pan: -.5, next: 0 }, { f0: 245, pan: .1, next: .8 }, { f0: 330, pan: .55, next: 1.7 }]; const allow = () => made++ < 3;
 
   function pass(sl, g) { if (!allow()) return; const t = ctx.currentTime, d = r(2, 3.4), e = gain(0), f = filt('lowpass', 520, .8), o = ctx.createOscillator(), n = noise(), nf = filt('bandpass', 700, .6), ng = gain(.35);
     o.type = 'sawtooth'; o.frequency.setValueAtTime(r(60, 72), t); o.frequency.linearRampToValueAtTime(r(95, 120), t + d * .45); o.frequency.linearRampToValueAtTime(r(55, 68), t + d);
@@ -56,17 +56,18 @@ window.SND = (() => {
   function note(sl, g, st, off = 0, fz = 0, dec = .9, free = false) { if (!free && !allow()) return; const t = ctx.currentTime + off, o = ctx.createOscillator(), e = gain(0), f = fz || 196 * Math.pow(2, PENT[Math.floor(Math.random() * PENT.length)] / 12); o.type = st.ag < 0 ? 'square' : 'triangle'; o.frequency.value = f;
     if (st.ag < 0) { const o2 = ctx.createOscillator(); o2.type = 'triangle'; o2.frequency.value = f * 1.045; o2.connect(e); o2.start(t); o2.stop(t + dec + .1); }
     o.connect(e); e.connect(sl.out); e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(g * .4, t + .012); e.gain.exponentialRampToValueAtTime(.0008, t + dec); o.start(t); o.stop(t + dec + .1); }
-  /* murmullo (medido en «Cartoon Mumbling»: tono 110–150 Hz, energía 200–800 Hz, casi nada sobre 3 kHz, sílabas a ~2,4 Hz en frases con pausas):
-     una frase = 3–7 sílabas sobre una sola voz grave; formantes que se deslizan sin articular palabras; la entonación baja suavemente. */
-  const VT = [[300, 800], [420, 1000], [520, 1200], [650, 1100], [380, 1500], [560, 900], [700, 1300]];
-  function mumble(sl, g, f0, pan) { const t0 = ctx.currentTime + .02, n = 3 + Math.floor(Math.random() * 5), o = ctx.createOscillator(), lp = filt('lowpass', 1900, .5), b1 = filt('bandpass', 500, 1.7), b2 = filt('bandpass', 1100, 2), g1 = gain(1), g2 = gain(.55), e = gain(0), pn = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
-    o.type = 'sawtooth'; o.frequency.setValueAtTime(f0, t0); o.connect(lp); lp.connect(b1); lp.connect(b2); b1.connect(g1); b2.connect(g2); g1.connect(e); g2.connect(e);
+  /* habla tipo «Animalese» (Animal Crossing): cada letra es un sílaba-pío de 50–100 ms con tono propio (salta entre semitonos), vocal con formantes y ataque seco;
+     ~10 por segundo en frases de 5–13 letras con huecos entre palabras; el final a veces sube como pregunta. */
+  const VF = [[800, 1250], [520, 1900], [310, 2300], [520, 950], [330, 800]], ST = [-3, -1, 0, 2, 4, 5, 7, 9];
+  function mumble(sl, g, f0, pan) { const t0 = ctx.currentTime + .02, n = 5 + Math.floor(Math.random() * 9), o = ctx.createOscillator(), lp = filt('lowpass', 3600, .4), b1 = filt('bandpass', 700, 3), b2 = filt('bandpass', 1500, 3), d0 = gain(.35), g1 = gain(1), g2 = gain(.7), e = gain(0), pn = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+    o.type = 'sawtooth'; o.connect(lp); lp.connect(d0); lp.connect(b1); lp.connect(b2); b1.connect(g1); b2.connect(g2); d0.connect(e); g1.connect(e); g2.connect(e);
     if (pn) { pn.pan.value = pan; e.connect(pn); pn.connect(sl.out); } else e.connect(sl.out);
-    let t = t0, pv = VT[Math.floor(Math.random() * VT.length)]; e.gain.setValueAtTime(0, t); b1.frequency.setValueAtTime(pv[0], t); b2.frequency.setValueAtTime(pv[1], t);
-    for (let i = 0; i < n; i++) { const d = r(.2, .5), v = VT[Math.floor(Math.random() * VT.length)], a = g * r(.6, 1) * (i === 0 ? .8 : 1);
-      o.frequency.linearRampToValueAtTime(f0 * (1 - .035 * i) * r(.95, 1.1), t + d * .8); b1.frequency.linearRampToValueAtTime(v[0] * r(.9, 1.1), t + d * .5); b2.frequency.linearRampToValueAtTime(v[1] * r(.9, 1.1), t + d * .5);
-      e.gain.linearRampToValueAtTime(a, t + .06); e.gain.linearRampToValueAtTime(a * .7, t + d * .7); e.gain.linearRampToValueAtTime(a * .12, t + d); t += d + r(0, .05); }
-    e.gain.linearRampToValueAtTime(0, t + .15); o.start(t0); o.stop(t + .2); return t + .2 - ctx.currentTime; }
+    let t = t0, wl = 3 + Math.floor(Math.random() * 4); const q = Math.random() < .3; e.gain.setValueAtTime(0, t);
+    for (let i = 0; i < n; i++) { const d = r(.05, .1), f = f0 * Math.pow(2, ST[Math.floor(Math.random() * ST.length)] / 12) * (q && i > n - 3 ? 1.25 : 1), v = VF[Math.floor(Math.random() * VF.length)], a = g * r(.7, 1);
+      o.frequency.setValueAtTime(f * r(.94, 1.0), t); o.frequency.linearRampToValueAtTime(f * r(1.0, 1.08), t + d); b1.frequency.setValueAtTime(v[0], t); b2.frequency.setValueAtTime(v[1], t);
+      e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(a, t + .008); e.gain.linearRampToValueAtTime(a * .55, t + d * .7); e.gain.linearRampToValueAtTime(0, t + d);
+      t += d + r(.015, .045); if (--wl <= 0) { t += r(.06, .16); wl = 3 + Math.floor(Math.random() * 4); } }
+    o.start(t0); o.stop(t + .1); return t + .1 - ctx.currentTime; }
   /* pájaros: frase de 2–6 píos con barrido de tono (seno agudo), a veces un trino rápido */
   function bird(sl, g) { if (!allow()) return; const t0 = ctx.currentTime, n = 2 + Math.floor(Math.random() * 5), base = r(2600, 4200), trill = Math.random() < .3, dir = Math.random() < .5 ? 1 : -1; let t = 0;
     for (let i = 0; i < n; i++) { const d = trill ? r(.03, .05) : r(.06, .16), f1 = base * r(.85, 1.2) * (1 + dir * .04 * i), f2 = f1 * (Math.random() < .5 ? r(1.15, 1.5) : r(.65, .88)), o = ctx.createOscillator(), e = gain(0), tt = t0 + t;
