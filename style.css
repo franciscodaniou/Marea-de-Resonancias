@@ -1017,3 +1017,31 @@ body.about h2.sh{font-size:clamp(30px,2.6vw,50px);line-height:1.1;letter-spacing
 body.about .wrap2{max-width:none;padding:0;margin:0}
 body.about .stack>.wrap2{position:relative;margin:0}
 body.about #s4 .foot2,body.about .lead3{margin-left:8px}
+
+/* v151 · about: dos partes (datos / fundamento), fundamento en teselas, fondo 3 % desenfocado */
+body.about #c{filter:blur(3px)}
+body.about .part{margin:26px 0 4px;padding:0 8px}
+body.about .part:first-child{margin-top:0}
+body.about .eb2{display:block;font-size:13px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--N);margin-bottom:8px}
+body.about h2.part-h{font-size:clamp(40px,4.8vw,88px);font-weight:800;letter-spacing:-.02em;line-height:1.02;margin:0 0 12px;color:var(--fg)}
+body.about .part .lead3{margin:0;max-width:46em}
+body.about .stack>.lead3{margin:-8px 0 0;padding:0 8px;max-width:52em}
+body.about h3.sh3{font-size:clamp(19px,1.3vw,26px);font-weight:700;margin:6px 0 -6px;padding:0 8px;color:var(--fg)}
+body.about .tiles{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr))}
+body.about .tiles.t2{grid-template-columns:repeat(2,minmax(0,1fr))}
+body.about .tile{margin:0;padding:24px 26px;border-radius:30px;min-width:0;display:block}
+body.about .tile.span{grid-column:1/-1}
+body.about .tile h3{margin:0 0 8px;font-size:clamp(18px,1.2vw,24px);font-weight:700;line-height:1.2}
+body.about .tile p{margin:0 0 10px}body.about .tile p:last-child{margin:0}
+body.about .tile .num{display:block;font-size:clamp(46px,4.2vw,72px);font-weight:300;line-height:1;letter-spacing:-.03em;color:var(--N);margin-bottom:10px}
+body.about .tile .sn{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.85);font-weight:700;font-size:15px;margin-bottom:12px;color:var(--N)}
+body.about .tile.goal{max-width:none}
+body.about .kb2{display:inline-block;padding:1px 9px;border-radius:999px;background:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.85);font-size:13px;line-height:1.6;margin:2px 2px;font-weight:600}
+body.about .note{margin:-4px 0 0;padding:0 8px;color:var(--mut);font-size:14.5px}
+@media(max-width:760px){body.about .tiles.t2{grid-template-columns:1fr}body.about .tile{padding:20px 20px;border-radius:26px}body.about h2.part-h{font-size:38px}}
+body.about .tiles.c5{grid-template-columns:repeat(6,minmax(0,1fr))}
+body.about .tiles.c5>.tile{grid-column:span 2}
+body.about .tiles.c5>.tile:nth-child(n+4){grid-column:span 3}
+@media(max-width:1000px){body.about .tiles.c5{grid-template-columns:repeat(2,minmax(0,1fr))}body.about .tiles.c5>.tile,body.about .tiles.c5>.tile:nth-child(n+4){grid-column:auto}body.about .tiles.c5>.tile:last-child{grid-column:1/-1}}
+@media(max-width:760px){body.about .tiles.c5{grid-template-columns:1fr}body.about .tiles.c5>.tile:last-child{grid-column:auto}}
+body.about .kg{white-space:nowrap;display:inline-block;margin:3px 0}
