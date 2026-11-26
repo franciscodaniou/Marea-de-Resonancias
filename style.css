@@ -832,20 +832,20 @@ body.about .stack>.card>ul,body.about .stack>.card>p{max-width:none}
 :root{--glow:0 0 0 1px rgba(255,255,255,.95),0 0 26px 2px rgba(255,255,255,.9),0 8px 22px rgba(59,66,52,.2),inset 0 0 20px rgba(255,255,255,.75),inset 0 2px 3px rgba(255,255,255,1);--glow-p:0 0 0 1px rgba(255,255,255,1),0 0 34px 5px rgba(255,255,255,1),0 3px 10px rgba(59,66,52,.18),inset 0 0 26px rgba(255,255,255,.95)}
 .btn,button,.lgt,.lmore,.cmin,.fc,#down,#back,#ctl .mb,#ctl .lbl,#cts .mb,#cts .lbl,#nav .mb,#nav .lbl,.pk button,.tg button,.snd,#sec button i{transition:scale .8s var(--spring-el),transform .45s var(--spring),background .3s,color .3s,box-shadow .35s ease,opacity .35s,border-color .3s}
 @media(hover:hover){
- .btn:hover,#hero button:hover,#down:hover,#back:hover,#ctl .mb:hover,#ctl .lbl:hover,#cts .mb:hover,#cts .lbl:hover,#nav .mb:hover,#nav .lbl:hover,.pk button:hover,.fc:hover,.lgt:hover,.lmore:hover,header nav .mb:hover{box-shadow:var(--glow)!important;background-color:rgba(59,66,52,.12)}
- .tg button:not(.on):hover{background:rgba(59,66,52,.12);box-shadow:var(--glow)}
+ .btn:hover,#hero button:hover,#down:hover,#back:hover,#ctl .mb:hover,#ctl .lbl:hover,#cts .mb:hover,#cts .lbl:hover,#nav .mb:hover,#nav .lbl:hover,.pk button:hover,.fc:hover,.lgt:hover,.lmore:hover,header nav .mb:hover{box-shadow:var(--glow)!important;background-color:rgba(255,255,255,.55)}
+ .tg button:not(.on):hover{background:rgba(255,255,255,.6);box-shadow:var(--glow)}
  #ctl button:not(.mb):hover,#cts button:not(.mb):hover{box-shadow:var(--glow)!important}
  #sec button:hover i{box-shadow:0 0 0 3px rgba(255,255,255,.9),0 0 12px 3px rgba(255,255,255,.95);transform:scale(1.4)}
 }
-.btn:active,#hero button:active,#down:active,#back:active,#ctl .mb:active,#ctl .lbl:active,#cts .mb:active,#cts .lbl:active,#nav .mb:active,#nav .lbl:active,.pk button:active,.fc:active,.lgt:active,.lmore:active,.tg button:active,.snd:active{box-shadow:var(--glow-p)!important;background-color:rgba(59,66,52,.2)}
+.btn:active,#hero button:active,#down:active,#back:active,#ctl .mb:active,#ctl .lbl:active,#cts .mb:active,#cts .lbl:active,#nav .mb:active,#nav .lbl:active,.pk button:active,.fc:active,.lgt:active,.lmore:active,.tg button:active,.snd:active{box-shadow:var(--glow-p)!important;background-color:rgba(255,255,255,.8)}
 .btn:focus-visible,button:focus-visible,.fc:focus-visible{outline:0;box-shadow:var(--glow)!important}
 /* v97 · franja horaria: alto rígido */
 .step .fnow{height:54px!important;min-height:54px!important;max-height:54px!important;box-sizing:border-box;overflow:hidden}
-@media(hover:hover){#leg:not(.open):hover{box-shadow:var(--glow)!important;background-color:rgba(59,66,52,.12)}}
-#leg:not(.open):active{box-shadow:var(--glow-p)!important;background-color:rgba(59,66,52,.2)}
+@media(hover:hover){#leg:not(.open):hover{box-shadow:var(--glow)!important;background-color:rgba(255,255,255,.55)}}
+#leg:not(.open):active{box-shadow:var(--glow-p)!important;background-color:rgba(255,255,255,.8)}
 body #leg{transition:width .7s var(--spring-soft),height .7s var(--spring-soft),border-radius .6s var(--spring-soft),scale .8s var(--spring-el),box-shadow .35s ease,background-color .3s,opacity .35s ease .1s,visibility 0s}
 /* v98 · about: mismo halo en botones e Inicio (header nav) */
-@media(hover:hover){body.about .btn:hover,body.about header nav .lbl:hover,body.about header nav .mb:hover,body.about #nav:hover .lbl{box-shadow:var(--glow)!important;background-color:rgba(59,66,52,.12)!important}}
+@media(hover:hover){body.about .btn:hover,body.about header nav .lbl:hover,body.about header nav .mb:hover,body.about #nav:hover .lbl{box-shadow:var(--glow)!important;background-color:rgba(255,255,255,.6)!important}}
 body.about .btn:active,body.about header nav .lbl:active,body.about header nav .mb:active{box-shadow:var(--glow-p)!important;background-color:rgba(255,255,255,.85)!important}
 body.about .btn,body.about header nav .lbl,body.about header nav .mb{transition:scale .8s var(--spring-el),transform .45s var(--spring),box-shadow .35s ease,background-color .3s!important}
 /* v100 · restaura el despliegue elástico de Inicio / Hora del día / Fuente junto con el halo */
@@ -869,7 +869,7 @@ body:has(#ctl:hover) #hint,body:has(#cts:hover) #hint,body:has(#ctl:focus-within
 }
 @media(min-width:1101px) and (max-height:820px){#ans{padding:10px 24px!important}#ans .q{font-size:15.5px!important}#ans span{font-size:13px!important}}
 #ans a{display:inline-block;padding:7px 20px;border-radius:99px;text-decoration:none!important;color:var(--fg);font-weight:700;white-space:nowrap;background:linear-gradient(135deg,rgba(255,255,255,.55),rgba(255,255,255,.18));border:1px solid rgba(255,255,255,.85);box-shadow:0 4px 14px rgba(59,66,52,.18),inset 0 2px 3px rgba(255,255,255,.9),inset 0 -2px 6px rgba(94,102,85,.14);-webkit-backdrop-filter:blur(3px) saturate(1.5);backdrop-filter:blur(3px) saturate(1.5);transition:scale .8s var(--spring-el),box-shadow .35s ease,background-color .3s}
-@media(hover:hover){#ans a:hover{scale:1.045;box-shadow:var(--glow);background-color:rgba(59,66,52,.12)}}
+@media(hover:hover){#ans a:hover{scale:1.045;box-shadow:var(--glow);background-color:rgba(255,255,255,.55)}}
 #ans a:active{scale:.93;box-shadow:var(--glow-p);transition-duration:.12s}
 #kbd,#kbd[hidden]{display:block!important}
 #kbd{background:linear-gradient(135deg,rgba(255,255,255,.5),rgba(255,255,255,.16))!important;-webkit-backdrop-filter:blur(3px) saturate(1.5)!important;backdrop-filter:blur(3px) saturate(1.5)!important;border:1px solid rgba(255,255,255,.85)!important;box-shadow:0 14px 34px rgba(59,66,52,.2),inset 0 2px 3px rgba(255,255,255,.95),inset 0 -2px 6px rgba(94,102,85,.14)!important;transform-origin:right center;transition:opacity .35s ease,transform .6s var(--spring-soft),visibility 0s}
@@ -926,7 +926,7 @@ body:has(#ctl:hover) #hint,body:has(#cts:hover) #hint,body:has(#ctl:focus-within
 /* v112 · botón de la pregunta con halo; píldora al ancho del texto; «Respuesta corta:» en negrita */
 #ans a{align-self:stretch;text-align:center;box-sizing:border-box}
 #ans span b{font-weight:700;color:#3b4234}
-@media(hover:hover) and (min-width:1101px){#ans:has(.qt:hover){box-shadow:var(--glow)!important;background-color:rgba(59,66,52,.12)!important;scale:1.03}
+@media(hover:hover) and (min-width:1101px){#ans:has(.qt:hover){box-shadow:var(--glow)!important;background-color:rgba(255,255,255,.55)!important;scale:1.03}
 #ans.open:has(.qt:hover){scale:1.012}}
 #ans:has(.qt:active){box-shadow:var(--glow-p)!important;scale:.96!important;transition-duration:.12s!important}
 @media(min-width:1101px){#ans{transition:width .7s var(--spring-soft),height .7s var(--spring-soft),border-radius .6s var(--spring-soft),box-shadow .35s ease,background-color .3s,scale .8s var(--spring-el),opacity .35s ease,visibility 0s!important;transform-origin:right top}}
@@ -945,13 +945,13 @@ body:has(#ctl:hover) #hint,body:has(#cts:hover) #hint,body:has(#ctl:focus-within
 .lgt::after,#leg.open .lgt::after{content:'▾'!important;font-size:11px;opacity:.7;margin-left:6px;display:inline-block;transition:transform .5s var(--spring)}
 #leg.open .lgt::after{transform:rotate(180deg)!important}
 #leg{transform-origin:left top}
-@media(hover:hover){body #leg:has(.lgt:hover){box-shadow:var(--glow)!important;background-color:rgba(59,66,52,.12)!important;scale:1.03}
+@media(hover:hover){body #leg:has(.lgt:hover){box-shadow:var(--glow)!important;background-color:rgba(255,255,255,.55)!important;scale:1.03}
 body #leg.open:has(.lgt:hover){scale:1.012}}
 body #leg:has(.lgt:active){box-shadow:var(--glow-p)!important;scale:.96!important;transition-duration:.12s!important}
 body #leg .lgt:hover,body #leg .lgt:active{box-shadow:none!important;background-color:transparent!important;scale:1}
 .lmore,.cmin,.step .blk .cmin{padding:7px 20px!important;border-radius:99px;text-decoration:none!important;color:var(--fg)!important;font-weight:700;font-size:13px;white-space:nowrap;background:linear-gradient(135deg,rgba(255,255,255,.55),rgba(255,255,255,.18));border:1px solid rgba(255,255,255,.85)!important;box-shadow:0 4px 14px rgba(59,66,52,.18),inset 0 2px 3px rgba(255,255,255,.9),inset 0 -2px 6px rgba(94,102,85,.14);-webkit-backdrop-filter:blur(3px) saturate(1.5);backdrop-filter:blur(3px) saturate(1.5);cursor:pointer;transition:scale .8s var(--spring-el),box-shadow .35s ease,background-color .3s}
 .cmin,.step .blk .cmin{display:none!important}@media(max-width:1100px){.step .blk .cmin{display:inline-block!important}}
-@media(hover:hover){body .lmore:hover,body .cmin:hover{scale:1.045;box-shadow:var(--glow)!important;background-color:rgba(59,66,52,.12)}}
+@media(hover:hover){body .lmore:hover,body .cmin:hover{scale:1.045;box-shadow:var(--glow)!important;background-color:rgba(255,255,255,.55)}}
 body .lmore:active,body .cmin:active{scale:.93;box-shadow:var(--glow-p)!important;transition-duration:.12s}
 .lmore{margin:14px 0 0}
 .step .blk .cmin{align-self:flex-start!important;width:max-content!important;max-width:100%;margin:8px 0 12px!important;line-height:1.2}
@@ -1300,11 +1300,10 @@ body.cmpv .lgb{transition:opacity .4s,transform .75s var(--spring)!important}
 .pks label{transition:scale .8s var(--spring-el,ease),transform .45s var(--spring,ease)}
 .pks label:active,.bmore:active{scale:.95}
 
-/* v190 · hover/pulsado: tinte oscuro (como el selector de liquid glass del sistema) en vez de halo blanco; gota de selección transparente */
-:root{--glow:0 0 0 1px rgba(59,66,52,.1),0 8px 22px rgba(59,66,52,.22),inset 0 0 18px rgba(59,66,52,.1),inset 0 1px 2px rgba(255,255,255,.5);
- --glow-p:0 0 0 1px rgba(59,66,52,.14),0 3px 10px rgba(59,66,52,.2),inset 0 0 22px rgba(59,66,52,.2),inset 0 1px 2px rgba(255,255,255,.35)}
-#sec button:hover i{box-shadow:0 0 0 3px rgba(59,66,52,.14),0 0 10px 2px rgba(59,66,52,.22)}
-.tg .th,.pk button.on,#ctl button.on,#cts button.on,#ctl .mb.on,#cts .mb.on,#nav .mb.on{
+/* v190 · solo la franja horaria del comparador: hover/pulsado con tinte oscuro y gota de selección transparente */
+@media(hover:hover){.cmpc #cfg button:not(.on):hover{background:rgba(59,66,52,.12)!important;box-shadow:0 0 0 1px rgba(59,66,52,.1),inset 0 0 18px rgba(59,66,52,.1)!important}}
+.cmpc #cfg button:active{background:rgba(59,66,52,.2)!important;box-shadow:0 0 0 1px rgba(59,66,52,.14),inset 0 0 22px rgba(59,66,52,.2)!important}
+.cmpc #cfg .th{
   background:linear-gradient(155deg,rgba(255,255,255,.2),rgba(255,255,255,.05) 40%,rgba(255,255,255,.04) 62%,rgba(255,255,255,.14))!important;
   border:1px solid rgba(255,255,255,.42)!important;
   box-shadow:inset 1px 1.5px 1px -.5px rgba(255,255,255,.95),inset -1px -1.5px 1px -.5px rgba(255,255,255,.5),inset 0 0 0 1px rgba(255,255,255,.14),inset 6px 8px 14px -9px rgba(255,255,255,.55),inset -6px -8px 14px -9px rgba(94,102,85,.14),inset 2px 0 5px -3px rgba(210,10,46,.2),inset -2px 0 5px -3px rgba(26,94,137,.2),0 6px 14px -6px rgba(59,66,52,.38),0 1px 3px rgba(59,66,52,.16)!important}
