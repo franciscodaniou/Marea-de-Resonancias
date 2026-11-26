@@ -1097,3 +1097,7 @@ body.about #c{filter:blur(14px)}
 
 
 .cmp[data-m="c"] .dots{display:none}
+
+/* v168 · nota de agrado en comparar */
+.bfn{margin:6px 0 0;font-size:12.5px;line-height:1.35;color:#4b5342}
+@media(min-width:1500px){.bfn{font-size:14px}}
