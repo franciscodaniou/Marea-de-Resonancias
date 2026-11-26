@@ -1407,3 +1407,8 @@ body #bar .morph .mb,body #bar .morph .mb:hover,body #bar .morph .mb:active{box-
 }
 body #bar .morph .lbl>span{font-size:inherit;letter-spacing:0;text-transform:none;color:inherit;margin:0;white-space:nowrap}
 body #bar .morph .lbl>span>b{font-weight:700}
+
+/* v203 · about: botones del encabezado del mismo ancho, centrados y alineados */
+body.about .brow{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;margin-left:auto;margin-right:auto}
+body.about .brow .btn{display:flex;align-items:center;justify-content:center;text-align:center;white-space:nowrap;margin:0;box-sizing:border-box}
+@media(max-width:760px){body.about .brow{grid-template-columns:1fr;width:100%}body.about .brow .btn{white-space:normal;width:100%}}
