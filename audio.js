@@ -52,7 +52,7 @@ window.SND = (() => {
     let sh = c.map((x, j) => tot ? Math.pow(x / tot, 1.5) * (j === top ? 1.7 : 1) : 0); const sm = sh.reduce((a, b) => a + b, 0) || 1; sh = sh.map(x => x / sm);   // la fuente predominante manda
     return { share: sh, top, db: u.length ? mean(u, f => f.pr) : 0, fv: u.length ? mean(u, f => f.fv) : 1, fp: u.length ? mean(u, f => f.fp) : 1, ag: agrSec(s), n: u.length }; };
   /* eventos: máximo 3 nuevos por ciclo de 120 ms, para que no se apilen voces y el procesador no se sature */
-  let made = 0; const allow = () => made++ < 3;
+  let made = 0, nextV = 0; const allow = () => made++ < 3;
 
   function pass(sl, g) { if (!allow()) return; const t = ctx.currentTime, d = r(2, 3.4), e = gain(0), f = filt('lowpass', 520, .8), o = ctx.createOscillator(), n = noise(), nf = filt('bandpass', 700, .6), ng = gain(.35);
     o.type = 'sawtooth'; o.frequency.setValueAtTime(r(60, 72), t); o.frequency.linearRampToValueAtTime(r(95, 120), t + d * .45); o.frequency.linearRampToValueAtTime(r(55, 68), t + d);
@@ -63,7 +63,7 @@ window.SND = (() => {
   function note(sl, g, st) { if (!allow()) return; const t = ctx.currentTime, o = ctx.createOscillator(), e = gain(0), f = 196 * Math.pow(2, PENT[Math.floor(Math.random() * PENT.length)] / 12); o.type = st.ag < 0 ? 'square' : 'triangle'; o.frequency.value = f;
     if (st.ag < 0) { const o2 = ctx.createOscillator(); o2.type = 'triangle'; o2.frequency.value = f * 1.045; o2.connect(e); o2.start(t); o2.stop(t + 1); }
     o.connect(e); e.connect(sl.out); e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(g * .4, t + .015); e.gain.exponentialRampToValueAtTime(.0008, t + .9); o.start(t); o.stop(t + 1); }
-  function vowel(sl, g) { if (!allow()) return; const t = ctx.currentTime, d = r(.25, .5), f0 = r(85, 150), o = ctx.createOscillator(), lp = filt('lowpass', 1100, .4), e = gain(0), F = [[640, 1190], [420, 900], [520, 1650], [380, 1100]][Math.floor(Math.random() * 4)];
+  function vowel(sl, g) { if (!allow()) return; const t = ctx.currentTime, d = Math.random() < .25 ? r(.7, 1.2) : r(.22, .6), f0 = r(80, 165), o = ctx.createOscillator(), lp = filt('lowpass', 1100, .4), e = gain(0), F = [[640, 1190], [420, 900], [520, 1650], [380, 1100]][Math.floor(Math.random() * 4)];
     o.type = 'sawtooth'; o.frequency.setValueAtTime(f0, t); o.frequency.linearRampToValueAtTime(f0 * r(.92, 1.06), t + d); o.connect(lp);
     [[F[0], 1.4, 1], [F[1], 1.8, .6]].forEach(([fr, q, m]) => { const bp = filt('bandpass', fr, q), bg = gain(m); lp.connect(bp); bp.connect(bg); bg.connect(e); });
     e.connect(sl.out); e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(g * .8, t + .09); e.gain.linearRampToValueAtTime(g * .45, t + d * .6); e.gain.linearRampToValueAtTime(0, t + d); o.start(t); o.stop(t + d + .05); }
@@ -73,10 +73,13 @@ window.SND = (() => {
   function tick() { if (!active) return; made = 0; const dt = .12; slots.forEach(sl => { if (!sl.st || sl.gain < .02) return; const st = sl.st, sh = st.share, lv = sl.gain, P = j => (st.top === j ? 1.5 : 1);
     if (sh[0] > .05 && Math.random() < dt * (.05 + .22 * (st.fv - 1)) * (.5 + 2 * sh[0])) pass(sl, .55 * lv * (.4 + sh[0]));
     if (sh[0] > .1 && Math.random() < dt * (.03 + .05 * (st.fv - 1)) * (.4 + 2 * sh[0])) beep(sl, lv * (.5 + sh[0]));
-    if (sh[1] > .05 && Math.random() < dt * 2.6 * (.3 + 1.5 * sh[1]) * (.4 + .3 * st.fp)) vowel(sl, lv * (.6 + 1.3 * sh[1]));
     if (sh[2] > .05 && Math.random() < dt * 1.6 * (.3 + 1.5 * sh[2])) note(sl, lv * (.3 + sh[2]), st);
     if (sh[3] > .04 && Math.random() < dt * (.09 + .12 * sh[3]) * P(3)) horn(sl, lv * (.4 + .9 * sh[3]), Math.random() < .7);
-    if (sh[3] > .25 && Math.random() < dt * .04) horn(sl, lv * .5, false); }); }
+    if (sh[3] > .25 && Math.random() < dt * .04) horn(sl, lv * .5, false); });
+    /* vocales graves: un solo flujo global con intervalos irregulares (exponenciales) y lugar elegido al azar según su peso humano → voces sueltas, asíncronas, sin ritmo de coro */
+    const now = ctx.currentTime; if (now >= nextV) { let W = 0; const ws = slots.map(q => { const w = q.st && q.gain > .02 ? q.st.share[1] * q.gain : 0; W += w; return w; });
+      if (W > .02) { let x = Math.random() * W, k = 0; while (k < ws.length - 1 && x > ws[k]) { x -= ws[k]; k++; } const q = slots[k], sh1 = q.st.share[1]; vowel(q, q.gain * (.6 + 1.3 * sh1)); }
+      nextV = now + cl(-Math.log(1 - Math.random()) * (1.1 / (.5 + 2 * Math.min(1, W))), .3, 3.2); } }
   /* escena: lista de [sector, paneo] y volumen general (0 en portada y en gráficas) */
   function update(sc, v) { if (!active) return; vol = v; const t = ctx.currentTime, key = JSON.stringify(sc.map(x => x[0])) + (window.MAREA ? MAREA.flt : '') + (window.MAREA ? MAREA.srcF : '');
     const k = 1 / Math.sqrt(Math.max(1, sc.length));
