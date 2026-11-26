@@ -27,13 +27,17 @@ window.SND = (() => {
     // H · tumulto de gente murmurando: muchas voces graves superpuestas (pulso glótico suave + formantes anchos + algo de aire), sin vibrato ni agudos, cada una con sílabas y pausas propias → un fondo de habla indistinta
     v.H = gain(0); B.H = d => { const bus = gain(.85), lp = filt('lowpass', 2100, .3); bus.connect(lp); lp.connect(d);
       const FM = [[640, 1190, 2300], [330, 1500, 2400], [420, 900, 2200], [520, 1650, 2400], [600, 1300, 2350], [380, 1100, 2300]], nz0 = noise();
-      for (let i = 0; i < 8; i++) { const f0 = i % 4 === 0 ? r(150, 200) : r(80, 140), o = osc('sawtooth', f0), amp = gain(.5), fm = FM[i % 6], hp = filt('lowpass', 900 + Math.random() * 500, .4), sum = gain(1);
+      for (let i = 0; i < 8; i++) { const f0 = i % 4 === 0 ? r(150, 200) : r(80, 140), o = osc('sawtooth', f0), amp = gain(f0 < 140 ? .65 : .5), fm = FM[i % 6], hp = filt('lowpass', 900 + Math.random() * 500, .4), sum = gain(1);
         lfo(r(.1, .35), f0 * .035, o.frequency);   // deriva lenta de entonación; sin vibrato
         lfo(r(1.8, 4.2), .3, amp.gain); lfo(r(.07, .25), .18, amp.gain);   // sílabas + pausas (la ganancia no baja de 0)
         o.connect(hp); hp.connect(sum);
         const ns = filt('lowpass', 1800, .3), nsg = gain(.3); nz0.connect(ns); ns.connect(nsg); nsg.connect(sum);   // aliento: vuelve la voz indistinta
         fm.forEach((fr, k) => { const bp = filt('bandpass', fr * r(.9, 1.1), 1.6), bg = gain([1.1, .7, .18][k]); sum.connect(bp); bp.connect(bg); bg.connect(amp); lfo(r(.12, .4), fr * .2, bp.frequency); });
-        if (ctx.createStereoPanner) { const pn = ctx.createStereoPanner(); pn.pan.value = r(-.8, .8); amp.connect(pn); pn.connect(bus); } else amp.connect(bus); } };
+        if (ctx.createStereoPanner) { const pn = ctx.createStereoPanner(); pn.pan.value = r(-.8, .8); amp.connect(pn); pn.connect(bus); } else amp.connect(bus); } 
+      // capa de «trombón»: tres dientes de sierra graves desafinados, filtrados con resonancia de metal (~480 Hz) y con ondulaciones lentas de intensidad; predomina sobre las voces
+      { const tb = gain(0), tl = filt('lowpass', 820, 2.2), tf = filt('peaking', 480, 1.2); tf.gain.value = 7; tl.connect(tf); tf.connect(tb); tb.connect(bus);
+        [[r(78, 86), 0], [r(92, 100), 1], [r(116, 124), 2]].forEach(([f0, k]) => { const o = osc('sawtooth', f0), og = gain(.5 - k * .1); lfo(r(.12, .3), f0 * .02, o.frequency); o.connect(og); og.connect(tl); });
+        tb.gain.value = 1.15; lfo(r(.15, .3), .35, tb.gain); lfo(r(.05, .11), .25, tb.gain); } };
     // C · se toca con notas sueltas (eventos)
     v.C = gain(0);
     // M · oleaje suave (barrido lento de un ruido grave) + casco/motor de barco (dos senos graves)
