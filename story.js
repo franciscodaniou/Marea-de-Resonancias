@@ -199,7 +199,7 @@
     <section class="cstage"><div class="stk"><div class="blk"><div class="bh"><h3>Comparar dos lugares</h3><div class="sub">elige A, B y la hora del día · mismas escalas en mallas y barras</div></div><article class="card sc cmpc"><p class="rd" id="rd" aria-live="polite"></p>
       <div class="pks">${[0, 1].map(k => `<label style="--c:${S[k ? 1 : 0].hex}"><b>${'AB'[k]}</b><select data-k="${k}" aria-label="Lugar ${'AB'[k]}">${S.map((d, i) => `<option value="${i}">${nm(i)}</option>`).join('')}</select></label>`).join('')}</div>
       ${[0, 1].map(k => `<div class="pk" data-k="${k}"><b style="color:${S[k ? 1 : 0].hex}">${'AB'[k]}</b>${S.map((d, i) => `<button data-i="${i}"><i style="background:${d.hex}"></i>${nm(i)}</button>`).join('')}</div>`).join('')}
-      <div class="tg fg" id="cfg">${[['all', 'Día'], ['am', 'Mañana'], ['pm', 'Tarde'], ['pk', 'Hora punta']].map(([k, n], i) => `<button data-f="${k}"${i ? '' : ' class="on"'}>${n}</button>`).join('')}</div>
+      <div class="cfrow"><div class="tg fg" id="cfg">${[['all', 'Día'], ['am', 'Mañana'], ['pm', 'Tarde'], ['pk', 'Hora punta']].map(([k, n], i) => `<button data-f="${k}"${i ? '' : ' class="on"'}>${n}</button>`).join('')}</div><button type="button" class="bmore" aria-expanded="false"><span class="m1">Más</span><span class="m2">Menos</span><i></i></button></div>
       <div class="bfs" id="bfs"></div></article></div></div></section></div>
 `;
   if (!ABOUT) document.body.insertAdjacentHTML('beforeend', '<div id="sref" aria-hidden="true">' + S.map(card).join('') + '</div>'); // molde invisible: da a app.js el tamaño de tarjeta que replican sectores y ciudades expandidos
@@ -257,7 +257,7 @@ const CQ = ['¿Cómo varían las fuentes y la intensidad del sonido según el lu
   const ROWS = [['dB prom.', 'db', 45, 90, v => v.toFixed(1)], ['dB máx.', 'mx', 60, 100, v => v.toFixed(0)], ['Peatonal', 'fp', 1, 3, v => v.toFixed(1)], ['Vehicular', 'fv', 1, 3, v => v.toFixed(1)], ['Agrado*', 'ag', -1, 2, v => v.toFixed(2)], ['Mediciones', 'n', 0, 14, v => v]];
   const dc = k => ({ db: 1, fp: 1, fv: 1, ag: 2 })[k] || 0, bf = (m, i) => { const A = m[0], B = m[1], w = (v, lo, hi) => v == null ? 0 : cl01((v - lo) / (hi - lo)) * 100;
     return ROWS.map(([l, key, lo, hi, f]) => `<div class="bf${key === 'db' || key === 'ag' ? '' : ' x'}"><b${A[key] == null ? '' : ` data-n="${f(A[key])}" data-dec="${dc(key)}"`}>${A[key] == null ? '–' : f(A[key])}</b><span class="ba"><i style="width:${w(A[key], lo, hi)}%;background:${S[pair[0]].hex}" data-w="${w(A[key], lo, hi).toFixed(1)}"></i></span><em>${l}</em><span class="bb"><i style="width:${w(B[key], lo, hi)}%;background:${S[pair[1]].hex}" data-w="${w(B[key], lo, hi).toFixed(1)}"></i></span><b${B[key] == null ? '' : ` data-n="${f(B[key])}" data-dec="${dc(key)}"`}>${B[key] == null ? '–' : f(B[key])}</b></div>`).join('')
-      + `<div class="bf dm"><b style="color:${A.dom ? COL[A.dom] : 'inherit'}">${A.dom ? SH[A.dom] : '–'}</b><span></span><em>Predomina</em><span></span><b style="color:${B.dom ? COL[B.dom] : 'inherit'}">${B.dom ? SH[B.dom] : '–'}</b></div><p class="bfn">*Agrado: promedio de las encuestas, de −1 (les incomoda) a 2 (les gusta).</p><button type="button" class="bmore" aria-expanded="false"><span class="m1">Ver más datos</span><span class="m2">Ver menos</span><i></i></button>`; };
+      + `<div class="bf dm"><b style="color:${A.dom ? COL[A.dom] : 'inherit'}">${A.dom ? SH[A.dom] : '–'}</b><span></span><em>Predomina</em><span></span><b style="color:${B.dom ? COL[B.dom] : 'inherit'}">${B.dom ? SH[B.dom] : '–'}</b></div><p class="bfn">*Agrado: promedio de las encuestas, de −1 (les incomoda) a 2 (les gusta).</p>`; };
   const cmpEl = document.querySelector('.cmp'), cmpL = cmpEl.querySelector('.cl'), cmpQ = cmpEl.querySelector('.cq'), cmpDots = [...cmpEl.querySelectorAll('.dots span')];
   const renderCmp = () => { const [a, b] = pair, A = met(a, cf), B = met(b, cf); if (window.MAREA) MAREA.pair = pair.slice();
     document.getElementById('bfs').innerHTML = bf([A, B]); if (window.VITA) VITA.scan(document.getElementById('bfs'));
@@ -273,7 +273,7 @@ const CQ = ['¿Cómo varían las fuentes y la intensidad del sonido según el lu
     if (window.cmLegSync) cmLegSync(); cmpQ.textContent = CQ[c ? 1 : 0]; document.getElementById('cmph').textContent = c ? 'Dos lugares frente a frente' : 'Cada lugar, a cada hora';
     cmpEl.querySelector('.cn.r').style.display = c ? 'none' : ''; cmpEl.querySelector('.cn.c').style.display = c ? '' : 'none';
     if (c) renderCmp(); else cmpDots.forEach((d, q) => d.classList.toggle('on', q === cur)); };
-  document.getElementById('bfs').addEventListener('click', e => { const b = e.target.closest('.bmore'); if (!b) return; const o = b.parentNode.classList.toggle('open'); b.setAttribute('aria-expanded', o); });
+  document.querySelector('.cfrow').addEventListener('click', e => { const b = e.target.closest('.bmore'); if (!b) return; const o = document.getElementById('bfs').classList.toggle('open'); b.classList.toggle('on', o); b.setAttribute('aria-expanded', o); });
   renderCmp(); setMode('r');
 
   /* scroll → lugar (seis tramos) y, dentro de cada lugar, franja horaria (mañana → tarde → hora punta); después, modo comparar */

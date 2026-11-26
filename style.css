@@ -1256,3 +1256,24 @@ body.cmpv .lgb{transition:opacity .4s,transform .75s var(--spring)!important}
  .bmore i{width:7px;height:7px;border-right:2px solid #5E6655;border-bottom:2px solid #5E6655;transform:rotate(45deg) translate(-2px,-2px);transition:transform .5s var(--spring-el,ease)}
  .bfs.open .bmore i{transform:rotate(-135deg) translate(-2px,-2px)}
 }
+
+/* v184 · franja horaria y «Más datos» en una sola línea */
+@media(max-width:759px){
+ .cfrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 6px}
+ .cfrow .tg{margin:0!important;flex:0 1 auto;min-width:0}
+ .cfrow .tg button{padding-left:11px!important;padding-right:11px!important}
+ .cfrow .bmore{order:0;margin:0;flex:0 0 auto;padding:9px 13px;gap:6px;font-size:13.5px}
+ .cfrow .bmore.on .m1,.bfs.open~.x{display:none}
+ .cfrow .bmore .m2{display:none}.cfrow .bmore.on .m2{display:inline}.cfrow .bmore.on .m1{display:none}
+ .cfrow .bmore.on i{transform:rotate(-135deg) translate(-2px,-2px)}
+}
+@media(max-width:759px){
+ .cfrow .tg button{white-space:nowrap;font-size:13.5px!important;padding:8px 9px!important}
+ .cfrow .bmore{padding:9px 12px;font-size:13.5px}
+}
+@media(max-width:759px){
+ .cfrow{gap:6px}
+ .cfrow .tg{padding:3px!important;gap:0!important}
+ .cfrow .tg button{font-size:12.5px!important;padding:8px 7px!important}
+ .cfrow .bmore{padding:9px 10px;gap:5px;font-size:12.5px;min-width:62px;justify-content:center}
+}
