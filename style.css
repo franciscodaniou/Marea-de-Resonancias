@@ -1291,3 +1291,11 @@ body.cmpv .lgb{transition:opacity .4s,transform .75s var(--spring)!important}
  .cmpc #cfg{display:flex;width:100%;box-sizing:border-box}
  .cmpc #cfg button{flex:1 1 0;text-align:center}
 }
+
+/* v189 · selectores A/B y «Más»: mismo vidrio que el resto de las píldoras */
+.pks label,.bmore{
+  background:linear-gradient(155deg,rgba(255,255,255,.2),rgba(255,255,255,.05) 40%,rgba(255,255,255,.04) 62%,rgba(255,255,255,.14))!important;
+  -webkit-backdrop-filter:blur(2px) saturate(1.18);backdrop-filter:blur(2px) saturate(1.18);border:1px solid rgba(255,255,255,.34)!important;
+  box-shadow:inset 1px 1.5px 1px -.5px rgba(255,255,255,.95),inset -1px -1.5px 1px -.5px rgba(255,255,255,.5),inset 0 0 0 1px rgba(255,255,255,.14),inset 6px 8px 14px -9px rgba(255,255,255,.55),inset -6px -8px 14px -9px rgba(94,102,85,.14),inset 2px 0 5px -3px rgba(210,10,46,.2),inset -2px 0 5px -3px rgba(26,94,137,.2),0 10px 18px -8px rgba(59,66,52,.3),0 2px 4px rgba(59,66,52,.1)!important}
+.pks label{transition:scale .8s var(--spring-el,ease),transform .45s var(--spring,ease)}
+.pks label:active,.bmore:active{scale:.95}
