@@ -1124,3 +1124,10 @@ h1,h2,h3,h4,h5,.sub,.sech,.part-h,.sh,#cmph,.bh h3,.sc h3,.sc .pf h5,#panel .pf 
 header b,header nav a,.eb,.eb2,#hero .eb,.fi2 b,.cl dt,.bf em,.lc h4,.chips,.cn{font-family:"SF Compact","SF Pro",-apple-system,"Helvetica Neue",Arial,sans-serif}
 q,.ag q,#panel q,.card em.q{font-family:"New York",Georgia,"Times New Roman",serif;font-style:normal!important;font-weight:600}
 .lead3{font-weight:400}
+/* v175 · index: se restauran los pesos originales (solo cambia la familia) */
+body:not(.about) .sub{font-weight:400}
+body:not(.about) .sech,body:not(.about) #cmph{font-weight:800}
+body:not(.about) h3{font-weight:600}
+body:not(.about) .sc h3,body:not(.about) .bh h3,body:not(.about) #panel .pd .bh h3{font-weight:700}
+body:not(.about) q,body:not(.about) .ag q,body:not(.about) #panel q,body:not(.about) .card em.q{font-weight:700}
+body:not(.about) .sech2{font-weight:800}
