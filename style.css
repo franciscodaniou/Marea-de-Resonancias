@@ -1012,3 +1012,8 @@ body.about .card>h3:first-child{margin-top:0}
 /* v149 · about: títulos de sección más grandes */
 body.about h2.sh{font-size:clamp(30px,2.6vw,50px);line-height:1.1;letter-spacing:-.015em;margin-bottom:-10px}
 @media(max-width:760px){body.about h2.sh{font-size:28px;margin-bottom:-8px}}
+
+/* v150 · about: gráficas, estadísticas y consola (movidas desde la visualización) */
+body.about .wrap2{max-width:none;padding:0;margin:0}
+body.about .stack>.wrap2{position:relative;margin:0}
+body.about #s4 .foot2,body.about .lead3{margin-left:8px}

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="theme-color" content="#DCDDD3"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Acerca de Marea de resonancias</title><link rel="stylesheet" href="style.css?v=149"></head>
+<title>Acerca de Marea de resonancias</title><link rel="stylesheet" href="style.css?v=150"></head>
 <body class="about">
 <header><b>Marea de resonancias</b><nav id="nav" class="morph"><span class="lbl" tabindex="0">Inicio</span><a class="mb" href="index.html">Visualización</a><a class="mb on" href="about.html">Acerca del estudio</a></nav></header>
 <canvas id="c" aria-hidden="true"></canvas>
@@ -25,7 +25,7 @@
 <ul>
 <li><b>Mediciones de terreno (46):</b> 38 del Barrio Puerto y 8 de Buenos Aires. Por medición: sector, hora de inicio, dB mínimo, promedio y máximo, fuente predominante, flujos peatonal y vehicular (1 a 3) y el fenómeno sonoro observado.</li>
 <li><b>Encuestas de percepción (20):</b> sector, agrado (de «me incomoda un poco» a «me gusta»), dB medido y una cita textual.</li>
-<li><b>Datos abiertos:</b> <a href="data.json">data.json</a> es la base completa y <a href="data.js?v=149">data.js</a> es la misma información como script que carga el sitio, con la fuente y los criterios de preparación en su cabecera.</li></ul>
+<li><b>Datos abiertos:</b> <a href="data.json">data.json</a> es la base completa y <a href="data.js?v=150">data.js</a> es la misma información como script que carga el sitio, con la fuente y los criterios de preparación en su cabecera.</li></ul>
 </section>
 <h2 class="sh">Figuración</h2><section class="card">
 <h3>La marea de resonancias</h3>
@@ -44,16 +44,17 @@
 <ul><li><b>Transparencia:</b> deja ver lo que hay detrás, como el sonido que atraviesa una fachada sin desaparecer.</li><li><b>Reflexión:</b> el brillo responde a quien se acerca, como el eco que vuelve según dónde suena.</li><li><b>Refracción:</b> el borde curva lo que se ve, como el medio que desvía y deforma lo que se oye.</li><li><b>Fusión:</b> dos contenedores cercanos se unen en una gota, como dos fuentes que se oyen como una sola masa.</li><li><b>Desenfoque:</b> el fondo difuso del ruido, sobre el que destacan las voces cercanas.</li></ul></section>
 <h2 class="sh">Interacción</h2><section class="card">
 <h3>Recorrido por scroll</h3>
-<p>La visualización se recorre hacia abajo, en ocho momentos:</p>
+<p>La visualización se recorre hacia abajo, en cinco momentos:</p>
 <ol>
 <li><b>El Barrio Puerto:</b> todas las mediciones sobre una misma malla, bajo la pregunta orientadora y una respuesta corta. Se puede tocar una medición, filtrar por «Hora del día» o «Fuente» y girar la malla arrastrando.</li>
 <li><b>Sectores:</b> la malla se disuelve en seis mallas lado a lado, con su dB promedio en barra, «más ruidoso» y «más tranquilo», agrado y flujos. Un clic expande el sector en una tarjeta con dB, fuentes, agrado, flujos, perfil por hora y el registro de cada medición.</li><li><b>Hallazgos:</b> «Lo que dice el Barrio Puerto»: tres respuestas (según el lugar, la fuente y la hora) con cifras que se animan y un gráfico de dB por hora. Cada lugar enlaza a su tramo.</li>
 <li><b>Lugares, a cada hora:</b> el título y la leyenda quedan fijos mientras dura la sección. Cada lugar ocupa tres tramos de scroll: mañana, tarde y hora punta. La malla se filtra por esa hora y la tarjeta muestra su dB promedio, el registro y el número de mediciones; al terminar se restaura el filtro previo.</li>
 <li><b>Comparar:</b> se eligen dos lugares (A y B) y una hora del día. Las dos mallas se muestran con la misma escala y barras que crecen desde el centro comparan dB, máximo, flujos, agrado y número de mediciones, con una lectura automática de la diferencia. El agrado no se filtra por hora porque las encuestas no registran hora.</li>
-<li><b>Gráficas que se transforman:</b> las mismas cifras cambian de forma con un botón (intensidad por lugar o por hora; agrado frente a dB o respuestas; el agrado en palabras, de «incomoda» a «gusta»).</li>
-<li><b>Partitura:</b> cada medición es una nota. La línea es su fuente de sonido, la posición su hora y el tamaño su dB. Se ve todo el barrio o un pentagrama por lugar.</li>
-<li><b>Estadísticas y consola:</b> qué suena, cuánta gente y tráfico hay, cómo se siente cada lugar, los picos más altos y una consola «Cómo funciona» con la malla en vivo.</li></ol>
+</ol>
 <p>El botón «Cómo leer» explica el código visual. A la derecha, un indicador de secciones permite saltar entre ellas y copiar un enlace que restaura la vista (sección, filtros, lugares A y B y hora). Sonido opcional (silenciado por defecto, botón del indicador o tecla M): cada fuente tiene su timbre y el volumen sigue los dB del lugar. Atajos: ← → (paso u hora), A y B (lugar en Comparar), N y P (sección), 1–6 (sector), M (sonido), ? (ayuda). La interfaz usa glassmorfismo (WebGL en controles fijos y CSS en lo que se desplaza).</p></section>
+<h2 class="sh">Las mismas cifras, de otra forma</h2><div class="wrap2 charts2" id="ab-charts"></div>
+<h2 class="sh">Estadísticas del Barrio Puerto</h2><div class="wrap2" id="s4"></div>
+<h2 class="sh">Cómo funciona</h2><div class="wrap2" id="s5"></div>
 <h2 class="sh">Declaración de uso de IA</h2><section class="card wide">
 <p>La IA (Claude, de Anthropic) se usó como apoyo a la implementación técnica: el motor de canvas, el shader del fondo, la maquetación responsiva, la depuración y las pruebas automatizadas en navegador.</p>
 <p>En las fases finales del proyecto, además, actuó de manera autónoma como agente sobre el repositorio de GitHub para los ajustes menores: el autor indicaba qué corregir y cómo hacerlo, y la IA lo ejecutaba directamente (modificaba los archivos, lo probaba en el navegador y publicaba el cambio con un commit y un push a la rama principal), sin proponer ni decidir la dirección creativa.</p>
@@ -61,9 +62,9 @@
 </div>
 <p class="foot">Proyecto grupal: <a href="https://wiki.ead.pucv.cl/Proyecto_de_Visualizaci%C3%B3n_-_Grupo_2">Proyecto de Visualización – Grupo 2</a> · Proyecto individual: <a href="https://wiki.ead.pucv.cl/Visualizaci%C3%B3n_de_Datos_Interactiva_TDS_2026_-_Francisco_Daniou">Visualización de Datos Interactiva TDS 2026 – Francisco Daniou</a> · Taller de Diseño de Servicios 2026</p>
 </div>
-<script src="data.js?v=149"></script><script src="app.js?v=149"></script><script src="glass.js?v=149"></script>
-<script>(function(){var S=[['hallazgos','Hallazgos']];var els=document.querySelectorAll('section.card');var nav=document.createElement('nav');nav.id='sec';nav.setAttribute('aria-label','Secciones de la página');
-var items=[];els.forEach(function(s,i){var h=s.previousElementSibling;if(!h||h.className!=='sh')return;if(!s.id)s.id='s'+i;items.push([h,h.textContent.trim()]);});
+<script src="data.js?v=150"></script><script src="vita.js?v=150"></script><script src="app.js?v=150"></script><script src="story.js?v=150"></script><script src="glass.js?v=150"></script>
+<script>(function(){var S=[['hallazgos','Hallazgos']];var els=document.querySelectorAll('h2.sh');var nav=document.createElement('nav');nav.id='sec';nav.setAttribute('aria-label','Secciones de la página');
+var items=[];els.forEach(function(h){items.push([h,h.textContent.trim()]);});
 nav.innerHTML=items.map(function(it,i){return '<button data-i="'+i+'" aria-label="'+it[1]+'"><span>'+it[1]+'</span><i></i></button>'}).join('');document.body.appendChild(nav);
 var bs=[].slice.call(nav.querySelectorAll('button')),RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 var pin=null;['wheel','touchstart','keydown'].forEach(function(ev){addEventListener(ev,function(){pin=null},{passive:true})});bs.forEach(function(b,i){b.addEventListener('click',function(){var y=items[i][0].getBoundingClientRect().top+scrollY-84;pin={i:i,y:Math.max(0,y),l:false,ly:0};scrollTo({top:y,behavior:RM?'auto':'smooth'})})});

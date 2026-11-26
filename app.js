@@ -258,7 +258,7 @@ function frame(ms) {
   const vh = innerHeight, sy0 = window.scrollY, hero = document.body.classList.contains('heroing') || document.body.classList.contains('about');
   const stEl = document.querySelectorAll('.step'), chEl = document.querySelector('.finds') || document.querySelector('.charts2'), csE = document.querySelector('.cstage'); let cT = 0, cS = -1, cmpT = 0;
   const fdE = document.querySelector('.finds'), stpE = document.querySelector('.steps'), rmp = e => cl((vh * .95 - e.getBoundingClientRect().top) / (.5 * vh), 0, 1);
-  amb = hero || want !== null ? 0 : chEl ? Math.max(fdE && stpE ? rmp(fdE) * (1 - cl((vh * .42 - stpE.getBoundingClientRect().top) / (vh * .3), 0, 1)) : 0, rmp(document.querySelector('.charts2') || chEl)) : cl((sy0 - 1.0 * vh) / (.6 * vh), 0, 1);
+  amb = hero || want !== null ? 0 : chEl ? Math.max(fdE && stpE ? rmp(fdE) * (1 - cl((vh * .42 - stpE.getBoundingClientRect().top) / (vh * .3), 0, 1)) : 0, (document.querySelector('.charts2') ? rmp(document.querySelector('.charts2')) : 0)) : cl((sy0 - 1.0 * vh) / (.6 * vh), 0, 1);
   if (stEl.length && !hero && want === null) { const f0 = stEl[0].getBoundingClientRect(), l0 = (csE || stEl[stEl.length - 1]).getBoundingClientRect(); cT = cl((vh * .42 - f0.top) / (vh * .3), 0, 1) * cl((l0.bottom - vh * .45) / (vh * .3), 0, 1);
     let best = 1e9; stEl.forEach((el, q) => { const r = el.getBoundingClientRect(), d = Math.abs((r.top + r.bottom) / 2 - vh / 2); if (d < best) { best = d; cS = q; } }); if (csE && csE.getBoundingClientRect().top < vh * .5) cmpT = 1; }
   { const ob = W < 760 && cS >= 0 && !cmpT && stEl[cS].querySelector('.blk.open') ? 1 : 0; mo += (ob - mo) * (1 - Math.exp(-dt * 6)); }

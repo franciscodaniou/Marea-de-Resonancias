@@ -190,7 +190,8 @@
       ${thesis()}
       <p class="foot2">Plaza de Mayo y Puente de la Mujer (Buenos Aires) son lugares de comparación: tienen dB propios, pero no entran en las cifras del Barrio Puerto. Las equivalencias en palabras son aproximadas.</p></section>`;
   };
-  document.getElementById('s3').innerHTML = `${finds()}<div class="steps"><div class="cmpw"><div class="cmp"><h2 id="cmph">Cada lugar, a cada hora</h2><p class="cq"></p>
+  const ABOUT = document.body.classList.contains('about');
+  if (!ABOUT) document.getElementById('s3').innerHTML = `${finds()}<div class="steps"><div class="cmpw"><div class="cmp"><h2 id="cmph">Cada lugar, a cada hora</h2><p class="cq"></p>
       <div class="ft">${FN.map(f => `<span>${f[0]}<em> ${f[1]}</em></span>`).join('')}</div>
       <div class="cp"><span class="dots">${S.map((d, i) => `<span style="background:${d.hex}"${i ? '' : ' class="on"'}></span>`).join('')}</span><span class="cn r">Lugar <i id="cmpn">1</i> de ${NS} · <i id="cmpt">${SECT[0]}</i></span><span class="cn c">Comparando · <i id="cmpa"></i> ↔ <i id="cmpb"></i></span></div>
       <dl class="cl"></dl></div></div>${S.map(card).join('')}
@@ -198,23 +199,13 @@
       ${[0, 1].map(k => `<div class="pk" data-k="${k}"><b style="color:${S[k ? 1 : 0].hex}">${'AB'[k]}</b>${S.map((d, i) => `<button data-i="${i}"><i style="background:${d.hex}"></i>${nm(i)}</button>`).join('')}</div>`).join('')}
       <div class="tg fg" id="cfg">${[['all', 'Día'], ['am', 'Mañana'], ['pm', 'Tarde'], ['pk', 'Hora punta']].map(([k, n], i) => `<button data-f="${k}"${i ? '' : ' class="on"'}>${n}</button>`).join('')}</div>
       <div class="bfs" id="bfs"></div></article></div></div></section></div>
-    <div class="wrap2 charts2"><h2 class="sech">Las mismas cifras, de otra forma</h2><p class="lead3">Cada gráfica se transforma en otra del mismo tema con el botón.</p><div class="grid2"><div class="mg" id="gA"></div><div class="mg" id="gB"></div></div>
-      <div class="ptr"><div class="mg" id="gD"></div></div></div>`;
-  document.getElementById('s4').innerHTML = `<div class="wrap2"><h2 class="sech">Estadísticas del Barrio Puerto</h2>
-    <p class="lead3">Qué suena, cuánta gente y tráfico hay, y dónde están los picos.</p>
+`;
+  const CH = `<p class="lead3">Cada gráfica se transforma en otra del mismo tema con el botón.</p><div class="grid2"><div class="mg" id="gA"></div><div class="mg" id="gB"></div></div>
+      <div class="ptr"><div class="mg" id="gD"></div></div>`;
+  const S4 = `<p class="lead3">Qué suena, cuánta gente y tráfico hay, y dónde están los picos.</p>
     <div class="grid2"><div class="mg" id="gC"></div><div class="blk"><div class="bh"><h3>Los picos del barrio</h3><p class="cs">Las seis mediciones más altas (dB máximo)</p></div><div class="tg st"><span>De mayor a menor</span></div><div class="card cc"><ol class="peaks">${peaks()}</ol></div></div></div>
-    <p class="foot2">Fuente: Base de Datos – Variación Sonora Barrio Puerto. Criterios y límites en <a href="about.html">Acerca del estudio</a>; datos en <a href="data.json">data.json</a>.</p></div>`;
-  if (window.VITA) VITA.scan(document.getElementById('s3')), VITA.scan(document.getElementById('s4'));
-  Morph(document.getElementById('gA'), A); Morph(document.getElementById('gB'), B); Morph(document.getElementById('gC'), C); Morph(document.getElementById('gD'), D);
-  { const SN = { V: 'los vehículos', H: 'las voces', C: 'el comercio', M: 'el puerto', N: 'la naturaleza' }, fr = FN.map(([n, , k]) => { const q = FM.filter(f => f.m >= FILTERS[k][0] && f.m <= FILTERS[k][1]), c = CK.map(c => q.filter(f => f.c === c).length), t = c.indexOf(Math.max(...c)); return `<li><b>${n}</b> <span>predomina ${SN[CK[t]]}</span></li>`; }).join('');
-    const lg = document.createElement('div'); lg.className = 'rd2 lg'; lg.id = 'rd2'; document.querySelector('#gD .tg').before(lg);
-    const gl = { dot: '<svg viewBox="0 0 40 28"><circle cx="20" cy="14" r="7" fill="currentColor"/></svg>', time: '<svg viewBox="0 0 40 28"><path d="M4 14h30M28 8l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-      rows: '<svg viewBox="0 0 40 28"><path d="M5 6h30M5 14h30M5 22h30" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>', size: '<svg viewBox="0 0 40 28"><circle cx="10" cy="15" r="3.5" fill="currentColor"/><circle cx="27" cy="14" r="8" fill="currentColor"/></svg>' };
-    lg.innerHTML = `<h5>Cómo leer este gráfico</h5><ul class="how"><li>${gl.dot}<p><b>Cada punto</b> es una medición hecha en terreno.</p></li><li>${gl.time}<p><b>De izquierda a derecha</b> pasa el día, de las 09:40 a las 18:50. La medición de las 00:20 queda al final.</p></li><li>${gl.rows}<p><b>Cada fila</b> es un tipo de sonido: vehículos, voces, comercio, puerto o naturaleza.</p></li><li>${gl.size}<p><b>Más grande</b> significa más fuerte, medido en decibeles (dB).</p></li></ul>
-      <div class="see"><h5>Lo que se ve</h5><ul>${fr}</ul><p class="rn">Puntos casi juntos en la misma hora son sonidos que se oyeron a la vez. Son pocas mediciones (${uniq(FM).length}), así que los patrones son pistas, no conclusiones.</p></div>`; }
-
-  document.getElementById('s5').innerHTML = `<div class="wrap2"><h2 class="sech">Cómo funciona</h2>
-    <p class="lead3">La lógica del código, en palabras simples.</p>
+    <p class="foot2">Fuente: Base de Datos – Variación Sonora Barrio Puerto. Datos abiertos: <a href="data.json">data.json</a> y <a href="data.js">data.js</a>.</p>`;
+  const S5 = `<p class="lead3">La lógica del código, en palabras simples.</p>
     <div class="console"><div class="cbar"><i></i><i></i><i></i><span>marea — explicar</span></div><pre><span class="pm">$</span> marea --explicar
 <span class="ok">1 · datos</span>   data.js guarda las mediciones de terreno y las encuestas. Se unen por lugar.
 <span class="ok">2 · malla</span>   cada lugar es un tubo de puntos. Un ruido suave (Perlin) lo ondula;
@@ -226,7 +217,24 @@
            que lees. Los filtros solo apagan lo que no coincide.
 <span class="ok">6 · vidrio</span>  glass.js dibuja los contenedores con un shader: refracta lo que
            hay detrás, como el sonido atravesando una fachada.
-<span class="pm">$</span> <span class="cur"></span></pre></div></div>`;
+<span class="pm">$</span> <span class="cur"></span></pre></div>`;
+  if (ABOUT) {
+    document.getElementById('ab-charts').innerHTML = CH; document.getElementById('s4').innerHTML = S4; document.getElementById('s5').innerHTML = S5;
+  if (window.VITA) VITA.scan(document.getElementById('ab-charts')), VITA.scan(document.getElementById('s4'));
+  Morph(document.getElementById('gA'), A); Morph(document.getElementById('gB'), B); Morph(document.getElementById('gC'), C); Morph(document.getElementById('gD'), D);
+  { const SN = { V: 'los vehículos', H: 'las voces', C: 'el comercio', M: 'el puerto', N: 'la naturaleza' }, fr = FN.map(([n, , k]) => { const q = FM.filter(f => f.m >= FILTERS[k][0] && f.m <= FILTERS[k][1]), c = CK.map(c => q.filter(f => f.c === c).length), t = c.indexOf(Math.max(...c)); return `<li><b>${n}</b> <span>predomina ${SN[CK[t]]}</span></li>`; }).join('');
+    const lg = document.createElement('div'); lg.className = 'rd2 lg'; lg.id = 'rd2'; document.querySelector('#gD .tg').before(lg);
+    const gl = { dot: '<svg viewBox="0 0 40 28"><circle cx="20" cy="14" r="7" fill="currentColor"/></svg>', time: '<svg viewBox="0 0 40 28"><path d="M4 14h30M28 8l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      rows: '<svg viewBox="0 0 40 28"><path d="M5 6h30M5 14h30M5 22h30" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>', size: '<svg viewBox="0 0 40 28"><circle cx="10" cy="15" r="3.5" fill="currentColor"/><circle cx="27" cy="14" r="8" fill="currentColor"/></svg>' };
+    lg.innerHTML = `<h5>Cómo leer este gráfico</h5><ul class="how"><li>${gl.dot}<p><b>Cada punto</b> es una medición hecha en terreno.</p></li><li>${gl.time}<p><b>De izquierda a derecha</b> pasa el día, de las 09:40 a las 18:50. La medición de las 00:20 queda al final.</p></li><li>${gl.rows}<p><b>Cada fila</b> es un tipo de sonido: vehículos, voces, comercio, puerto o naturaleza.</p></li><li>${gl.size}<p><b>Más grande</b> significa más fuerte, medido en decibeles (dB).</p></li></ul>
+      <div class="see"><h5>Lo que se ve</h5><ul>${fr}</ul><p class="rn">Puntos casi juntos en la misma hora son sonidos que se oyeron a la vez. Son pocas mediciones (${uniq(FM).length}), así que los patrones son pistas, no conclusiones.</p></div>`; }
+    const eqBh = () => { const hs = [...document.querySelectorAll('.charts2 .grid2 .bh')]; hs.forEach(h => h.style.minHeight = ''); if (innerWidth <= 700) return; const m = Math.max(0, ...hs.map(h => h.offsetHeight)); hs.forEach(h => h.style.minHeight = m + 'px'); };
+    eqBh(); addEventListener('resize', eqBh); setTimeout(eqBh, 500); setTimeout(eqBh, 2000); if (document.fonts && document.fonts.ready) document.fonts.ready.then(eqBh); document.querySelector('.charts2').addEventListener('click', () => setTimeout(eqBh, 60));
+    return;
+  }
+
+
+
 
   /* ---- modo comparar: dos lugares frente a frente, misma franja y misma escala ---- */
   const REC = [['Color', 'fuente de sonido que predomina'], ['Largo', 'hora, de 09:40 a 18:50'], ['Relieve', 'dB promedio del lugar'], ['Puntos brillantes', 'cada uno es una medición de terreno'], ['Puntos y estelas', 'personas y vehículos'], ['Anillos', 'finos: dB de referencia · exterior: agrado percibido']];
@@ -285,8 +293,7 @@
 
   /* ---- navegación por secciones, estado en la URL y teclado ---- */
   const abs = el => el.getBoundingClientRect().top + scrollY, vhh = () => innerHeight, q1 = sel => document.querySelector(sel);
-  const SEC = [['barrio', 'Barrio', () => 0], ['sectores', 'Sectores', () => vhh() * 1.02], ['hallazgos', 'Hallazgos', () => abs(q1('.finds')) - 40], ['contraste', 'Lugares', () => abs(stepsEl), () => stopY(0)], ['comparar', 'Comparar', () => abs(stg) - vhh() * .3],
-     ['graficas', 'Gráficas', () => abs(q1('.charts2')) - 70], ['partitura', 'Qué y cuándo', () => abs(q1('#gD')) - 80], ['estadisticas', 'Estadísticas', () => abs(q1('#s4')) - 70], ['como', 'Cómo funciona', () => abs(q1('#s5')) - 70]];
+  const SEC = [['barrio', 'Barrio', () => 0], ['sectores', 'Sectores', () => vhh() * 1.02], ['hallazgos', 'Hallazgos', () => abs(q1('.finds')) - 40], ['contraste', 'Lugares', () => abs(stepsEl), () => stopY(0)], ['comparar', 'Comparar', () => abs(stg) - vhh() * .3]];
   const nav = document.createElement('nav'); nav.id = 'sec'; nav.setAttribute('aria-label', 'Secciones del atlas');
   nav.innerHTML = SEC.map(([k, n]) => `<button data-k="${k}" aria-label="${n}"><span>${n}</span><i></i></button>`).join('')
     + '<button class="snd" hidden aria-pressed="false" aria-label="Activar sonido"><span>Sonido silenciado</span><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6v4h2.6L8.5 12.6V3.4L5.1 6z"/><path class="w" d="M10.8 5.6a3.4 3.4 0 010 4.8M12.6 3.8a6 6 0 010 8.4"/></svg></button><button class="lk" aria-label="Copiar enlace a esta vista"><span>Copiar enlace</span><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6.5 9.5l3-3M5 8l-1.2 1.2a2.4 2.4 0 003.4 3.4L8.4 11.4M11 8l1.2-1.2A2.4 2.4 0 008.8 3.4L7.6 4.6"/></svg></button><button class="kb" aria-label="Atajos de teclado"><span>Atajos de teclado</span><b>?</b></button>';
@@ -324,8 +331,6 @@
     const tv = Math.min(innerWidth * .4, 660); // ancho visual objetivo; se ensancha la tarjeta y se escala lo justo para caber
     [[...document.querySelectorAll('.step .blk')], [...document.querySelectorAll('.cstage .blk')]].forEach(g => { let sc = 1, w = Math.min(tv, 560); for (let k = 0; k < 4; k++) { g.forEach(b => { b.style.minHeight = ''; b.style.width = w + 'px'; }); const mh = Math.max(0, ...g.map(b => b.offsetHeight)); sc = mh > av ? Math.max(.6, av / mh) : 1; w = Math.min(tv / sc, innerWidth * .62); }
       g.forEach(b => b.style.width = w + 'px'); const mh = Math.max(0, ...g.map(b => b.offsetHeight)); sc = mh > av ? Math.max(.6, av / mh) : 1; g.forEach(b => { b.style.minHeight = mh + 'px'; b.style.transformOrigin = 'right top'; if (sc < 1) b.style.transform = `scale(${sc.toFixed(3)})`; }); }); }; // todas las tarjetas: mismo ancho, alto y escala
-  const eqBh = () => { const hs = [...document.querySelectorAll('.charts2 .grid2 .bh')]; hs.forEach(h => h.style.minHeight = ''); if (innerWidth <= 700) return; const m = Math.max(0, ...hs.map(h => h.offsetHeight)); hs.forEach(h => h.style.minHeight = m + 'px'); }; // títulos de las dos gráficas con el mismo alto → contenedores alineados
-  eqBh(); addEventListener('resize', eqBh); setTimeout(eqBh, 500); setTimeout(eqBh, 2000); if (document.fonts && document.fonts.ready) document.fonts.ready.then(eqBh); document.querySelector('.charts2').addEventListener('click', () => setTimeout(eqBh, 60));
   fitBlk(); addEventListener('resize', fitBlk); if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitBlk); setTimeout(fitBlk, 600); setTimeout(fitBlk, 2000);
   // restaurar la vista desde la URL (si trae sec=…) y saltar la portada
   const restore = () => { const h = location.hash.slice(1); if (!h.includes('sec=')) { ready = true; mark(); return; } const q = new URLSearchParams(h), M = window.MAREA; if (document.body.classList.contains('heroing')) document.getElementById('go').click();
