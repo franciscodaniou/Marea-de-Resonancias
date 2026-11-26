@@ -24,15 +24,16 @@ window.SND = (() => {
     // V · motor al ralentí (tono grave con armónicos y pulso suave) + rodadura de neumáticos
     v.V = gain(0); { const o = osc('sawtooth', 56), o2 = osc('sawtooth', 56.7), f = filt('lowpass', 340, .9), m = gain(.8); o.connect(f); o2.connect(f); f.connect(m); m.connect(v.V); lfo(8.5, .22, m.gain);
       const n = noise(), r = filt('bandpass', 620, .5), rg = gain(.22); n.connect(r); r.connect(rg); rg.connect(v.V); }
-    // H · tumulto de gente murmurando: varias voces graves y agudas (pulso glótico + formantes de vocal), cada una con su ritmo de sílabas y pausas, más un soplo de consonantes
-    v.H = gain(0); { const bus = gain(1.2), lp = filt('lowpass', 3400, .4); bus.connect(lp); lp.connect(v.H);
-      const FM = [[730, 1090, 2440], [270, 2290, 3010], [300, 870, 2240], [530, 1840, 2480], [660, 1720, 2410]];
-      for (let i = 0; i < 8; i++) { const f0 = i % 3 === 0 ? r(190, 250) : r(95, 165), o = osc('sawtooth', f0), amp = gain(.5), fm = FM[i % 5];
-        lfo(r(4.5, 6), f0 * .012, o.frequency); lfo(r(.15, .6), f0 * .07, o.frequency);
-        lfo(r(2.2, 4.8), .28, amp.gain); lfo(r(.1, .3), .2, amp.gain);   // sílabas + pausas de frase (la ganancia no baja de 0)
-        fm.forEach((fr, k) => { const bp = filt('bandpass', fr * r(.92, 1.08), k ? 7 : 5), bg = gain([1.3, .8, .4][k]); o.connect(bp); bp.connect(bg); bg.connect(amp); lfo(r(.2, .6), fr * .16, bp.frequency); });
-        if (ctx.createStereoPanner) { const pn = ctx.createStereoPanner(); pn.pan.value = r(-.7, .7); amp.connect(pn); pn.connect(bus); } else amp.connect(bus); }
-      const nz = noise(), nb = filt('bandpass', 2900, .8), ng = gain(.05); nz.connect(nb); nb.connect(ng); ng.connect(bus); lfo(5, .04, ng.gain); }
+    // H · tumulto de gente murmurando: muchas voces graves superpuestas (pulso glótico suave + formantes anchos + algo de aire), sin vibrato ni agudos, cada una con sílabas y pausas propias → un fondo de habla indistinta
+    v.H = gain(0); { const bus = gain(.65), lp = filt('lowpass', 2100, .3); bus.connect(lp); lp.connect(v.H);
+      const FM = [[640, 1190, 2300], [330, 1500, 2400], [420, 900, 2200], [520, 1650, 2400], [600, 1300, 2350], [380, 1100, 2300]], nz0 = noise();
+      for (let i = 0; i < 14; i++) { const f0 = i % 4 === 0 ? r(150, 200) : r(80, 140), o = osc('sawtooth', f0), amp = gain(.5), fm = FM[i % 6], hp = filt('lowpass', 900 + Math.random() * 500, .4), sum = gain(1);
+        lfo(r(.1, .35), f0 * .035, o.frequency);   // deriva lenta de entonación; sin vibrato
+        lfo(r(1.8, 4.2), .3, amp.gain); lfo(r(.07, .25), .18, amp.gain);   // sílabas + pausas (la ganancia no baja de 0)
+        o.connect(hp); hp.connect(sum);
+        const ns = filt('lowpass', 1800, .3), nsg = gain(.3); nz0.connect(ns); ns.connect(nsg); nsg.connect(sum);   // aliento: vuelve la voz indistinta
+        fm.forEach((fr, k) => { const bp = filt('bandpass', fr * r(.9, 1.1), 1.6), bg = gain([1.1, .7, .18][k]); sum.connect(bp); bp.connect(bg); bg.connect(amp); lfo(r(.12, .4), fr * .2, bp.frequency); });
+        if (ctx.createStereoPanner) { const pn = ctx.createStereoPanner(); pn.pan.value = r(-.8, .8); amp.connect(pn); pn.connect(bus); } else amp.connect(bus); } }
     // C · se toca con notas sueltas (eventos)
     v.C = gain(0);
     // M · oleaje suave (barrido lento de un ruido grave) + casco/motor de barco (dos senos graves)
@@ -56,10 +57,10 @@ window.SND = (() => {
   function note(sl, g, st) { const t = ctx.currentTime, o = ctx.createOscillator(), e = gain(0), f = 196 * Math.pow(2, PENT[Math.floor(Math.random() * PENT.length)] / 12); o.type = st.ag < 0 ? 'square' : 'triangle'; o.frequency.value = f;
     if (st.ag < 0) { const o2 = ctx.createOscillator(); o2.type = 'triangle'; o2.frequency.value = f * 1.045; o2.connect(e); o2.start(t); o2.stop(t + 1); }
     o.connect(e); e.connect(sl.out); e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(g * .4, t + .015); e.gain.exponentialRampToValueAtTime(.0008, t + .9); o.start(t); o.stop(t + 1); }
-  function vowel(sl, g) { const t = ctx.currentTime, d = r(.3, .6), f0 = r(100, 230), o = ctx.createOscillator(), e = gain(0), F = [[730, 1090], [300, 870], [530, 1840], [660, 1720]][Math.floor(Math.random() * 4)];
-    o.type = 'sawtooth'; o.frequency.setValueAtTime(f0, t); o.frequency.linearRampToValueAtTime(f0 * r(.88, 1.12), t + d);
-    [[F[0], 5, 1], [F[1], 7, .6]].forEach(([fr, q, m]) => { const bp = filt('bandpass', fr, q), bg = gain(m); o.connect(bp); bp.connect(bg); bg.connect(e); });
-    e.connect(sl.out); e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(g * .9, t + .07); e.gain.linearRampToValueAtTime(g * .5, t + d * .6); e.gain.linearRampToValueAtTime(0, t + d); o.start(t); o.stop(t + d + .05); }
+  function vowel(sl, g) { const t = ctx.currentTime, d = r(.25, .5), f0 = r(85, 150), o = ctx.createOscillator(), lp = filt('lowpass', 1100, .4), e = gain(0), F = [[640, 1190], [420, 900], [520, 1650], [380, 1100]][Math.floor(Math.random() * 4)];
+    o.type = 'sawtooth'; o.frequency.setValueAtTime(f0, t); o.frequency.linearRampToValueAtTime(f0 * r(.92, 1.06), t + d); o.connect(lp);
+    [[F[0], 1.4, 1], [F[1], 1.8, .6]].forEach(([fr, q, m]) => { const bp = filt('bandpass', fr, q), bg = gain(m); lp.connect(bp); bp.connect(bg); bg.connect(e); });
+    e.connect(sl.out); e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(g * .8, t + .09); e.gain.linearRampToValueAtTime(g * .45, t + d * .6); e.gain.linearRampToValueAtTime(0, t + d); o.start(t); o.stop(t + d + .05); }
   function horn(sl, g, big) { const t = ctx.currentTime, e = gain(0), f = filt('lowpass', big ? 520 : 760, .7), base = big ? 87.3 : 155, a = big ? .6 : .35, hold = big ? 2.2 : 1.1, rel = big ? 2.4 : 1.2;
     const os = [osc('sawtooth', base), osc('sawtooth', base * 1.5), osc('sine', base / 2)]; os.forEach(o => { o.connect(f); }); const v = lfo(5, base * .006, os[0].frequency); f.connect(e); e.connect(sl.out);
     e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(g, t + a); e.gain.setValueAtTime(g, t + a + hold); e.gain.linearRampToValueAtTime(0, t + a + hold + rel); const end = t + a + hold + rel + .1; os.forEach(o => o.stop(end)); v.stop(end); }
