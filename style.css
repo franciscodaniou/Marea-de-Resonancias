@@ -1008,3 +1008,7 @@ body.about .stack>h2.sh:first-child,body.about .wrap>h2.sh{margin-top:0}
 body.about .wrap>h2.sh{margin:22px 0 10px}
 @media(max-width:760px){body.about h2.sh{font-size:21px;padding:0 6px}}
 body.about .card>h3:first-child{margin-top:0}
+
+/* v149 · about: títulos de sección más grandes */
+body.about h2.sh{font-size:clamp(30px,2.6vw,50px);line-height:1.1;letter-spacing:-.015em;margin-bottom:-10px}
+@media(max-width:760px){body.about h2.sh{font-size:28px;margin-bottom:-8px}}
