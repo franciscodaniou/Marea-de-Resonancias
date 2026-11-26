@@ -26,6 +26,12 @@ const cv = document.getElementById('c'), x = cv.getContext('2d'), tip = document
 let carPos = 0, carTgt = 0, lastCar = false, lastCi = -1, carInit = false, carTm = 0; // móvil: carrusel horizontal de sectores (uno por pantalla)
 const car = document.createElement('div'), cdots = document.createElement('div'); car.id = 'car'; cdots.id = 'cdots'; car.innerHTML = '<div class="sl"></div>'.repeat(NS + 2); /* [copia del último, sectores…, copia del primero] → carrusel infinito */ cdots.innerHTML = '<i></i>'.repeat(NS); document.body.append(car, cdots);
 let carLast = -1, carWT = 0, legWas = false;
+let carRPos = 0, carRTgt = 0, lastCarR = false, lastCiR = -1, carRInit = false, carRTm = 0, carRLast = -1, carRWT = 0; // móvil: carrusel horizontal de las dos ciudades (una por pantalla)
+const carR = document.createElement('div'), cdotsR = document.createElement('div'); carR.id = 'carR'; cdotsR.id = 'cdotsR'; carR.innerHTML = '<div class="sl"></div>'.repeat(4); cdotsR.innerHTML = '<i></i><i></i>'; document.body.append(carR, cdotsR);
+const carRWrap = () => { const sl = carR.scrollLeft; if (Math.abs(sl - carRLast) > .5) { carRLast = sl; clearTimeout(carRWT); carRWT = setTimeout(carRWrap, 120); return; }
+  const d = sl < W * .5 ? 2 : sl > 2.5 * W ? -2 : 0; if (!d) return; carRPos += d; carRTgt += d; carR.style.scrollSnapType = 'none'; carR.style.scrollBehavior = 'auto'; carR.scrollLeft = sl + d * W; carRLast = carR.scrollLeft; setTimeout(() => { carR.style.scrollSnapType = ''; carR.style.scrollBehavior = ''; }, 60); };
+carR.addEventListener('scroll', () => { carRTgt = carR.scrollLeft / W - 1; clearTimeout(carRTm); carRTm = setTimeout(carRWrap, 140); }, { passive: true });
+carR.addEventListener('click', e => cv.dispatchEvent(new MouseEvent('click', { clientX: e.clientX, clientY: e.clientY, bubbles: true })));
 const carWrap = () => { const sl = car.scrollLeft; if (Math.abs(sl - carLast) > .5) { carLast = sl; clearTimeout(carWT); carWT = setTimeout(carWrap, 120); return; } /* solo en reposo: evita saltar en plena inercia */
   const d = sl < W * .5 ? NS : sl > (NS + .5) * W ? -NS : 0; if (!d) return; carPos += d; carTgt += d; car.style.scrollSnapType = 'none'; car.style.scrollBehavior = 'auto'; car.scrollLeft = sl + d * W; carLast = car.scrollLeft; setTimeout(() => { car.style.scrollSnapType = ''; car.style.scrollBehavior = ''; }, 60); };
 car.addEventListener('scroll', () => { carTgt = car.scrollLeft / W - 1; clearTimeout(carTm); carTm = setTimeout(carWrap, 140); }, { passive: true });
@@ -100,7 +106,7 @@ function layout() { // las figuras se reacomodan en sincronía con el pill/leyen
     if (pg) { const cl0 = W - pg.right - pg.w * pg.sc; Rf = Math.max(80, Math.min(H * .32, (H - 260) / 2.12, (cl0 - 90) / 2.3)); FX = cl0 / 2; FY = (90 + H - 92) / 2 - .06 * Rf - 39; }
   }
   if (W >= 1100) S0 = Math.min(S0, H * .245); // proporción figura/alto como en escritorio estándar
-  { KR = mob ? .58 : W < 1100 ? .5 : .6; const LBr = mob ? 176 : 215, r = Math.min(gw / 2 / 2.05, (gh - LBr) / 2.2); RgR = Math.max(50, Math.min(r, S0 * 1.35)); if (mob) RgR = Math.max(50, Math.min(RgR, (H - (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--barh')) || 90) - 78 - 202 - top0) / 2.17)); const rcy = top0 + 8 + RgR * 1.08 + Math.max(0, (gh - LBr - 2.2 * RgR) / 2); let rcy2 = rcy; if (mob) { const dt = H - (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--barh')) || 90) - 78; rcy2 = Math.max(top0 + RgR * 1.05, Math.min(rcy, dt - 8 - RgR * 1.12 - 182)); } RC = [[x0 + gw * .25, rcy2], [x0 + gw * .75, rcy2]]; } // fase intermedia: dos ciudades lado a lado
+  { KR = mob ? .58 : W < 1100 ? .5 : .6; const LBr = mob ? 176 : 215, r = Math.min(mob ? gw / 2.5 : gw / 2 / 2.05, (gh - LBr) / 2.2); RgR = Math.max(50, Math.min(r, mob ? 1e4 : S0 * 1.35)); if (mob) RgR = Math.max(50, Math.min(RgR, (H - (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--barh')) || 90) - 78 - 202 - top0) / 2.17)); const rcy = top0 + 8 + RgR * 1.08 + Math.max(0, (gh - LBr - 2.2 * RgR) / 2); let rcy2 = rcy; if (mob) { const dt = H - (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--barh')) || 90) - 78; rcy2 = Math.max(top0 + RgR * 1.05, Math.min(rcy, dt - 8 - RgR * 1.12 - 182)); } RC = mob ? [[W / 2, rcy2], [W / 2 + W, rcy2]] : [[x0 + gw * .25, rcy2], [x0 + gw * .75, rcy2]]; if (mob) { carR.style.top = top0 + 'px'; carR.style.height = Math.max(0, H - 150 - top0) + 'px'; cdotsR.style.top = Math.round(Math.max(top0 + 6, rcy2 - RgR * 1.15 - 22)) + 'px'; } } // fase intermedia: dos ciudades lado a lado
   FP = Math.max(560, Math.max(S0, Rb * .48, Rf * .48, RgR * KR) * 3.3); fitPanel(); // la focal crece con la escala: en pantallas grandes la malla ya no se sale de cuadro
 }
 
@@ -115,7 +121,7 @@ function geoms() {
 }
 
 function geomsR() { // fase de dos ciudades: al aislar una, su malla crece y se centra como en un sector expandido
-  GR = [0, 1].map(i => { const kk = focR === i ? kR : 0; return { cx: lerp(RC[i][0], FX, kk), cy: lerp(RC[i][1], FY, kk), sc: lerp(RgR * KR, Rf * .48, kk), al: focR === null || focR === i ? 1 : 1 - kR }; });
+  GR = [0, 1].map(i => { const kk = focR === i ? kR : 0; const bx = W < 760 ? W / 2 + (i - carRPos - 2 * Math.round((i - carRPos) / 2)) * W : RC[i][0]; return { cx: lerp(bx, FX, kk), cy: lerp(RC[i][1], FY, kk), sc: lerp(RgR * KR, Rf * .48, kk), al: focR === null || focR === i ? 1 : 1 - kR }; });
 }
 
 // ===== Marea de resonancias: malla orgánica (tubo deformado por ruido Perlin) =====
@@ -287,7 +293,7 @@ REG.forEach(R => { const q = uniq(F.filter(f => R.ss.includes(f.s) && !f.ap && !
   const es = E.filter(e => R.ss.includes(e[0])); R.ag = es.length ? mean(es, e => e[1]) : null; R.ne = es.length;
   R.p = mean(q.filter(f => f.fp != null), f => f.fp) || 1; R.v = mean(q.filter(f => f.fv != null), f => f.fv) || 1; });
 function regLab(i, a) { // bajada de cada ciudad: mismos datos y composición que la de cada lugar, promediando sus mediciones
-  const R = REG[i], cx = GR[i].cx, mob = W < 760, c = rgbOf(COL[R.dom]), y = GR[i].cy + RgR * (mob ? 1.12 : 1.22) + (mob ? 26 : 22), cellW = W * .5 - (mob ? 14 : 38), sc = mob ? Math.min(1, cellW / 176) : Math.min(1, cellW / 250);
+  const R = REG[i], cx = GR[i].cx, mob = W < 760, c = rgbOf(COL[R.dom]), y = GR[i].cy + RgR * (mob ? 1.12 : 1.22) + (mob ? 26 : 22), cellW = mob ? W - 28 : W * .5 - 38, sc = mob ? Math.min(1, cellW / 176) : Math.min(1, cellW / 250);
   x.save(); x.textAlign = 'center'; if (sc < 1) { x.translate(cx, y); x.scale(sc, sc); x.translate(-cx, -y); }
   const rz = fact() ? fst(fsel(R.ss, flt, srcF)) : null, rdb = rz ? rz.db : R.db, rfr = srcF ? ['am', 'pm', 'pk'].map(k => fst(fsel(R.ss, k, srcF)).db) : R.fr, nd = rdb == null, dv = nd ? 0 : rdb * cl(a * 1.15, 0, 1), o1 = 36, bw = Math.min(mob ? 190 : 150, cellW / sc - 12), by = y + o1 + 8, py = mob ? 0 : 40;
   const rr = (px, qy, w, h, r) => { x.beginPath(); if (x.roundRect) x.roundRect(px, qy, w, h, r); else x.rect(px, qy, w, h); x.fill(); };
@@ -328,6 +334,8 @@ function frame(ms) {
   eR += (eRT - eR) * (1 - Math.exp(-dt * 5)); if (Math.abs(eRT - eR) < .002) eR = eRT;
   eS += (eT - eS) * (1 - Math.exp(-dt * 5)); if (Math.abs(eT - eS) < .002) eS = eT;
   { const on = W < 760 && want === null && eS > .85 && cA < .05 && amb < .05 && !hero; if (on !== lastCar) { lastCar = on; car.classList.toggle('on', on); cdots.classList.toggle('on', on); }
+    { const onR = W < 760 && want === null && wantR === null && eR > .85 && eS < .3 && cA < .05 && amb < .05 && !hero; if (onR !== lastCarR) { lastCarR = onR; carR.classList.toggle('on', onR); cdotsR.classList.toggle('on', onR); }
+      carRPos += (carRTgt - carRPos) * (1 - Math.exp(-dt * 14)); if (!carRInit && carR.scrollWidth > W * 1.5) { carR.scrollLeft = W; carRInit = true; } const cj = ((Math.round(carRTgt) % 2) + 2) % 2; if (cj !== lastCiR) { lastCiR = cj; [...cdotsR.children].forEach((d, i) => d.classList.toggle('on', i === cj)); } }
     carPos += (carTgt - carPos) * (1 - Math.exp(-dt * 14)); if (!carInit && car.scrollWidth > W * 1.5) { car.scrollLeft = W; carInit = true; } const ci = ((Math.round(carTgt) % NS) + NS) % NS; if (ci !== lastCi) { lastCi = ci; [...cdots.children].forEach((d, i) => d.classList.toggle('on', i === ci)); } }
   ee = eS * (1 - amb); er = eR * (1 - amb); Aglob = document.body.classList.contains('about') ? .6 : lerp(1, .27, amb);
   const fo = iso(); if (fo !== lastFoc) { lastFoc = fo; document.body.classList.toggle('foc', fo); }
@@ -381,7 +389,7 @@ function frame(ms) {
     x.restore(); x.globalAlpha = 1;
   });
   { const labR = cl((eR - .6) / .35, 0, 1) * (1 - cl(eS / .4, 0, 1)) * (1 - amb) * (1 - cl(cA * 4, 0, 1)); if (labR > .05 && want === null) { [0, 1].forEach(i => regLab(i, labR * (focR === null ? 1 : focR === i ? cl(1 - kR * 4, 0, 1) : 1 - kR))); if (focR !== null && kR > .5) regBig(focR, cl((kR - .5) * 2, 0, 1)); } }
-  const stg = eS > .5 ? 2 : eR > .5 ? 1 : 0, ht = iso() ? '' : (stg === 0 ? 'Todas las mediciones · toca un punto' : stg === 1 ? 'Dos ciudades · clic para aislar' : 'Clic en un sector para expandirlo · teclas 1–' + NS); if (ht !== lastHt) { lastHt = ht; hint.textContent = ht; }
+  const stg = eS > .5 ? 2 : eR > .5 ? 1 : 0, ht = iso() ? '' : (stg === 0 ? 'Todas las mediciones · toca un punto' : stg === 1 ? (W < 760 ? 'Desliza para ver cada ciudad · toca para aislar' : 'Dos ciudades · clic para aislar') : 'Clic en un sector para expandirlo · teclas 1–' + NS); if (ht !== lastHt) { lastHt = ht; hint.textContent = ht; }
   const dw = document.getElementById('down'), dl = stg === 0 ? 'Separar las dos ciudades ↓' : stg === 1 ? 'Desplegar sectores ↓' : 'Ver hallazgos ↓'; if (dw.textContent !== dl) dw.textContent = dl;
   requestAnimationFrame(frame);
 }

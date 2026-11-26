@@ -288,7 +288,7 @@
 
   /* ---- navegación por secciones, estado en la URL y teclado ---- */
   const abs = el => el.getBoundingClientRect().top + scrollY, vhh = () => innerHeight, q1 = sel => document.querySelector(sel);
-  const SEC = [['barrio', 'Barrio', () => 0], ['ciudades', 'Dos ciudades', () => vhh() * .9], ['sectores', 'Sectores', () => vhh() * 1.95], ['hallazgos', 'Hallazgos', () => abs(q1('.finds')) - 40], ['comparar', 'Comparar', () => abs(stg) - vhh() * .4]];
+  const SEC = [['barrio', 'Barrio', () => 0], ['ciudades', 'Dos ciudades', () => vhh() * .9], ['sectores', 'Sectores', () => vhh() * 1.95], ['hallazgos', 'Hallazgos', () => abs(q1('.finds')) - 40], ['comparar', 'Comparar', () => abs(stg) - vhh() * .4, () => abs(stg) + 1]];
   const nav = document.createElement('nav'); nav.id = 'sec'; nav.setAttribute('aria-label', 'Secciones del atlas');
   nav.innerHTML = SEC.map(([k, n]) => `<button data-k="${k}" aria-label="${n}"><span>${n}</span><i></i></button>`).join('')
     + '<button class="snd" hidden aria-pressed="false" aria-label="Activar sonido"><span>Sonido silenciado</span><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6v4h2.6L8.5 12.6V3.4L5.1 6z"/><path class="w" d="M10.8 5.6a3.4 3.4 0 010 4.8M12.6 3.8a6 6 0 010 8.4"/></svg></button><button class="lk" aria-label="Copiar enlace a esta vista"><span>Copiar enlace</span><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6.5 9.5l3-3M5 8l-1.2 1.2a2.4 2.4 0 003.4 3.4L8.4 11.4M11 8l1.2-1.2A2.4 2.4 0 008.8 3.4L7.6 4.6"/></svg></button><button class="kb" aria-label="Atajos de teclado"><span>Atajos de teclado</span><b>?</b></button>';
@@ -314,7 +314,7 @@
   const tkb = () => { if (kbd.hidden) measK(); kbd.hidden = !kbd.hidden; }; nav.querySelector('.kb').addEventListener('click', tkb);
   addEventListener('keydown', e => { if (e.ctrlKey || e.metaKey || e.altKey || document.body.classList.contains('heroing')) return; const t = e.target; if (t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return; const k = e.key;
     if (k === '?') { tkb(); e.preventDefault(); return; } if (k === 'Escape') { kbd.hidden = true; return; }
-    if (/^[np]$/i.test(k)) { go(SEC[Math.max(0, Math.min(SEC.length - 1, act + (/n/i.test(k) ? 1 : -1)))][2]()); e.preventDefault(); return; }
+    if (/^[np]$/i.test(k)) { { const t = SEC[Math.max(0, Math.min(SEC.length - 1, act + (/n/i.test(k) ? 1 : -1)))]; go((t[3] || t[2])()); }; e.preventDefault(); return; }
     if (k === 'ArrowRight' || k === 'ArrowLeft') { const d = k === 'ArrowRight' ? 1 : -1;
       if (mode === 'c') { const o = ['all', 'am', 'pm', 'pk'], j = Math.max(0, Math.min(3, o.indexOf(cf) + d)); document.querySelector(`#cfg button[data-f="${o[j]}"]`).click(); e.preventDefault(); }
       return; }
@@ -332,6 +332,6 @@
     if (q.get('A') && q.get('B')) { pair[0] = Math.max(0, Math.min(NS - 1, +q.get('A') - 1)); pair[1] = Math.max(0, Math.min(NS - 1, +q.get('B') - 1)); if (pair[0] === pair[1]) pair[1] = (pair[0] + 1) % NS; }
     if (q.get('cf') && ['am', 'pm', 'pk'].includes(q.get('cf'))) { cf = q.get('cf'); document.querySelectorAll('#cfg button').forEach(x => x.classList.toggle('on', x.dataset.f === cf)); placeF(); } renderCmp();
     const i = Math.max(0, SEC.findIndex(s => s[0] === q.get('sec')));
-    setTimeout(() => { scrollTo(0, SEC[i][2]()); if (q.get('s')) setTimeout(() => { if (scrollY < vhh()) scrollTo(0, SEC[2][2]()); setTimeout(() => M.focus(+q.get('s') - 1), 900); }, 400); setTimeout(() => { ready = true; mark(); }, q.get('s') ? 2200 : 900); }, 700); };
+    setTimeout(() => { scrollTo(0, (SEC[i][3] || SEC[i][2])()); if (q.get('s')) setTimeout(() => { if (scrollY < vhh()) scrollTo(0, SEC[2][2]()); setTimeout(() => M.focus(+q.get('s') - 1), 900); }, 400); setTimeout(() => { ready = true; mark(); }, q.get('s') ? 2200 : 900); }, 700); };
   restore(); mark();
 })();
