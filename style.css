@@ -1374,3 +1374,36 @@ body.about .tg .th{
 @media(max-width:380px){.cfrow .tg button{font-size:11.5px!important;padding:8px 5px!important}.cfrow .bmore{width:36px}}
 @media(max-width:759px){.cfrow #cfg,.cmpc #cfg{flex:1 1 0!important;min-width:0!important;width:auto!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-auto-columns:minmax(0,1fr)!important}
  .cfrow .tg button{font-size:11.5px!important;padding:8px 2px!important;min-width:0}}
+
+/* v200 · Fuente / Hora del día: píldora → selector con gota, con el mismo resorte que «Cómo leer».
+   JS fija el tamaño (px) de cada estado; el contenedor anima width/height/radio con resorte, las opciones entran escalonadas y la gota viaja entre opciones. */
+body #bar .morph{position:relative;isolation:isolate;display:grid!important;grid-template-columns:repeat(var(--cols,4),var(--cell,auto));gap:0!important;padding:4px!important;box-sizing:border-box;border-radius:var(--rad,99px);flex:0 0 auto;max-width:none!important;
+ transition:width .75s var(--spring-soft),height .75s var(--spring-soft),border-radius .6s var(--spring-soft),opacity .35s ease .1s!important}
+body #bar .morph.nt,body #bar .morph.nt *{transition:none!important}
+body #bar .morph::before{inset:0;border-radius:inherit;transition:opacity .4s ease,border-radius .6s var(--spring-soft)}
+body #bar .morph .lbl{position:absolute!important;inset:0;z-index:2;display:flex!important;align-items:center;justify-content:center;box-sizing:border-box;width:auto!important;max-width:none!important;margin:0!important;padding:10px 24px!important;border-width:1px!important;opacity:1;transform:none;
+ transition:opacity .3s ease .14s,transform .6s var(--spring-soft) .1s,background-color .3s,box-shadow .35s!important}
+body #bar .morph.open .lbl{opacity:0!important;transform:scale(.94);pointer-events:none;transition:opacity .22s ease,transform .5s var(--spring-soft)!important}
+body #bar .morph .mb{position:relative;z-index:1;display:flex!important;align-items:center;justify-content:center;box-sizing:border-box;width:auto!important;max-width:none!important;margin:0!important;padding:10px 0!important;border-width:0!important;overflow:visible;
+ opacity:0;transform:scale(.55);pointer-events:none;transition:opacity .2s ease,transform .4s var(--spring-soft),color .3s!important}
+body #bar .morph.open .mb{opacity:1;transform:none;pointer-events:auto;transition:opacity .35s ease calc(.12s + var(--i,0)*.05s),transform .7s var(--spring) calc(.08s + var(--i,0)*.05s),color .3s!important}
+body #bar .morph .mb::before{display:none!important}
+/* gota única que viaja entre opciones */
+body #bar .morph .gt{position:absolute;z-index:0;left:0;top:0;width:0;height:0;border-radius:99px;pointer-events:none;opacity:0;box-sizing:border-box;
+ border:1px solid rgba(255,255,255,.42);background:linear-gradient(155deg,rgba(255,255,255,.2),rgba(255,255,255,.05) 40%,rgba(255,255,255,.04) 62%,rgba(255,255,255,.14));
+ box-shadow:inset 1px 1.5px 1px -.5px rgba(255,255,255,.95),inset -1px -1.5px 1px -.5px rgba(255,255,255,.5),inset 0 0 0 1px rgba(255,255,255,.14),inset 6px 8px 14px -9px rgba(255,255,255,.55),inset -6px -8px 14px -9px rgba(94,102,85,.14),inset 2px 0 5px -3px rgba(210,10,46,.2),inset -2px 0 5px -3px rgba(26,94,137,.2);
+ transition:left .6s var(--spring),top .6s var(--spring),width .6s var(--spring),height .6s var(--spring),opacity .35s ease .1s}
+body #bar .morph.open .gt{opacity:1}
+body #bar .morph .gt.nt{transition:none!important}
+/* hover/pulsado oscuro: solo un tinte plano que llena la celda, sin borde ni halo */
+body #bar .morph .mb:not(.on)::after{inset:0;border-radius:99px;background:rgba(59,66,52,.12)!important;box-shadow:none!important;border:0!important;outline:0}
+body #bar .morph .mb:not(.on):active::after{background:rgba(59,66,52,.2)!important}
+body #bar .morph .mb,body #bar .morph .mb:hover,body #bar .morph .mb:active{box-shadow:none!important;background:transparent!important;outline:0;border:0!important;-webkit-tap-highlight-color:transparent}
+@media(max-width:760px){
+ body #bar .morph .lbl{padding:8px 18px!important}
+ body #bar .morph .mb{padding:9px 0!important;font-size:13px}
+ body #bar .morph{border-radius:var(--rad,99px)}
+ #cts.open{display:grid!important}
+}
+body #bar .morph .lbl>span{font-size:inherit;letter-spacing:0;text-transform:none;color:inherit;margin:0;white-space:nowrap}
+body #bar .morph .lbl>span>b{font-weight:700}

@@ -513,9 +513,9 @@ document.getElementById('down').onclick = () => { const vh = innerHeight; scroll
 panel.addEventListener('click', e => { const b = e.target.closest('.it'); if (b) { const f = F[+b.dataset.i]; pf = pf === f ? null : f; render(); } });
 back.onclick = () => wantR !== null ? focusR(null) : focus(null);
 addEventListener('keydown', e => { if (e.key === 'Escape') wantR !== null ? focusR(null) : focus(null); if (/^[12]$/.test(e.key) && want === null && eR > .85 && eS < .3 && !document.body.classList.contains('heroing')) focusR(+e.key - 1); });
-document.querySelectorAll('#ctl button').forEach(b => b.onclick = () => { flt = b.dataset.f; document.querySelectorAll('#ctl button').forEach(o => o.classList.toggle('on', o === b)); document.querySelector('#ctl .lbl').innerHTML = '<b>Hora del día</b>' + (flt === 'all' ? '' : ' · ' + b.textContent); document.getElementById('ctl').classList.remove('open'); b.blur(); render(); });
+document.querySelectorAll('#ctl button').forEach(b => b.onclick = () => { flt = b.dataset.f; document.querySelectorAll('#ctl button').forEach(o => o.classList.toggle('on', o === b)); document.querySelector('#ctl .lbl').innerHTML = '<span><b>Hora del día</b>' + (flt === 'all' ? '' : ' · ' + b.textContent) + '</span>'; document.getElementById('ctl').classList.remove('open'); b.blur(); render(); });
 
-window.MAREA = { pair: [0, 1], get want() { return want; }, get wantR() { return wantR; }, focusR(i) { focusR(i); }, get srcF() { return srcF; }, setSrc(c) { setSrc(c); }, focus(s) { focus(s); }, get flt() { return flt; }, get night() { return nightOn; }, setNight(v) { if (nightOn === v) return; nightOn = v; render(); }, setFlt(f) { if (flt === f) return; flt = f; const b = document.querySelector(`#ctl button[data-f="${f}"]`); document.querySelectorAll('#ctl button').forEach(o => o.classList.toggle('on', o === b)); if (b) document.querySelector('#ctl .lbl').innerHTML = '<b>Hora del día</b>' + (flt === 'all' ? '' : ' · ' + b.textContent); render(); } }; // la comparativa avanza la franja horaria con el scroll
+window.MAREA = { pair: [0, 1], get want() { return want; }, get wantR() { return wantR; }, focusR(i) { focusR(i); }, get srcF() { return srcF; }, setSrc(c) { setSrc(c); }, focus(s) { focus(s); }, get flt() { return flt; }, get night() { return nightOn; }, setNight(v) { if (nightOn === v) return; nightOn = v; render(); }, setFlt(f) { if (flt === f) return; flt = f; const b = document.querySelector(`#ctl button[data-f="${f}"]`); document.querySelectorAll('#ctl button').forEach(o => o.classList.toggle('on', o === b)); if (b) document.querySelector('#ctl .lbl').innerHTML = '<span><b>Hora del día</b>' + (flt === 'all' ? '' : ' · ' + b.textContent) + '</span>'; render(); } }; // la comparativa avanza la franja horaria con el scroll
 document.getElementById('go').onclick = () => { document.getElementById('hero').classList.add('off'); document.body.classList.remove('heroing'); };
 // escala de referencia: traduce dB a algo cotidiano (aproximada)
 const DBW = v => v < 50 ? 'oficina o biblioteca tranquila' : v < 60 ? 'conversación suave' : v < 70 ? 'conversación fuerte o calle tranquila' : v < 80 ? 'calle con tráfico constante' : v < 90 ? 'tráfico intenso o maquinaria' : 'bocina o maquinaria muy fuerte';
@@ -536,7 +536,7 @@ function setSrc(c) { // filtro por fuente de sonido: leyenda y pill «Fuente» c
   srcF = c || null; pkey = '';
   document.querySelectorAll('#leg li[data-c]').forEach(o => { o.classList.toggle('act', o.dataset.c === srcF); o.classList.toggle('dim', !!srcF && o.dataset.c !== srcF); });
   document.querySelectorAll('#cts button').forEach(o => o.classList.toggle('on', (o.dataset.c || null) === srcF));
-  document.querySelector('#cts .lbl').innerHTML = '<b>Fuente</b>' + (srcF ? ' · ' + SH[srcF] : ''); document.getElementById('cts').classList.remove('open'); render();
+  document.querySelector('#cts .lbl').innerHTML = '<span><b>Fuente</b>' + (srcF ? ' · ' + SH[srcF] : '') + '</span>'; document.getElementById('cts').classList.remove('open'); render();
 }
 document.querySelector('#leg .lgb').addEventListener('click', e => { const li = e.target.closest('li[data-c]'); if (li) setSrc(srcF === li.dataset.c ? null : li.dataset.c); });
 document.querySelectorAll('#cts button[data-c]').forEach(b => { b.insertAdjacentHTML('afterbegin', `<i style="background:${COL[b.dataset.c]}"></i>`); });
@@ -567,11 +567,11 @@ addEventListener('resize', size); size(); render(); requestAnimationFrame(frame)
 /* escritorio: Hora del día y Fuente van anclados en posición absoluta (medida en reposo); al desplegarse, el vecino solo se atenúa y nunca es empujado */
 { const bar = document.getElementById('bar'), A = document.getElementById('ctl'), B = document.getElementById('cts'); let lt = 0;
   const hov = () => A.matches(':hover,:focus-within') || B.matches(':hover,:focus-within');
-  const place = () => { if (!bar || !A || !B) return; [A, B].forEach(e => { e.style.position = ''; e.style.left = ''; e.style.bottom = ''; e.style.width = ''; }); bar.style.height = ''; bar.style.width = '';
+  const place = () => { if (!bar || !A || !B) return; [A, B].forEach(e => { e.style.position = ''; e.style.left = ''; e.style.bottom = ''; }); bar.style.height = ''; bar.style.width = '';
     if (innerWidth < 760 || !matchMedia('(hover:hover)').matches) return;
     const br = bar.getBoundingClientRect(), ra = A.getBoundingClientRect(), rb = B.getBoundingClientRect(); if (!ra.width) return;
     const la = ra.left - br.left, lb = rb.left - br.left, h = Math.max(ra.height, rb.height); bar.style.height = h + 'px'; bar.style.width = Math.max(la + ra.width, lb + rb.width) + 'px';
-    A.style.cssText += `;position:absolute;left:${la}px;bottom:0;width:max-content`; B.style.cssText += `;position:absolute;left:${lb}px;bottom:0;width:max-content`; };
+    A.style.cssText += `;position:absolute;left:${la}px;bottom:0`; B.style.cssText += `;position:absolute;left:${lb}px;bottom:0`; };
   const later = d => { clearTimeout(lt); lt = setTimeout(() => { if (hov()) later(300); else place(); }, d); };
   [A, B].forEach(e => { e.addEventListener('mouseleave', () => later(900)); e.addEventListener('focusout', () => later(900)); e.addEventListener('click', () => later(900)); });
   addEventListener('resize', () => later(120)); if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => later(50)); later(400); setTimeout(() => later(0), 1800); }
@@ -595,3 +595,20 @@ addEventListener('resize', size); size(); render(); requestAnimationFrame(frame)
 (() => { let busy = 0; const eq = () => { if (busy) return; document.querySelectorAll('.tg:not(.st)').forEach(t => { t.style.setProperty('grid-auto-columns', 'max-content'); let m = 0; t.querySelectorAll('button').forEach(b => { m = Math.max(m, b.getBoundingClientRect().width); }); t.style.removeProperty('grid-auto-columns'); if (m) t.style.setProperty('--tgw', Math.ceil(m) + 'px'); });
     busy = 1; dispatchEvent(new Event('resize')); busy = 0; };
   addEventListener('load', () => setTimeout(eq, 0)); addEventListener('resize', () => { if (!busy) eq(); }); if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => setTimeout(eq, 0)); })();
+// v200 · selectores morph (Fuente / Hora del día): tamaños por estado, gota viajera, hover de escritorio
+(() => { const mq = matchMedia('(max-width:760px)'), cs = [];
+  const place = (c, anim) => { const g = c.querySelector('.gt'), on = c.querySelector('.mb.on'); if (!g || !on) return; const a = anim && c.classList.contains('open'); g.classList.toggle('nt', !a); g.style.left = on.offsetLeft + 'px'; g.style.top = on.offsetTop + 'px'; g.style.width = on.offsetWidth + 'px'; g.style.height = on.offsetHeight + 'px'; };
+  const apply = (c, instant) => { const mbs = [...c.querySelectorAll('.mb')], n = mbs.length, mob = mq.matches; if (!n) return;
+    if (instant) c.classList.add('nt'); c.style.setProperty('--cell', 'max-content'); c.style.setProperty('--cols', n);
+    let m = 0; mbs.forEach(b => { const o = b.style.fontWeight; b.style.fontWeight = '600'; m = Math.max(m, b.scrollWidth); b.style.fontWeight = o; });
+    const need = Math.ceil(m) + (mob ? 16 : 32), avail = innerWidth - (mob ? 28 : 44) - 8; let rows = 1, cols = n; while (rows < n && cols * need > avail) { rows++; cols = Math.ceil(n / rows); }
+    c.style.setProperty('--cols', cols); c.style.setProperty('--cell', need + 'px'); c.style.setProperty('--rad', rows > 1 ? '26px' : '99px');
+    const ow = cols * need + 8, oh = rows * mbs[0].offsetHeight + 8, l = c.querySelector('.lbl'), L = getComputedStyle(l), rg = document.createRange(); rg.selectNodeContents(l); const r = rg.getBoundingClientRect();
+    const cw = Math.ceil(r.width + parseFloat(L.paddingLeft) + parseFloat(L.paddingRight) + 2), ch = Math.ceil(r.height + parseFloat(L.paddingTop) + parseFloat(L.paddingBottom) + 2), open = c.classList.contains('open');
+    c.style.width = (open ? ow : cw) + 'px'; c.style.height = (open ? oh : ch) + 'px'; c.style.setProperty('--rad', open && rows > 1 ? '26px' : '99px'); place(c, false);
+    void c.offsetWidth; if (instant) requestAnimationFrame(() => requestAnimationFrame(() => c.classList.remove('nt'))); };
+  ['ctl', 'cts'].forEach(id => { const c = document.getElementById(id); if (!c) return; cs.push(c); if (!c.querySelector('.gt')) c.appendChild(Object.assign(document.createElement('i'), { className: 'gt' })); c.querySelectorAll('.mb').forEach((b, i) => b.style.setProperty('--i', i));
+    c._o = c.classList.contains('open'); c._on = c.querySelector('.mb.on'); new MutationObserver(ms => { let a = 0, p = 0; ms.forEach(m => { if (m.type === 'childList') { if (m.target !== c) a = 1; } else if (m.target === c) { if (c.classList.contains('open') !== c._o) { c._o = !c._o; a = 1; } } else if (m.target.classList.contains('mb') && c.querySelector('.mb.on') !== c._on) { c._on = c.querySelector('.mb.on'); p = 1; } });
+      if (a) { const open = c.classList.contains('open'); if (!open && c._h) { requestAnimationFrame(() => c._h && c.classList.add('open')); return; } apply(c, false); if (open) requestAnimationFrame(() => place(c, true)); } else if (p) place(c, true); }).observe(c, { attributes: true, attributeFilter: ['class'], subtree: true, childList: true });
+    if (matchMedia('(hover:hover)').matches) { c.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse' && !mq.matches) { c._h = 1; c.classList.add('open'); } }); c.addEventListener('pointerleave', e => { c._h = 0; if (e.pointerType === 'mouse' && !mq.matches) c.classList.remove('open'); }); } });
+  const all = () => cs.forEach(c => apply(c, true)); all(); addEventListener('load', all); addEventListener('resize', all); mq.addEventListener && mq.addEventListener('change', all); if (document.fonts && document.fonts.ready) document.fonts.ready.then(all); })();
