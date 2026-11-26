@@ -52,7 +52,7 @@ window.SND = (() => {
     let sh = c.map((x, j) => tot ? Math.pow(x / tot, 1.5) * (j === top ? 1.7 : 1) : 0); const sm = sh.reduce((a, b) => a + b, 0) || 1; sh = sh.map(x => x / sm);   // la fuente predominante manda
     return { share: sh, top, db: u.length ? mean(u, f => f.pr) : 0, fv: u.length ? mean(u, f => f.fv) : 1, fp: u.length ? mean(u, f => f.fp) : 1, ag: agrSec(s), n: u.length }; };
   /* eventos: máximo 3 nuevos por ciclo de 120 ms, para que no se apilen voces y el procesador no se sature */
-  let made = 0, nextV = 0, nextC = 0; const allow = () => made++ < 3;
+  let made = 0, nextV = 0, nextC = 0, nextB = 0; const allow = () => made++ < 3;
 
   function pass(sl, g) { if (!allow()) return; const t = ctx.currentTime, d = r(2, 3.4), e = gain(0), f = filt('lowpass', 520, .8), o = ctx.createOscillator(), n = noise(), nf = filt('bandpass', 700, .6), ng = gain(.35);
     o.type = 'sawtooth'; o.frequency.setValueAtTime(r(60, 72), t); o.frequency.linearRampToValueAtTime(r(95, 120), t + d * .45); o.frequency.linearRampToValueAtTime(r(55, 68), t + d);
@@ -63,6 +63,10 @@ window.SND = (() => {
   function note(sl, g, st, off = 0, fz = 0, dec = .9, free = false) { if (!free && !allow()) return; const t = ctx.currentTime + off, o = ctx.createOscillator(), e = gain(0), f = fz || 196 * Math.pow(2, PENT[Math.floor(Math.random() * PENT.length)] / 12); o.type = st.ag < 0 ? 'square' : 'triangle'; o.frequency.value = f;
     if (st.ag < 0) { const o2 = ctx.createOscillator(); o2.type = 'triangle'; o2.frequency.value = f * 1.045; o2.connect(e); o2.start(t); o2.stop(t + dec + .1); }
     o.connect(e); e.connect(sl.out); e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(g * .4, t + .012); e.gain.exponentialRampToValueAtTime(.0008, t + dec); o.start(t); o.stop(t + dec + .1); }
+  /* pájaros: frase de 2–6 píos con barrido de tono (seno agudo), a veces un trino rápido */
+  function bird(sl, g) { if (!allow()) return; const t0 = ctx.currentTime, n = 2 + Math.floor(Math.random() * 5), base = r(2600, 4200), trill = Math.random() < .3, dir = Math.random() < .5 ? 1 : -1; let t = 0;
+    for (let i = 0; i < n; i++) { const d = trill ? r(.03, .05) : r(.06, .16), f1 = base * r(.85, 1.2) * (1 + dir * .04 * i), f2 = f1 * (Math.random() < .5 ? r(1.15, 1.5) : r(.65, .88)), o = ctx.createOscillator(), e = gain(0), tt = t0 + t;
+      o.type = 'sine'; o.frequency.setValueAtTime(f1, tt); o.frequency.exponentialRampToValueAtTime(f2, tt + d); o.connect(e); e.connect(sl.out); e.gain.setValueAtTime(0, tt); e.gain.linearRampToValueAtTime(g * .5, tt + d * .25); e.gain.linearRampToValueAtTime(0, tt + d); o.start(tt); o.stop(tt + d + .02); t += d + (trill ? r(.02, .04) : r(.07, .22)); } }
   /* caja registradora: ráfaga de teclas (2–5 golpes secos y rápidos) + «ching» de dos notas con cola larga; luego silencio */
   function register(sl, g, st) { if (!allow()) return; const n = 2 + Math.floor(Math.random() * 4), base = 196 * Math.pow(2, PENT[3 + Math.floor(Math.random() * 3)] / 12); let t = 0;
     for (let i = 0; i < n; i++) { note(sl, g * .55, st, t, base * (i % 2 ? 1.5 : 1), .13, true); t += r(.07, .12); }
@@ -82,6 +86,9 @@ window.SND = (() => {
     if (now0 >= nextC) { let W = 0; const ws = slots.map(q => { const w = q.st && q.gain > .02 ? q.st.share[2] * q.gain : 0; W += w; return w; });
       if (W > .015) { let x = Math.random() * W, k = 0; while (k < ws.length - 1 && x > ws[k]) { x -= ws[k]; k++; } const q = slots[k]; register(q, q.gain * (.3 + q.st.share[2]), q.st); }
       nextC = now0 + r(1.6, 4.2) / (.6 + Math.min(1.2, W * 2)); }
+    if (now0 >= nextB) { let W = 0; const ws = slots.map(q => { const w = q.st && q.gain > .02 ? q.st.share[4] * q.gain : 0; W += w; return w; });
+      if (W > .015) { let x = Math.random() * W, k = 0; while (k < ws.length - 1 && x > ws[k]) { x -= ws[k]; k++; } const q = slots[k]; bird(q, q.gain * (.25 + q.st.share[4])); }
+      nextB = now0 + r(1.2, 4.5) / (.6 + Math.min(1.2, W * 2)); }
     /* vocales graves: un solo flujo global con intervalos irregulares (exponenciales) y lugar elegido al azar según su peso humano → voces sueltas, asíncronas, sin ritmo de coro */
     const now = ctx.currentTime; if (now >= nextV) { let W = 0; const ws = slots.map(q => { const w = q.st && q.gain > .02 ? q.st.share[1] * q.gain : 0; W += w; return w; });
       if (W > .02) { let x = Math.random() * W, k = 0; while (k < ws.length - 1 && x > ws[k]) { x -= ws[k]; k++; } const q = slots[k], sh1 = q.st.share[1]; vowel(q, q.gain * (.6 + 1.3 * sh1)); }
