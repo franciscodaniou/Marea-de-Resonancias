@@ -1440,3 +1440,10 @@ body.about .brow .btn{display:flex;align-items:center;justify-content:center;tex
 @media(max-width:900px){.fcity .fsplit{grid-template-columns:1fr}.fcity .fnums b{width:3.2em;font-size:32px}.fcity .fnums li{gap:12px}}
 .fcity .fnums b{width:3.3em}
 @media(max-width:900px){.fcity .fnums{display:grid;grid-template-columns:1fr 1fr;gap:20px 16px}.fcity .fnums li{flex-direction:column;align-items:flex-start;gap:6px}.fcity .fnums b{width:auto;font-size:36px}.fcity .fnums strong{font-size:15px;line-height:1.25}.fcity .fnums div span{font-size:13px}}
+/* v220 · la segunda columna de «Valparaíso frente a Buenos Aires» usa las mismas columnas, márgenes y cifras que «Lectura de los datos» */
+.fcity{padding:28px 30px 24px!important}
+.fcity .fsplit{grid-template-columns:1.1fr 1fr;gap:20px 40px}
+.fcity .fnums{gap:12px}.fcity .fnums li{gap:18px}
+.fcity .fnums b{width:3.5em;font-size:clamp(34px,3.6vw,52px)}
+.fcity .fnums strong{font-size:clamp(17px,1.5vw,21px)}.fcity .fnums div span{font-size:14.5px}
+@media(max-width:900px){.fcity{padding:22px 20px!important}.fcity .fsplit{grid-template-columns:1fr}}
