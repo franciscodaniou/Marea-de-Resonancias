@@ -1,27 +1,33 @@
 /* generado por tools/gen-dark.py — no editar a mano */
+header{background:linear-gradient(var(--bg),transparent)}
 #hero{backdrop-filter:blur(14px)}
 #panel{backdrop-filter:blur(16px)}
-#leg,#panel,#back,#hint,#ctl button,#hero button,main,#leg,#panel,#back,#hint,#cts button,#hero button,main{-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid rgba(0,0,0,0.18);box-shadow:inset .5px .5px 1px rgba(0,0,0,0.22),inset -.5px -.5px 1px rgba(0,0,0,0.06),inset 0 0 24px rgba(0,0,0,0.06),0 12px 32px rgba(255,255,255,0.2)}
+#leg,#panel,#back,#hint,#ctl button,#hero button,main,#leg,#panel,#back,#hint,#cts button,#hero button,main{background:linear-gradient(135deg,rgba(255,255,255,0.072),rgba(255,255,255,0.018) 55%,rgba(255,255,255,0.036));-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid rgba(0,0,0,0.18);box-shadow:inset .5px .5px 1px rgba(0,0,0,0.22),inset -.5px -.5px 1px rgba(0,0,0,0.06),inset 0 0 24px rgba(0,0,0,0.018),0 12px 32px rgba(255,255,255,0.2)}
 #hero{-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+#ctl button.on,#cts button.on{background:linear-gradient(135deg,rgba(255,255,255,0.144),rgba(255,255,255,0.045))}
 .it{border-color:rgba(0,0,0,0.14)}
 .it.on{border-color:rgba(0,0,0,0.5)}
-#tip,.card,.btn{-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid rgba(0,0,0,0.18);box-shadow:inset .5px .5px 1px rgba(0,0,0,0.22),inset -.5px -.5px 1px rgba(0,0,0,0.06),inset 0 0 24px rgba(0,0,0,0.06),0 12px 32px rgba(255,255,255,0.2)}
+#tip,.card,.btn{background:linear-gradient(135deg,rgba(255,255,255,0.072),rgba(255,255,255,0.018) 55%,rgba(255,255,255,0.036));-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid rgba(0,0,0,0.18);box-shadow:inset .5px .5px 1px rgba(0,0,0,0.22),inset -.5px -.5px 1px rgba(0,0,0,0.06),inset 0 0 24px rgba(0,0,0,0.018),0 12px 32px rgba(255,255,255,0.2)}
 body.gl #hero{-webkit-backdrop-filter:none;backdrop-filter:none}
 #tip{text-shadow:0 1px 8px rgba(0,0,0,0.7)}
-#ctl .lbl,#nav .lbl,#cts .lbl,#nav .lbl{border:1px solid rgba(0,0,0,0.18);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:inset .5px .5px 1px rgba(0,0,0,0.22),inset -.5px -.5px 1px rgba(0,0,0,0.06),0 12px 32px rgba(255,255,255,0.2)}
+#ctl .lbl,#nav .lbl,#cts .lbl,#nav .lbl{border:1px solid rgba(0,0,0,0.18);background:linear-gradient(135deg,rgba(255,255,255,0.072),rgba(255,255,255,0.018) 55%,rgba(255,255,255,0.036));-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:inset .5px .5px 1px rgba(0,0,0,0.22),inset -.5px -.5px 1px rgba(0,0,0,0.06),0 12px 32px rgba(255,255,255,0.2)}
 #ctl .mb,#nav .mb,#cts .mb,#nav .mb{border-color:rgba(0,0,0,0.22)}
-#nav .mb{-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:inset .5px .5px 1px rgba(0,0,0,0.22),inset -.5px -.5px 1px rgba(0,0,0,0.06),0 12px 32px rgba(255,255,255,0.2)}
+#nav .mb{background:linear-gradient(135deg,rgba(255,255,255,0.072),rgba(255,255,255,0.018) 55%,rgba(255,255,255,0.036));-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:inset .5px .5px 1px rgba(0,0,0,0.22),inset -.5px -.5px 1px rgba(0,0,0,0.06),0 12px 32px rgba(255,255,255,0.2)}
+#ctl .mb.on,#nav .mb.on,#cts .mb.on,#nav .mb.on{background:linear-gradient(135deg,rgba(255,255,255,0.144),rgba(255,255,255,0.045))}
+body.about header{background:linear-gradient(var(--bg) 52%,transparent)}
 .peaks li{border-top:1px solid rgba(0,0,0,0.1)}
+body.deep header{background:linear-gradient(var(--bg) 52%,transparent)}
 .peaks li{border-top:1px solid rgba(94,102,85,.16)}
 .it{border-color:rgba(94,102,85,.16)}
 .it.on{border-color:rgba(94,102,85,.5)}
+#ctl .mb.on,#nav .mb.on,#ctl button.on,#cts .mb.on,#nav .mb.on,#cts button.on{background:linear-gradient(135deg,rgba(255,255,255,0.338),rgba(255,255,255,0.158))}
 .tg{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(94,102,85,.2)}
 .console{box-shadow:0 18px 50px rgba(255,255,255,0.28)}
 .tg{-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(0,0,0,0.44);box-shadow:inset 0 1px 0 rgba(0,0,0,0.39),0 6px 18px rgba(255,255,255,0.12)}
-.tg .th{border:1px solid rgba(0,0,0,0.55);box-shadow:0 4px 14px rgba(255,255,255,0.22),inset 0 -2px 6px rgba(255,255,255,0.18),inset 0 1px 2px rgba(0,0,0,0.45);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
-.card{-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid rgba(0,0,0,0.49);box-shadow:inset 0 1px 0 rgba(0,0,0,0.29),inset 0 -10px 24px rgba(255,255,255,0.1),inset 1px 0 0 rgba(0,0,0,0.25),0 22px 50px rgba(255,255,255,0.16),0 2px 6px rgba(255,255,255,0.08)}
-.tg .th{border:1px solid rgba(0,0,0,0.62);box-shadow:0 6px 16px rgba(255,255,255,0.22),0 1px 2px rgba(255,255,255,0.2),inset 0 1px 2px rgba(0,0,0,0.5),inset 0 -3px 8px rgba(255,255,255,0.22),inset 3px 0 6px rgba(255,255,255,0.1),inset -3px 0 6px rgba(255,255,255,0.12)}
-.card{-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);border:1px solid rgba(0,0,0,0.44);box-shadow:inset 0 1px 0 rgba(0,0,0,0.28),inset 1px 0 0 rgba(0,0,0,0.12),inset 0 -1.5px 0 rgba(255,255,255,0.18),inset 0 -14px 22px -14px rgba(0,0,0,0.35),0 18px 40px rgba(255,255,255,0.14),0 2px 5px rgba(255,255,255,0.08)}
+.tg .th{background:linear-gradient(135deg,rgba(255,255,255,0.315),rgba(255,255,255,0.126));border:1px solid rgba(0,0,0,0.55);box-shadow:0 4px 14px rgba(255,255,255,0.22),inset 0 -2px 6px rgba(255,255,255,0.072),inset 0 1px 2px rgba(0,0,0,0.45);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.card{background:linear-gradient(145deg,rgba(255,255,255,0.279),rgba(255,255,255,0.117));-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid rgba(0,0,0,0.49);box-shadow:inset 0 1px 0 rgba(0,0,0,0.29),inset 0 -10px 24px rgba(255,255,255,0.03),inset 1px 0 0 rgba(0,0,0,0.25),0 22px 50px rgba(255,255,255,0.16),0 2px 6px rgba(255,255,255,0.08)}
+.tg .th{background:linear-gradient(160deg,rgba(255,255,255,0.414),rgba(255,255,255,0.203) 55%,rgba(255,255,255,0.315));border:1px solid rgba(0,0,0,0.62);box-shadow:0 6px 16px rgba(255,255,255,0.22),0 1px 2px rgba(255,255,255,0.2),inset 0 1px 2px rgba(0,0,0,0.5),inset 0 -3px 8px rgba(255,255,255,0.088),inset 3px 0 6px rgba(255,255,255,0.04),inset -3px 0 6px rgba(255,255,255,0.048)}
+.card{background:linear-gradient(150deg,rgba(255,255,255,0.135),rgba(255,255,255,0.0315) 45%,rgba(255,255,255,0.063));-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);border:1px solid rgba(0,0,0,0.44);box-shadow:inset 0 1px 0 rgba(0,0,0,0.28),inset 1px 0 0 rgba(0,0,0,0.12),inset 0 -1.5px 0 rgba(255,255,255,0.18),inset 0 -14px 22px -14px rgba(0,0,0,0.105),0 18px 40px rgba(255,255,255,0.14),0 2px 5px rgba(255,255,255,0.08)}
 .tg{-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
 .cmp{box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
 .fnow{border:1px solid rgba(0,0,0,0.48)}
@@ -41,18 +47,20 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:2px solid 
 #panel .det{border:1px solid rgba(0,0,0,0.48)}
 #psub{text-shadow:0 0 10px var(--bg),0 0 4px var(--bg)}
 #ans{border:1px solid rgba(0,0,0,0.52);box-shadow:0 4px 18px rgba(255,255,255,0.12)}
+header{background:linear-gradient(var(--bg) 52%,transparent)}
+header,body.deep header,body.about header{background:linear-gradient(var(--bg) 78%,transparent)}
 #ans{box-shadow:none}
 #ans .q{text-shadow:0 0 12px var(--bg),0 0 4px var(--bg)}
 #ans .a{border:1px solid rgba(0,0,0,0.52);box-shadow:0 4px 18px rgba(255,255,255,0.12)}
 header b{text-shadow:0 0 10px var(--bg),0 0 4px var(--bg)}
 #panel .det .org{border-top:1px dashed rgba(94,102,85,.35)}
-.card,#ans .a,#leg,#panel,#back,#hint,#tip,#down,.btn,#hero button,#ctl .lbl,#cts .lbl,#nav .lbl,#ctl .mb,#cts .mb,#nav .mb{-webkit-backdrop-filter:blur(1px);backdrop-filter:blur(1px);text-shadow:none;box-shadow:inset .5px 1px 1px -.5px rgba(0,0,0,0.47),inset -.5px -1px 1px -.5px rgba(0,0,0,0.25),inset 0 0 0 1px rgba(0,0,0,0.09),
-    inset 7px 9px 16px -9px rgba(0,0,0,0.6),inset -7px -9px 16px -9px rgba(255,255,255,0.16),inset 2px 0 5px -3px rgba(255,255,255,0.25),inset -2px 0 5px -3px rgba(255,255,255,0.25),
+.card,#ans .a,#leg,#panel,#back,#hint,#tip,#down,.btn,#hero button,#ctl .lbl,#cts .lbl,#nav .lbl,#ctl .mb,#cts .mb,#nav .mb{background:linear-gradient(155deg,rgba(255,255,255,0.09),rgba(255,255,255,0.018) 38%,rgba(255,255,255,0.0135) 62%,rgba(255,255,255,0.063));-webkit-backdrop-filter:blur(1px);backdrop-filter:blur(1px);text-shadow:none;box-shadow:inset .5px 1px 1px -.5px rgba(0,0,0,0.47),inset -.5px -1px 1px -.5px rgba(0,0,0,0.25),inset 0 0 0 1px rgba(0,0,0,0.09),
+    inset 7px 9px 16px -9px rgba(0,0,0,0.18),inset -7px -9px 16px -9px rgba(255,255,255,0.048),inset 2px 0 5px -3px rgba(255,255,255,0.1),inset -2px 0 5px -3px rgba(255,255,255,0.1),
     0 14px 26px -10px rgba(255,255,255,0.34),0 2px 6px rgba(255,255,255,0.12)}
 .card,#ans .a,#leg,#panel,#back,#hint,#tip,#down,.btn,#hero button,#ctl .lbl,#cts .lbl,#nav .lbl{border:1px solid rgba(0,0,0,0.27)}
 #ctl .mb,#cts .mb,#nav .mb{border-color:rgba(0,0,0,0.34)}
-.card,#ans .a,#panel,#leg.open{-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
-.how li,.fnow,.fc,.pk button:not(.on){-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);border:1px solid rgba(0,0,0,0.27);box-shadow:inset .5px 1px 1px -.5px rgba(0,0,0,0.47),inset -.5px -1px 1px -.5px rgba(0,0,0,0.25),inset 0 0 0 1px rgba(0,0,0,0.08),inset 6px 8px 14px -9px rgba(0,0,0,0.55),inset -6px -8px 14px -9px rgba(255,255,255,0.14),inset 2px 0 5px -3px rgba(255,255,255,0.2),inset -2px 0 5px -3px rgba(255,255,255,0.2),
+.card,#ans .a,#panel,#leg.open{-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);background:linear-gradient(155deg,rgba(255,255,255,0.126),rgba(255,255,255,0.045) 40%,rgba(255,255,255,0.036) 62%,rgba(255,255,255,0.09))}
+.how li,.fnow,.fc,.pk button:not(.on){background:linear-gradient(155deg,rgba(255,255,255,0.09),rgba(255,255,255,0.0225) 40%,rgba(255,255,255,0.018) 62%,rgba(255,255,255,0.063));-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);border:1px solid rgba(0,0,0,0.27);box-shadow:inset .5px 1px 1px -.5px rgba(0,0,0,0.47),inset -.5px -1px 1px -.5px rgba(0,0,0,0.25),inset 0 0 0 1px rgba(0,0,0,0.08),inset 6px 8px 14px -9px rgba(0,0,0,0.165),inset -6px -8px 14px -9px rgba(255,255,255,0.042),inset 2px 0 5px -3px rgba(255,255,255,0.08),inset -2px 0 5px -3px rgba(255,255,255,0.08),
     0 10px 18px -8px rgba(255,255,255,0.3),0 2px 4px rgba(255,255,255,0.1)}
 .pk button.on{box-shadow:inset .5px 1px 1px -.5px rgba(0,0,0,0.5),inset -.5px -1px 1px -.5px rgba(0,0,0,0.3),0 10px 18px -8px rgba(255,255,255,0.34),0 2px 4px rgba(255,255,255,0.12)}
 @media(max-width:520px){#nav.open .mb{backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
@@ -70,12 +78,12 @@ header b{text-shadow:0 0 10px var(--bg),0 0 4px var(--bg)}
 @media(hover:hover){body.about .btn:hover,body.about header nav .lbl:hover,body.about header nav .mb:hover,body.about #nav:hover .lbl{box-shadow:var(--glow)!important}
 }
 body.about .btn:active,body.about header nav .lbl:active,body.about header nav .mb:active{box-shadow:var(--glow-p)!important}
-#ans a{border:1px solid rgba(0,0,0,0.55);box-shadow:0 4px 14px rgba(255,255,255,0.18),inset 0 1px 2px rgba(0,0,0,0.45),inset 0 -2px 6px rgba(255,255,255,0.14);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+#ans a{background:linear-gradient(135deg,rgba(255,255,255,0.248),rgba(255,255,255,0.081));border:1px solid rgba(0,0,0,0.55);box-shadow:0 4px 14px rgba(255,255,255,0.18),inset 0 1px 2px rgba(0,0,0,0.45),inset 0 -2px 6px rgba(255,255,255,0.056);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 @media(hover:hover){#ans a:hover{box-shadow:var(--glow)}
 }
 #ans a:active{box-shadow:var(--glow-p)}
-#kbd{-webkit-backdrop-filter:blur(3px)!important;backdrop-filter:blur(3px)!important;border:1px solid rgba(0,0,0,0.55)!important;box-shadow:0 14px 34px rgba(255,255,255,0.2),inset 0 1px 2px rgba(0,0,0,0.47),inset 0 -2px 6px rgba(255,255,255,0.14)!important}
-@media(min-width:1101px){#ans{border:1px solid rgba(0,0,0,0.55)!important;box-shadow:0 8px 24px rgba(255,255,255,0.16),inset 0 1px 2px rgba(0,0,0,0.47),inset 0 -2px 6px rgba(255,255,255,0.14)!important;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+#kbd{background:linear-gradient(135deg,rgba(255,255,255,0.225),rgba(255,255,255,0.072))!important;-webkit-backdrop-filter:blur(3px)!important;backdrop-filter:blur(3px)!important;border:1px solid rgba(0,0,0,0.55)!important;box-shadow:0 14px 34px rgba(255,255,255,0.2),inset 0 1px 2px rgba(0,0,0,0.47),inset 0 -2px 6px rgba(255,255,255,0.056)!important}
+@media(min-width:1101px){#ans{background:linear-gradient(135deg,rgba(255,255,255,0.225),rgba(255,255,255,0.072))!important;border:1px solid rgba(0,0,0,0.55)!important;box-shadow:0 8px 24px rgba(255,255,255,0.16),inset 0 1px 2px rgba(0,0,0,0.47),inset 0 -2px 6px rgba(255,255,255,0.056)!important;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 #ans .qt{box-shadow:none}
 #ans .q{text-shadow:none!important}
 #ans .a{box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
@@ -87,11 +95,11 @@ body.about .btn:active,body.about header nav .lbl:active,body.about header nav .
 }
 body #leg:has(.lgt:active){box-shadow:var(--glow-p)!important}
 body #leg .lgt:hover,body #leg .lgt:active{box-shadow:none!important}
-.lmore,.cmin,.step .blk .cmin{border:1px solid rgba(0,0,0,0.55)!important;box-shadow:0 4px 14px rgba(255,255,255,0.18),inset 0 1px 2px rgba(0,0,0,0.45),inset 0 -2px 6px rgba(255,255,255,0.14);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.lmore,.cmin,.step .blk .cmin{background:linear-gradient(135deg,rgba(255,255,255,0.248),rgba(255,255,255,0.081));border:1px solid rgba(0,0,0,0.55)!important;box-shadow:0 4px 14px rgba(255,255,255,0.18),inset 0 1px 2px rgba(0,0,0,0.45),inset 0 -2px 6px rgba(255,255,255,0.056);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 @media(hover:hover){body .lmore:hover,body .cmin:hover{box-shadow:var(--glow)!important}
 }
 body .lmore:active,body .cmin:active{box-shadow:var(--glow-p)!important}
-@media(max-width:1100px){#ans{border:1px solid rgba(0,0,0,0.55)!important;box-shadow:0 8px 24px rgba(255,255,255,0.16),inset 0 1px 2px rgba(0,0,0,0.47),inset 0 -2px 6px rgba(255,255,255,0.14)!important;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+@media(max-width:1100px){#ans{background:linear-gradient(135deg,rgba(255,255,255,0.225),rgba(255,255,255,0.072))!important;border:1px solid rgba(0,0,0,0.55)!important;box-shadow:0 8px 24px rgba(255,255,255,0.16),inset 0 1px 2px rgba(0,0,0,0.47),inset 0 -2px 6px rgba(255,255,255,0.056)!important;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 #ans .qt{box-shadow:none}
 #ans .a{box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 #ans:has(.qt:active){box-shadow:var(--glow-p)!important}
@@ -107,23 +115,23 @@ body.about .kb2{border:1px solid rgba(0,0,0,0.55)}
 @media(max-width:759px){.bmore{box-shadow:inset 0 1px 0 rgba(0,0,0,0.47),0 4px 10px -4px rgba(255,255,255,0.3)}
 .bmore i{border-right:2px solid #5E6655;border-bottom:2px solid #5E6655}
 }
-.pks label,.bmore{-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);border:1px solid rgba(0,0,0,0.27)!important;box-shadow:inset .5px 1px 1px -.5px rgba(0,0,0,0.47),inset -.5px -1px 1px -.5px rgba(0,0,0,0.25),inset 0 0 0 1px rgba(0,0,0,0.08),inset 6px 8px 14px -9px rgba(0,0,0,0.55),inset -6px -8px 14px -9px rgba(255,255,255,0.14),inset 2px 0 5px -3px rgba(255,255,255,0.2),inset -2px 0 5px -3px rgba(255,255,255,0.2),0 10px 18px -8px rgba(255,255,255,0.3),0 2px 4px rgba(255,255,255,0.1)!important}
-@media(hover:hover){.cmpc #cfg button:not(.on):hover{box-shadow:0 0 0 1px rgba(255,255,255,0.1),inset 0 0 18px rgba(255,255,255,0.1)!important}
+.pks label,.bmore{background:linear-gradient(155deg,rgba(255,255,255,0.09),rgba(255,255,255,0.0225) 40%,rgba(255,255,255,0.018) 62%,rgba(255,255,255,0.063))!important;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);border:1px solid rgba(0,0,0,0.27)!important;box-shadow:inset .5px 1px 1px -.5px rgba(0,0,0,0.47),inset -.5px -1px 1px -.5px rgba(0,0,0,0.25),inset 0 0 0 1px rgba(0,0,0,0.08),inset 6px 8px 14px -9px rgba(0,0,0,0.165),inset -6px -8px 14px -9px rgba(255,255,255,0.042),inset 2px 0 5px -3px rgba(255,255,255,0.08),inset -2px 0 5px -3px rgba(255,255,255,0.08),0 10px 18px -8px rgba(255,255,255,0.3),0 2px 4px rgba(255,255,255,0.1)!important}
+@media(hover:hover){.cmpc #cfg button:not(.on):hover{box-shadow:0 0 0 1px rgba(255,255,255,0.1),inset 0 0 18px rgba(255,255,255,0.03)!important}
 }
-.cmpc #cfg button:active{box-shadow:0 0 0 1px rgba(255,255,255,0.14),inset 0 0 22px rgba(255,255,255,0.2)!important}
-.cmpc #cfg .th{border:1px solid rgba(0,0,0,0.34)!important;box-shadow:inset .5px 1px 1px -.5px rgba(0,0,0,0.47),inset -.5px -1px 1px -.5px rgba(0,0,0,0.25),inset 0 0 0 1px rgba(0,0,0,0.08),inset 6px 8px 14px -9px rgba(0,0,0,0.55),inset -6px -8px 14px -9px rgba(255,255,255,0.14),inset 2px 0 5px -3px rgba(255,255,255,0.2),inset -2px 0 5px -3px rgba(255,255,255,0.2),0 6px 14px -6px rgba(255,255,255,0.38),0 1px 3px rgba(255,255,255,0.16)!important}
+.cmpc #cfg button:active{box-shadow:0 0 0 1px rgba(255,255,255,0.14),inset 0 0 22px rgba(255,255,255,0.06)!important}
+.cmpc #cfg .th{background:linear-gradient(155deg,rgba(255,255,255,0.09),rgba(255,255,255,0.0225) 40%,rgba(255,255,255,0.018) 62%,rgba(255,255,255,0.063))!important;border:1px solid rgba(0,0,0,0.34)!important;box-shadow:inset .5px 1px 1px -.5px rgba(0,0,0,0.47),inset -.5px -1px 1px -.5px rgba(0,0,0,0.25),inset 0 0 0 1px rgba(0,0,0,0.08),inset 6px 8px 14px -9px rgba(0,0,0,0.165),inset -6px -8px 14px -9px rgba(255,255,255,0.042),inset 2px 0 5px -3px rgba(255,255,255,0.08),inset -2px 0 5px -3px rgba(255,255,255,0.08),0 6px 14px -6px rgba(255,255,255,0.38),0 1px 3px rgba(255,255,255,0.16)!important}
 .cmpc #cfg .th{-webkit-backdrop-filter:blur(1px)!important;backdrop-filter:blur(1px)!important}
-@media(hover:hover){body.about .tg button:not(.on):hover{box-shadow:0 0 0 1px rgba(255,255,255,0.1),inset 0 0 18px rgba(255,255,255,0.1)!important}
+@media(hover:hover){body.about .tg button:not(.on):hover{box-shadow:0 0 0 1px rgba(255,255,255,0.1),inset 0 0 18px rgba(255,255,255,0.03)!important}
 }
-body.about .tg button:active{box-shadow:0 0 0 1px rgba(255,255,255,0.14),inset 0 0 22px rgba(255,255,255,0.2)!important}
-body.about .tg .th{border:1px solid rgba(0,0,0,0.34)!important;-webkit-backdrop-filter:blur(1px)!important;backdrop-filter:blur(1px)!important;box-shadow:inset .5px 1px 1px -.5px rgba(0,0,0,0.47),inset -.5px -1px 1px -.5px rgba(0,0,0,0.25),inset 0 0 0 1px rgba(0,0,0,0.08),inset 6px 8px 14px -9px rgba(0,0,0,0.55),inset -6px -8px 14px -9px rgba(255,255,255,0.14),inset 2px 0 5px -3px rgba(255,255,255,0.2),inset -2px 0 5px -3px rgba(255,255,255,0.2),0 6px 14px -6px rgba(255,255,255,0.38),0 1px 3px rgba(255,255,255,0.16)!important}
-#ctl::before,#cts::before{border:1px solid rgba(0,0,0,0.27);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:inset .5px 1px 1px -.5px rgba(0,0,0,0.47),inset -.5px -1px 1px -.5px rgba(0,0,0,0.25),inset 0 0 0 1px rgba(0,0,0,0.08),0 10px 18px -8px rgba(255,255,255,0.3),0 2px 4px rgba(255,255,255,0.1)}
+body.about .tg button:active{box-shadow:0 0 0 1px rgba(255,255,255,0.14),inset 0 0 22px rgba(255,255,255,0.06)!important}
+body.about .tg .th{background:linear-gradient(155deg,rgba(255,255,255,0.09),rgba(255,255,255,0.0225) 40%,rgba(255,255,255,0.018) 62%,rgba(255,255,255,0.063))!important;border:1px solid rgba(0,0,0,0.34)!important;-webkit-backdrop-filter:blur(1px)!important;backdrop-filter:blur(1px)!important;box-shadow:inset .5px 1px 1px -.5px rgba(0,0,0,0.47),inset -.5px -1px 1px -.5px rgba(0,0,0,0.25),inset 0 0 0 1px rgba(0,0,0,0.08),inset 6px 8px 14px -9px rgba(0,0,0,0.165),inset -6px -8px 14px -9px rgba(255,255,255,0.042),inset 2px 0 5px -3px rgba(255,255,255,0.08),inset -2px 0 5px -3px rgba(255,255,255,0.08),0 6px 14px -6px rgba(255,255,255,0.38),0 1px 3px rgba(255,255,255,0.16)!important}
+#ctl::before,#cts::before{border:1px solid rgba(0,0,0,0.27);background:linear-gradient(155deg,rgba(255,255,255,0.09),rgba(255,255,255,0.0225) 40%,rgba(255,255,255,0.018) 62%,rgba(255,255,255,0.063));-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:inset .5px 1px 1px -.5px rgba(0,0,0,0.47),inset -.5px -1px 1px -.5px rgba(0,0,0,0.25),inset 0 0 0 1px rgba(0,0,0,0.08),0 10px 18px -8px rgba(255,255,255,0.3),0 2px 4px rgba(255,255,255,0.1)}
 #ctl .mb,#cts .mb{box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
-#ctl .mb::before,#cts .mb::before{border:1px solid rgba(0,0,0,0.34);box-shadow:inset .5px 1px 1px -.5px rgba(0,0,0,0.47),inset -.5px -1px 1px -.5px rgba(0,0,0,0.25),inset 0 0 0 1px rgba(0,0,0,0.08),inset 6px 8px 14px -9px rgba(0,0,0,0.55),inset -6px -8px 14px -9px rgba(255,255,255,0.14),inset 2px 0 5px -3px rgba(255,255,255,0.2),inset -2px 0 5px -3px rgba(255,255,255,0.2)}
-#ctl .mb:not(.on)::after,#cts .mb:not(.on)::after{box-shadow:inset 0 0 18px rgba(255,255,255,0.1)}
-body #bar .morph .gt{border:1px solid rgba(0,0,0,0.34);box-shadow:inset .5px 1px 1px -.5px rgba(0,0,0,0.47),inset -.5px -1px 1px -.5px rgba(0,0,0,0.25),inset 0 0 0 1px rgba(0,0,0,0.08),inset 6px 8px 14px -9px rgba(0,0,0,0.55),inset -6px -8px 14px -9px rgba(255,255,255,0.14),inset 2px 0 5px -3px rgba(255,255,255,0.2),inset -2px 0 5px -3px rgba(255,255,255,0.2)}
+#ctl .mb::before,#cts .mb::before{border:1px solid rgba(0,0,0,0.34);background:linear-gradient(155deg,rgba(255,255,255,0.09),rgba(255,255,255,0.0225) 40%,rgba(255,255,255,0.018) 62%,rgba(255,255,255,0.063));box-shadow:inset .5px 1px 1px -.5px rgba(0,0,0,0.47),inset -.5px -1px 1px -.5px rgba(0,0,0,0.25),inset 0 0 0 1px rgba(0,0,0,0.08),inset 6px 8px 14px -9px rgba(0,0,0,0.165),inset -6px -8px 14px -9px rgba(255,255,255,0.042),inset 2px 0 5px -3px rgba(255,255,255,0.08),inset -2px 0 5px -3px rgba(255,255,255,0.08)}
+#ctl .mb:not(.on)::after,#cts .mb:not(.on)::after{box-shadow:inset 0 0 18px rgba(255,255,255,0.03)}
+body #bar .morph .gt{border:1px solid rgba(0,0,0,0.34);background:linear-gradient(155deg,rgba(255,255,255,0.09),rgba(255,255,255,0.0225) 40%,rgba(255,255,255,0.018) 62%,rgba(255,255,255,0.063));box-shadow:inset .5px 1px 1px -.5px rgba(0,0,0,0.47),inset -.5px -1px 1px -.5px rgba(0,0,0,0.25),inset 0 0 0 1px rgba(0,0,0,0.08),inset 6px 8px 14px -9px rgba(0,0,0,0.165),inset -6px -8px 14px -9px rgba(255,255,255,0.042),inset 2px 0 5px -3px rgba(255,255,255,0.08),inset -2px 0 5px -3px rgba(255,255,255,0.08)}
 body #bar .morph .mb:not(.on)::after{box-shadow:none!important}
 body #bar .morph .mb,body #bar .morph .mb:hover,body #bar .morph .mb:active{box-shadow:none!important}
 .thm.fl{border:1px solid rgba(0,0,0,0.4);backdrop-filter:blur(14px)}
-#ans{border:1px solid rgba(0,0,0,0.27)!important;box-shadow:inset .5px 1px 1px -.5px rgba(0,0,0,0.47),inset -.5px -1px 1px -.5px rgba(0,0,0,0.25),inset 0 0 0 1px rgba(0,0,0,0.09),inset 7px 9px 16px -9px rgba(0,0,0,0.6),inset -7px -9px 16px -9px rgba(255,255,255,0.16),inset 2px 0 5px -3px rgba(255,255,255,0.25),inset -2px 0 5px -3px rgba(255,255,255,0.25),0 14px 26px -10px rgba(255,255,255,0.34),0 2px 6px rgba(255,255,255,0.12)!important;-webkit-backdrop-filter:blur(1px)!important;backdrop-filter:blur(1px)!important}
-#nav .mb,#nav.open .mb,#nav .mb.on{border-color:rgba(0,0,0,0.27)!important;box-shadow:inset .5px 1px 1px -.5px rgba(0,0,0,0.47),inset -.5px -1px 1px -.5px rgba(0,0,0,0.25),inset 0 0 0 1px rgba(0,0,0,0.09),inset 7px 9px 16px -9px rgba(0,0,0,0.6),inset -7px -9px 16px -9px rgba(255,255,255,0.16),inset 2px 0 5px -3px rgba(255,255,255,0.25),inset -2px 0 5px -3px rgba(255,255,255,0.25),0 14px 26px -10px rgba(255,255,255,0.34),0 2px 6px rgba(255,255,255,0.12);-webkit-backdrop-filter:blur(1px)!important;backdrop-filter:blur(1px)!important}
+#ans{background:linear-gradient(155deg,rgba(255,255,255,0.0405),rgba(255,255,255,0.009) 38%,rgba(255,255,255,0.00675) 62%,rgba(255,255,255,0.027))!important;border:1px solid rgba(0,0,0,0.27)!important;box-shadow:inset .5px 1px 1px -.5px rgba(0,0,0,0.47),inset -.5px -1px 1px -.5px rgba(0,0,0,0.25),inset 0 0 0 1px rgba(0,0,0,0.09),inset 7px 9px 16px -9px rgba(0,0,0,0.18),inset -7px -9px 16px -9px rgba(255,255,255,0.048),inset 2px 0 5px -3px rgba(255,255,255,0.1),inset -2px 0 5px -3px rgba(255,255,255,0.1),0 14px 26px -10px rgba(255,255,255,0.34),0 2px 6px rgba(255,255,255,0.12)!important;-webkit-backdrop-filter:blur(1px)!important;backdrop-filter:blur(1px)!important}
+#nav .mb,#nav.open .mb,#nav .mb.on{background-image:linear-gradient(155deg,rgba(255,255,255,0.0405),rgba(255,255,255,0.009) 38%,rgba(255,255,255,0.00675) 62%,rgba(255,255,255,0.027))!important;border-color:rgba(0,0,0,0.27)!important;box-shadow:inset .5px 1px 1px -.5px rgba(0,0,0,0.47),inset -.5px -1px 1px -.5px rgba(0,0,0,0.25),inset 0 0 0 1px rgba(0,0,0,0.09),inset 7px 9px 16px -9px rgba(0,0,0,0.18),inset -7px -9px 16px -9px rgba(255,255,255,0.048),inset 2px 0 5px -3px rgba(255,255,255,0.1),inset -2px 0 5px -3px rgba(255,255,255,0.1),0 14px 26px -10px rgba(255,255,255,0.34),0 2px 6px rgba(255,255,255,0.12);-webkit-backdrop-filter:blur(1px)!important;backdrop-filter:blur(1px)!important}

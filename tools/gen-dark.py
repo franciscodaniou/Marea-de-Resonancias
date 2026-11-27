@@ -20,6 +20,27 @@ def swap(m, dark=.45):
     if L > .75: return f'rgba(0,0,0,{a:g})'
     if L < dark: return f'rgba(255,255,255,{a:g})'
     return m.group(0)
+def soften(v):
+    """modo oscuro: los brillos interiores suaves (blur grande) y los tintes laterales se atenúan mucho; los bordes finos no se tocan"""
+    out = []; depth = 0; cur = ''
+    for ch in v:
+        if ch == '(': depth += 1
+        elif ch == ')': depth -= 1
+        if ch == ',' and depth == 0: out.append(cur); cur = ''
+        else: cur += ch
+    out.append(cur); res = []
+    for L in out:
+        if 'inset' in L:
+            m = re.search(r'inset\s+(-?[\d.]+)(?:px)?\s+(-?[\d.]+)(?:px)?\s+([\d.]+)(?:px)?(?:\s+(-?[\d.]+)(?:px)?)?', L)
+            if m:
+                blur = float(m.group(3)); k = .3 if blur >= 10 else (.4 if blur >= 4 else 1)
+                if k != 1: L = re.sub(r'rgba\(([^)]*),\s*([\d.]+)\)', lambda c: f'rgba({c.group(1)},{float(c.group(2)) * k:.3g})', L)
+        res.append(L)
+    return ','.join(res)
+def soften_grad(v):
+    if 'linear-gradient(' in v and re.fullmatch(r'[^a-z#]*linear-gradient\((?:[^()]|\([^()]*\))*\)\s*', v.strip()) and not re.search(r'rgba\((?!255,\s*255,\s*255)', v) and 'rgb(' not in v and '#' not in v:
+        return re.sub(r'rgba\(255,\s*255,\s*255,\s*([\d.]+)\)', lambda c: f'rgba(255,255,255,{float(c.group(1)) * .45:.3g})', v)
+    return None
 def split_decls(body):
     out, depth, cur = [], 0, ''
     for ch in body:
@@ -59,11 +80,14 @@ def build(rules):
                 imp = '!important' if '!important' in v else ''
                 f = swap if p.endswith('shadow') else (lambda m: swap(m, .3))  # bordes/contornos: los tonos medios (olivas de líneas, chevrons, puntos) no se invierten
                 v2 = col.sub(f, v.replace('!important', '').strip())
+                if p.endswith('shadow'): v2 = soften(v2)
                 ds.append(f'{p}:{v2}{imp}')
             elif p in ('backdrop-filter', '-webkit-backdrop-filter'):  # sin saturate/brightness: sobre el fondo azul tiñen el vidrio (tras el filtro se ve marrón); el blur se conserva
                 imp = '!important' if '!important' in v else ''
                 v2 = re.sub(r'\s*(saturate|brightness)\([^)]*\)', '', v.replace('!important', '')).strip()
                 ds.append(f'{p}:{v2}{imp}')
+            elif p in ('background', 'background-image') and soften_grad(v.replace('!important', '')) is not None:  # veladuras de vidrio: degradados blancos mucho más leves
+                ds.append(f"{p}:{soften_grad(v.replace('!important', '')).strip()}{'!important' if '!important' in v else ''}")
             elif p in ('box-shadow', 'text-shadow'):  # none / reinicios conservan el orden de cascada
                 ds.append(f'{p}:{v.strip()}')
         if ds: res.append(f'{pre}{{{";".join(ds)}}}')
