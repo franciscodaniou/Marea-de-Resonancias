@@ -6,7 +6,16 @@
   const SUN = '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="8" r="2.7"/><path d="M8 1.6v1.5M8 12.9v1.5M1.6 8h1.5M12.9 8h1.5M3.5 3.5l1.1 1.1M11.4 11.4l1.1 1.1M12.5 3.5l-1.1 1.1M4.6 11.4l-1.1 1.1"/></svg>';
   const apply = t => { put('marea-theme', t); try { sessionStorage.setItem('marea-y', String(scrollY)); } catch (e) {} location.reload(); };
   const label = b => { const d = dark(); b.setAttribute('aria-pressed', d); b.setAttribute('aria-label', d ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'); b.innerHTML = '<span>' + (d ? 'Modo claro' : 'Modo oscuro') + '</span>' + (d ? SUN : MOON); };
-  const build = () => { if (document.querySelector('.thm')) return; const b = document.createElement('button'); b.className = 'thm'; b.type = 'button'; label(b); b.addEventListener('click', () => apply(dark() ? 'light' : 'dark'));
+  /* about: barra lateral de puntos (en index la crea story.js); salta a las partes y secciones de la página */
+  const aboutRail = () => { if (!document.body.classList.contains('about') || document.getElementById('sec')) return;
+    const hs = [...document.querySelectorAll('h2.part-h, h2.sh')], T = [['Inicio', null]].concat(hs.map(h => [h.textContent.trim(), h]));
+    const nav = document.createElement('nav'); nav.id = 'sec'; nav.setAttribute('aria-label', 'Secciones de la página');
+    nav.innerHTML = T.map(([n], i) => `<button data-i="${i}" aria-label="${n.replace(/"/g, '')}"><span>${n}</span><i></i></button>`).join(''); document.body.appendChild(nav);
+    const bs = [...nav.querySelectorAll('button')], top = h => h ? h.getBoundingClientRect().top + scrollY : 0, RMo = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    bs.forEach((b, i) => b.addEventListener('click', () => scrollTo({ top: Math.max(0, top(T[i][1]) - 90), behavior: RMo ? 'auto' : 'smooth' })));
+    let tk = 0; const mark = () => { tk = 0; let a = 0; T.forEach(([, h], i) => { if (h && top(h) - scrollY < innerHeight * .4) a = i; }); bs.forEach((b, i) => b.classList.toggle('on', i === a)); };
+    addEventListener('scroll', () => { if (!tk) tk = requestAnimationFrame(mark); }, { passive: true }); addEventListener('resize', mark); mark(); };
+  const build = () => { aboutRail(); if (document.querySelector('.thm')) return; const b = document.createElement('button'); b.className = 'thm'; b.type = 'button'; label(b); b.addEventListener('click', () => apply(dark() ? 'light' : 'dark'));
     const rail = document.getElementById('sec'), snd = rail && rail.querySelector('.snd');
     if (snd) snd.after(b); else if (rail) rail.appendChild(b); else { b.classList.add('fl'); document.body.appendChild(b); } };
   addEventListener('keydown', e => { if (e.key !== 't' && e.key !== 'T' || e.metaKey || e.ctrlKey || e.altKey || /INPUT|TEXTAREA|SELECT/.test((e.target || {}).tagName || '')) return; apply(dark() ? 'light' : 'dark'); });
