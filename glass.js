@@ -18,7 +18,7 @@
     const nz = (x, y, z, t) => (Math.sin(1.7 * x + t * .3 + Math.sin(2.1 * y + t * .2)) + Math.sin(2.3 * y - 1.3 * z + t * .25) + Math.sin(1.1 * z + 1.9 * x - t * .2)) / 3;
     return t => {
       const W = innerWidth, H = innerHeight; if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
-      c.fillStyle = '#DCDDD3'; c.fillRect(0, 0, W, H);
+      c.fillStyle = window.__DK ? '#E1F2FF' : '#DCDDD3'; c.fillRect(0, 0, W, H);
       const R0 = Math.min(W, H) * .30, FP = R0 * 4.2, cx = W * .5, cy = H * .5, ry = t * .06, rx = -.9 + .12 * Math.sin(t * .1), cY = Math.cos(ry), sY = Math.sin(ry), cX = Math.cos(rx), sX = Math.sin(rx);
       const P = [];
       for (let u = 0; u <= NU; u++) { const th = u / NU * TAU, row = []; for (let v = 0; v < NV; v++) { const ph = v / NV * TAU;

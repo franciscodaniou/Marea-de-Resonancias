@@ -354,7 +354,7 @@ function frame(ms) {
   if (W >= 1100 && cA > .01) { const cp = document.querySelector('.cmp'); if (cp) { const t0 = cp.getBoundingClientRect().bottom + 14, b0 = H - 24, h0 = b0 - t0; if (h0 > 60) { const r = Math.max(34, Math.min(Math.min(W * .165, H * .25), h0 / 2.2)); CMR = r; CMY = (t0 + b0) / 2; } } } // escritorio de poca altura: la figura baja de la leyenda
   if (W < 1100 && cm > .01) { const bk = document.querySelector('.cstage .blk'), cp = document.querySelector('.cmp'); // comparación en pantallas chicas: los dos modelos ocupan el hueco entre el título y la tarjeta
     if (bk && cp) { const t0 = Math.max(cp.getBoundingClientRect().bottom + 6, 96), b0 = bk.getBoundingClientRect().top - 8, h0 = b0 - t0; if (h0 > 80) { CPR = cl(h0 / (W < 760 ? (H < 700 ? 2.5 : 2.15) : H < 700 ? 2.85 : 2.4), 36, W >= 760 ? Math.min(W * .29, 265) : Math.min(W * (W < 760 ? .4 : .3), W < 760 ? 190 : 150)); CPY = (t0 + b0) / 2 - 4; } } } // CMY/CMR (lugares) no se tocan: al volver desde Comparar el modelo ya no pasa por la posición de la comparación
-  geoms(); geomsR(); x.globalCompositeOperation = 'source-over'; x.fillStyle = '#DCDDD3'; x.fillRect(0, 0, W, H);
+  geoms(); geomsR(); x.globalCompositeOperation = 'source-over'; x.fillStyle = window.__DK ? '#E1F2FF' : '#DCDDD3'; x.fillRect(0, 0, W, H);
   curDt = dt * rm;
   for (let s = 0; s < NS; s++) { updMesh(s, ee, er); lightMesh(s); }
   for (let s = 0; s < NS; s++) { const al = G[s].al * Aglob * GR[rOf(s)].al; if (al > .01 && !(W < 760 && ee > .9 && Math.abs(G[s].cx - W / 2) > W * 1.2)) { drawMesh(s, al, evOf(ee, .5)); flows(s, curDt, al); } }
