@@ -7,6 +7,9 @@
    · halo = agrado percibido en encuestas (coral → ámbar → turquesa) */
 
 const COL = { V: '#D20A2E', H: '#E2AC2C', C: '#6150A2', M: '#1A5E89', N: '#00675B' }; // paleta sobre fondo salvia
+/* modo oscuro: la página se invierte con invert()+hue-rotate(180°); para que cada fuente se vea con el color deseado se pre-compensa: P = 1 − Hr·D (Hr·Hr = I a 180°) */
+if (window.__DK) { const D = { V: [255, 111, 125], H: [244, 196, 80], C: [170, 156, 255], M: [108, 184, 255], N: [58, 208, 176] }, Hr = [[-.574, 1.43, .144], [.426, .43, .144], [.426, 1.43, -.856]];
+  Object.keys(D).forEach(k => { const d = D[k].map(x => x / 255), p = Hr.map(r => 1 - (r[0] * d[0] + r[1] * d[1] + r[2] * d[2])).map(x => Math.round(Math.max(0, Math.min(1, x)) * 255)); COL[k] = '#' + p.map(x => x.toString(16).padStart(2, '0')).join(''); }); }
 const CAT = { V: 'Vehicular', H: 'Humana (voces, música)', C: 'Comercial (locales, captadores)', M: 'Mecánica / portuaria', N: 'Natural' };
 const rgbOf = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, n >> 8 & 255, n & 255]; };
 const SH = { V: 'Vehicular', H: 'Humana', C: 'Comercial', M: 'Portuaria', N: 'Natural' };
