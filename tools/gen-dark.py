@@ -46,7 +46,7 @@ def parse(s, i=0, end=None):
 def build(rules):
     res = []
     for pre, body in rules:
-        if pre.startswith('@font-face'): continue
+        if pre.startswith('@font-face') or pre.startswith('html[data-theme="dark"]'): continue
         if pre.startswith('@'):
             kids = build(parse(body))
             if kids and not pre.startswith('@keyframes'): res.append(f'{pre}{{{kids}}}')

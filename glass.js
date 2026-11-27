@@ -137,7 +137,7 @@ void main(){
 }`;
 
   function sh(type, s) { const o = gl.createShader(type); gl.shaderSource(o, s); gl.compileShader(o); return gl.getShaderParameter(o, gl.COMPILE_STATUS) ? o : (console.warn(gl.getShaderInfoLog(o)), null); }
-  const vs = sh(gl.VERTEX_SHADER, VERT), fs = sh(gl.FRAGMENT_SHADER, FRAG); if (!vs || !fs) return fail('shader');
+  const vs = sh(gl.VERTEX_SHADER, VERT), fs = sh(gl.FRAGMENT_SHADER, window.__DK ? FRAG.split('vec3(0.863, 0.867, 0.827)').join('vec3(0.882, 0.949, 1.0)') : FRAG); if (!vs || !fs) return fail('shader');
   const pr = gl.createProgram(); gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr);
   if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return fail(gl.getProgramInfoLog(pr));
   gl.useProgram(pr);

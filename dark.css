@@ -125,4 +125,3 @@ body #bar .morph .gt{border:1px solid rgba(0,0,0,0.34);box-shadow:inset .5px 1px
 body #bar .morph .mb:not(.on)::after{box-shadow:none!important}
 body #bar .morph .mb,body #bar .morph .mb:hover,body #bar .morph .mb:active{box-shadow:none!important}
 .thm.fl{border:1px solid rgba(0,0,0,0.4);backdrop-filter:blur(14px)}
-html[data-theme="dark"] .console{box-shadow:0 18px 50px rgba(255,255,255,0.55)}
