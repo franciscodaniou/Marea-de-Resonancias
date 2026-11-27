@@ -343,6 +343,7 @@ const CQ = ['¿Cómo varían las fuentes y la intensidad del sonido según el lu
   const hashState = () => { const q = new URLSearchParams(); q.set('sec', SEC[act][0]); const M = window.MAREA; if (M.want !== null) q.set('s', M.want + 1);
     if (act <= 2 || M.want !== null) { if (M.flt !== 'all') q.set('f', M.flt); } if (M.srcF) q.set('c', M.srcF);
     if (act === 4) { q.set('A', pair[0] + 1); q.set('B', pair[1] + 1); if (cf !== 'all') q.set('cf', cf); } return '#' + q.toString(); };
+  window.MAREA.hashNow = hashState;
   const sync = () => { if (!ready || document.body.classList.contains('heroing') || ut) return; ut = setTimeout(() => { ut = 0; try { history.replaceState(null, '', hashState()); } catch (e) { } }, 250); };
   const mark = () => { const y = scrollY + vhh() * .35; let a = 0; SEC.forEach((s, i) => { if (y >= s[2]() - vhh() * .0) a = i; }); if (pin) { const mx = document.documentElement.scrollHeight - innerHeight; if (!pin.landed && (Math.abs(scrollY - pin.y) < 6 || scrollY >= mx - 2)) { pin.landed = true; pin.ly = scrollY; } if (pin.landed && Math.abs(scrollY - pin.ly) > 30) pin = null; else a = pin.i; } if (a !== act) { act = a; sbtn.forEach((b, i) => { b.classList.toggle('on', i === a); if (i === a) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current'); }); } sync(); };
   addEventListener('scroll', () => requestAnimationFrame(mark), { passive: true }); addEventListener('resize', mark);
