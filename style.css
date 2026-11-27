@@ -1460,3 +1460,11 @@ html[data-theme="dark"]{--bg:#E1F2FF}
 html[data-theme="dark"] #hero{background:rgba(225,242,255,.84)}
 html[data-theme="dark"] header,html[data-theme="dark"] body.deep header,html[data-theme="dark"] body.about header{background:linear-gradient(rgba(225,242,255,.85),rgba(225,242,255,0))}
 @media(max-width:1100px){html[data-theme="dark"] body.gl #leg.open{background:rgba(225,242,255,.78)}}
+/* v226 · modo noche: consola de about sigue oscura (se aplica el filtro una segunda vez para cancelar la inversión) y fondo de about plano como el de index */
+html[data-theme="dark"] .console{filter:invert(1) hue-rotate(180deg);background:#0b1b29;color:#c9d1c3;box-shadow:0 18px 50px rgba(0,0,0,.55)}
+html[data-theme="dark"] body.about{background:var(--bg)}
+/* v226 · tintes oliva del modo claro → equivalentes azulados (el filtro los volvía marrón sobre el fondo #05141F) */
+@media(max-width:1100px){html[data-theme="dark"] #nav.open .mb{background-color:rgba(231,249,255,.82)}}
+html[data-theme="dark"] #kbd{background:rgba(246,253,255,.9)!important}
+/* v226 · «La pregunta» y botones de apertura con el mismo velo que «Cómo leer» / Inicio en modo noche */
+html[data-theme="dark"] #ans,html[data-theme="dark"] .lmore,html[data-theme="dark"] .cmin,html[data-theme="dark"] .step .blk .cmin{background:linear-gradient(155deg,rgba(255,255,255,.2),rgba(255,255,255,.04) 38%,rgba(255,255,255,.03) 62%,rgba(255,255,255,.14))!important}

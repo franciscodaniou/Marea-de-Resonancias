@@ -59,6 +59,10 @@ def build(rules):
                 imp = '!important' if '!important' in v else ''
                 v2 = col.sub(swap, v.replace('!important', '').strip())
                 ds.append(f'{p}:{v2}{imp}')
+            elif p in ('backdrop-filter', '-webkit-backdrop-filter'):  # sin saturate/brightness: sobre el fondo azul tiñen el vidrio (tras el filtro se ve marrón); el blur se conserva
+                imp = '!important' if '!important' in v else ''
+                v2 = re.sub(r'\s*(saturate|brightness)\([^)]*\)', '', v.replace('!important', '')).strip()
+                ds.append(f'{p}:{v2}{imp}')
             elif p in ('box-shadow', 'text-shadow'):  # none / reinicios conservan el orden de cascada
                 ds.append(f'{p}:{v.strip()}')
         if ds: res.append(f'{pre}{{{";".join(ds)}}}')
