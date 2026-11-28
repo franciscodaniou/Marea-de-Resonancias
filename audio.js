@@ -116,6 +116,6 @@ window.SND = (() => {
 })();
 
 (() => { const b = document.querySelector('#sec .snd'); if (!b) return; b.hidden = false;
-  const set = on => { b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); b.setAttribute('aria-label', on ? 'Silenciar sonido' : 'Activar sonido'); b.querySelector('span').textContent = on ? 'Sonido activado' : 'Sonido silenciado'; };
+  const set = on => { b.classList.add('q'); b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); b.setAttribute('aria-label', on ? 'Silenciar sonido' : 'Activar sonido'); b.querySelector('span').textContent = on ? 'Sonido activado' : 'Sonido silenciado'; };
   b.addEventListener('click', () => set(SND.toggle()));
   addEventListener('keydown', e => { if (e.ctrlKey || e.metaKey || e.altKey || document.body.classList.contains('heroing') || e.key.toLowerCase() !== 'm') return; const t = e.target; if (t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return; set(SND.toggle()); }); })();
