@@ -560,6 +560,10 @@ window.cmLegSync = cmLegSync;
 const legSet = v => { legMeasure(); leg.classList.toggle('open', v); document.documentElement.style.setProperty('--lb', (72 + (v ? Math.min(lgin.offsetHeight, 260) : 38) + 14) + 'px'); document.body.classList.toggle('legopen', v); setTimeout(() => size(), 60); setTimeout(() => size(), 700); lgt.setAttribute('aria-expanded', v); };
 lgt.onclick = () => legSet(!leg.classList.contains('open'));
 cv.addEventListener('click', () => { if (innerWidth < 1100) legSet(false); });
+/* clic fuera de «Cómo leer» (incluida su versión del comparador) y de «La pregunta»: se cierran, además de cerrarse con su propio enunciado */
+document.addEventListener('click', e => { const P = e.composedPath ? e.composedPath() : [];
+  if (leg.classList.contains('open') && !P.includes(leg)) legSet(false);
+  const an = document.getElementById('ans'); if (an && an.classList.contains('open') && !P.includes(an) && window.ansClose) window.ansClose(); });
 addEventListener('keydown', e => { if (e.key === 'Escape' && innerWidth < 1100) legSet(false); });
 addEventListener('resize', () => { legMeasure(); const m = innerWidth >= 1100; if (m !== legMode) { legMode = m; legSet(m); } });
 legMeasure(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { legMeasure(); size(); });
@@ -583,7 +587,7 @@ addEventListener('resize', size); size(); render(); requestAnimationFrame(frame)
 { const ans = document.getElementById('ans'), qt = document.getElementById('qt'), ain = ans && ans.querySelector('.ain'); let manual = false;
   const meas = () => { if (!ans) return; ans.style.setProperty('--ah', (38 + Math.ceil(ain.offsetHeight)) + 'px'); window.ANS_H = ans.classList.contains('open') ? 38 + ain.offsetHeight : 38; };
   const setQ = (v, byUser) => { if (!ans || ans.classList.contains('open') === v) return; if (byUser) manual = true; meas(); ans.classList.toggle('open', v); qt.setAttribute('aria-expanded', v); window.ANS_H = v ? 38 + ain.offsetHeight : 38; setTimeout(() => size(), 60); setTimeout(() => size(), 700); };
-  if (ans) { if (innerWidth >= 1100) ans.classList.add('open'); meas(); qt.onclick = () => setQ(!ans.classList.contains('open'), true);
+  if (ans) { if (innerWidth >= 1100) ans.classList.add('open'); meas(); qt.onclick = () => setQ(!ans.classList.contains('open'), true); window.ansClose = () => setQ(false, true);
     addEventListener('scroll', () => { if (manual || innerWidth < 1100) return; setQ(scrollY < innerHeight * .8, false); }, { passive: true });
     addEventListener('resize', () => { meas(); size(); }); if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { meas(); size(); }); setTimeout(meas, 300); }
 }
