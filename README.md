@@ -22,7 +22,7 @@ Es un sitio estático, sin dependencias ni compilación.
 | `audio.js` | Sonido por fuentes (prototipo opcional, síntesis Web Audio; se quita borrando el archivo y su `<script>`) |
 | `glass.js` | Capa WebGL del glassmorfismo (con respaldo en CSS) |
 | `style.css` | Estilos y diseño responsivo |
-| `data.js` / `data.json` | Datos de fichas de terreno (Barrio Puerto y 8 mediciones de Buenos Aires con dB propios) y 20 encuestas, con fuente y criterios |
+| `data.js` / `data.json` | Datos de fichas de terreno (Barrio Puerto y 8 mediciones de Buenos Aires con dB propios) y 27 encuestas de agrado (20 del Barrio Puerto y 7 de Buenos Aires), con fuente y criterios |
 
 ## Codificación visual
 Malla orgánica (tubo deformado por ruido Perlin) = el lugar: color = fuente predominante, largo = hora (09:40 → 18:50), relieve = dB.

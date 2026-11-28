@@ -11,8 +11,8 @@
     [['Qué se oye', 'Micros y bocinas: 10 de 11 mediciones son tráfico, y es donde más gente y vehículos circulan.'], ['Cómo se vive', '4 de 6 personas encuestadas lo sienten incómodo.']],
     [['Qué se oye', 'Captadores, música de locales y cortinas metálicas: un pasaje comercial.'], ['Cómo cambia', 'Tranquilo en la mañana; sube a 72 dB en la hora punta.']],
     [['Qué se oye', 'Voces y canto en torno a la pileta seca: el sonido más parejo del barrio.'], ['Ojo con el dato', 'Solo 3 mediciones y 2 encuestas: es una lectura preliminar.']],
-    [['Qué se oye', 'Colectivos y autos, con mucha gente a pie: una plaza junto a una avenida.'], ['Cómo cambia', 'El promedio sube de 70 a 74 dB entre la mañana y la hora punta.'], ['Ojo con el dato', 'Tres mediciones propias con dB y ninguna encuesta de agrado.']],
-    [['Qué se oye', 'El zumbido de la ciudad de fondo, turistas y terrazas, en el borde del río.'], ['Cómo cambia', 'De noche, la música de los bares lleva el máximo a 96 dB.'], ['Ojo con el dato', 'Cinco mediciones propias con dB y ninguna encuesta de agrado.']]];
+    [['Qué se oye', 'Colectivos y autos, con mucha gente a pie: una plaza junto a una avenida.'], ['Cómo cambia', 'El promedio sube de 70 a 74 dB entre la mañana y la hora punta.'], ['Ojo con el dato', 'Tres mediciones propias con dB y solo 3 encuestas de agrado: es una lectura preliminar.']],
+    [['Qué se oye', 'El zumbido de la ciudad de fondo, turistas y terrazas, en el borde del río.'], ['Cómo cambia', 'De noche, la música de los bares lleva el máximo a 96 dB.'], ['Ojo con el dato', 'Cinco mediciones propias con dB y solo 4 encuestas de agrado: es una lectura preliminar.']]];
   window.FIX = FI;
   const cl01 = v => Math.max(0, Math.min(1, v));
   const RM = matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -62,11 +62,11 @@
 
   /* Grupo B · agrado frente a dB <-> respuestas de agrado */
   const B = {
-    a: () => { const v = V(), X = q => 120 + (q - 60) / 14 * 380, Y = a => 206 - (a + 1) / 3 * 190, dy = [-18, 28, 28, -18, 28, -18];
+    a: () => { const v = V(), X = q => 120 + (q - 60) / 14 * 380, Y = a => 206 - (a + 1) / 3 * 190, dy = [-18, 28, 28, -18, -18, -18];
       [60, 64, 68, 72].forEach(t => { line(v, 'gx' + t, X(t), 14, X(t), 206, GR); text(v, 'tx' + t, X(t), 236, t, 'm', 'middle'); });
       [-1, 0, 1, 2].forEach(t => { line(v, 'gy' + t, 120, Y(t), 500, Y(t), GR); text(v, 'ty' + t, 104, Y(t) + 4, ['incómoda', 'da igual', 'gusta un poco', 'gusta'][t + 1], 'm', 'end'); });
       text(v, 'ax', 500, 11, 'dB promedio →', 'm', 'end'); text(v, 'ay', 124, 11, 'agrado percibido ↑', 'm');
-      S.forEach((d, i) => { const nn = d.db == null || d.ag == null, x = nn ? 520 : X(d.db), y = nn ? 120 : Y(d.ag); circ(v, 'c' + i, x, y, nn ? 0 : 10, d.hex, nn ? 0 : .92); text(v, 'n' + i, x, y + dy[i], nm(i), 'b', 'middle', nn ? 0 : 1);
+      S.forEach((d, i) => { const nn = d.db == null || d.ag == null, x = nn ? 520 : X(d.db), y = nn ? 120 : Y(d.ag); circ(v, 'c' + i, x, y, nn ? 0 : 10, d.hex, nn ? 0 : .92); const lb = i === 1 ? [-16, 4, 'end'] : i === 4 ? [14, 4, 'start'] : [0, dy[i], 'middle']; text(v, 'n' + i, x + lb[0], y + lb[1], nm(i), 'b', lb[2], nn ? 0 : 1);
         for (let k = 0; k < 4; k++) rect(v, `r${i}${k}`, x, y, 0, 0, '#D20A2E', 0); }); return v; },
     b: () => { const v = V(), col = ['#D20A2E', '#a39f8a', '#5E9C8F', '#00675B'], nmz = ['Incomoda', 'Da igual', 'Gusta un poco', 'Gusta'];
       S.forEach((d, i) => { const y = 8 + i * 31; text(v, 'n' + i, 0, y + 13, SECT[i], 'b'); let x = 162;
@@ -188,7 +188,7 @@
       <p>Las franjas de Buenos Aires tienen pocas mediciones (${fr[1].map(q => q.n).join(', ')} frente a ${fr[0].map(q => q.n).join(', ')} en Valparaíso): es una lectura, no una regla.</p></article>`;
   };
   const thesis = () => {
-    const w = S.filter(d => d.db != null && d.ag != null), top = w.slice().sort((a, b) => b.ag - a.ag)[0], low = w.slice().sort((a, b) => a.ag - b.ag)[0], pk = S.filter(d => d.mx != null).sort((a, b) => b.mx - a.mx)[0];
+    const w = S.filter(d => d.s < 4 && d.db != null && d.ag != null), top = w.slice().sort((a, b) => b.ag - a.ag)[0], low = w.slice().sort((a, b) => a.ag - b.ag)[0], pk = S.filter(d => d.mx != null).sort((a, b) => b.mx - a.mx)[0];
     if (!top || !low || top === low) return '';
     const f = v => v.toFixed(1).replace('.', ',');
     const WHY = ['El mar y las voces pesan más que los decibeles.', 'Dominan micros y bocinas, con el flujo vehicular más alto.', 'Captadores y música de locales en un tubo comercial.', 'Voces y canto en torno a la pileta.'];

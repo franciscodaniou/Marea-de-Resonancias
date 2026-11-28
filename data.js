@@ -1,7 +1,7 @@
 /* Datos · Marea de resonancias (Barrio Puerto)
    Fuente: «Base de Datos – Variación Sonora Barrio Puerto» (Grupo 2 · Taller de Diseño de Servicios 2026).
    · FICHAS  = fichas del Barrio Puerto + las de Buenos Aires (tabla general BA)
-   · ENCUESTAS = 20 encuestas de percepción (tercera página del PDF)
+   · ENCUESTAS = 27 encuestas de percepción: 20 del Barrio Puerto (tercera página del PDF) + 7 de Buenos Aires (20 y 21/11/2026)
    Criterios de preparación (documentados también en about.html):
    · Tipo de fuente: V vehicular · H humana · C comercial · M portuaria/mecánica · N natural. La categoría «comercial»
      separa captadores, música de locales, cortinas y locatarios de las voces humanas (8 fichas recategorizadas por el equipo).
@@ -14,7 +14,10 @@
      Se tratan como mediciones normales. Cada tipo de fuente de la ficha es una fila; la primera es la predominante.
      La medición BA-M-14 (00:20, noche) se ubica al final del recorrido horario (hora 24:20) y queda fuera de las franjas mañana/tarde/hora punta.
      Los rankings y hallazgos del «Barrio Puerto» usan solo los cuatro lugares de Valparaíso; Buenos Aires se compara lugar por lugar.
-     Sin encuestas de agrado en Buenos Aires. */
+     Encuestas de agrado de Buenos Aires (7): Plaza de Mayo n=3 (20/11, 72,3 dB) y Puente de la Mujer n=4 (21/11, 69,4 dB en dos; dos sin dB).
+     Agrado BA: la pregunta 4 («el sonido de este lugar me agrada / me es indiferente / me desagrada») se pasa a la escala de arriba con apoyo de la
+     pregunta 6 (1–5): «me agrada» con 4–5 = 2 (gusta); «me agrada» con 3 = 1 (gusta un poco); «indiferente» = 0 (da igual); «desagrada» = −1 (incomoda).
+     La encuesta 2 de Plaza de Mayo marca «desagrada» y 4/5 en la pregunta 6: se respeta la pregunta 4. */
 const SECT = ['Muelle Prat', 'Plaza Sotomayor', 'Calle Serrano', 'Plaza Echaurren', 'Plaza de Mayo', 'Puente de la Mujer'];
 const SHORT = ['Prat', 'Sotomayor', 'Serrano', 'Echaurren', 'Mayo', 'Puente'];
 const APRA = 'Mapa Estratégico de Ruido 2018 · Agencia de Protección Ambiental (APrA), Gobierno de la Ciudad de Buenos Aires';
@@ -107,5 +110,7 @@ const FICHAS = [
   ['00:20', 5, 70, 82, 96, 3, 1, 'C', 'Música de bares', 'Nublado, viento bajo. Actividades: atención en locales, conversaciones, interacción / juego, música / espectáculo callejero.', 5, 'BA-M-14'],
   ['00:20', 5, 70, 82, 96, 3, 1, 'H', 'Personas', 'Fuente secundaria registrada en la ficha (humana); sin descripción detallada.', 5, 'BA-M-14'],
 ];
-// ENCUESTAS: [sector (0-3; Plaza de Mayo aún sin encuestas), agrado (−1…2), dB medido durante la encuesta (si se registró)]
-const ENCUESTAS = [[0,1,71.4],[0,1,75],[3,1,54],[3,-1,75.4],[2,0,74.3],[0,1],[0,2],[0,1],[0,1],[1,-1],[1,-1],[1,0],[1,-1],[1,-1],[2,0],[2,2],[2,2],[2,2],[0,2],[1,2]];
+// ENCUESTAS: [sector (0-3 Barrio Puerto · 4 Plaza de Mayo · 5 Puente de la Mujer), agrado (−1…2), dB medido durante la encuesta (si se registró)]
+const ENCUESTAS = [[0,1,71.4],[0,1,75],[3,1,54],[3,-1,75.4],[2,0,74.3],[0,1],[0,2],[0,1],[0,1],[1,-1],[1,-1],[1,0],[1,-1],[1,-1],[2,0],[2,2],[2,2],[2,2],[0,2],[1,2],
+  [4,0,72.3],[4,-1,72.3],[4,-1,72.3],  // Plaza de Mayo · encuestas 1-3 (Piera Ivelic, 20/11)
+  [5,2,69.4],[5,1,69.4],[5,-1],[5,2]];  // Puente de la Mujer · encuestas 4-5 (Piera, 21/11) y dos de Catalina (21/11, sin dB)
